@@ -2,7 +2,7 @@
     <ContentWrapper>
         <div class="content-heading">
             <div>Página Inicial
-                <small>{{$t("dashboard.WELCOME")}}</small>
+                <small>{{selectUserName()}}</small>
             </div>
             <!-- START Language list-->
             <div class="ml-auto">
@@ -32,6 +32,10 @@
                         case 'es': return 'Spanish'; break;
                         case 'en': default: return 'English';
                     }
+                },
+                selectUserName(){
+                    var LUser = JSON.parse(sessionStorage.getItem("user"));
+                    return `Bem vindo ao Thuor, ${LUser.user.nome}!`;
                 }
             }
         },

@@ -104,8 +104,12 @@
 import Vue from "vue";
 import VeeValidate from "vee-validate";
 import Loading from "vue-loading-overlay";
+import API_NOTIFICATION from "../../api/notification";
 // Import stylesheet
 import "vue-loading-overlay/dist/vue-loading.css";
+import API_LOGIN from "../../api/loginAPI";
+import API_HEADERS from "../../api/configAxios";
+
 Vue.use(Loading);
 
 Vue.use(VeeValidate, {
@@ -138,20 +142,26 @@ export default {
     },
     hideLoading() {
       Vue.prototype.$loader.hide();
-    },
+    },    
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
           this.showLoading();
           // simulate AJAX
-          setTimeout(() => {
-            this.hideLoading();
-          }, 5000);
+          API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
+            .then(retorno => {
+              console.log("Retorno", retorno);
+              sessionStorage.setItem("user", JSON.stringify(retorno.data));
+              API_LOGIN.VerificaToken();
+              this.$router.push('home');
+              this.hideLoading();
+            })
+            .catch(error => {
+              //console.log("Erro ao efetuar login", error);
+              this.hideLoading();
+              API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
+            });
 
-          console.log("Form Submitted!");
-          console.log(`Email: ${this.login.email}`);
-          console.log(`Password: ${this.login.password}`);
-          console.log(`Remember Me: ${this.login.rememberme}`);
           return;
         }
         console.log("Correct them errors!");
