@@ -19,9 +19,7 @@ import App from './App.vue'
 import router from './router'
 import i18next from './i18n.js';
 import Notifications from 'vue-notification'
-
 Vue.config.productionTip = false
-
 Vue.use(BootstrapVue);
 Vue.use(VueI18Next);
 Vue.use(Notifications);

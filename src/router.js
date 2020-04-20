@@ -12,6 +12,8 @@ const SubMenu = () => import ('@/views/SubMenu/SubMenu.vue')
 
 const Login = () => import ('@/views/Pages/Login.vue')
 
+const Produtos = () => import ('@/views/Pages/Produtos.vue')
+
 Vue.use(Router)
 
 export default new Router({
@@ -25,6 +27,16 @@ export default new Router({
             path: '/login',
             component: Login
         },
+        {
+            path: '/produto/detalhe/:id',
+            component: Layout,
+            children:[
+                {
+                    path: '/',
+                    component: Produtos
+                }
+            ]
+        },
         // Admin Pages
         {
             path: '/',
@@ -36,6 +48,16 @@ export default new Router({
                 }, {
                     path: '/submenu',
                     component: SubMenu
+                }
+            ]
+        },
+        {
+            path: '/produtos',
+            component: Layout,
+            children:[
+                {
+                    path: '/todos',
+                    component: Produtos
                 }
             ]
         },

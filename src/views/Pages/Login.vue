@@ -173,10 +173,18 @@ export default {
       });
     },
     checkIfLogged() {
-      var LUser = JSON.parse(sessionStorage.getItem("user"));
-      if (LUser != null) {
-        API_LOGIN.VerificaToken();
+      this.showLoading();
+      if (
+        sessionStorage.getItem("user") !== undefined &&
+        sessionStorage.getItem("user") !== null
+      ) {
+        var LUser = JSON.parse(sessionStorage.getItem("user"));
+        if (LUser != null) {
+          API_LOGIN.VerificaToken();
+        }
       }
+
+      this.hideLoading();
     }
   }
 };
