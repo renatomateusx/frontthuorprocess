@@ -117,6 +117,9 @@ Vue.use(VeeValidate, {
 });
 
 export default {
+  created() {
+    this.checkIfLogged();
+  },
   data() {
     return {
       login: {
@@ -142,7 +145,7 @@ export default {
     },
     hideLoading() {
       Vue.prototype.$loader.hide();
-    },    
+    },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
@@ -150,22 +153,30 @@ export default {
           // simulate AJAX
           API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
             .then(retorno => {
-              console.log("Retorno", retorno);
-              sessionStorage.setItem("user", JSON.stringify(retorno.data));
-              API_LOGIN.VerificaToken();
-              this.$router.push('home');
+              if (retorno !== undefined) {
+                sessionStorage.setItem("user", JSON.stringify(retorno.data));
+                this.$router.push("home");
+              }
               this.hideLoading();
             })
             .catch(error => {
-              //console.log("Erro ao efetuar login", error);
+              if (error.response.status === 401) {
+                API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
+              }
+              console.log("Erro ao efetuar login", error);
               this.hideLoading();
-              API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
             });
 
           return;
         }
         console.log("Correct them errors!");
       });
+    },
+    checkIfLogged() {
+      var LUser = JSON.parse(sessionStorage.getItem("user"));
+      if (LUser != null) {
+        API_LOGIN.VerificaToken();
+      }
     }
   }
 };

@@ -1,20 +1,20 @@
-
 const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 var API_LOGIN = {
   EfetuarLogin(login, senha) {
     return new Promise((resolve, reject) => {
-      console.log("Login URL", constantes.WEBSITEAPI + constantes.PATH_LOGIN);
       axios
         .post(constantes.WEBSITEAPI + constantes.PATH_LOGIN, {
           email: login,
           senha: senha
         })
-        .then(function (response) {
+        .then((response) => {
+          console.log("Response", response);
           resolve(response);
         })
-        .catch(function (error) {
+        .catch((error) => {
+          console.log("Reject", error);
           reject(error);
         });
     });
@@ -30,12 +30,16 @@ var API_LOGIN = {
       }
     });
     axios
-      .get(constantes.WEBSITEAPI, API_HEADERS.getHeader())
-      .then(res =>{
+      .get(constantes.WEBSITEAPI + constantes.PATH_TOKEN, API_HEADERS.getHeader())
+      .then(res => {
         console.log("Retorno Get", res);
       })
-      .catch(error =>{
-        console.log("Retorno Erro", error);
+      .catch(error => {
+        if (error.response.status == 401) {
+          sessionStorage.removeItem("user");
+          this.$router.push('login');
+        }
+        console.log("Retorno Erros", error);
       })
   }
 }
