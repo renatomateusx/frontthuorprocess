@@ -103,14 +103,15 @@
 <script>
 import Vue from "vue";
 import VeeValidate from "vee-validate";
-import Loading from "vue-loading-overlay";
+
 import API_NOTIFICATION from "../../api/notification";
+import API_LOADING from '../../api/loading';
 // Import stylesheet
-import "vue-loading-overlay/dist/vue-loading.css";
+
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 
-Vue.use(Loading);
+
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -129,27 +130,11 @@ export default {
       }
     };
   },
-  methods: {
-    showLoading() {
-      Vue.prototype.$loader = this.$loading.show({
-        // Optional parameters
-        container: this.fullPage ? null : this.$refs.formContainer,
-        canCancel: true,
-        onCancel: this.onCancel,
-        fullPage: true,
-        loader: "bars",
-        color: "#007BFF",
-        width: 80,
-        height: 80
-      });
-    },
-    hideLoading() {
-      Vue.prototype.$loader.hide();
-    },
+  methods: {    
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
-          this.showLoading();
+          API_LOADING.ShowLoading();
           // simulate AJAX
           API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
             .then(retorno => {
@@ -157,14 +142,14 @@ export default {
                 sessionStorage.setItem("user", JSON.stringify(retorno.data));
                 this.$router.push("home");
               }
-              this.hideLoading();
+              API_LOADING.HideLoading();
             })
             .catch(error => {
               if (error.response.status === 401) {
                 API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
               }
               console.log("Erro ao efetuar login", error);
-              this.hideLoading();
+              API_LOADING.HideLoading();
             });
 
           return;
@@ -172,19 +157,23 @@ export default {
         console.log("Correct them errors!");
       });
     },
-    checkIfLogged() {
-      this.showLoading();
+    checkIfLogged() {      
+      API_LOADING.ShowLoading();
       if (
         sessionStorage.getItem("user") !== undefined &&
         sessionStorage.getItem("user") !== null
       ) {
         var LUser = JSON.parse(sessionStorage.getItem("user"));
         if (LUser != null) {
-          API_LOGIN.VerificaToken();
+          API_LOGIN.VerificaToken()
+            .then(res => {
+              API_LOADING.HideLoading();
+            })
+            .catch(res => {
+              API_LOADING.HideLoading();
+            });
         }
       }
-
-      this.hideLoading();
     }
   }
 };

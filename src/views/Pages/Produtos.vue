@@ -32,99 +32,70 @@
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <div>
-        <span class="fa fa-tag"></span> Produtos
-        <small>
-          Todos os seus produtos estão aqui?
-          <br />Pode demorar um tempo até que a sua loja nos envie. Caso queira forçar, clique no botão de importar abaixo.
-        </small>
-      </div>
+      <span class="fa fa-tag"></span>Produtos
     </div>
-    <!-- START card-->
-    <div class="card card-default">
-      <div class="card-header">
-        <button
-          class="btn btn-secondary borderButton"
-          type="button"
-          v-on:click="importFromShopify()"
+    <small>
+      Todos os seus produtos estão aqui?
+      <br />Pode demorar um tempo até que a sua loja nos envie. Caso queira forçar a importação, clique no botão de importar abaixo.
+    </small>
+    <p></p>
+    <Datatable :options="dtOptions1" class="table table-striped table-hover w-100" >
+      <thead>
+        <tr>
+          <th style="width:120px">
+            <strong>ID</strong>
+          </th>
+          <th style="width:500px">
+            <strong>NOME</strong>
+          </th>
+          <th>
+            <strong>VARIANTES</strong>
+          </th>
+          <th>
+            <strong>ESTOQUE</strong>
+          </th>          
+          <th class="text-center">
+            <strong>MOD. EM</strong>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          v-for="{id_produto_json, titulo_produto, json_dados_produto} in produtosList"
+          :key="id_produto_json"
         >
-          <img class="shopifysvg" src="../../../public/img/shopify.svg" /> Importar do Shopify
-        </button>
-      </div>
-      <!-- START table-responsive-->
-      <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="table-ext-1">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>NOME</th>
-              <th>VARIANTES</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="{id_produto_json, titulo_produto, json_dados_produto} in produtosList"
-              :key="id_produto_json"
-            >
-              <td>
-                <div class="checkbox c-checkbox">
-                  <label>
-                    <input type="checkbox" />
-                    <span class="fa fa-check"></span>
-                  </label>
-                </div>
-                <span class="id_produto">{{id_produto_json}}</span>
-              </td>
-              <td>
-                <div class="media">
-                  <img
-                    class="img-fluid circle"
-                    v-bind:src="JSON.parse(json_dados_produto).image.src"
-                    alt="Image"
-                  />
-                  <span class="titulo_produto">
-                    <router-link :to="{path: '/produto/detalhe/' + id_produto_json}">
-                      <b>{{titulo_produto}}</b>
-                    </router-link>
-                  </span>
-                </div>
-              </td>
-              <td>{{JSON.parse(json_dados_produto).variants.length}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <!-- END table-responsive-->
-      <div class="card-footer">
-        <div class="d-flex">
-          <div>
-            <div class="input-group">
-              <input class="form-control" type="text" placeholder="Filtro" />
-              <div class="input-group-append">
-                <button class="btn btn-secondary" type="button">
-                  <span class="fa fa-search"></span>
-                </button>
-              </div>
+          <td>
+            <div class="checkbox c-checkbox">
+              <label>
+                <input type="checkbox" />
+                <span class="fa fa-check"></span>
+              </label>
             </div>
-          </div>
-          <div class="ml-auto">
-            <div class="input-group float-right">
-              <select class="custom-select" id="inputGroupSelect01">
-                <option value="0">Ações</option>
-                <option value="1">Excluir</option>
-                <option value="2">Duplicar</option>
-                <option value="3">Desativar</option>
-              </select>
-              <div class="input-group-append">
-                <button class="btn btn-secondary" type="button">Aplicar</button>
-              </div>
+            <span class="id_produto">{{id_produto_json}}</span>
+          </td>
+          <td>
+            <div class="media">
+              <img
+                class="img-fluid circle"
+                v-bind:src="JSON.parse(json_dados_produto).image.src"
+                alt="Image"
+              />
+              <span class="titulo_produto">
+                <router-link :to="{path: '/produto/detalhe/' + id_produto_json}">
+                  <b>{{titulo_produto}}</b>
+                </router-link>
+              </span>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- END row-->
+          </td>
+          <td>{{JSON.parse(json_dados_produto).variants.length}}</td>
+          <td class="text-center">
+            <span class="badge badge-success">Ativo</span>
+          </td>
+          
+          <td>{{JSON.parse(json_dados_produto).updated_at | formatDate}}</td>
+        </tr>
+      </tbody>
+    </Datatable>
   </ContentWrapper>
 </template>
 
@@ -138,14 +109,23 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_PRODUTOS from "../../api/produtosAPI";
-
+import Datatable from "@/components/Tables/Datatable";
+import moment from 'moment'
 Vue.use(Loading);
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
+Vue.filter('formatDate', function(value) {
+  if (value) {
+    return moment(String(value)).format('DD/MM/YYYY hh:mm')
+  }
+});
 
 export default {
+  components: {
+    Datatable
+  },
   created() {
     this.checkIfLogged();
   },
@@ -155,6 +135,34 @@ export default {
         email: "",
         password: "",
         rememberme: false
+      },
+      dtOptions1: {
+        data: this.produtosList,
+        columns:[
+          {title: 'ID'},
+          {title: 'NOME'},
+          {title: 'VARIANTES'},
+          {title: 'ESTOQUE  '}
+
+        ],
+        paging: true, // Table pagination
+        ordering: true, // Column ordering
+        info: true, // Bottom left status text
+        responsive: true,
+        // Text translation options
+        // Note the required keywords between underscores (e.g _MENU_)
+        oLanguage: {
+          sSearch: '<em class="fa fa-search"></em>',
+          sLengthMenu: "_MENU_ Registros Por Página",
+          info: "Mostrando página _PAGE_ de _PAGES_",
+          zeroRecords: "Nada encontrado, você ainda não tem produtos",
+          infoEmpty: "Não há registros",
+          infoFiltered: "(filtrado de _MAX_ total de registros)",
+          oPaginate: {
+            sNext: '<em class="fa fa-caret-right"></em>',
+            sPrevious: '<em class="fa fa-caret-left"></em>'
+          }
+        }
       },
       produtosList: {}
     };
@@ -196,6 +204,7 @@ export default {
               var LImages = JSON.parse(retProd.data[0].json_dados_produto);
               console.log("Retorno Produtos", LImages.image.src);
               this.produtosList = retProd.data;
+              this.dtOptions1.data = this.produtosList;
               this.hideLoading();
             })
             .catch(error => {
@@ -219,6 +228,7 @@ export default {
               var LImages = JSON.parse(retProd.data[0].json_dados_produto);
               console.log("Retorno Produtos", LImages.image.src);
               this.produtosList = retProd.data;
+              
               this.hideLoading();
               API_NOTIFICATION.Notifica(
                 "Tudo Pronto",
