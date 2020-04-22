@@ -1,14 +1,14 @@
 import Vue from 'vue'
-import Loading from "vue-loading-overlay";
+import Loading from 'vue-loading-overlay'
 
 Vue.use(Loading);
 import "vue-loading-overlay/dist/vue-loading.css";
 var API_LOADING = {
-    isShowingLoading : false,
+    isShowingLoading: false,
     ShowLoading() {
         if (!this.isShowingLoading) {
             this.isShowingLoading = true;
-            Vue.prototype.$loader = this.$loading.show({
+            Vue.prototype.$loader = Loading.show({
                 // Optional parameters
                 container: this.fullPage ? null : this.$refs.formContainer,
                 canCancel: true,

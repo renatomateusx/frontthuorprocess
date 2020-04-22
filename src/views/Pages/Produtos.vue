@@ -39,7 +39,7 @@
       <br />Pode demorar um tempo até que a sua loja nos envie. Caso queira forçar a importação, clique no botão de importar abaixo.
     </small>
     <p></p>
-    <Datatable :options="dtOptions1" class="table table-striped table-hover w-100" >
+    <Datatable :options="dtOptions1" class="table table-striped table-hover w-100"  id="tabela">
       <thead>
         <tr>
           <th style="width:120px">
@@ -167,23 +167,7 @@ export default {
       produtosList: {}
     };
   },
-  methods: {
-    showLoading() {
-      Vue.prototype.$loader = this.$loading.show({
-        // Optional parameters
-        container: this.fullPage ? null : this.$refs.formContainer,
-        canCancel: true,
-        onCancel: this.onCancel,
-        fullPage: true,
-        loader: "bars",
-        color: "#007BFF",
-        width: 80,
-        height: 80
-      });
-    },
-    hideLoading() {
-      Vue.prototype.$loader.hide();
-    },
+  methods: {   
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
@@ -196,7 +180,7 @@ export default {
       });
     },
     checkIfLogged() {
-      this.showLoading();
+      API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
           API_PRODUTOS.GetProdutos()
@@ -205,7 +189,8 @@ export default {
               console.log("Retorno Produtos", LImages.image.src);
               this.produtosList = retProd.data;
               this.dtOptions1.data = this.produtosList;
-              this.hideLoading();
+              this.$refs.tableElement.$data = this.produtosList;
+              API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
               console.log("Erro ao pegar produtos", error);
@@ -219,7 +204,7 @@ export default {
         });
     },
     importFromShopify() {
-      this.showLoading();
+      API_NOTIFICATION.ShowLoading();
       API_PRODUTOS.ImportFromShopify()
         .then(retorno => {
           this.hideLoading();
@@ -229,7 +214,7 @@ export default {
               console.log("Retorno Produtos", LImages.image.src);
               this.produtosList = retProd.data;
               
-              this.hideLoading();
+              API_NOTIFICATION.HideLoading();
               API_NOTIFICATION.Notifica(
                 "Tudo Pronto",
                 "Produtos Importados!",
@@ -241,7 +226,7 @@ export default {
             });
         })
         .catch(error => {
-          this.hideLoading();
+          API_NOTIFICATION.HideLoading();
           API_NOTIFICATION.Notifica(
             "Oops!",
             "Ocorreu um problema ao tentar importar os produtos.",

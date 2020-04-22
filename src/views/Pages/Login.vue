@@ -105,7 +105,7 @@ import Vue from "vue";
 import VeeValidate from "vee-validate";
 
 import API_NOTIFICATION from "../../api/notification";
-import API_LOADING from '../../api/loading';
+
 // Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
@@ -134,7 +134,7 @@ export default {
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
-          API_LOADING.ShowLoading();
+          API_NOTIFICATION.ShowLoading();
           // simulate AJAX
           API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
             .then(retorno => {
@@ -142,14 +142,14 @@ export default {
                 sessionStorage.setItem("user", JSON.stringify(retorno.data));
                 this.$router.push("home");
               }
-              API_LOADING.HideLoading();
+              API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
               if (error.response.status === 401) {
                 API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
               }
               console.log("Erro ao efetuar login", error);
-              API_LOADING.HideLoading();
+              API_NOTIFICATION.HideLoading();
             });
 
           return;
@@ -158,7 +158,7 @@ export default {
       });
     },
     checkIfLogged() {      
-      API_LOADING.ShowLoading();
+      API_NOTIFICATION.ShowLoading();
       if (
         sessionStorage.getItem("user") !== undefined &&
         sessionStorage.getItem("user") !== null
@@ -167,10 +167,10 @@ export default {
         if (LUser != null) {
           API_LOGIN.VerificaToken()
             .then(res => {
-              API_LOADING.HideLoading();
+              API_NOTIFICATION.HideLoading();
             })
             .catch(res => {
-              API_LOADING.HideLoading();
+              API_NOTIFICATION.HideLoading();
             });
         }
       }
