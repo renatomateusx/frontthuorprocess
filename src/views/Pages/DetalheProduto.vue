@@ -72,15 +72,24 @@
 .block {
   display: block;
 }
-.btnSalvar{
+.btnSalvar {
   color: white;
   font-weight: bold;
-  font-size:18px
+  font-size: 18px;
+}
+.precoAtual {
+  color: green;
+}
+.precoCompare {
+  color: red;
+}
+.linkCompra {
+  color: #23b7e5;
 }
 </style>
 <template>
   <ContentWrapper>
-    <div class="content-heading">Produto: {{this.produtoByID.title}}</div>
+    <div class="content-heading"><b>Produto:</b> {{this.produtoByID.title}}</div>
     <div class="row col-lg-10"></div>
     <div class="text-right mt-2 mb-3" style="display:none">
       <b-btn variant="warning mr-2">Descartar</b-btn>
@@ -193,7 +202,7 @@
                   aria-label="Definição de Produto"
                   v-show="this.produtoTable.tipo_frete === 'FIXO'"
                 >
-                  <b-input-group  size="lg" prepend="R$">
+                  <b-input-group size="lg" prepend="R$">
                     <b-form-input
                       v-model.lazy="price"
                       v-model="preco_frete"
@@ -404,38 +413,56 @@
               <h3 class="mt-0">RESUMO</h3>
             </div>
             <hr />
-            <p><b>Criado em:</b> {{this.produtoByID.created_at | formatDate}}</p>
-            <p><b>Modificado em:</b> {{this.produtoByID.updated_at | formatDate}}</p>
+            <p>
+              <b>Criado em:</b>
+              {{this.produtoByID.created_at | formatDate}}
+            </p>
+            <p>
+              <b>Modificado em:</b>
+              {{this.produtoByID.updated_at | formatDate}}
+            </p>
             <hr />
           </div>
 
           <div class="arrow"></div>
           <!-- AQUI COMEÇA O COMPONENTE DA VARIANTE, DOLADO DIREITO. TRANSFORME EM COMPONENTE DEPOIS -->
-          <div class="card card-default" v-for="{id, compare_at_price, price } in this.produtoByID.variants" :key="id">
+          <div
+            class="card card-default"
+            v-for="{id, compare_at_price, price, image_id, sku } in this.produtoByID.variants"
+            :key="id"
+          >
             <div class="popover-body">
               <div class="d-flex align-items-center mb-2">
-                <img class="mr-3 rounded-circle thumb48" src="img/user/05.jpg" alt="Image" />
+                <img
+                  class="mr-3 rounded-circle thumb48"
+                  :src="getImageVariantById(image_id)"
+                  alt="Image"
+                />
                 <p class="m-0">
                   <span class="text-muted">
-                    <strong>SKU:</strong>
+                    <strong>
+                      <b>SKU:</b>
+                      {{sku}}
+                    </strong>
                   </span>
                   <br />
-                  <span class="text-muted">
-                    <strike>Preço âncora:</strike>
+                  <span class="mr-2 text-muted">
+                    <strike class="precoCompare">R$ {{compare_at_price}}</strike>
                   </span>
                   <span class="text-muted">
-                    <strong>Preço promo:</strong>
+                    <strong class="precoAtual">R$ {{price}}</strong>
                   </span>
                   <br />
-                  <a class="text-muted" href="#">
-                    <span class="fa fa-link"></span>
-                    <strong>Link de Compra</strong>
+                  <a class="text-muted" title="Clique para copiar" style="cursor:pointer!important;" @click.stop.prevent="copyToClip('https://thuor.com/pagamento/'+id)">
+                    <span class="fa fa-link linkCompra"></span>
+                    <strong class="linkCompra">Link de Compra</strong>
                     <!-- AO CLICAR, COPIAR PARA O CLIBPBOARD -->
                   </a>
                 </p>
               </div>
             </div>
           </div>
+          <input type="hidden" id="copyClipBoard" />
           <!-- AQUI TERMINA O COMPONENTE DA VARIANTE, DOLADO DIREITO. TRANSFORME EM COMPONENTE DEPOIS -->
         </div>
       </form>
@@ -495,8 +522,8 @@ export default {
       statusProd: false,
       customFrete: false,
       preco_frete: 0,
-      urlDirBoleto: '',
-      urlDirCartao: '',
+      urlDirBoleto: "",
+      urlDirCartao: "",
       dtOptions1: {
         data: this.produtosList,
         columns: [
@@ -655,7 +682,6 @@ export default {
         this.produtoTable.id_produto_json
       )
         .then(res => {
-          
           API_NOTIFICATION.showNotification(
             "Tipo de Frete Atualizado",
             "success"
@@ -688,6 +714,37 @@ export default {
             "error"
           );
         });
+    },
+    getImageVariantById(idImage) {
+      var images = this.produtoByID.images;
+      return images.find(x => x.id === idImage).src;
+      // images.forEach((obj, i) => {
+
+      // });
+    },
+    copyToClip(comp) {
+      document.getElementById("copyClipBoard").value = comp;
+      let textToCopy = document.querySelector("#copyClipBoard");
+      textToCopy.setAttribute("type", "text");
+      textToCopy.select();
+      
+      var sucessoCopy = document.execCommand('copy');
+      var msg = sucessoCopy ? 'sucesso' : 'erro';
+      if(msg === 'sucesso'){
+        API_NOTIFICATION.showNotification(
+            "Copiado!",
+            "success"
+          );
+      }
+      else{
+         API_NOTIFICATION.showNotification(
+            "Erro ao copiar. Tente novamente.",
+            "error"
+          );
+      }
+      textToCopy.setAttribute("type", "hidden");
+      window.getSelection().removeAllRanges();
+      console.log("Comp", comp);
     }
   }
 };
