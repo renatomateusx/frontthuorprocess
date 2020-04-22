@@ -28,6 +28,7 @@
 .td {
   width: 150px;
 }
+
 </style>
 <template>
   <ContentWrapper>
@@ -38,6 +39,8 @@
       Todos os seus produtos estão aqui?
       <br />Pode demorar um tempo até que a sua loja nos envie. Caso queira forçar a importação, clique no botão de importar abaixo.
     </small>
+    <p></p>
+    <button type="button" v-on:click="importFromShopify()" class="btn btn-secondary btn-lg"><span class=""><img src="../../../public/img/shopify.svg" width="25" height="25px"></span> Importar do Shopify</button>
     <p></p>
     <Datatable :options="dtOptions1" class="table table-striped table-hover w-100"  id="tabela">
       <thead>
@@ -205,14 +208,14 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_PRODUTOS.ImportFromShopify()
         .then(retorno => {
-          this.hideLoading();
+          
           API_PRODUTOS.GetProdutos()
             .then(retProd => {
               var LImages = JSON.parse(retProd.data[0].json_dados_produto);
               console.log("Retorno Produtos", LImages.image.src);
               this.produtosList = retProd.data;
               
-              API_NOTIFICATION.HideLoading();
+              
               API_NOTIFICATION.Notifica(
                 "Tudo Pronto",
                 "Produtos Importados!",
