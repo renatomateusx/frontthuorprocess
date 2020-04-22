@@ -24,10 +24,12 @@ var API_LOGIN = {
     return new Promise((resolve, reject) => {
       if (sessionStorage.getItem("user") === undefined || sessionStorage.getItem("user") === null) {
         router.push('login');
+        return;
       }
       var LUser = JSON.parse(sessionStorage.getItem("user"));
       if (LUser == null) {
         router.push('login');
+        return;
       }
 
       axios.interceptors.response.use((response) => {

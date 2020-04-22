@@ -1,8 +1,10 @@
-
 import Vue from 'vue'
 import VueSweetalert2 from 'vue-sweetalert2';
-import Swal from 'sweetalert2';
+import 'loaders.css/loaders.css';
+import 'spinkit/css/spinkit.css';
+import Notifications from 'vue-notification'
 Vue.use(VueSweetalert2);
+Vue.use(Notifications);
 
 var API_NOTIFICATION = {
     isShowingLoading: false,
@@ -12,21 +14,44 @@ var API_NOTIFICATION = {
     ShowLoading() {
         this.isShowingLoading = true;
         Vue.swal({
-            title: 'Aguarde...',
-            html: '',
-            timer: 2000,
+            customClass: 'swal-wide',
+            title: '<span class="text-aguard">Aguarde...</span>',
+            html: " <div class='card-body align-items-center justify-content-center'>             <div class='ball-scale-ripple-multiple widthLoadingDiv'>                <div class='loadingSwall'></div>               <div class='loadingSwall'></div>                <div class='loadingSwall'></div>            </div>        </div>",
+            showConfirmButton: false,
+            showCancelButton: false,
+            allowEnterKey: false,
+            allowEscapeKey: false,
+            allowOutsideClick: false,
             timerProgressBar: true,
             onBeforeOpen: () => {
-                Swal.showLoading();          
+                // Swal.showLoading();          
             },
             onClose: () => {
-                
+
             }
         })
     },
-    HideLoading(){
+    HideLoading() {
         Vue.swal.close();
         this.isShowingLoading = false;
+    },
+    showNotification(message, type) {
+        const Toast = Vue.swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            onOpen: (toast) => {
+                toast.addEventListener('mouseenter', Vue.swal.stopTimer)
+                toast.addEventListener('mouseleave', Vue.swal.resumeTimer)
+            }
+        })
+
+        Toast.fire({
+            icon: type,
+            title: message
+        })
     }
 }
 export default API_NOTIFICATION 

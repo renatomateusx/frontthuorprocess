@@ -119,6 +119,7 @@ Vue.use(VeeValidate, {
 
 export default {
   created() {
+    API_NOTIFICATION.HideLoading();
     this.checkIfLogged();
   },
   data() {
@@ -149,7 +150,7 @@ export default {
                 API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
               }
               console.log("Erro ao efetuar login", error);
-              API_NOTIFICATION.HideLoading();
+              
             });
 
           return;
@@ -158,7 +159,7 @@ export default {
       });
     },
     checkIfLogged() {      
-      API_NOTIFICATION.ShowLoading();
+      
       if (
         sessionStorage.getItem("user") !== undefined &&
         sessionStorage.getItem("user") !== null
@@ -167,7 +168,8 @@ export default {
         if (LUser != null) {
           API_LOGIN.VerificaToken()
             .then(res => {
-              API_NOTIFICATION.HideLoading();
+              API_NOTIFICATION.ShowLoading();
+              this.$router.push('home');
             })
             .catch(res => {
               API_NOTIFICATION.HideLoading();

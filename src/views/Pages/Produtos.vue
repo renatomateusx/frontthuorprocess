@@ -185,11 +185,9 @@ export default {
         .then(res => {
           API_PRODUTOS.GetProdutos()
             .then(retProd => {
-              var LImages = JSON.parse(retProd.data[0].json_dados_produto);
-              console.log("Retorno Produtos", LImages.image.src);
+              var LImages = JSON.parse(retProd.data[0].json_dados_produto);              
               this.produtosList = retProd.data;
               this.dtOptions1.data = this.produtosList;
-              this.$refs.tableElement.$data = this.produtosList;
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {

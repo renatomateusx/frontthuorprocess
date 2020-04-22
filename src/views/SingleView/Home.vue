@@ -16,18 +16,24 @@
     </div>
     <div class="row">
       <div class="col-12 text-center">
-        <h2 class="text-thin">Single view content</h2>
-        <p>
-          This project is an application skeleton. You can use it to quickly bootstrap your webapp projects and dev environment for these projects.
-          <br />The seed app doesn't do much and has most of the feature removed so you can add theme as per your needs just following the demo app examples.
-        </p>
+        <h2 class="text-thin">Fique atento!</h2>
+        <p>Quando tivermos algum aviso para você é aqui que ele irá aparecer.</p>
       </div>
     </div>
   </ContentWrapper>
 </template>
 
 <script>
+
+import Loading from "vue-loading-overlay";
+import API_NOTIFICATION from "../../api/notification";
+import API_LOGIN from "../../api/loginAPI";
+import API_HEADERS from "../../api/configAxios";
+
 export default {
+  created() {
+    this.checkIfLogged();
+  },
   data() {
     return {
       selectedLanguage() {
@@ -41,10 +47,11 @@ export default {
         }
       },
       selectUserName() {
-        if(sessionStorage.getItem("user") === undefined) this.$router.push("login");
+        if (sessionStorage.getItem("user") === undefined)
+          this.$router.push("login");
         var LUser = JSON.parse(sessionStorage.getItem("user"));
-        if(LUser === undefined || LUser === null){
-            this.$router.push("login");            
+        if (LUser === undefined || LUser === null) {
+          this.$router.push("login");
         }
         if (LUser !== undefined && LUser !== null) {
           return `Bem vindo ao Thuor, ${LUser.user.nome}!`;
@@ -53,6 +60,19 @@ export default {
     };
   },
   methods: {
+    checkIfLogged() {
+      API_NOTIFICATION.ShowLoading();
+      API_LOGIN.VerificaToken()
+        .then(res => {
+         API_NOTIFICATION.HideLoading();
+        })
+        .catch(error => {
+          console.log("Erro ao verificar token", error);
+          if (error.response.status === 401) {
+            this.$router.push("login");
+          }
+        });
+    },
     changeLanguage(lang) {
       this.$i18n.i18next.changeLanguage(lang);
     }

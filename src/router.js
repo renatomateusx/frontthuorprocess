@@ -13,6 +13,7 @@ const SubMenu = () => import ('@/views/SubMenu/SubMenu.vue')
 const Login = () => import ('@/views/Pages/Login.vue')
 
 const Produtos = () => import ('@/views/Pages/Produtos.vue')
+const DetalheProduto = () => import ('@/views/Pages/DetalheProduto.vue')
 
 Vue.use(Router)
 
@@ -33,7 +34,7 @@ export default new Router({
             children:[
                 {
                     path: '/',
-                    component: Produtos
+                    component: DetalheProduto
                 }
             ]
         },
