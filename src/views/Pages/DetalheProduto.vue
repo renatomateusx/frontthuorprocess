@@ -693,7 +693,7 @@ export default {
           }
           else{
             API_NOTIFICATION.Notifica("Oops!", "Parâmetro Inválido", "error");
-            //this.$router.push('../../home');
+            ////this.$router.push('../../home');
           }
         })
         .catch(error => {
