@@ -23,12 +23,12 @@ var API_LOGIN = {
   VerificaToken() {
     return new Promise((resolve, reject) => {
       if (sessionStorage.getItem("user") === undefined || sessionStorage.getItem("user") === null) {
-        router.push('login');
+        router.push('../../login');
         return;
       }
       var LUser = JSON.parse(sessionStorage.getItem("user"));
       if (LUser == null) {
-        router.push('login');
+        router.push('../../login');
         return;
       }
 
@@ -38,7 +38,7 @@ var API_LOGIN = {
       }, (error) => {
         if (error.response.status === 401) {
           sessionStorage.removeItem("user");
-          router.push('login');
+          router.push('../../login');
           
         }
         return Promise.reject(error);

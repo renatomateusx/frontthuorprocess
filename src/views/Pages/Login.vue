@@ -141,7 +141,7 @@ export default {
             .then(retorno => {
               if (retorno !== undefined) {
                 sessionStorage.setItem("user", JSON.stringify(retorno.data));
-                this.$router.push("home");
+                this.$router.go("home");
               }
               API_NOTIFICATION.HideLoading();
             })

@@ -86,10 +86,23 @@
 .linkCompra {
   color: #23b7e5;
 }
+.sku {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: Rubik, sans-serif;
+  color: purple;
+}
+.myDropDownPrazo /deep/ .dropdown-menu {
+  max-height: 100px;
+  overflow-y: auto;
+}
 </style>
 <template>
   <ContentWrapper>
-    <div class="content-heading"><b>Produto:</b> {{this.produtoByID.title}}</div>
+    <div class="content-heading">
+      <b>Produto:</b>
+      {{this.produtoByID.title}}
+    </div>
     <div class="row col-lg-10"></div>
     <div class="text-right mt-2 mb-3" style="display:none">
       <b-btn variant="warning mr-2">Descartar</b-btn>
@@ -248,162 +261,230 @@
               </div>
             </div>
           </b-tab>
-          <b-tab title="SEO Metadata">
-            <fieldset>
-              <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Title</label>
-                <div class="col-lg-10">
+          <b-tab title="Estoque">
+            <div v-for="optionsValues in this.produtoByID.options">
+              <div class="card card-default" v-for="(title, index) in optionsValues.values">
+                <div class="popover-body">
+                  <!-- <div>{{optionsValues}}</div> -->
+                  <div class="d-flex align-items-center mb-2">
+                    <img
+                      class="mr-3 rounded-circle thumb48"
+                      :src="getImageVariantById(getVariantOptionByTitle(title).image_id)"
+                      alt="Image"
+                    />
+                    <p class="m-0">
+                      <span class="text-muted">
+                        <strong class="sku">
+                          <b>SKU:</b>
+                          {{getVariantOptionByTitle(title).sku}}
+                        </strong>
+                      </span>
+                      <br />
+                      <span class="mr-2 text-muted">
+                        <b class>{{optionsValues.name}}: {{title}}</b>
+                      </span>
+                      <br />
+                    </p>
+                  </div>
+                  <div class="card-body">
+                    <span class="col-md-9 col-form-label labelCheckBox">Gerenciar Estoque?</span>
+
+                    <p><small class="col-md-9 col-form-label">Para não gerenciar o estoque, deixe em branco ou zerado em clique em salvar</small></p>
+                    <div
+                      class="card"                      
+                    >
+                      <div class="form-group">
+                        <div class="col-lg-6">
+                          <span class="col-md-4 col-form-label labelCheckBox">Quantidade</span>
+                          <input
+                            class="form-control float-right col-md-3"
+                            type="text"
+                            placeholder="Qtd. Est."
+                            v-bind:id="'qtd'+getVariantOptionByTitle(title).id"
+                          />
+                        </div>
+                      </div>
+                      <br />
+                      <div class="form-group">
+                        <div class="col-lg-6">
+                          <span class="col-md-4 col-form-label labelCheckBox">Quantidade Mínima</span>
+                          <input
+                            class="form-control float-right col-md-3"
+                            type="text"
+                            placeholder="Qtd. Est."
+                            v-bind:id="'qtd_minima'+getVariantOptionByTitle(title).id"
+                          />
+                        </div>
+                      </div>
+                      <b-input-group-append class="float-right" style="display:block;">
+                        <b-btn
+                          class="float-right btnSalvar"
+                          v-on:click="salvarEstoqueQuantidades(getVariantOptionByTitle(title).id, 'qtd'+getVariantOptionByTitle(title).id, 'qtd_minima'+getVariantOptionByTitle(title).id, 'check'+getVariantOptionByTitle(title).id)"
+                          variant="info"
+                        >Salvar</b-btn>
+                      </b-input-group-append>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-footer">
+                  <span class="col-md-9 col-form-label labelCheckBox">Prazo para Postagem</span>
+
+                  <div class="col-sm-7 col-lg-6">
+                    <!-- START box placeholder-->
+                    <div class="box">
+                      <small>Insira/Deixe 0 para postagem IMEDIATA</small>
+                      <!-- START button group-->
+
+                      <b-input-group size="lg" prepend="Dias Úteis">
+                        <b-form-input
+                          v-bind:value="getValuePrazoEnvioVariantByID(getVariantOptionByTitle(title).id, 'prazo_envio'+getVariantOptionByTitle(title).id)"
+                          v-bind:id="'prazo_envio'+getVariantOptionByTitle(title).id"
+                        ></b-form-input>
+                        <b-input-group-append>
+                          <b-btn
+                            v-on:click="salvarPrazoEnvio(getVariantOptionByTitle(title).id,'prazo_envio'+getVariantOptionByTitle(title).id )"
+                            variant="info"
+                          >Salvar</b-btn>
+                        </b-input-group-append>
+                      </b-input-group>
+                      <!-- END button group-->
+                    </div>
+                    <!-- END box placeholder-->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </b-tab>
+          <!-- <b-tab title="Pictures"> -->
+          <!-- <div class="row mb-3">
+            <div class="col-3">
+              <strong>Preview</strong>
+            </div>
+            <div class="col-9">
+              <strong>Details</strong>
+            </div>
+          </div>
+          <div class="row mb-3 pb-3 bb">
+            <div class="col-6 col-md-3">
+              <a href="#" title="Product 1">
+                <img class="img-fluid" src="img/bg7.jpg" alt="Product 1" />
+              </a>
+            </div>
+            <div class="col-6 col-md-9">
+              <fieldset>
+                <div class="form-group row">
                   <input class="form-control" type="text" placeholder="Brief description.." />
                 </div>
+              </fieldset>
+              <p>
+                <strong>Picture type</strong>
+              </p>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod1-pic" value="option1" checked />
+                  <span></span>Primary
+                </label>
               </div>
-            </fieldset>
-            <fieldset>
-              <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Description</label>
-                <div class="col-lg-10">
-                  <textarea class="form-control" rows="5" placeholder="Max 255 characters..."></textarea>
-                </div>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod1-pic" value="option2" />
+                  <span></span>Thumbnail
+                </label>
               </div>
-            </fieldset>
-            <fieldset>
-              <div class="form-group row">
-                <label class="col-lg-2 col-form-label">Keywords</label>
-                <div class="col-lg-10">
-                  <textarea class="form-control" rows="5" placeholder="Max 1000 characters..."></textarea>
-                </div>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod1-pic" value="option3" />
+                  <span></span>Gallery
+                </label>
               </div>
-            </fieldset>
-          </b-tab>
-          <b-tab title="Pictures">
-            <div class="row mb-3">
-              <div class="col-3">
-                <strong>Preview</strong>
-              </div>
-              <div class="col-9">
-                <strong>Details</strong>
-              </div>
-            </div>
-            <div class="row mb-3 pb-3 bb">
-              <div class="col-6 col-md-3">
-                <a href="#" title="Product 1">
-                  <img class="img-fluid" src="img/bg7.jpg" alt="Product 1" />
-                </a>
-              </div>
-              <div class="col-6 col-md-9">
-                <fieldset>
-                  <div class="form-group row">
-                    <input class="form-control" type="text" placeholder="Brief description.." />
-                  </div>
-                </fieldset>
-                <p>
-                  <strong>Picture type</strong>
-                </p>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod1-pic" value="option1" checked />
-                    <span></span>Primary
-                  </label>
-                </div>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod1-pic" value="option2" />
-                    <span></span>Thumbnail
-                  </label>
-                </div>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod1-pic" value="option3" />
-                    <span></span>Gallery
-                  </label>
-                </div>
-                <div class="text-right">
-                  <button class="btn btn-sm btn-danger" type="button">
-                    <em class="fa fa-times-circle fa-fw"></em>Remove
-                  </button>
-                </div>
+              <div class="text-right">
+                <button class="btn btn-sm btn-danger" type="button">
+                  <em class="fa fa-times-circle fa-fw"></em>Remove
+                </button>
               </div>
             </div>
-            <div class="row mb-3 pb-3 bb">
-              <div class="col-6 col-md-3">
-                <a href="#" title="Product 2">
-                  <img class="img-fluid" src="img/bg8.jpg" alt="Product 1" />
-                </a>
+          </div>
+          <div class="row mb-3 pb-3 bb">
+            <div class="col-6 col-md-3">
+              <a href="#" title="Product 2">
+                <img class="img-fluid" src="img/bg8.jpg" alt="Product 1" />
+              </a>
+            </div>
+            <div class="col-6 col-md-9">
+              <fieldset>
+                <div class="form-group row">
+                  <input class="form-control" type="text" placeholder="Brief description.." />
+                </div>
+              </fieldset>
+              <p>
+                <strong>Picture type</strong>
+              </p>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod2-pic" value="option1" checked />
+                  <span></span>Primary
+                </label>
               </div>
-              <div class="col-6 col-md-9">
-                <fieldset>
-                  <div class="form-group row">
-                    <input class="form-control" type="text" placeholder="Brief description.." />
-                  </div>
-                </fieldset>
-                <p>
-                  <strong>Picture type</strong>
-                </p>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod2-pic" value="option1" checked />
-                    <span></span>Primary
-                  </label>
-                </div>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod2-pic" value="option2" />
-                    <span></span>Thumbnail
-                  </label>
-                </div>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod2-pic" value="option3" />
-                    <span></span>Gallery
-                  </label>
-                </div>
-                <div class="text-right">
-                  <button class="btn btn-sm btn-danger" type="button">
-                    <em class="fa fa-times-circle fa-fw"></em>Remove
-                  </button>
-                </div>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod2-pic" value="option2" />
+                  <span></span>Thumbnail
+                </label>
+              </div>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod2-pic" value="option3" />
+                  <span></span>Gallery
+                </label>
+              </div>
+              <div class="text-right">
+                <button class="btn btn-sm btn-danger" type="button">
+                  <em class="fa fa-times-circle fa-fw"></em>Remove
+                </button>
               </div>
             </div>
-            <div class="row mb-3 pb-3">
-              <div class="col-6 col-md-3">
-                <a href="#" title="Product 3">
-                  <img class="img-fluid" src="img/bg10.jpg" alt="Product 1" />
-                </a>
+          </div>
+          <div class="row mb-3 pb-3">
+            <div class="col-6 col-md-3">
+              <a href="#" title="Product 3">
+                <img class="img-fluid" src="img/bg10.jpg" alt="Product 1" />
+              </a>
+            </div>
+            <div class="col-6 col-md-9">
+              <fieldset>
+                <div class="form-group row">
+                  <input class="form-control" type="text" placeholder="Brief description.." />
+                </div>
+              </fieldset>
+              <p>
+                <strong>Picture type</strong>
+              </p>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod3-pic" value="option1" checked />
+                  <span></span>Primary
+                </label>
               </div>
-              <div class="col-6 col-md-9">
-                <fieldset>
-                  <div class="form-group row">
-                    <input class="form-control" type="text" placeholder="Brief description.." />
-                  </div>
-                </fieldset>
-                <p>
-                  <strong>Picture type</strong>
-                </p>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod3-pic" value="option1" checked />
-                    <span></span>Primary
-                  </label>
-                </div>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod3-pic" value="option2" />
-                    <span></span>Thumbnail
-                  </label>
-                </div>
-                <div class="c-radio c-radio-nofont">
-                  <label>
-                    <input type="radio" name="prod3-pic" value="option3" />
-                    <span></span>Gallery
-                  </label>
-                </div>
-                <div class="text-right">
-                  <button class="btn btn-sm btn-danger" type="button">
-                    <em class="fa fa-times-circle fa-fw"></em>Remove
-                  </button>
-                </div>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod3-pic" value="option2" />
+                  <span></span>Thumbnail
+                </label>
+              </div>
+              <div class="c-radio c-radio-nofont">
+                <label>
+                  <input type="radio" name="prod3-pic" value="option3" />
+                  <span></span>Gallery
+                </label>
+              </div>
+              <div class="text-right">
+                <button class="btn btn-sm btn-danger" type="button">
+                  <em class="fa fa-times-circle fa-fw"></em>Remove
+                </button>
               </div>
             </div>
-          </b-tab>
+          </div>-->
+          <!-- </b-tab> -->
         </b-tabs>
       </form>
       <form class="card card-default col-lg-3 right marginLeft">
@@ -440,7 +521,7 @@
                 />
                 <p class="m-0">
                   <span class="text-muted">
-                    <strong>
+                    <strong class="sku">
                       <b>SKU:</b>
                       {{sku}}
                     </strong>
@@ -453,7 +534,12 @@
                     <strong class="precoAtual">R$ {{price}}</strong>
                   </span>
                   <br />
-                  <a class="text-muted" title="Clique para copiar" style="cursor:pointer!important;" @click.stop.prevent="copyToClip('https://thuor.com/pagamento/'+id)">
+                  <a
+                    class="text-muted"
+                    title="Clique para copiar"
+                    style="cursor:pointer!important;"
+                    @click.stop.prevent="copyToClip('https://thuor.com/pagamento/'+id)"
+                  >
                     <span class="fa fa-link linkCompra"></span>
                     <strong class="linkCompra">Link de Compra</strong>
                     <!-- AO CLICAR, COPIAR PARA O CLIBPBOARD -->
@@ -522,8 +608,10 @@ export default {
       statusProd: false,
       customFrete: false,
       preco_frete: 0,
+      prazo_envio: 0,
       urlDirBoleto: "",
       urlDirCartao: "",
+      gerencia_estoque: [],
       dtOptions1: {
         data: this.produtosList,
         columns: [
@@ -555,6 +643,11 @@ export default {
       produtoTable: {}
     };
   },
+  watch: {
+    value: function() {
+      this.$emit("change", value);
+    }
+  },
   methods: {
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
@@ -571,26 +664,36 @@ export default {
       var LID_PRODUTO = this.$route.params.id;
       API_LOGIN.VerificaToken()
         .then(res => {
-          if (LID_PRODUTO !== undefined) {
+          console.log(typeof  LID_PRODUTO);
+          if (LID_PRODUTO !== undefined && typeof LID_PRODUTO !== 'string') {
             API_PRODUTOS.GetProdutoByID(LID_PRODUTO)
               .then(retProd => {
                 var LImages = JSON.parse(retProd.data.json_dados_produto);
-                console.log(JSON.parse(retProd.data.json_dados_produto));
+                //console.log(JSON.parse(retProd.data.json_dados_produto));
                 this.produtoByID = JSON.parse(retProd.data.json_dados_produto);
                 this.produtoTable = retProd.data;
                 this.statusProd = this.produtoTable.status;
                 this.customFrete = this.produtoTable.custom_frete;
-                this.preco_frete = this.produtoTable.preco_frete.trim();
+                this.preco_frete = this.produtoTable.preco_frete;
+                this.produtoByID.variants.forEach((obj, i) => {
+                  console.log("obj", obj.id);
+                  this.getDadosEstoqueByVariante(obj.id);
+                });
+
                 document.getElementById(
                   "preco_frete"
                 ).value = this.produtoTable.preco_frete;
-                console.log("Dados Produto", this.preco_frete);
+                //console.log("Dados Produto", this.preco_frete);
                 this.dtOptions1.data = this.produtosList;
                 API_NOTIFICATION.HideLoading();
               })
               .catch(error => {
                 console.log("Erro ao pegar produtos", error);
               });
+          }
+          else{
+            API_NOTIFICATION.Notifica("Oops!", "Parâmetro Inválido", "error");
+            //this.$router.push('../../home');
           }
         })
         .catch(error => {
@@ -722,29 +825,157 @@ export default {
 
       // });
     },
+    getVariantOptionByTitle(title) {
+      var variantes = this.produtoByID.variants;
+      return variantes.find(x => x.title === title);
+    },
     copyToClip(comp) {
       document.getElementById("copyClipBoard").value = comp;
       let textToCopy = document.querySelector("#copyClipBoard");
       textToCopy.setAttribute("type", "text");
       textToCopy.select();
-      
-      var sucessoCopy = document.execCommand('copy');
-      var msg = sucessoCopy ? 'sucesso' : 'erro';
-      if(msg === 'sucesso'){
+
+      var sucessoCopy = document.execCommand("copy");
+      var msg = sucessoCopy ? "sucesso" : "erro";
+      if (msg === "sucesso") {
+        API_NOTIFICATION.showNotification("Copiado!", "success");
+      } else {
         API_NOTIFICATION.showNotification(
-            "Copiado!",
-            "success"
-          );
-      }
-      else{
-         API_NOTIFICATION.showNotification(
-            "Erro ao copiar. Tente novamente.",
-            "error"
-          );
+          "Erro ao copiar. Tente novamente.",
+          "error"
+        );
       }
       textToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
-      console.log("Comp", comp);
+    },
+    getValuePrazoEnvioVariantByID(id, campo) {
+      API_PRODUTOS.GetPrazoEnvioVarianteByID(id, campo)
+        .then(res => {
+          const LVariante = res.data.prazo_envio;
+
+          document.getElementById(res.data.campo).value = LVariante || 0;
+        })
+        .catch(error => {
+          console.log("Erro ao pegar variante por ID", error);
+        });
+    },
+    salvarPrazoEnvio(id, campo) {
+      API_NOTIFICATION.ShowLoading();
+      var LValue = document.getElementById(campo).value;
+      if (LValue !== undefined && LValue > -1) {
+        API_PRODUTOS.SalvarPrazoEnvioByID(id, LValue)
+          .then(res => {
+            API_NOTIFICATION.showNotification(
+              "Prazo de Envio Atualizado!",
+              "success"
+            );
+          })
+          .catch(error => {
+            console.log("Erro ao salvar prazo de envio");
+            API_NOTIFICATION.HideLoading();
+          });
+      }
+    },
+    AlteraGerenciarEstoque(id, id_variante) {
+      console.log(this.gerencia_estoque[id]);
+      var LValue = this.gerencia_estoque[id];
+      if (LValue == 0) {
+        API_NOTIFICATION.ShowLoading();
+        API_PRODUTOS.DesativaGerenciamentoPorVarianteID(id_variante)
+          .then(retorno => {
+            API_NOTIFICATION.showNotification(
+              "Gerenciamento de Estoque Desativado!",
+              "success"
+            );
+          })
+          .catch(error => {
+            console.log("Erro ao desativar gerenciamento de estoque", error);
+            API_NOTIFICATION.HideLoading();
+          });
+
+        console.log("Desativa Gerenciamento de ESTOQUE");
+      } else {
+        console.log("Aguarda salvar gerenciamento de estoque", LValue);
+        // console.log("Campo Gerencia Estoque", campoChecked.checked);
+      }
+    },
+    getGerenciaEstoqueByVarianteID(id, campo) {
+      return this.gerencia_estoque[id];
+    },
+    salvarEstoqueQuantidades(id, qtd, qtd_minima, id_model) {
+      API_NOTIFICATION.ShowLoading();
+      var LValue = this.gerencia_estoque[id_model];
+      var LQtd = $("#" + qtd).val();
+      var LQtdMinima = $("#" + qtd_minima).val();
+      console.log(id, LQtd, LQtdMinima, LValue);
+      API_PRODUTOS.SalvarQuantidadeEstoqueGerenciamentoPorVarianteID(
+        id,
+        LQtd,
+        LQtdMinima
+      )
+        .then(retorno => {
+          API_NOTIFICATION.showNotification(
+            "Gerenciamento de Estoque atualizado!",
+            "success"
+          );
+        })
+        .catch(error => {
+          console.log("Erro ao atualizar o gerenciamento de estoque");
+          API_NOTIFICATION.HideLoading();
+        });
+    },
+    getDadosEstoqueByVariante(id) {
+      API_PRODUTOS.GetDadosEstoquePorVarianteID(id)
+        .then(res => {
+          //console.log("Res", res);
+          var LVariante = res.data[0];
+          if (LVariante) {
+            document.getElementById("qtd" + LVariante.id_variante).value =
+              LVariante.quantidade || 0;
+            document.getElementById(
+              "qtd_minima" + LVariante.id_variante
+            ).value = LVariante.quantidade || 0;
+            document.getElementById("input_" + LVariante.id_variante).checked =
+              LVariante.gerencia_estoque;
+            this.gerencia_estoque["check" + id] = LVariante.gerencia_estoque;
+            console.log(
+              "Gerencia Estoque",
+              this.gerencia_estoque["check" + id]
+            );
+          }
+        })
+        .catch(error => {
+          console.log("Erro ao atualizar o gerenciamento de estoque");
+          API_NOTIFICATION.HideLoading();
+        });
+    },
+    getCheckedInputGerenciaEstoque(id) {
+      setTimeout(() => {
+        var LChecked = document.getElementById("input_" + id);
+        console.log("Checked", LChecked.checked);
+        return LChecked.checked;
+      }, 1000);
+    },
+    getClass(id) {
+      setTimeout(() => {
+        console.log("Resultado:" + id, this.gerencia_estoque["check" + id]);
+        if (this.gerencia_estoque["check" + id] !== undefined) {
+          var LClass =
+            this.gerencia_estoque["check" + id] == 1 ? "ativo" : "inativo";
+          return LClass;
+        } else {
+          return "inativo";
+        }
+      }, 1000);
+    },
+    getSituacaoGerenciaEstoque(id) {
+      setTimeout(() => {
+        if (this.gerencia_estoque["check" + id] !== undefined) {
+          return this.gerencia_estoque["check" + id] == 1;
+        } else {
+          return 0;
+        }
+      }, 1000);
     }
   }
 };

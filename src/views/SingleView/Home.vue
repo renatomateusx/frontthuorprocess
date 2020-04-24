@@ -48,10 +48,10 @@ export default {
       },
       selectUserName() {
         if (sessionStorage.getItem("user") === undefined)
-          this.$router.push("login");
+          this.$router.go("login");
         var LUser = JSON.parse(sessionStorage.getItem("user"));
         if (LUser === undefined || LUser === null) {
-          this.$router.push("login");
+          this.$router.go("login");
         }
         if (LUser !== undefined && LUser !== null) {
           return `Bem vindo ao Thuor, ${LUser.user.nome}!`;

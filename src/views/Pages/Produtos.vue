@@ -84,7 +84,7 @@
                 alt="Image"
               />
               <span class="titulo_produto">
-                <router-link :to="{path: '/produto/detalhe/' + id_produto_json}">
+                <router-link :to="{path: '/produtos/detalhe/' + id_produto_json}">
                   <b>{{titulo_produto}}</b>
                 </router-link>
               </span>
@@ -200,7 +200,7 @@ export default {
         .catch(error => {
           console.log("Erro ao verificar token", error);
           if (error.response.status === 401) {
-            this.$router.push("login");
+            this.$router.go("login");
           }
         });
     },

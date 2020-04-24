@@ -29,15 +29,29 @@ export default new Router({
         component: Login
     },
     {
-        path: '/produto/detalhe/:id',
+        path: 'produtos',
         component: Layout,
         children: [
             {
-                path: '/',
+                path: '/todos',
+                component: Produtos
+            },
+            {
+                path: '/produtos/detalhe/:id',
                 component: DetalheProduto
             }
         ]
     },
+    // {
+    //     path: '/produto/detalhe/:id',
+    //     component: Layout,
+    //     children: [
+    //         {
+    //             path: '/',
+    //             component: DetalheProduto
+    //         }
+    //     ]
+    // },
     // Admin Pages
     {
         path: '/',
@@ -52,16 +66,7 @@ export default new Router({
             }
         ]
     },
-    {
-        path: '/produtos',
-        component: Layout,
-        children: [
-            {
-                path: '/todos',
-                component: Produtos
-            }
-        ]
-    },
+    
     // Not found route
     {
         path: '*',
