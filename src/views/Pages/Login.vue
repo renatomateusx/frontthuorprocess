@@ -2,6 +2,9 @@
 .card-flat {
   margin-top: 80px !important;
 }
+.bg-dark{
+  background-color: #23b7e5;
+}
 </style>
 <template>
   <div class="block-center mt-4 wd-xl">

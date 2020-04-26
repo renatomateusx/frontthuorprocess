@@ -15,6 +15,8 @@ const Login = () => import('@/views/Pages/Login.vue')
 const Produtos = () => import('@/views/Pages/Produtos.vue')
 const DetalheProduto = () => import('@/views/Pages/DetalheProduto.vue')
 
+const Cart = () => import('@/components/Cart/Cart.vue');
+
 Vue.use(Router)
 
 export default new Router({
@@ -65,6 +67,11 @@ export default new Router({
                 component: SubMenu
             }
         ]
+    },
+    {
+        path: '/cart',
+        component: Cart,
+
     },
     
     // Not found route

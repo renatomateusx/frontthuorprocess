@@ -20,15 +20,16 @@ const Menu = [
         }]
     },
     {
-        name: 'Menu',
-        icon: 'icon-speedometer',
+        name: 'Cart',
+        icon: 'icon-cart',
         translate: 'sidebar.nav.MENU',
         label: { value: 1, color: 'info' },
-        submenu: [{
-            name: 'Submenu',
-            translate: 'sidebar.nav.SUBMENU',
-            path: 'submenu'
-        }]
+        path: 'cart'
+        // submenu: [{
+        //     name: 'Submenu',
+        //     translate: 'sidebar.nav.SUBMENU',
+        //     path: 'submenu'
+        // }]
     }
 ];
 
