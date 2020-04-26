@@ -252,6 +252,7 @@ Vue.use(VeeValidate, {
 export default {
   created() {
     API_NOTIFICATION.HideLoading();
+    this.checkURL();
   },
   data() {
     return {
@@ -287,6 +288,21 @@ export default {
         }
         console.log("Correct them errors!");
       });
+    },
+    checkURL(){
+        var url = window.location.href;
+        if(url.includes('items')){
+            console.log("Items");
+            var newURL = url.split('items');
+            
+            console.log(newURL[1]);
+            var params = new URL(window.location.href);
+            
+            alert(params);
+            //GUARDA O [1] PARA USAR COMO QUISER.
+            window.location.href = newURL[0];
+            this.$router.push('/cart');
+        }
     }
   }
 };

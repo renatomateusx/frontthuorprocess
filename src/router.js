@@ -71,7 +71,10 @@ export default new Router({
     {
         path: '/cart',
         component: Cart,
-
+    },
+    {
+        path: '/cart/items',
+        component: Cart
     },
     
     // Not found route
