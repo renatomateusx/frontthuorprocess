@@ -19,18 +19,16 @@
   font-size: 22px;
 }
 @media only screen and (max-width: 992px) {
-  #btnTop{
-      display: block!important;
+  #btnTop {
+    display: block !important;
   }
 }
-
 </style>
 <template>
   <div class="block-center">
     <div class="container">
       <div class="card shopping-cart">
         <div class="card-header bg-dark text-light">
-        
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>
           Shipping cart
           <a href class="btn btn-outline-info btn-sm pull-right ml-3">
@@ -44,8 +42,7 @@
             </div>
             <!-- /.holder-icon -->
             <div class="text mr-2">
-                <div class="fa fa-lock"></div>
-              Pagamento
+              <div class="fa fa-lock"></div>Pagamento
               <br />
               <strong class="green">100% seguro</strong>
             </div>
@@ -61,7 +58,7 @@
               <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc quam urna, dignissim nec auctor in, mattis vitae leo.</p>
             </div>
             <div class="col-md-12 col-lg-4 float-right">
-              <div class="summary" id="btnTop" style="display:none;">                
+              <div class="summary" id="btnTop" style="display:none;">
                 <button type="button" class="btn btn-primary btn-lg btn-block float-right">Checkout</button>
               </div>
             </div>
@@ -239,7 +236,7 @@ import Vue from "vue";
 import VeeValidate from "vee-validate";
 
 import API_NOTIFICATION from "../../api/notification";
-
+import API_PRODUTOS from "../../api/produtosAPI";
 // Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
@@ -260,7 +257,8 @@ export default {
         email: "",
         password: "",
         rememberme: false
-      }
+      },
+      produtosCart: []
     };
   },
   methods: {
@@ -289,21 +287,67 @@ export default {
         console.log("Correct them errors!");
       });
     },
-    checkURL(){
-        var url = window.location.href;
-        if(url.includes('items')){
-            console.log("Items");
-            var newURL = url.split('items');
-            
-            console.log(newURL[1]);
-            var params = new URL(window.location.href);
-            
-            alert(params);
-            //GUARDA O [1] PARA USAR COMO QUISER.
-            window.location.href = newURL[0];
-            this.$router.push('/cart');
+    async checkURL() {
+      var url = window.location.href;
+      if (url.includes("items")) {
+        
+        var newURL = url.split("items");
+
+        const produtos = [],
+          variantes = [],
+          quantidade = [];
+        var params = new URL(window.location.href);
+        const cart_token = params.searchParams.get("cart_token");
+        const isShopify = params.searchParams.get("isShopify");
+        const limpa_carrinho = params.searchParams.get("limpa_carrinho");
+        const qtdItems = params.searchParams.get("qtd_items");
+        
+        for (var i = 0; i < qtdItems - 1; i++) {
+          
+          // produtos.push(
+          //   params.searchParams.get("produto_option_id[" + i + "]")
+          // );
+          // quantidade.push(
+          //   params.searchParams.get("produto_option_quantity[" + i + "]")
+          // );
+          // variantes.push(
+          //   params.searchParams.get("produto_option_variante_id[" + i + "]")
+          // );
+          var lpro = await this.pushProducts(
+            params.searchParams.get("produto_option_id[" + i + "]"),
+            params.searchParams.get("produto_option_quantity[" + i + "]"),
+            params.searchParams.get("produto_option_variante_id[" + i + "]")
+          );
+          this.produtosCart.push(lpro);
+          console.log("Items", lpro);
         }
+        alert(params);
+        //GUARDA O [1] PARA USAR COMO QUISER.
+        //window.location.href = newURL[0];
+        //this.$router.push("/cart");
+      }
+    },
+    async pushProducts(product, quantity, variante_id) {
+      return new Promise((resolve, reject) => {
+        try {
+          
+          API_PRODUTOS.GetProdutoByIDThuor(product, quantity, variante_id)
+            .then((retorno) => {
+              console.log("Opa", product, quantity, variante_id);
+              var LProd = JSON.parse(retorno);
+              //this.produtosCart.push(LProd);
+              //console.log("Lprod", LProd);
+              resolve(LProd);
+            })
+            .catch((error) => {
+              console.log("Error ao pegar o Produto no Thuor.com", error);
+            });
+        } catch (error) {
+          console.log("Erro ao pegar os dados do produto na API", error);
+        }
+      });
     }
-  }
+  },
+  getProductInformation(id) {}
 };
 </script>

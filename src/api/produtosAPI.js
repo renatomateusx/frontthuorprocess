@@ -43,6 +43,28 @@ var API_PRODUTOS = {
             }
         });
     },
+    GetProdutoByIDThuor(id, quant, variant) {
+        return new Promise((resolve, reject) => {
+            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            if (LUser !== null && LUser !== undefined) {
+                let LBody = {
+                    id_produto: id,
+                    quantity: quant,
+                    variant: variant
+                }                
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID_THUOR, LBody, API_HEADERS.getHeader())
+                    .then((response) => {
+                        console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
     ImportFromShopify() {
         return new Promise((resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));

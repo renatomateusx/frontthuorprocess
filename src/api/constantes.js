@@ -5,6 +5,7 @@ export default Object.freeze({
   PATH_TOKEN: 'users/VerificaToken',
   PATH_PRODUTOS: 'produtos/GetProdutos',
   PATH_PRODUTO_BY_ID: 'produtos/GetProdutoByID',
+  PATH_PRODUTO_BY_ID_THUOR: 'produtos/GetProdutoByIDThuor',
   PATH_UPDATE_STATUS_PRODUTO: 'produtos/UpdateStatusProduto',
   PATH_UPDATE_TIPO_PRODUTO: 'produtos/UpdateTipoProduto',
   PATH_PRODUTOS_IMPORT: 'importarProdutosShopify/ImportarProdutosShopify',
