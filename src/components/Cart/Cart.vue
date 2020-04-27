@@ -97,7 +97,7 @@
             </div>
             <!-- /.holder-icon -->
             <div class="text mr-2">
-              <div class="fa fa-lock"></div> Pagamento
+              <div class="fa fa-lock"></div>Pagamento
               <br />
               <strong class="green">100% seguro</strong>
             </div>
@@ -115,6 +115,7 @@
               <div class="summary" id="btnTop" style="display:none;">
                 <button
                   type="button"
+                  v-on:click="goToCheckout()"
                   class="btn btn-primary btn-lg btn-block float-right mb-3"
                 >Checkout</button>
               </div>
@@ -219,7 +220,11 @@
                     <span class="text">Total</span>
                     <span class="price">$360</span>
                   </div>-->
-                  <button type="button" class="btn btn-primary btn-lg btn-block mt-3">Checkout</button>
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-lg btn-block mt-3"
+                    v-on:click="goToCheckout()"
+                  >Checkout</button>
                   <a
                     :href="this.dadosLoja.url_loja"
                     class="btn btn-outline-info btn-sm pull-right mt-3 btnKeepBuyingFooter"
@@ -328,6 +333,7 @@ export default {
         const isShopify = params.searchParams.get("isShopify");
         const limpa_carrinho = params.searchParams.get("limpa_carrinho");
         const qtdItems = params.searchParams.get("qtd_items");
+        const redirectTo = params.searchParams.get("redirectTo");
         this.getDadosLoja();
 
         for (var i = 0; i < qtdItems; i++) {
@@ -343,7 +349,12 @@ export default {
         API_NOTIFICATION.HideLoading();
         //GUARDA O [1] PARA USAR COMO QUISER.
         window.location.href = newURL[0];
-        this.$router.push("/cart");
+        if (redirectTo == "checkout") {
+          this.$router.push("/checkout");
+        }
+        if (redirectTo == "cart") {
+          this.$router.push("/cart");
+        }
       } else {
         console.log("1");
         const LCart = sessionStorage.getItem("cart");
@@ -450,6 +461,9 @@ export default {
       var qtd = parseInt(Comp.value) - 1;
       document.getElementById("qtd_" + idThuor).value = qtd;
       this.changeQuantity(idThuor);
+    },
+    goToCheckout() {
+      this.$router.push("/checkout");
     }
   }
 };
