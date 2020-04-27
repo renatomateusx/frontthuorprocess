@@ -17,6 +17,9 @@ const DetalheProduto = () => import('@/views/Pages/DetalheProduto.vue')
 
 const Cart = () => import('@/components/Cart/Cart.vue');
 
+const Checkout =() => import('@/components/Cart/Checkout.vue');
+
+
 Vue.use(Router)
 
 export default new Router({
@@ -71,6 +74,10 @@ export default new Router({
     {
         path: '/cart',
         component: Cart,
+    },
+    {
+        path: '/checkout',
+        component: Checkout,
     },
     {
         path: '/cart/items',
