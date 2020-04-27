@@ -13,7 +13,7 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS, LBody, API_HEADERS.getHeader())
                     .then((response) => {
-                        console.log("Response", response);
+                        //console.log("Response", response);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -33,7 +33,7 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID, LBody, API_HEADERS.getHeader())
                     .then((response) => {
-                        console.log("Response", response);
+                        // console.log("Response", response);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -45,24 +45,22 @@ var API_PRODUTOS = {
     },
     GetProdutoByIDThuor(id, quant, variant) {
         return new Promise((resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
-            if (LUser !== null && LUser !== undefined) {
-                let LBody = {
-                    id_produto: id,
-                    quantity: quant,
-                    variant: variant
-                }                
-                axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID_THUOR, LBody, API_HEADERS.getHeader())
-                    .then((response) => {
-                        console.log("Response", response);
-                        resolve(response);
-                    })
-                    .catch((error) => {
-                        console.log("Reject", error);
-                        reject(error);
-                    });
+            let LBody = {
+                id_produto: id,
+                quantity: quant,
+                variant: variant
             }
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID_THUOR, LBody)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(response);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+
         });
     },
     ImportFromShopify() {
@@ -75,7 +73,7 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS_IMPORT, LBody, API_HEADERS.getHeader())
                     .then((response) => {
-                        console.log("Response", response);
+                        //console.log("Response", response);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -96,7 +94,7 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_TIPO_PRODUTO, LBody, API_HEADERS.getHeader())
                     .then((response) => {
-                        console.log("Response", response);
+                        //console.log("Response", response);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -117,7 +115,7 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_PRODUTO, LBody, API_HEADERS.getHeader())
                     .then((response) => {
-                        console.log("Response", response);
+                        //console.log("Response", response);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -127,7 +125,7 @@ var API_PRODUTOS = {
             }
         });
     },
-    UpdateCustomFrete(custom_frete, id_produto){
+    UpdateCustomFrete(custom_frete, id_produto) {
         return new Promise((resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
@@ -148,7 +146,7 @@ var API_PRODUTOS = {
             }
         });
     },
-    UpdateTipoFrete(tipo_frete, preco_frete, id_produto){
+    UpdateTipoFrete(tipo_frete, preco_frete, id_produto) {
         return new Promise((resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
@@ -170,7 +168,7 @@ var API_PRODUTOS = {
             }
         });
     },
-    UpdateURLDirProduto(url_dir_cartao, url_dir_boleto, id_produto){
+    UpdateURLDirProduto(url_dir_cartao, url_dir_boleto, id_produto) {
         return new Promise((resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
@@ -204,7 +202,7 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_GET_PRAZO_ENVIO_VARIANTE_BY_ID, LBody, API_HEADERS.getHeader())
                     .then((response) => {
-                        
+
                         resolve(response);
                     })
                     .catch((error) => {
