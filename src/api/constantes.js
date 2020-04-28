@@ -17,6 +17,8 @@ export default Object.freeze({
   PATH_SALVA_GERENCIAMENTO_ESTOQUE_VARIANTE_BY_ID: 'produtos/SalvaGerenciamentoEstoqueVarianteByID',
   PATH_DESATIVA_GERENCIAMENTO_ESTOQUE_VARIANTE_BY_ID: 'produtos/DesativaGerenciamentoEstoquePorVarianteID',
   PATH_GET_DADOS_ESTOQUE_VARIANTE_BY_ID: 'produtos/GetDadosEstoquePorVarianteID',
-  PATH_LOJA: 'integracaoShopify/GetDadosLoja'
+  PATH_LOJA: 'integracaoShopify/GetDadosLoja',
+  PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
+  PATH_GET_FRETE: 'logisticas/GetFretes',
   
 });

@@ -78,7 +78,7 @@
 .dadosPessoais {
   font-size: 20px;
   font-weight: 900;
-  top: 2px;
+  top: 1px;
   position: relative;
   color: #5d9cec;
   margin-left: 10px;
@@ -106,7 +106,7 @@
   padding: 0;
   padding-left: 30px;
   float: left;
-  font-size: 12px;
+  font-size: 11px;
   margin-bottom: 10px;
 }
 .minusmargintop {
@@ -136,8 +136,20 @@
   -webkit-opacity: 0.6;
   opacity: 0.6;
 }
-.paddingZero{
+.paddingZero {
   padding: 0;
+}
+.localidade {
+  top: 5px !important;
+}
+.dadosPessoaisNomeCompletoVModel {
+  color: #4d4d4d !important;
+  font-weight: 700 !important;
+  font-size: 15px;
+}
+.paddingTopBottomZERO {
+  padding-bottom: 0px !important;
+  padding-top: 0px !important;
 }
 @media only screen and (max-width: 992px) {
   #btnTop {
@@ -183,7 +195,7 @@
         <span class></span>
         <div class="badge badge-blue iconStep" style="display:none;">1</div>
       </div>
-      <div class="row">
+      <div class="row col-xl-10" style=" margin: 0 auto;">
         <!-- START STEP 1-->
         <div class="col-md-4 mt-1 cardSide">
           <!-- START card-->
@@ -191,21 +203,46 @@
             <div class="card-header rounded">
               <span class="badge badge-blue iconBadge">1</span>
               <span class="dadosPessoais">Dados Pessoais</span>
+              <span
+                class="fa fa-edit pull-right float-right cursorP"
+                v-show="stepDadosPessoaisFinalizados == 1"
+                v-on:click="editarDadosPessoais()"
+              ></span>
               <p>
                 <small
                   class="textInformation col-md-10"
                 >Solicitamos somente as informações essenciais para você fazer sua compra.</small>
               </p>
             </div>
-            <div class="card-body minusmargintop">
+            <div class="card-body minusmargintop" v-show="stepDadosPessoaisFinalizados == 1">
               <form class="form-horizontal">
                 <div class="form-group row formGroup">
-                  <label class="col-xl-2 col-form-label labelForm">Nome Completo</label>
-                  <div class="col-xl-10">
+                  <label
+                    class="col-xl-12 col-form-label labelForm dadosPessoaisNomeCompletoVModel paddingTopBottomZERO"
+                    v-show="nome_completo"
+                  >{{nome_completo}}</label>
+                  <label
+                    class="col-xl-12 col-form-label labelForm paddingTopBottomZERO"
+                    v-show="email"
+                  >{{email}}</label>
+                  <label
+                    class="col-xl-12 col-form-label labelForm paddingTopBottomZERO"
+                    v-show="cpf"
+                  >CPF: {{cpf}}</label>
+                </div>
+              </form>
+            </div>
+            <div class="card-body minusmargintop" v-show="stepDadosPessoaisFinalizados == 0">
+              <form class="form-horizontal">
+                <div class="form-group row formGroup">
+                  <label class="col-xl-12 col-form-label labelForm">Nome Completo</label>
+                  <div class="col-xl-12">
                     <input
                       class="form-control required"
                       autocomplete="name"
                       type="text"
+                      minlength="5"
+                      v-model="nome_completo"
                       id="nome_completo"
                       placeholder="Digite seu nome aqui"
                       required
@@ -214,11 +251,12 @@
                 </div>
                 <div class="form-group row formGroup">
                   <label class="col-md-10 col-form-label labelForm">E-mail</label>
-                  <div class="col-xl-10">
+                  <div class="col-xl-12">
                     <input
                       autocomplete="email"
                       class="form-control"
                       type="email"
+                      v-model="email"
                       id="email"
                       placeholder="Digite seu E-mail"
                       required
@@ -227,11 +265,15 @@
                 </div>
                 <div class="form-group row formGroup">
                   <label class="col-xl-12 col-form-label labelForm">CPF</label>
-                  <div class="col-md-10">
+                  <div class="col-md-7">
                     <input
+                      @input="maskCPF()"
+                      minlength="14"
+                      maxlength="14"
                       class="form-control required"
                       autocomplete="cpf"
                       type="text"
+                      v-model="cpf"
                       placeholder="Digite seu CPF"
                       required
                     />
@@ -239,10 +281,10 @@
                 </div>
                 <div class="form-group row formGroup">
                   <label
-                    class="col-xl-2 col-form-label labelForm"
+                    class="col-xl-12 col-form-label labelForm"
                     for="inlineFormInputGroup"
                   >Celular / WhatsApp</label>
-                  <div class="col-xl-12 col-md-9">
+                  <div class="col-xl-7 col-md-9">
                     <div class="input-group mb-0">
                       <div class="input-group-prepend">
                         <div class="input-group-text">+55</div>
@@ -251,6 +293,10 @@
                         class="form-control"
                         id="inlineFormInputGroup"
                         type="text"
+                        minlength="15"
+                        maxlength="15"
+                        @input="maskTelefone()"
+                        v-model="telefone"
                         placeholder="71 9 9130-6561"
                         required
                       />
@@ -270,12 +316,18 @@
                 </div>
 
                 <div class="form-group row mt-3">
-                  <div class="col-xl-10">
+                  <div class="col-xl-12">
                     <button
                       class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
                       v-on:click="validarStep(currentStep)"
                       type="button"
-                    >Continuar<span class="fa fa-arrow-right ml-2" style="position:relative; top:1px"></span></button>
+                    >
+                      Continuar
+                      <span
+                        class="fa fa-arrow-right ml-2"
+                        style="position:relative; top:1px"
+                      ></span>
+                    </button>
                   </div>
                 </div>
               </form>
@@ -285,100 +337,145 @@
         </div>
         <!-- END STEP 1-->
         <!-- START STEP 2-->
-        <div class="col-md-4 mt-1 cardSide">
+        <div
+          class="col-md-4 mt-1 cardSide"
+          v-bind:class="currentStep == 2 || stepDadosEnderecoFinalizados == 1 ? '': 'disabledBox'"
+        >
           <!-- START card-->
           <div class="card card-default">
             <div class="card-header rounded">
               <span class="badge badge-blue iconBadge">2</span>
               <span class="dadosPessoais">Endereço</span>
+              <span
+                class="fa fa-edit pull-right float-right cursorP"
+                v-show="stepDadosEnderecoFinalizados == 1"
+                v-on:click="editarEndereco()"
+              ></span>
               <p>
-                <small
-                  class="textInformation col-md-10"
-                >Cadastre ou selecione um endereço.</small>
+                <small class="textInformation col-md-10">Cadastre ou selecione um endereço.</small>
               </p>
             </div>
-            <div class="card-body minusmargintop">
+            <div class="card-default minusmargintop" v-show="stepDadosEnderecoFinalizados == 1">
+              <div class="card-body">
+                <form class="form-horizontal">
+                  <div class="form-group row formGroup">
+                    <input type="radio" checked />
+                    <label
+                      class="col-xl-12 col-form-label labelForm paddingTopBottomZERO"
+                      v-show="endereco"
+                    >
+                      <b>{{endereco}} - {{bairro}}</b>
+                    </label>
+                    <label
+                      class="col-xl-12 col-form-label labelForm paddingTopBottomZERO"
+                      v-show="cidade"
+                    >{{cidade}}-{{estado}}</label>
+                    <label
+                      class="col-xl-12 col-form-label labelForm paddingTopBottomZERO"
+                      v-show="CEP"
+                    >CEP: {{CEP}}</label>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="card-body minusmargintop" v-show="stepDadosEnderecoFinalizados == 0">
               <form class="form-horizontal">
                 <div class="form-group row formGroup">
-                  <label class="col-xl-2 col-form-label labelForm">CEP</label>
-                  <div class="col-md-7">
+                  <label class="col-xl-12 col-form-label labelForm">CEP</label>
+                  <div class="col-md-6">
                     <input
+                      @input="consultaCEP()"
                       class="form-control required"
                       autocomplete="zipcode"
                       type="text"
                       id="cep"
+                      v-model="CEP"
                       placeholder="Digite seu CEP"
                       required
                     />
                   </div>
+                  <span
+                    class="localidade col-md-7"
+                    v-show="this.cidade"
+                  >{{this.cidade}} - {{this.estado}}</span>
                 </div>
-                <div class="form-group row formGroup">
-                  <label class="col-md-10 col-form-label labelForm">Endereço</label>
-                  <div class="col-xl-10">
+                <div class="form-group row formGroup" v-show="endereco">
+                  <label class="col-md-12 col-form-label labelForm">Endereço</label>
+                  <div class="col-xl-12">
                     <input
-                      autocomplete="email"
+                      autocomplete="address"
                       class="form-control"
-                      type="email"
-                      id="email"
+                      type="address"
+                      id="endereco"
+                      v-model="endereco"
                       placeholder="Digite seu E-mail"
                       required
                     />
                   </div>
                 </div>
-                <div class="form-group row formGroup">
-                  
-                  <div class="col-md-6">
-                    <label class="col-xl-2 col-form-label labelForm paddingZero">Número</label>
+                <div class="form-group row formGroup" v-show="endereco">
+                  <div class="col-md-6 mt-1">
+                    <label class="col-xl-12 col-form-label labelForm paddingZero mb-1">Número</label>
                     <input
                       class="form-control required"
                       autocomplete="number"
                       type="text"
-                      placeholder=""
+                      v-model="numero_porta"
+                      placeholder
                       required
                     />
                   </div>
-                  
-                  <div class="col-md-6">
-                    <label class="col-xl-6 col-form-label labelForm paddingZero">Bairro</label>
+
+                  <div class="col-md-6 mt-1" v-show="bairro">
+                    <label class="col-xl-6 col-form-label labelForm paddingZero mb-1">Bairro</label>
                     <input
                       class="form-control required"
                       autocomplete="neighborhood"
                       type="text"
-                      placeholder=""
+                      v-model="bairro"
+                      placeholder
                       required
                     />
                   </div>
                 </div>
-                <div class="form-group row formGroup">
+                <div class="form-group row formGroup" v-show="endereco">
                   <label class="col-xl-12 col-form-label labelForm">Complemento</label>
                   <div class="col-md-12">
                     <input
                       class="form-control"
                       autocomplete="complement"
+                      v-model="complemento"
                       type="text"
-                      placeholder=""                      
+                      placeholder
                     />
                   </div>
                 </div>
-                <div class="form-group row formGroup">
+                <div class="form-group row formGroup" v-show="endereco">
                   <label class="col-xl-12 col-form-label labelForm">Destinatário</label>
                   <div class="col-md-12">
                     <input
                       class="form-control"
                       autocomplete="receiver"
+                      v-model="destinatario"
                       type="text"
-                      placeholder=""                      
+                      placeholder
                     />
                   </div>
                 </div>
 
                 <div class="form-group row mt-3">
-                  <div class="col-xl-10">
+                  <div class="col-xl-12">
                     <button
                       class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
                       v-on:click="validarStep(currentStep)"
                       type="button"
-                    >Continuar<span class="fa fa-arrow-right ml-2" style="position:relative; top:1px"></span></button>
+                    >
+                      Continuar
+                      <span
+                        class="fa fa-arrow-right ml-2"
+                        style="position:relative; top:1px"
+                      ></span>
+                    </button>
                   </div>
                 </div>
               </form>
@@ -388,16 +485,14 @@
         </div>
         <!-- END STEP 2-->
         <!-- START STEP 3-->
-        <div class="col-md-4 mt-1 cardSide">
+        <div class="col-md-4 mt-1 cardSide" v-bind:class="currentStep == 3 ? '': 'disabledBox'">
           <!-- START card-->
           <div class="card card-default">
             <div class="card-header rounded">
               <span class="badge badge-blue iconBadge">3</span>
               <span class="dadosPessoais">Pagamento</span>
               <p>
-                <small
-                  class="textInformation col-md-10"
-                >Escolha abaixo uma forma de pagamento.</small>
+                <small class="textInformation col-md-10">Escolha abaixo uma forma de pagamento.</small>
               </p>
             </div>
             <div class="card-body minusmargintop">
@@ -462,12 +557,14 @@
                 </div>
 
                 <div class="form-group row mt-3">
-                  <div class="col-xl-10">
+                  <div class="col-xl-12">
                     <button
                       class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
                       v-on:click="validarStep(currentStep)"
                       type="button"
-                    ><span class="fa fa-lock mr-2" style="position:relative; top:1px"></span>Comprar Agora</button>
+                    >
+                      <span class="fa fa-lock mr-2" style="position:relative; top:1px"></span>Comprar Agora
+                    </button>
                   </div>
                 </div>
               </form>
@@ -488,10 +585,12 @@ import money from "v-money";
 import API_NOTIFICATION from "../../api/notification";
 import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
+import UTILIS_API from "../../api/utilisAPI";
 // Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
+import UTILIS from "../../utilis/utilis.js";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -521,11 +620,24 @@ export default {
       produtosCart: [],
       dadosLoja: null,
       nomeLoja: "",
-      currentStep: 1
+      currentStep: 1,
+      nome_completo: "",
+      telefone: "",
+      cpf: "",
+      email: "",
+      CEP: "",
+      endereco: "",
+      numero_porta: "",
+      bairro: "",
+      complemento: "",
+      destinatario: "",
+      cidade: "",
+      estado: "",
+      stepDadosPessoaisFinalizados: 0,
+      stepDadosEnderecoFinalizados: 0
     };
   },
   methods: {
-    validarStep(step) {},
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -692,6 +804,103 @@ export default {
     },
     goToCheckout() {
       this.$router.push("/checkout");
+    },
+    consultaCEP() {
+      if (this.CEP.length >= 8) {
+        this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
+        UTILIS_API.VIA_CEP(this.CEP)
+          .then(retornoCEP => {
+            this.endereco = retornoCEP.logradouro;
+            this.bairro = retornoCEP.bairro;
+            this.cidade = retornoCEP.localidade;
+            this.estado = retornoCEP.uf;
+            this.complemento = retornoCEP.complemento;
+            this.destinatario = this.nome_completo;
+          })
+          .catch(error => {
+            console.log(
+              "Erro ao tentar pegar dados do endereço do usuário",
+              error
+            );
+          });
+      } else {
+        this.endereco = "";
+        this.bairro = "";
+        this.cidade = "";
+        this.estado = "";
+        this.complemento = "";
+        this.destinatario = "";
+      }
+    },
+    validarStep(step) {
+      API_NOTIFICATION.ShowLoading();
+      if (this.currentStep == 1) {
+        if (
+          UTILIS.isValidCPF(this.cpf) &&
+          UTILIS.isValidTelefone(this.telefone) &&
+          UTILIS.isValidEmail(this.email) &&
+          UTILIS.isValidName(this.nome_completo)
+        ) {
+          this.nome_completo = this.nome_completo.toUpperCase();
+          this.stepDadosPessoaisFinalizados = 1;
+          this.currentStep = 2;
+          API_NOTIFICATION.HideLoading();
+        } else {
+          API_NOTIFICATION.showNotification(
+            "Todos os campos são obrigatórios!",
+            "error"
+          );
+        }
+      } else if (this.currentStep == 2) {
+        if (
+          UTILIS.isValidString(this.cpf, 9) &&
+          UTILIS.isValidString(this.endereco, 5) &&
+          UTILIS.isValidString(this.numero_porta, 1) &&
+          UTILIS.isValidString(this.bairro, 2) &&
+          UTILIS.isValidName(this.destinatario)
+        ) {
+          API_LOJA.GetFretes()
+            .then(retornoFretes => {
+              console.log("Retorno Frtes", retornoFretes);
+              this.stepDadosEnderecoFinalizados = 1;
+              this.currentStep = 3;
+              API_NOTIFICATION.HideLoading();
+            })
+            .catch(error => {
+              console.log(
+                "Não foi possível obter os dados do Frete para esta loja",
+                error
+              );
+            });
+        } else {
+          API_NOTIFICATION.showNotification(
+            "Campos de Endereço são obrigatórios!",
+            "error"
+          );
+        }
+      }
+    },
+    editarDadosPessoais() {
+      this.stepDadosPessoaisFinalizados = 0;
+      document.getElementById("nome_completo").focus();
+      this.currentStep = 1;
+    },
+    editarEndereco() {
+      this.stepDadosEnderecoFinalizados = 0;
+      document.getElementById("cep").focus();
+      this.currentStep = 2;
+    },
+    maskCPF() {
+      this.cpf = this.cpf.replace(
+        /(\d{3})(\d{3})(\d{3})(\d{2})/,
+        "$1.$2.$3-$4"
+      );
+    },
+    maskTelefone() {
+      this.telefone = this.telefone.replace(
+        /(\d{2})(\d{5})(\d{4})/,
+        "($1) $2-$3"
+      );
     }
   }
 };
