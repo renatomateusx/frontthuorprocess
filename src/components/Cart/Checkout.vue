@@ -158,15 +158,16 @@
   color: grey;
 }
 .opcaoSelecionada {
-  background-color: gray;
-  color: white;
+  background-color: #dcdcdc;
+  color: black;
   font-weight: bold;
-  border-color: gray;
+  border-color: #dcdcdc;
+  border: 2px solid #ccc;
 }
 .opcaoDeselecionada {
   font-weight: bold;
   color: gray;
-  border-color: #23b7e5;
+  border-color: 2px solid #23b7e5;
 }
 .btnFrete {
   padding: 15px;
@@ -174,9 +175,24 @@
   cursor: pointer !important;
   border-radius: 10px;
 }
+.btnFormaPagamentoSelecionada {
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer !important;
+  border-radius: 10px;
+}
+.smallInforFormaPagamentoBoleto {
+  padding: 5px;
+  margin: 5px;
+  cursor: pointer !important;
+  border-radius: 10px;
+  color: black;
+  background-color: #dcdcdc;
+  border: 2px solid #ccc;
+}
 .selecionadoInfo {
   margin-top: 10px;
-  color: chartreuse;
+  color: blueviolet;
   text-align: right !important;
   float: right !important;
 }
@@ -189,7 +205,7 @@
 .textValorTotal {
   color: black;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 1.2em;
   display: block;
   margin: 0 auto;
   text-align: center;
@@ -200,6 +216,23 @@
   height: 50px;
   top: 7px;
   position: relative;
+}
+.textInfoFrete {
+  text-align: left;
+  font-size: 11px;
+  white-space: pre-wrap;
+}
+#dropParcelas{
+  width: 100%!important;
+  margin-left: 0!important;
+  padding-left: 0!important;
+}
+#dropParcelas__BV_toggle_{
+  width: 100%!important;
+  text-align: left;
+}
+#dropParcelas__BV_toggle_::after{
+  text-align: right;
 }
 @media only screen and (max-width: 992px) {
   #btnTop {
@@ -446,7 +479,6 @@
                       id="cep"
                       v-model="CEP"
                       placeholder="Digite seu CEP"
-                      required
                     />
                   </div>
                   <span
@@ -464,7 +496,6 @@
                       id="endereco"
                       v-model="endereco"
                       placeholder="Digite seu E-mail"
-                      required
                     />
                   </div>
                 </div>
@@ -476,8 +507,6 @@
                       autocomplete="number"
                       type="text"
                       v-model="numero_porta"
-                      placeholder
-                      required
                     />
                   </div>
 
@@ -488,8 +517,6 @@
                       autocomplete="neighborhood"
                       type="text"
                       v-model="bairro"
-                      placeholder
-                      required
                     />
                   </div>
                 </div>
@@ -501,7 +528,6 @@
                       autocomplete="complement"
                       v-model="complemento"
                       type="text"
-                      placeholder
                     />
                   </div>
                 </div>
@@ -513,7 +539,6 @@
                       autocomplete="receiver"
                       v-model="destinatario"
                       type="text"
-                      placeholder
                     />
                   </div>
                 </div>
@@ -539,7 +564,7 @@
             <div
               class="card-default minusmargintop"
               v-show="stepDadosEnderecoFinalizados == 1 && fretes"
-              v-for="{id, status, nome, prazo, preco } in this.fretes"
+              v-for="{id, status, nome, prazo, preco } in fretes"
               :key="id"
             >
               <div class="card-body">
@@ -552,11 +577,13 @@
                       :class="freteSelecionado == id ? 'opcaoSelecionada':'opcaoDeselecionada'"
                     >
                       <p>
-                        <span class="text-left pull-left float-left col-md-10">{{nome}}</span>
+                        <span
+                          class="text-left pull-left float-left col-md-10 textInfoFrete"
+                        >{{nome}}</span>
                       </p>
                       <p>
                         <span
-                          class="text-left pull-left float-left ml-0 col-md-10"
+                          class="text-left pull-left float-left ml-0 col-md-10 textInfoFrete"
                         >Preço: R$ {{preco}}</span>
                       </p>
                       <p>
@@ -577,7 +604,7 @@
           </div>
           <!-- END card-->
         </div>
-        <!-- END STEP 2-->        
+        <!-- END STEP 2-->
         <!-- START STEP 3-->
         <div class="col-md-4 mt-1 cardSide" v-bind:class="currentStep == 3 ? '': 'disabledBoxX'">
           <!-- START card-->
@@ -591,7 +618,11 @@
               <p>
                 <small class="col-md-10">
                   Processado por:
-                  <img v-bind:src="getImageProcessor()" height="20px" class="imageCompanyProcessor" />
+                  <img
+                    v-bind:src="getImageProcessor()"
+                    height="20px"
+                    class="imageCompanyProcessor"
+                  />
                 </small>
               </p>
 
@@ -600,12 +631,12 @@
                 <button
                   type="button"
                   v-on:click="formaPagamentoSelecionada('creditCard')"
-                  class="btn btn-secondary col-md-11 pull-left float-left btnFrete"
-                  :class="formaPagamento == 'creditCard' ? 'opcaoSelecionada':'opcaoDeselecionada'"
+                  class="btn btn-secondary col-md-11 pull-left float-left btnFormaPagamentoSelecionada"
+                  :class="getClassSelected('creditCard')"
                 >
                   <p>
                     <span class="text-left pull-left float-left col-md-10">Cartão de Crédito</span>
-                  </p>                 
+                  </p>
                   <p>
                     <span class="text-left pull-left float-left ml-0 col-md-10">
                       <small>Pagamento 100% seguro</small>
@@ -617,15 +648,95 @@
                     </span>
                   </p>
                 </button>
+                <div class="card-body minusmargintop" v-show="formaPagamento =='creditCard'">
+                  <form class="form-horizontal">
+                    <div class="form-group row formGroup mt-3">
+                      <label class="col-xl-12 col-form-label labelForm">Número do Cartão</label>
+                      <div class="col-md-7">
+                        <input
+                          class="form-control required"
+                          autocomplete="cc-number"
+                          type="text"
+                          id="card_number"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group row formGroup">
+                      <label class="col-xl-12 col-form-label labelForm">Validade</label>
+                      <div class="col-md-5">
+                        <input
+                          autocomplete="cc-exp"
+                          class="form-control"
+                          type="text"
+                          id="validade"
+                          placeholder="MM/AA"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group row formGroup">
+                      <label class="col-xl-12 col-form-label labelForm">Nome do Titular do Cartão</label>
+                      <div class="col-md-7">
+                        <input class="form-control required" autocomplete="name" type="text" />
+                      </div>
+                    </div>
+                    <div class="form-group row formGroup">
+                      <label class="col-xl-12 col-form-label labelForm">Cód. de Segurança</label>
+                      <div class="col-md-5">
+                        <input class="form-control required" autocomplete="security" type="text" />
+                      </div>
+                    </div>
+                    <div class="form-group row formGroup">
+                      <label class="col-xl-12 col-form-label labelForm">CPF do Titular</label>
+                      <div class="col-md-7">
+                        <input
+                          @input="maskCPF()"
+                          minlength="14"
+                          maxlength="14"
+                          class="form-control required"
+                          autocomplete="cpf_titular"
+                          type="text"
+                          v-model="cpf"
+                          placeholder="Digite seu CPF"
+                        />
+                      </div>
+                    </div>
+                    <div class="form-group row formGroup">
+                      <label
+                        class="col-xl-2 col-form-label labelForm"
+                        for="inlineFormInputGroup"
+                      >Parcelas</label>
+                      <div class="col-lg-12">
+                        <small>Digite o cartão para selecionar as parcelas</small>
+                                                 
+                          <b-dropdown id="dropParcelas" text="Parcelas" class="m-md-2 pull-left float-left col-md-12" style="width:100%!important;">
+                            <b-dropdown-item>First Action</b-dropdown-item>                                                        
+                          </b-dropdown>
+                        
+                      </div>
+                    </div>
+
+                    <div class="form-group row mt-3">
+                      <div class="col-xl-12">
+                        <button
+                          class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
+                          v-on:click="validarStep(currentStep)"
+                          type="button"
+                        >
+                          <span class="fa fa-lock mr-2" style="position:relative; top:1px"></span>Comprar Agora
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
                 <button
                   type="button"
                   v-on:click="formaPagamentoSelecionada('boleto')"
-                  class="btn btn-secondary col-md-11 pull-left float-left btnFrete"
-                  :class="formaPagamento == 'boleto' ? 'opcaoSelecionada':'opcaoDeselecionada'"
+                  class="btn btn-secondary col-md-11 pull-left float-left btnFormaPagamentoSelecionada"
+                  :class="getClassSelected('boleto')"
                 >
                   <p>
                     <span class="text-left pull-left float-left col-md-10">Boleto</span>
-                  </p>                 
+                  </p>
                   <p>
                     <span class="text-left pull-left float-left ml-0 col-md-10">
                       <small>Processamento em 3 dias.</small>
@@ -637,88 +748,38 @@
                     </span>
                   </p>
                 </button>
-              </div>
-            </div>
-
-            <div class="card-body minusmargintop" style="display:none;">
-              <form class="form-horizontal">
-                <div class="form-group row formGroup">
-                  <label class="col-xl-2 col-form-label labelForm">Nome Completo</label>
-                  <div class="col-xl-10">
-                    <input
-                      class="form-control required"
-                      autocomplete="name"
-                      type="text"
-                      id="nome_completo"
-                      placeholder="Digite seu nome aqui"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="form-group row formGroup">
-                  <label class="col-md-10 col-form-label labelForm">E-mail</label>
-                  <div class="col-xl-10">
-                    <input
-                      autocomplete="email"
-                      class="form-control"
-                      type="email"
-                      id="email"
-                      placeholder="Digite seu E-mail"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="form-group row formGroup">
-                  <label class="col-xl-12 col-form-label labelForm">CPF</label>
-                  <div class="col-md-10">
-                    <input
-                      class="form-control required"
-                      autocomplete="cpf"
-                      type="text"
-                      placeholder="Digite seu CPF"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="form-group row formGroup">
-                  <label
-                    class="col-xl-2 col-form-label labelForm"
-                    for="inlineFormInputGroup"
-                  >Celular / WhatsApp</label>
-                  <div class="col-xl-12 col-md-9">
-                    <div class="input-group mb-0">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">+55</div>
-                      </div>
-                      <input
-                        class="form-control"
-                        id="inlineFormInputGroup"
-                        type="text"
-                        placeholder="71 9 9130-6561"
-                        required
-                      />
+                <div class="card-body minusmargintop" v-show="formaPagamento =='boleto'">
+                  <form class="form-horizontal">
+                    <div class="form-group row mt-2">
+                      <small
+                        class="text-justify col-md-12 smallInforFormaPagamentoBoleto"
+                      >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</small>
                     </div>
-                  </div>
+                    <div class="form-group row mt-2">
+                      <span class="valorNoBoleto col-md-12 ml-1">
+                        Valor no Boleto
+                        <strong>R$ {{formatPrice(getTotal().total)}}</strong>
+                      </span>
+                    </div>
+                    <div class="form-group row mt-3">
+                      <div class="col-xl-12">
+                        <button
+                          class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
+                          v-on:click="validarStep(currentStep)"
+                          type="button"
+                        >
+                          <span class="fa fa-lock mr-2" style="position:relative; top:1px"></span>Comprar Agora
+                        </button>
+                      </div>
+                    </div>
+                  </form>
                 </div>
-
-                <div class="form-group row mt-3">
-                  <div class="col-xl-12">
-                    <button
-                      class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
-                      v-on:click="validarStep(currentStep)"
-                      type="button"
-                    >
-                      <span class="fa fa-lock mr-2" style="position:relative; top:1px"></span>Comprar Agora
-                    </button>
-                  </div>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
           <!-- END card-->
         </div>
         <!-- END STEP 3-->
-
 
         <!-- START STEP 4-->
         <div class="col-md-4 mt-1 cardSide">
@@ -781,6 +842,7 @@
 <script>
 import Vue from "vue";
 import VeeValidate from "vee-validate";
+import Multiselect from "vue-multiselect";
 import money from "v-money";
 import API_NOTIFICATION from "../../api/notification";
 import API_PRODUTOS from "../../api/produtosAPI";
@@ -795,6 +857,7 @@ import UTILIS from "../../utilis/utilis.js";
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
+Vue.component("multiselect", Multiselect);
 Vue.use(money, { precision: 2 });
 export default {
   created() {
@@ -804,6 +867,9 @@ export default {
     }
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
+  },
+  computed:{
+    
   },
   data() {
     return {
@@ -843,7 +909,16 @@ export default {
       stepDadosEnderecoFinalizados: 0,
       valorTotalCompra: 0,
       valorFrete: 0,
-      formaPagamento: '',
+      formaPagamento: "any",
+      vueSelectValue: "",
+      vueSelectOptions: [
+        "Vue.js",
+        "Adonis",
+        "Rails",
+        "Sinatra",
+        "Laravel",
+        "Phoenix"
+      ]
     };
   },
   methods: {
@@ -1126,9 +1201,9 @@ export default {
     freteSelected(id) {
       this.freteSelecionado = id;
       var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
-      this.valorFrete = this.fretes.find(
-        x => x.id == this.freteSelecionado
-      ).preco;
+      this.valorFrete = parseFloat(
+        this.fretes.find(x => x.id == this.freteSelecionado).preco
+      );
       //console.log("Novo Frte Selecionado", lnome);
     },
     selecionaPadrao(id, preco, nome) {
@@ -1147,13 +1222,15 @@ export default {
       //console.log("Nome Selecionado", lnome);
       return lnome;
     },
-    getImageProcessor(){
+    getImageProcessor() {
       return "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
     },
-    formaPagamentoSelecionada(formaPagamento){
-      this.formaPagamento = formaPagamento;
+    formaPagamentoSelecionada(fmp) {
+      this.formaPagamento = fmp;
+    },
+    getClassSelected(opcao){
+      return this.formaPagamento == opcao ? 'opcaoSelecionada':'opcaoDeselecionada';
     }
-    
   }
 };
 </script>
