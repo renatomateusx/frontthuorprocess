@@ -89,7 +89,7 @@
 .sku {
   font-size: 13px;
   font-weight: 700;
-  font-family: Rubik, sans-serif;
+  font-family: Rubik, sans-serif!important;
   color: purple;
 }
 .myDropDownPrazo /deep/ .dropdown-menu {

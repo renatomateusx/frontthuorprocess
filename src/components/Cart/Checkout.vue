@@ -141,6 +141,7 @@
 }
 .localidade {
   top: 5px !important;
+  font-size: 12px;
 }
 .dadosPessoaisNomeCompletoVModel {
   color: #4d4d4d !important;
@@ -150,6 +151,55 @@
 .paddingTopBottomZERO {
   padding-bottom: 0px !important;
   padding-top: 0px !important;
+}
+.enderecoEntregaHeader {
+  font-size: 15px;
+  font-weight: 700;
+  color: grey;
+}
+.opcaoSelecionada {
+  background-color: gray;
+  color: white;
+  font-weight: bold;
+  border-color: gray;
+}
+.opcaoDeselecionada {
+  font-weight: bold;
+  color: gray;
+  border-color: #23b7e5;
+}
+.btnFrete {
+  padding: 15px;
+  margin: 10px;
+  cursor: pointer !important;
+  border-radius: 10px;
+}
+.selecionadoInfo {
+  margin-top: 10px;
+  color: chartreuse;
+  text-align: right !important;
+  float: right !important;
+}
+.ValorTotalResumo {
+  background-color: #f5f5f5;
+  border-radius: 9px;
+  height: 40px;
+  color: white !important;
+}
+.textValorTotal {
+  color: black;
+  font-weight: 700;
+  font-size: 20px;
+  display: block;
+  margin: 0 auto;
+  text-align: center;
+  top: 5px;
+}
+.imgVariant {
+  width: 50px;
+  height: 50px;
+  top: 7px;
+  position: relative;
 }
 @media only screen and (max-width: 992px) {
   #btnTop {
@@ -359,7 +409,12 @@
               <div class="card-body">
                 <form class="form-horizontal">
                   <div class="form-group row formGroup">
-                    <input type="radio" checked />
+                    <label
+                      class="col-xl-12 col-form-label labelForm enderecoEntregaHeader paddingTopBottomZERO"
+                      v-show="endereco"
+                    >
+                      <b>Endereço de Entrega:</b>
+                    </label>
                     <label
                       class="col-xl-12 col-form-label labelForm paddingTopBottomZERO"
                       v-show="endereco"
@@ -395,7 +450,7 @@
                     />
                   </div>
                   <span
-                    class="localidade col-md-7"
+                    class="localidade col-md-6 pull-left float-left text-left"
                     v-show="this.cidade"
                   >{{this.cidade}} - {{this.estado}}</span>
                 </div>
@@ -480,12 +535,51 @@
                 </div>
               </form>
             </div>
+            <!-- stepDadosEnderecoFinalizados == 1 &&  -->
+            <div
+              class="card-default minusmargintop"
+              v-show="stepDadosEnderecoFinalizados == 1 && fretes"
+              v-for="{id, status, nome, prazo, preco } in this.fretes"
+              :key="id"
+            >
+              <div class="card-body">
+                <form class="form-horizontal">
+                  <div class="form-group row formGroup">
+                    <button
+                      type="button"
+                      v-on:click="freteSelected(id)"
+                      class="btn btn-secondary col-md-11 pull-left float-left btnFrete"
+                      :class="freteSelecionado == id ? 'opcaoSelecionada':'opcaoDeselecionada'"
+                    >
+                      <p>
+                        <span class="text-left pull-left float-left col-md-10">{{nome}}</span>
+                      </p>
+                      <p>
+                        <span
+                          class="text-left pull-left float-left ml-0 col-md-10"
+                        >Preço: R$ {{preco}}</span>
+                      </p>
+                      <p>
+                        <span class="text-left pull-left float-left ml-0 col-md-10">
+                          <small>Entrega garantida</small>
+                        </span>
+                      </p>
+                      <p v-if="freteSelecionado == id">
+                        <span class="text-left pull-left float-left ml-0 col-md-10 selecionadoInfo">
+                          <small>Selecionado</small>
+                        </span>
+                      </p>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
           <!-- END card-->
         </div>
-        <!-- END STEP 2-->
+        <!-- END STEP 2-->        
         <!-- START STEP 3-->
-        <div class="col-md-4 mt-1 cardSide" v-bind:class="currentStep == 3 ? '': 'disabledBox'">
+        <div class="col-md-4 mt-1 cardSide" v-bind:class="currentStep == 3 ? '': 'disabledBoxX'">
           <!-- START card-->
           <div class="card card-default">
             <div class="card-header rounded">
@@ -494,8 +588,59 @@
               <p>
                 <small class="textInformation col-md-10">Escolha abaixo uma forma de pagamento.</small>
               </p>
+              <p>
+                <small class="col-md-10">
+                  Processado por:
+                  <img v-bind:src="getImageProcessor()" height="20px" class="imageCompanyProcessor" />
+                </small>
+              </p>
+
+              <!-- MOSTRA AS OPÇÕES DE PAGAMENTO -->
+              <div class="form-group row formGroup">
+                <button
+                  type="button"
+                  v-on:click="formaPagamentoSelecionada('creditCard')"
+                  class="btn btn-secondary col-md-11 pull-left float-left btnFrete"
+                  :class="formaPagamento == 'creditCard' ? 'opcaoSelecionada':'opcaoDeselecionada'"
+                >
+                  <p>
+                    <span class="text-left pull-left float-left col-md-10">Cartão de Crédito</span>
+                  </p>                 
+                  <p>
+                    <span class="text-left pull-left float-left ml-0 col-md-10">
+                      <small>Pagamento 100% seguro</small>
+                    </span>
+                  </p>
+                  <p v-if="formaPagamento == 'creditCard'">
+                    <span class="text-left pull-left float-left ml-0 col-md-10 selecionadoInfo">
+                      <small>Selecionado</small>
+                    </span>
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  v-on:click="formaPagamentoSelecionada('boleto')"
+                  class="btn btn-secondary col-md-11 pull-left float-left btnFrete"
+                  :class="formaPagamento == 'boleto' ? 'opcaoSelecionada':'opcaoDeselecionada'"
+                >
+                  <p>
+                    <span class="text-left pull-left float-left col-md-10">Boleto</span>
+                  </p>                 
+                  <p>
+                    <span class="text-left pull-left float-left ml-0 col-md-10">
+                      <small>Processamento em 3 dias.</small>
+                    </span>
+                  </p>
+                  <p v-if="formaPagamento == 'boleto'">
+                    <span class="text-left pull-left float-left ml-0 col-md-10 selecionadoInfo">
+                      <small>Selecionado</small>
+                    </span>
+                  </p>
+                </button>
+              </div>
             </div>
-            <div class="card-body minusmargintop">
+
+            <div class="card-body minusmargintop" style="display:none;">
               <form class="form-horizontal">
                 <div class="form-group row formGroup">
                   <label class="col-xl-2 col-form-label labelForm">Nome Completo</label>
@@ -573,6 +718,61 @@
           <!-- END card-->
         </div>
         <!-- END STEP 3-->
+
+
+        <!-- START STEP 4-->
+        <div class="col-md-4 mt-1 cardSide">
+          <!-- START card-->
+          <div class="card card-default">
+            <div class="card-header rounded">
+              <span class="dadosPessoais">Resumo da Compra</span>
+              <div class="col-md-12 ValorTotalResumo mt-3">
+                <span class="textValorTotal col-md-12">Valor: R$ {{formatPrice(getTotal().total)}}</span>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="items">
+                    <div
+                      class="product"
+                      v-for="{title, variant_id, variant_title, quantity, variant_price_ancora, variant_price, variant_img, id_thuor} in produtosCart"
+                      :key="id_thuor"
+                    >
+                      <div class="row col-md-12">
+                        <div class="mt-3 w-100">
+                          <img class="rounded img-fluid float-left imgVariant" :src="variant_img" />
+                          <div class="product-name">
+                            <div class="product-name">
+                              <a class="ml-2 w-100" href="#">{{title}}</a>
+                              <div class="product-info">
+                                <div>
+                                  <span class="value ml-2">{{variant_title}}</span>
+                                </div>
+                              </div>
+                              <div class="product-info">
+                                <div>
+                                  <span class="value ml-2">
+                                    <small>
+                                      {{quantity}} Unidade(s) -
+                                      <b>R$ {{formatPrice(variant_price)}}</b>
+                                    </small>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card-body minusmargintop"></div>
+          </div>
+          <!-- END card-->
+        </div>
+        <!-- END STEP 4-->
       </div>
     </div>
   </div>
@@ -598,6 +798,10 @@ Vue.use(VeeValidate, {
 Vue.use(money, { precision: 2 });
 export default {
   created() {
+    if (sessionStorage.getItem("fretes") != null) {
+      this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
+      console.log(this.fretes);
+    }
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
   },
@@ -618,6 +822,8 @@ export default {
         rememberme: false
       },
       produtosCart: [],
+      fretes: [],
+      freteSelecionado: -1,
       dadosLoja: null,
       nomeLoja: "",
       currentStep: 1,
@@ -634,7 +840,10 @@ export default {
       cidade: "",
       estado: "",
       stepDadosPessoaisFinalizados: 0,
-      stepDadosEnderecoFinalizados: 0
+      stepDadosEnderecoFinalizados: 0,
+      valorTotalCompra: 0,
+      valorFrete: 0,
+      formaPagamento: '',
     };
   },
   methods: {
@@ -700,6 +909,7 @@ export default {
         const LCart = sessionStorage.getItem("cart");
         this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
         this.produtosCart = JSON.parse(LCart);
+        this.getTotal();
         API_NOTIFICATION.HideLoading();
       }
     },
@@ -761,12 +971,16 @@ export default {
         total: 0,
         discount: 0
       };
+      if (sessionStorage.getItem("cart") != null) {
+        this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
+      }
       if (this.produtosCart != null) {
         this.produtosCart.forEach((item, i) => {
           subTotal = subTotal + item.variant_price_ancora * item.quantity;
           total = total + item.variant_price * item.quantity;
           discount = subTotal - total;
         });
+        total = total + this.valorFrete;
         var LTotal = {
           subTotal: subTotal,
           total: total,
@@ -862,6 +1076,13 @@ export default {
           API_LOJA.GetFretes()
             .then(retornoFretes => {
               console.log("Retorno Frtes", retornoFretes);
+              sessionStorage.setItem(
+                "fretes",
+                JSON.stringify(retornoFretes.data)
+              );
+              retornoFretes.data.forEach((obj, i) => {
+                this.selecionaPadrao(obj.id, obj.preco, obj.nome);
+              });
               this.stepDadosEnderecoFinalizados = 1;
               this.currentStep = 3;
               API_NOTIFICATION.HideLoading();
@@ -901,7 +1122,38 @@ export default {
         /(\d{2})(\d{5})(\d{4})/,
         "($1) $2-$3"
       );
+    },
+    freteSelected(id) {
+      this.freteSelecionado = id;
+      var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+      this.valorFrete = this.fretes.find(
+        x => x.id == this.freteSelecionado
+      ).preco;
+      //console.log("Novo Frte Selecionado", lnome);
+    },
+    selecionaPadrao(id, preco, nome) {
+      if (
+        preco == "0,00" ||
+        nome
+          .toUpperCase()
+          .includes("GRÁTIS" || nome.toUpperCase().includes("GRATIS"))
+      ) {
+        this.freteSelected(id);
+      }
+      return true;
+    },
+    getFreteSelecionadoNome() {
+      var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+      //console.log("Nome Selecionado", lnome);
+      return lnome;
+    },
+    getImageProcessor(){
+      return "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
+    },
+    formaPagamentoSelecionada(formaPagamento){
+      this.formaPagamento = formaPagamento;
     }
+    
   }
 };
 </script>
