@@ -616,7 +616,7 @@
                 <small class="textInformation col-md-10">Escolha abaixo uma forma de pagamento.</small>
               </p>
               <p>
-                <small class="col-md-10">
+                <small class="">
                   Processado por:
                   <img
                     v-bind:src="getImageProcessor()"
