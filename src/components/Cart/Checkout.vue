@@ -242,7 +242,10 @@
   font-size: 11px;
   white-space: pre-wrap;
 }
-
+.imageCard{
+  width: 25px!important;
+  height: 25px!important;
+}
 @media only screen and (max-width: 992px) {
   #btnTop {
     display: block !important;
@@ -713,7 +716,10 @@
                   </button>
                   <div class="card-body minusmargintop" v-show="formaPagamento =='creditCard'">
                     <div class="form-group row formGroup mt-3">
-                      <label class="col-xl-12 col-form-label labelForm">Número do Cartão</label>
+                      <label class="col-xl-12 col-form-label labelForm">
+                        Número do Cartão
+                        <img class="imageCard" v-show="this.payment_id" :src="getImageCard()" />
+                      </label>
                       <div class="col-md-7">
                         <input
                           @input="verificaDigitosCartao()"
@@ -1014,7 +1020,7 @@ export default {
       cpf_titular: "",
       nome_titular: "",
       validade: "",
-      cartToken: "",
+      cardToken: "",
       card_number: "",
       payment_id: "",
       stepDadosPessoaisFinalizados: 0,
@@ -1269,7 +1275,7 @@ export default {
         ) {
           API_LOJA.GetFretes()
             .then(retornoFretes => {
-              console.log("Retorno Frtes", retornoFretes);
+              //console.log("Retorno Frtes", retornoFretes);
               sessionStorage.setItem(
                 "fretes",
                 JSON.stringify(retornoFretes.data)
@@ -1326,10 +1332,17 @@ export default {
       );
     },
     maskCardNumber() {
-      this.card_number = this.card_number.replace(
-        /(\d{4})(\d{4})(\d{4})(\d{4})/,
-        "$1 $2 $3 $4"
-      );
+      if (this.payment_id == "amex") {
+        this.card_number = this.card_number.replace(
+          /(\d{4})(\d{4})(\d{4})(\d{3})/,
+          "$1 $2 $3 $4"
+        );
+      } else {
+        this.card_number = this.card_number.replace(
+          /(\d{4})(\d{4})(\d{4})(\d{4})/,
+          "$1 $2 $3 $4"
+        );
+      }
     },
     maskValidade() {
       this.validade = this.validade.replace(/(\d{2})(\d{2})/, "$1/$2");
@@ -1422,6 +1435,7 @@ export default {
       //console.log("Response", response);
       if (status == 200) {
         this.payment_id = response[0].id;
+        ////console.log("Payment ID", this.payment_id);
         this.getParcelas();
       } else {
         alert(`payment method info error: ${response}`);
@@ -1467,18 +1481,21 @@ export default {
       API_NOTIFICATION.ShowLoading();
       const form = document.querySelector("#pay");
       //console.log("Form", form);
-      window.Mercadopago.createToken(form, function(status, response) {
-        if (status != 200 && status != 201) {
-          console.log("Não foi possível gerar o token");
-        } else {
-          this.cardToken = response.id;
-        }
-      });
-      this.iniciaPagamentoBackEnd(this.cardToken);
+      window.Mercadopago.createToken(form, this.iniciaPagamentoBackEnd);
     },
-    iniciaPagamentoBackEnd(cartToken) {
-      
-      while (!this.try) {
+    iniciaPagamentoBackEnd(status, response) {
+      if (status != 200 && status != 201) {
+        console.log("Não foi possível gerar o token", response.message);
+        window.Mercadopago.clearSession();
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "Não foi possível completar a ação. Tente novamente!",
+          "warning"
+        );
+      } else {
+        this.cardToken = response.id;
+
+        //while (this.try == false) {
         console.log(this.cardToken);
         var cart = this.produtosCart;
         var transacao = {
@@ -1502,26 +1519,45 @@ export default {
             cpf_titular: this.cpf_titular
           },
           produtos: cart,
-          dadosLoja: this.dadosLoja
+          dadosLoja: this.dadosLoja,
+          dadosCheckout: this.DadosCheckout,
+          paymentData: {
+            transaction_amount: this.formatPrice(this.getTotal().total),
+            token: this.cardToken,
+            description: this.dadosLoja.nome_loja,
+            installments: this.parcelas,
+            payment_method_id: this.payment_id,
+            payer: {
+              email: this.email
+            }
+          }
         };
-        //console.log("Stinf", transacao);
         const JSONString = JSON.stringify(transacao);
         const LCripto = btoa(JSONString);
-        //console.log("Base64", LCripto);
-        //console.log("Drcripto", JSON.parse(atob(LCripto)));
-        this.try = true;
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT.DoPayBackEnd(LCripto)
-        .then((retornoPay)=>{
-            
-            
-        })
-        .catch((error)=>{
-          console.log("Erro ao tentar efetuar o pagamento", error);
-          API_NOTIFICATION.showNotification('Por favor, tente novamente ', 'error');
-        })
-        
-        break;
+          .then(retornoPay => {
+            console.log("Enviado para o backend");
+            API_NOTIFICATION.HideLoading();
+          })
+          .catch(error => {
+            console.log("Erro ao tentar efetuar o pagamento", error);
+            API_NOTIFICATION.showNotification(
+              "Por favor, tente novamente ",
+              "error"
+            );
+          });
+
+        //break;
+      }
+    },
+    getImageCard() {
+      if (this.payment_id !== undefined && this.payment_id.length > 1) {
+        let bandeira = this.payment_id;
+        if(bandeira == 'master') bandeira = 'mastercard';
+        return (
+          "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
+        );
       }
     }
   }

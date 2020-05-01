@@ -3,10 +3,10 @@ import axios from 'axios';
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 var API_CHECKOUT = {
-    DoPayBackEnd(pay) {
+    DoPayBackEnd(cripto) {
         return new Promise((resolve, reject) => {
             let LBody = {
-                pay: pay
+                pay: cripto
             }
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_PAY_CHECKOUT, LBody)
