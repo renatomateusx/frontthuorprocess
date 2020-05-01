@@ -1,3 +1,4 @@
+import API_NOTIFICATION from "../api/notification";
 var UTILIS = {
   isValidCPF(strCPF) {
     //console.log(strCPF);
@@ -5,33 +6,33 @@ var UTILIS = {
     var Soma;
     var Resto;
     Soma = 0;
-    if (!strCPF) return false;
-    if(strCPF.length == undefined) return false;
-    if(strCPF.length < 11) return false;
-    if (strCPF == "00000000000") return false;
-    else if (strCPF === "11111111111") return false;
-    else if (strCPF === "22222222222") return false;
-    else if (strCPF === "33333333333") return false;
-    else if (strCPF === "44444444444") return false;
-    else if (strCPF === "55555555555") return false;
-    else if (strCPF === "66666666666") return false;
-    else if (strCPF === "77777777777") return false;
-    else if (strCPF === "88888888888") return false;
-    else if (strCPF === "99999999999") return false;
-    for (var i = 1; i <= 9; i++){
+    if (!strCPF) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu CPF', 'error'); return false; }
+    if (strCPF.length == undefined) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu CPF', 'error'); return false; }
+    if (strCPF.length < 11) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu CPF corretamente', 'error'); return false; }
+    if (strCPF == "00000000000") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "11111111111") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "22222222222") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "33333333333") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "44444444444") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "55555555555") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "66666666666") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "77777777777") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "88888888888") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    else if (strCPF === "99999999999") { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
+    for (var i = 1; i <= 9; i++) {
       Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (11 - i);
-    } 
+    }
     Resto = (Soma * 10) % 11;
 
     if ((Resto == 10) || (Resto == 11)) Resto = 0;
-    if (Resto != parseInt(strCPF.substring(9, 10))) return false;
+    if (Resto != parseInt(strCPF.substring(9, 10))) { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
 
     Soma = 0;
     for (var i = 1; i <= 10; i++) Soma = Soma + parseInt(strCPF.substring(i - 1, i)) * (12 - i);
     Resto = (Soma * 10) % 11;
 
     if ((Resto == 10) || (Resto == 11)) Resto = 0;
-    if (Resto != parseInt(strCPF.substring(10, 11))) return false;
+    if (Resto != parseInt(strCPF.substring(10, 11))) { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
     console.log("Retornando true");
     return true;
   },
@@ -40,10 +41,11 @@ var UTILIS = {
   }
   ,
   isValidTelefone(telefone) {
-    if (!telefone) return false;
-    if (telefone.length == undefined) return false;
+    if (!telefone) { API_NOTIFICATION.showNotificationW('Oops', 'Informe seu telefone', 'error'); return false; }
+    if (telefone.length == undefined) { API_NOTIFICATION.showNotificationW('Oops', 'Informe seu telefone', 'error'); return false; }
+    if (telefone.length == 0) { API_NOTIFICATION.showNotificationW('Oops', 'Informe seu telefone', 'error'); return false; }
     telefone = this.removeTelefoneCaracteres(telefone);
-    if (telefone.length < 11) return false;
+    if (telefone.length < 11) { API_NOTIFICATION.showNotificationW('Oops', 'Telefone Inválido', 'error'); return false; }
     return true;
   },
   removeTelefoneCaracteres(telefone) {
@@ -51,6 +53,10 @@ var UTILIS = {
   },
   isValidEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!email) {API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false;}
+    if (email.length == undefined)  {API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false;}
+    if (email.length == 0)  {API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false;}
+    if(!re.test(String(email).toLowerCase())){API_NOTIFICATION.showNotificationW('Oops', 'E-mail Inválido', 'error'); return false;}
     return re.test(String(email).toLowerCase());
   },
   maskCPF(cpf) {
@@ -64,18 +70,18 @@ var UTILIS = {
       return cpf + '-';
     }
   },
-  isValidName(name){
-    if(!name) return false;
-    if(name.length == undefined) return false;
-    if(name.length <5) return false;
+  isValidName(name) {
+    if (!name) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome', 'error'); return false;}
+    if (name.length == undefined)  {API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome', 'error'); return false;}
+    if (name.length < 5)  {API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome completo', 'error'); return false;}
     return true;
   },
-  isValidString(string, length){
-    if(!string) return false;
-    if(!string.length == undefined) return false;
-    if(string.length == 0) return false;
-    if(string.length < length) return false;
-    
+  isValidString(string, length, campo) {
+    if (!string) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo, 'error'); return false;}
+    if (!string.length == undefined) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo, 'error'); return false;}
+    if (string.length == 0) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo + ' corretamente', 'error'); return false;}
+    if (string.length < length) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha '+ campo + ' corretamente', 'error'); return false;}
+
     return true;
   }
 }

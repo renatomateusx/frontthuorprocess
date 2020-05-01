@@ -20,5 +20,7 @@ export default Object.freeze({
   PATH_LOJA: 'integracaoShopify/GetDadosLoja',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_GET_FRETE: 'logisticas/GetFretes',
+  PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',
+  PATH_PAY_CHECKOUT: 'checkouts/DoPay',
   
 });

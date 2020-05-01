@@ -31,9 +31,33 @@ var API_NOTIFICATION = {
             }
         })
     },
+    ShowLoadingPay() {
+        if (!this.isShowingLoading) {
+            this.isShowingLoading = true;
+            Vue.swal({
+                customClass: 'swal-wide',
+                title: '<span class="text-aguard">Momentinho...</span>',
+                html: " <div class='card-body align-items-center justify-content-center'>             <div class='ball-scale-ripple-multiple widthLoadingDiv'>                <div class='loadingSwall'></div>               <div class='loadingSwall'></div>                <div class='loadingSwall'></div>            </div>        </div>",
+                showConfirmButton: false,
+                showCancelButton: false,
+                allowEnterKey: false,
+                allowEscapeKey: false,
+                allowOutsideClick: false,
+                timerProgressBar: true,
+                onBeforeOpen: () => {
+                    // Swal.showLoading();          
+                },
+                onClose: () => {
+
+                }
+            })
+        }
+    },
     HideLoading() {
-        Vue.swal.close();
-        this.isShowingLoading = false;
+        if (this.isShowingLoading) {
+            Vue.swal.close();
+            this.isShowingLoading = false;
+        }
     },
     showNotification(message, type) {
         const Toast = Vue.swal.mixin({
@@ -52,6 +76,14 @@ var API_NOTIFICATION = {
             icon: type,
             title: message
         })
+    },
+
+    showNotificationW(title, message, type) {
+        Vue.swal(
+            title,
+            message,
+            type
+        );
     }
 }
 export default API_NOTIFICATION 

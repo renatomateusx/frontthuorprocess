@@ -41,6 +41,27 @@ var API_LOJA = {
                     });
             }
         });
+    },
+    GetCheckouts() {
+        return new Promise((resolve, reject) => {
+            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
+                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CHECKOUTS, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
     }
 
 };
