@@ -242,9 +242,9 @@
   font-size: 11px;
   white-space: pre-wrap;
 }
-.imageCard{
-  width: 25px!important;
-  height: 25px!important;
+.imageCard {
+  width: 25px !important;
+  height: 25px !important;
 }
 @media only screen and (max-width: 992px) {
   #btnTop {
@@ -718,7 +718,11 @@
                     <div class="form-group row formGroup mt-3">
                       <label class="col-xl-12 col-form-label labelForm">
                         Número do Cartão
-                        <img class="imageCard" v-show="this.payment_id" :src="getImageCard()" />
+                        <img
+                          class="imageCard"
+                          v-show="this.payment_id"
+                          :src="getImageCard()"
+                        />
                       </label>
                       <div class="col-md-7">
                         <input
@@ -867,86 +871,7 @@
         <!-- END STEP 3-->
       </div>
     </div>
-    <!-- ESSE FORM AQUI ABAIXO VAI PEGAR AS INFORMAÇÕES -->
-    <!-- INÍCIO DO FORM-->
-    <form action="/processar_pagamento" method="post" id="pay" name="pay">
-      <fieldset>
-        <input
-          type="text"
-          name="description"
-          id="description"
-          v-bind:value="'Compra na Loja '+ this.dadosLoja.nome_loja"
-        />
-        <input
-          name="transaction_amount"
-          id="transaction_amount"
-          v-bind:value="formatPrice(this.getTotal().total)"
-        />
-        <input
-          :value="card_number.replace(/ /g,'')"
-          type="text"
-          id="cardNumber"
-          data-checkout="cardNumber"
-          onselectstart="return false"
-          onpaste="return false"
-          oncopy="return false"
-          oncut="return false"
-          ondrag="return false"
-          ondrop="return false"
-          autocomplete="off"
-        />
-        <input type="text" id="cardholderName" :value="nome_titular" data-checkout="cardholderName" />
-        <input
-          type="text"
-          id="cardExpirationMonth"
-          data-checkout="cardExpirationMonth"
-          :value="getValidadeCartao().mes"
-          onselectstart="return false"
-          onpaste="return false"
-          oncopy="return false"
-          oncut="return false"
-          ondrag="return false"
-          ondrop="return false"
-          autocomplete="off"
-        />
-        <input
-          type="text"
-          id="cardExpirationYear"
-          :value="getValidadeCartao().ano"
-          data-checkout="cardExpirationYear"
-          onselectstart="return false"
-          onpaste="return false"
-          oncopy="return false"
-          oncut="return false"
-          ondrag="return false"
-          ondrop="return false"
-          autocomplete="off"
-        />
-        <input
-          type="text"
-          id="securityCode"
-          v-model="codigo_seguranca"
-          data-checkout="securityCode"
-          onselectstart="return false"
-          onpaste="return false"
-          oncopy="return false"
-          oncut="return false"
-          ondrag="return false"
-          ondrop="return false"
-          autocomplete="off"
-        />
-        <select id="installments" v-model="parcelas" class="form-control" name="installments">
-          <option v-bind:value="parcelas" selected="selected"></option>
-        </select>
-        <select id="docType" data-checkout="docType">
-          <option value="CPF" selected="selected">CPF</option>
-        </select>
-        <input type="text" id="docNumber" v-model="cpf_titular" data-checkout="docNumber" />
-        <input type="email" id="email" name="email" v-model="email" />
-        <input type="hidden" name="payment_method_id" v-model="payment_id" id="payment_method_id" />
-      </fieldset>
-    </form>
-    <!-- FINAL DO FORM-->
+    <div id="formPayMP"></div>
   </div>
 </template>
 
@@ -965,9 +890,13 @@ import API_CHECKOUT from "../../api/checkoutAPI";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
-//import mercadopago from "mercadopago";
+import form_auxiliar_mp from "../../utilis/form_auxiliar_mp";
+import UTILIS_CHECKOUT_MP from "../../utilis/utilis_checkout_mp";
+import LoadScript from "vue-plugin-load-script";
 
-//Vue.use(mercadopago);
+Vue.prototype.$DadosCheckout = {};
+
+Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -975,6 +904,13 @@ Vue.use(VeeValidate, {
 
 Vue.component("multiselect", Multiselect);
 Vue.use(money, { precision: 2 });
+
+Vue.mixin({
+  data: function() {
+    return {};
+  }
+});
+
 export default {
   created() {
     if (sessionStorage.getItem("fretes") != null) {
@@ -1030,8 +966,7 @@ export default {
       formaPagamento: "any",
       ImageProcessor: "",
       vueSelectValue: "",
-      totalQuantity: 0,
-      DadosCheckout: {}
+      totalQuantity: 0
     };
   },
   mounted() {
@@ -1115,11 +1050,6 @@ export default {
         try {
           API_PRODUTOS.GetProdutoByIDThuor(product, quantity, variante_id)
             .then(retorno => {
-              //console.log("Opa", product, quantity, variante_id);
-              //console.log("Opa", retorno.data);
-
-              //this.produtosCart.push(LProd);
-              //console.log("Lprod", LProd);
               resolve(retorno.data);
             })
             .catch(error => {
@@ -1139,7 +1069,6 @@ export default {
           this.recalculaSubtotal();
         }
       }
-      //console.log("ID Thuor", id);
     },
     async getDadosLoja() {
       //API_NOTIFICATION.ShowLoading();
@@ -1150,7 +1079,6 @@ export default {
           const LojaData = res.data;
           this.dadosLoja = LojaData;
           sessionStorage.setItem("DadosLoja", JSON.stringify(LojaData));
-          //API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
           console.log("Erro ao pegar dados da Loja", error);
@@ -1191,10 +1119,7 @@ export default {
     },
     async changeQuantity(idThuor) {
       var Comp = document.getElementById("qtd_" + idThuor);
-      //console.log("IdThuor", idThuor);
-      //console.log("Comp", Comp.value);
       for (const [i, item] of this.produtosCart.entries()) {
-        //this.produtosCart.forEach((item, i)=>{
         if (item.id_thuor == idThuor) {
           item.quantity = Comp.value;
           this.produtosCart[i].quantity = Comp.value;
@@ -1259,11 +1184,6 @@ export default {
           this.stepDadosPessoaisFinalizados = 1;
           this.currentStep = 2;
           API_NOTIFICATION.HideLoading();
-        } else {
-          // API_NOTIFICATION.showNotification(
-          //   "Todos os campos são obrigatórios!",
-          //   "error"
-          // );
         }
       } else if (this.currentStep == 2) {
         if (
@@ -1275,7 +1195,6 @@ export default {
         ) {
           API_LOJA.GetFretes()
             .then(retornoFretes => {
-              //console.log("Retorno Frtes", retornoFretes);
               sessionStorage.setItem(
                 "fretes",
                 JSON.stringify(retornoFretes.data)
@@ -1293,14 +1212,12 @@ export default {
                 error
               );
             });
-        } else {
-          // API_NOTIFICATION.showNotification(
-          //   "Campos de Endereço são obrigatórios!",
-          //   "error"
-          // );
         }
       } else if (this.currentStep == 3) {
-        this.pay();
+        ///Verifica se o gateway é o MERCADO PAGO
+        if (Vue.prototype.$DadosCheckout.gateway == 1) {
+          UTILIS_CHECKOUT_MP.pay();
+        }
       }
     },
     editarDadosPessoais() {
@@ -1401,160 +1318,22 @@ export default {
     getCheckouts() {
       API_LOJA.GetCheckouts()
         .then(retornoCheckout => {
-          this.DadosCheckout = retornoCheckout.data;
-          this.iniciaChehckout();
+          Vue.prototype.$DadosCheckout = retornoCheckout.data;
+          if (Vue.prototype.$DadosCheckout.gateway == 1) {
+            //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
+            document.getElementById("formPayMP").innerHTML =
+              form_auxiliar_mp.FORM_AUXILIAR_MP;
+            UTILIS_CHECKOUT_MP.iniciaCheckout();
+          }
         })
         .catch(error => {
           console.log("Erro ao tentar pegar dados do checkout", error);
         });
     },
-    iniciaChehckout() {
-      if (this.DadosCheckout.gateway == 1) {
-        this.ImageProcessor =
-          "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
-        window.Mercadopago.setPublishableKey(this.DadosCheckout.chave_publica);
-        //console.log(window.Mercadopago.getIdentificationTypes());
-      }
-    },
-    verificaDigitosCartao() {
-      if (this.DadosCheckout.gateway == 1) {
-        const binCard = this.card_number.replace(/ /g, "");
-        if (binCard.length >= 6) {
-          let bin = binCard.substring(0, 6);
-          window.Mercadopago.getPaymentMethod(
-            {
-              bin: bin
-            },
-            this.setPaymentMethod
-          );
-        }
-      }
-      this.maskCardNumber();
-    },
-    setPaymentMethod(status, response) {
-      //console.log("Response", response);
-      if (status == 200) {
-        this.payment_id = response[0].id;
-        ////console.log("Payment ID", this.payment_id);
-        this.getParcelas();
-      } else {
-        alert(`payment method info error: ${response}`);
-      }
-    },
-    getValidadeCartao() {
-      var LMes = this.validade.split("/")[0];
-      var LAno = this.validade.split("/")[1];
-      var LVal = {
-        mes: LMes,
-        ano: LAno
-      };
-      return LVal;
-    },
-    getParcelas() {
-      window.Mercadopago.getInstallments(
-        {
-          payment_method_id: this.payment_id,
-          amount: this.getTotal().total
-        },
-        function(status, response) {
-          if (status == 200) {
-            document.getElementById("dropParcelas").options.length = 0;
-
-            response[0].payer_costs.forEach(installment => {
-              let opt = document.createElement("option");
-              opt.text = installment.recommended_message;
-              opt.value = installment.installments;
-              opt.id = installment.installments;
-              opt.selected = true;
-              document.getElementById("dropParcelas").appendChild(opt);
-              if (opt.id == 12) {
-                document.getElementById(opt.id).selected = true;
-              }
-            });
-          } else {
-            console.log(`installments method info error: ${response}`);
-          }
-        }
-      );
-    },
-    pay() {
-      API_NOTIFICATION.ShowLoading();
-      const form = document.querySelector("#pay");
-      //console.log("Form", form);
-      window.Mercadopago.createToken(form, this.iniciaPagamentoBackEnd);
-    },
-    iniciaPagamentoBackEnd(status, response) {
-      if (status != 200 && status != 201) {
-        console.log("Não foi possível gerar o token", response.message);
-        window.Mercadopago.clearSession();
-        API_NOTIFICATION.showNotificationW(
-          "Oops!",
-          "Não foi possível completar a ação. Tente novamente!",
-          "warning"
-        );
-      } else {
-        this.cardToken = response.id;
-
-        //while (this.try == false) {
-        console.log(this.cardToken);
-        var cart = this.produtosCart;
-        var transacao = {
-          dadosComprador: {
-            nome_completo: this.nome_completo,
-            email: this.email,
-            cpf: this.cpf,
-            telefone: this.telefone,
-            cep: this.cep,
-            endereco: this.endereco,
-            numero_porta: this.numero_porta,
-            bairro: this.bairro,
-            cidade: this.cidade,
-            estado: this.estado,
-            complemento: this.complemento,
-            destinatario: this.destinatario,
-            numero_cartao: this.numero_cartao,
-            validade: this.validade,
-            nome_titular: this.nome_titular,
-            codigo_segurança: this.codigo_seguranca,
-            cpf_titular: this.cpf_titular
-          },
-          produtos: cart,
-          dadosLoja: this.dadosLoja,
-          dadosCheckout: this.DadosCheckout,
-          paymentData: {
-            transaction_amount: this.formatPrice(this.getTotal().total),
-            token: this.cardToken,
-            description: this.dadosLoja.nome_loja,
-            installments: this.parcelas,
-            payment_method_id: this.payment_id,
-            payer: {
-              email: this.email
-            }
-          }
-        };
-        const JSONString = JSON.stringify(transacao);
-        const LCripto = btoa(JSONString);
-        API_NOTIFICATION.ShowLoading();
-        API_CHECKOUT.DoPayBackEnd(LCripto)
-          .then(retornoPay => {
-            console.log("Enviado para o backend");
-            API_NOTIFICATION.HideLoading();
-          })
-          .catch(error => {
-            console.log("Erro ao tentar efetuar o pagamento", error);
-            API_NOTIFICATION.showNotification(
-              "Por favor, tente novamente ",
-              "error"
-            );
-          });
-
-        //break;
-      }
-    },
     getImageCard() {
       if (this.payment_id !== undefined && this.payment_id.length > 1) {
         let bandeira = this.payment_id;
-        if(bandeira == 'master') bandeira = 'mastercard';
+        if (bandeira == "master") bandeira = "mastercard";
         return (
           "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
         );

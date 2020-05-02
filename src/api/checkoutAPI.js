@@ -20,7 +20,26 @@ var API_CHECKOUT = {
                 });
 
         });
+    },
+    DoPayBackEndTicket(cripto) {
+        return new Promise((resolve, reject) => {
+            let LBody = {
+                pay: cripto
+            }
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_PAY_CHECKOUT_TICKET, LBody)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(response);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+
+        });
     }
+    
 
 };
 export default API_CHECKOUT 
