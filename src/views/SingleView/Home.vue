@@ -2,7 +2,7 @@
   <ContentWrapper>
     <div class="content-heading">
       <div>
-        Página Inicial
+        Dashboard
         <small>{{selectUserName()}}</small>
       </div>
       <!-- START Language list-->
@@ -24,7 +24,6 @@
 </template>
 
 <script>
-
 import Loading from "vue-loading-overlay";
 import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
@@ -47,12 +46,7 @@ export default {
         }
       },
       selectUserName() {
-        if (sessionStorage.getItem("user") === undefined)
-          this.$router.go("login");
         var LUser = JSON.parse(sessionStorage.getItem("user"));
-        if (LUser === undefined || LUser === null) {
-          this.$router.go("login");
-        }
         if (LUser !== undefined && LUser !== null) {
           return `Bem vindo ao Thuor, ${LUser.user.nome}!`;
         }
@@ -64,13 +58,10 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-         API_NOTIFICATION.HideLoading();
+          API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
-          if (error.response.status === 401) {
-            this.$router.push("login");
-          }
         });
     },
     changeLanguage(lang) {

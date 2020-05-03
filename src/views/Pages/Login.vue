@@ -144,7 +144,7 @@ export default {
             .then(retorno => {
               if (retorno !== undefined) {
                 sessionStorage.setItem("user", JSON.stringify(retorno.data));
-                this.$router.go("home");
+                this.$router.push("/home");
               }
               API_NOTIFICATION.HideLoading();
             })
@@ -162,23 +162,7 @@ export default {
       });
     },
     checkIfLogged() {      
-      
-      if (
-        sessionStorage.getItem("user") !== undefined &&
-        sessionStorage.getItem("user") !== null
-      ) {
-        var LUser = JSON.parse(sessionStorage.getItem("user"));
-        if (LUser != null) {
-          API_LOGIN.VerificaToken()
-            .then(res => {
-              API_NOTIFICATION.ShowLoading();
-              this.$router.push('home');
-            })
-            .catch(res => {
-              API_NOTIFICATION.HideLoading();
-            });
-        }
-      }
+      sessionStorage.removeItem("user");      
     }
   }
 };

@@ -89,7 +89,7 @@
 .sku {
   font-size: 13px;
   font-weight: 700;
-  font-family: Rubik, sans-serif!important;
+  font-family: Rubik, sans-serif !important;
   color: purple;
 }
 .myDropDownPrazo /deep/ .dropdown-menu {
@@ -289,10 +289,12 @@
                   <div class="card-body">
                     <span class="col-md-9 col-form-label labelCheckBox">Gerenciar Estoque?</span>
 
-                    <p><small class="col-md-9 col-form-label">Para não gerenciar o estoque, deixe em branco ou zerado em clique em salvar</small></p>
-                    <div
-                      class="card"                      
-                    >
+                    <p>
+                      <small
+                        class="col-md-9 col-form-label"
+                      >Para não gerenciar o estoque, deixe em branco ou zerado em clique em salvar</small>
+                    </p>
+                    <div class="card">
                       <div class="form-group">
                         <div class="col-lg-6">
                           <span class="col-md-4 col-form-label labelCheckBox">Quantidade</span>
@@ -538,7 +540,7 @@
                     class="text-muted"
                     title="Clique para copiar"
                     style="cursor:pointer!important;"
-                    @click.stop.prevent="copyToClip('https://thuor.com/pagamento/'+id)"
+                    @click.stop.prevent="copyToClip('https://thuor.com/pay/'+getCripto(produtoByID.id, id))"
                   >
                     <span class="fa fa-link linkCompra"></span>
                     <strong class="linkCompra">Link de Compra</strong>
@@ -569,8 +571,14 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import Datatable from "@/components/Tables/Datatable";
 import money from "v-money";
 import moment from "moment";
-Vue.use(Loading);
+////import VueCryptojs from "vue-cryptojs";
 
+/////Vue.use(VueCryptojs);
+
+import Hashids from 'hashids';
+
+
+Vue.use(Loading);
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
@@ -660,39 +668,53 @@ export default {
     },
     checkIfLogged() {
       API_NOTIFICATION.ShowLoading();
-      console.log("Query Page", this.$route.params.id);
       var LID_PRODUTO = this.$route.params.id;
       API_LOGIN.VerificaToken()
         .then(res => {
-          console.log(typeof  LID_PRODUTO);
-          if (LID_PRODUTO !== undefined && typeof LID_PRODUTO !== 'string') {
+          if (LID_PRODUTO !== undefined) {
             API_PRODUTOS.GetProdutoByID(LID_PRODUTO)
               .then(retProd => {
-                var LImages = JSON.parse(retProd.data.json_dados_produto);
-                //console.log(JSON.parse(retProd.data.json_dados_produto));
-                this.produtoByID = JSON.parse(retProd.data.json_dados_produto);
-                this.produtoTable = retProd.data;
-                this.statusProd = this.produtoTable.status;
-                this.customFrete = this.produtoTable.custom_frete;
-                this.preco_frete = this.produtoTable.preco_frete;
-                this.produtoByID.variants.forEach((obj, i) => {
-                  console.log("obj", obj.id);
-                  this.getDadosEstoqueByVariante(obj.id);
-                });
+                console.log("Ret Prod", retProd.data.length);
+                if (retProd.data != undefined) {
+                  console.log("Ret Prod", retProd);
+                  var LImages = JSON.parse(retProd.data.json_dados_produto);
+                  //console.log(JSON.parse(retProd.data.json_dados_produto));
+                  this.produtoByID = JSON.parse(
+                    retProd.data.json_dados_produto
+                  );
+                  this.produtoTable = retProd.data;
+                  this.statusProd = this.produtoTable.status;
+                  this.customFrete = this.produtoTable.custom_frete;
+                  this.preco_frete = this.produtoTable.preco_frete;
+                  this.produtoByID.variants.forEach((obj, i) => {
+                    console.log("obj", obj.id);
+                    this.getDadosEstoqueByVariante(obj.id);
+                  });
 
-                document.getElementById(
-                  "preco_frete"
-                ).value = this.produtoTable.preco_frete;
-                //console.log("Dados Produto", this.preco_frete);
-                this.dtOptions1.data = this.produtosList;
-                API_NOTIFICATION.HideLoading();
+                  document.getElementById(
+                    "preco_frete"
+                  ).value = this.produtoTable.preco_frete;
+                  //console.log("Dados Produto", this.preco_frete);
+                  this.dtOptions1.data = this.produtosList;
+                  API_NOTIFICATION.HideLoading();
+                } else {
+                  API_NOTIFICATION.showNotificationW(
+                    "Oops!",
+                    "Produto inexistente",
+                    "error"
+                  );
+                  console.log("Erro");
+                  setTimeout(() => {
+                    this.$router.push("/todos");
+                  }, 1500);
+                }
               })
               .catch(error => {
                 console.log("Erro ao pegar produtos", error);
               });
-          }
-          else{
+          } else {
             API_NOTIFICATION.Notifica("Oops!", "Parâmetro Inválido", "error");
+            this.$router.push("/todos");
             ////this.$router.push('../../home');
           }
         })
@@ -820,14 +842,15 @@ export default {
     },
     getImageVariantById(idImage) {
       var images = this.produtoByID.images;
-      return images.find(x => x.id === idImage).src;
+      if(idImage == undefined) return "";
+      return images.find(x => x.id === idImage).src || ``;
       // images.forEach((obj, i) => {
 
       // });
     },
     getVariantOptionByTitle(title) {
       var variantes = this.produtoByID.variants;
-      return variantes.find(x => x.title === title);
+      return variantes.find(x => x.title === title) || ``;
     },
     copyToClip(comp) {
       document.getElementById("copyClipBoard").value = comp;
@@ -976,6 +999,15 @@ export default {
           return 0;
         }
       }, 1000);
+    },
+    getCripto(id_produto, id_variante) {
+      // console.log(id_produto);
+      const hashids = new Hashids('', 0, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      const produtHashed= hashids.encode(id_produto.toString(), id_variante.toString());
+      // const numbers = hashids.decode(produtHashed);
+      // console.log("ID Hashedid", produtHashed);
+      // console.log("ID Deshashed", numbers);
+      return produtHashed;
     }
   }
 };

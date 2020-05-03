@@ -21,6 +21,24 @@ var API_LOJA = {
 
         });
     },
+    GetDadosLojaByIdUsuario(id_usuario) {
+        return new Promise((resolve, reject) => {
+            let LBody = {
+                id_usuario: id_usuario
+            }
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_LOJA_BY_ID_USUARIO, LBody)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(response);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+
+        });
+    },
     GetFretes() {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {

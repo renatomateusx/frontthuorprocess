@@ -5,6 +5,12 @@ module.exports = {
     baseUrl: process.env.VUE_BASE_URL || '/',
     productionSourceMap: false,
     configureWebpack: {
+         resolve: {
+            alias: {
+                'vue$': 'vue/dist/vue.esm.js'
+            },
+            extensions: ['*', '.js', '.vue', '.json']
+        },
         module: {
             // Fix for flot resize
             rules: [{

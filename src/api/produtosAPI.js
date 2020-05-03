@@ -63,6 +63,26 @@ var API_PRODUTOS = {
 
         });
     },
+    GetProdutoByIDImported(id, quant, variant) {
+        return new Promise((resolve, reject) => {
+            let LBody = {
+                id_produto: id,
+                quantity: quant,
+                variant: variant
+            }
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID_IMPORTED, LBody)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(response);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+
+        });
+    },
     ImportFromShopify() {
         return new Promise((resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));

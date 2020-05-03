@@ -22,24 +22,16 @@ var API_LOGIN = {
   },
   VerificaToken() {
     return new Promise((resolve, reject) => {
-      if (sessionStorage.getItem("user") === undefined || sessionStorage.getItem("user") === null) {
-        router.push('../../login');
-        return;
-      }
-      var LUser = JSON.parse(sessionStorage.getItem("user"));
-      if (LUser == null) {
-        router.push('../../login');
-        return;
-      }
-
+      if (sessionStorage.getItem("user") == undefined || sessionStorage.getItem("user") == null) {
+        router.push('/login');
+      }            
       axios.interceptors.response.use((response) => {
         // Do something with response data
         return response;
       }, (error) => {
         if (error.response.status === 401) {
           sessionStorage.removeItem("user");
-          router.push('../../login');
-          
+          router.push('/login');          
         }
         return Promise.reject(error);
       });
