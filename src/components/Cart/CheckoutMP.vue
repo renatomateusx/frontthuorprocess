@@ -1045,20 +1045,13 @@ export default {
       ImageProcessor: "",
       vueSelectValue: "",
       totalQuantity: 0,
-      granTotal:0,
-      granDesconto:0,
-      granQuantity:0,
-      granSubTotal:0,
+      granTotal: 0,
+      granDesconto: 0,
+      granQuantity: 0,
+      granSubTotal: 0
     };
   },
   mounted() {
-    const plugin = document.createElement("script");
-    plugin.setAttribute(
-      "src",
-      "https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"
-    );
-    plugin.async = true;
-    document.head.appendChild(plugin);
   },
   methods: {
     formatPrice(value) {
@@ -1142,13 +1135,12 @@ export default {
         }
       });
     },
-    async recalculaSubtotal() {},
     async remove(id) {
       for (var i = 0; i < this.produtosCart.length; i++) {
         if (this.produtosCart[i].id_thuor == id) {
           this.produtosCart.splice(i, 1);
           sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
-          this.recalculaSubtotal();
+          this.getTotal();
         }
       }
     },
@@ -1207,9 +1199,15 @@ export default {
             this.cidade = retornoCEP.localidade;
             this.estado = retornoCEP.uf;
             this.complemento = retornoCEP.complemento;
-            this.destinatario = nome_completo;
+            this.destinatario = this.nome_completo;
           })
           .catch(error => {
+            this.endereco = "";
+            this.bairro = "";
+            this.cidade = "";
+            this.estado = "";
+            this.complemento = "";
+            this.destinatario = "";
             console.log(
               "Erro ao tentar pegar dados do endereço do usuário",
               error
@@ -1228,10 +1226,10 @@ export default {
       API_NOTIFICATION.ShowLoading();
       if (this.currentStep == 1) {
         if (
-          UTILIS.isValidName(nome_completo) &&
-          UTILIS.isValidEmail(email) &&
-          UTILIS.isValidCPF(cpf) &&
-          UTILIS.isValidTelefone(telefone)
+          UTILIS.isValidName(this.nome_completo) &&
+          UTILIS.isValidEmail(this.email) &&
+          UTILIS.isValidCPF(this.cpf) &&
+          UTILIS.isValidTelefone(this.telefone)
         ) {
           this.nome_completo = this.nome_completo.toUpperCase();
           this.stepDadosPessoaisFinalizados = 1;
@@ -1240,11 +1238,11 @@ export default {
         }
       } else if (this.currentStep == 2) {
         if (
-          UTILIS.isValidString(CEP, 9, "CEP") &&
-          UTILIS.isValidString(endereco, 5, "Endereço") &&
-          UTILIS.isValidString(numero_porta, 1, "Número do endereço") &&
-          UTILIS.isValidString(bairro, 2, "bairro") &&
-          UTILIS.isValidString(destinatario, 5, "destinatário")
+          UTILIS.isValidString(this.CEP, 9, "CEP") &&
+          UTILIS.isValidString(this.endereco, 5, "Endereço") &&
+          UTILIS.isValidString(this.numero_porta, 1, "Número do endereço") &&
+          UTILIS.isValidString(this.bairro, 2, "bairro") &&
+          UTILIS.isValidString(this.destinatario, 5, "destinatário")
         ) {
           API_LOJA.GetFretes()
             .then(retornoFretes => {
@@ -1255,7 +1253,7 @@ export default {
               retornoFretes.data.forEach((obj, i) => {
                 this.selecionaPadrao(obj.id, obj.preco, obj.nome);
               });
-              this.stepDadosEnderecoFinalizados  = 1;
+              this.stepDadosEnderecoFinalizados = 1;
               this.currentStep = 3;
               API_NOTIFICATION.HideLoading();
             })
@@ -1279,12 +1277,15 @@ export default {
       this.currentStep = 1;
     },
     editarEndereco() {
-      this.stepDadosEnderecoFinalizados  = 0;
+      this.stepDadosEnderecoFinalizados = 0;
       document.getElementById("cep").focus();
       this.currentStep = 2;
     },
     maskCPF() {
-      this.cpf = this.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+      this.cpf = this.cpf.replace(
+        /(\d{3})(\d{3})(\d{3})(\d{2})/,
+        "$1.$2.$3-$4"
+      );
     },
     maskCPFTitular() {
       this.cpf_titular = this.cpf_titular.replace(
@@ -1293,7 +1294,10 @@ export default {
       );
     },
     maskTelefone() {
-      this.telefone = this.telefone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      this.telefone = this.telefone.replace(
+        /(\d{2})(\d{5})(\d{4})/,
+        "($1) $2-$3"
+      );
     },
     maskCardNumber() {
       if (this.payment_id == "amex") {
@@ -1312,12 +1316,13 @@ export default {
       this.validade = this.validade.replace(/(\d{2})(\d{2})/, "$1/$2");
     },
     freteSelected(id) {
-      this.freteselecionado = id;
-      var lnome = this.fretes.find(x => x.id == this.freteselecionado).nome;
+      this.freteSelecionado = id;
+      var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
       this.valorFrete = parseFloat(
-        this.fretes.find(x => x.id == this.freteselecionado).preco
+        this.fretes.find(x => x.id == this.freteSelecionado).preco
       );
-      //console.log("Novo Frte Selecionado", lnome);
+      this.getTotal();
+      console.log("Novo Frte Selecionado", this.valorFrete);
     },
     selecionaPadrao(id, preco, nome) {
       if (
@@ -1326,12 +1331,12 @@ export default {
           .toUpperCase()
           .includes("GRÁTIS" || nome.toUpperCase().includes("GRATIS"))
       ) {
-        freteselected(id);
+        this.freteSelected(id);
       }
       return true;
     },
     getFreteSelecionadoNome() {
-      var lnome = this.fretes.find(x => x.id == this.freteselecionado).nome;
+      var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
       //console.log("Nome Selecionado", lnome);
       return lnome;
     },
@@ -1386,7 +1391,7 @@ export default {
     },
     getImageCard() {
       if (this.payment_id !== undefined && this.payment_id.length > 1) {
-        let bandeira = payment_id;
+        let bandeira = this.payment_id;
         if (bandeira == "master") bandeira = "mastercard";
         return (
           "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
@@ -1402,14 +1407,33 @@ export default {
             {
               bin: bin
             },
-            this.setPaymentMethod
+            (status, response) => {
+              if (status == 200) {
+                this.payment_id = response[0].id;
+                ////console.log("Payment ID", this.payment_id);
+                this.getParcelas();
+              } else {
+                alert(`payment method info error: ${response}`);
+              }
+            }
           );
         }
       }
       this.maskCardNumber();
     },
+    setPaymentMethod(status, response) {
+      //console.log("Response", response);
+      if (status == 200) {
+        this.payment_id = response[0].id;
+        ////console.log("Payment ID", this.payment_id);
+        this.getParcelas();
+      } else {
+        alert(`payment method info error: ${response}`);
+      }
+    },
+
     getStepDadosEnderecoFinalizado() {
-      return this.stepDadosEnderecoFinalizados ;
+      return this.stepDadosEnderecoFinalizados;
     },
     getCidade() {
       return this.cidade;
@@ -1441,16 +1465,20 @@ export default {
       }
       if (this.produtosCart != null) {
         this.produtosCart.forEach((item, i) => {
-          subTotal = parseFloat(subTotal) + parseFloat(item.variant_price_ancora) * parseInt(item.quantity);          
-          total = parseFloat(total) + parseFloat(item.variant_price) * parseFloat(item.quantity);
-          this.granTotal = total;
+          subTotal =
+            parseFloat(subTotal) +
+            parseFloat(item.variant_price_ancora) * parseInt(item.quantity);
+          total =
+            parseFloat(total) +
+            parseFloat(item.variant_price) * parseFloat(item.quantity);
           this.totalQuantity =
             parseInt(this.totalQuantity) + parseInt(item.quantity);
           discount = parseFloat(subTotal) - parseFloat(total);
-          this.granSubTotal = subTotal;
-          this.granDesconto = discount;
         });
         total = parseFloat(total) + parseFloat(this.valorFrete);
+        this.granTotal = total;
+        this.granSubTotal = subTotal;
+        this.granDesconto = discount;
         var LTotal = {
           subTotal: subTotal,
           total: total,
@@ -1479,19 +1507,9 @@ export default {
         //console.log(Mercadopago.getIdentificationTypes());
       }
     },
-    setPaymentMethod(status, response) {
-      //console.log("Response", response);
-      if (status == 200) {
-        this.payment_id = response[0].id;
-        ////console.log("Payment ID", this.payment_id);
-        this.getParcelas();
-      } else {
-        alert(`payment method info error: ${response}`);
-      }
-    },
 
     getParcelas() {
-      Mercadopago.getInstallments(
+      window.Mercadopago.getInstallments(
         {
           payment_method_id: this.payment_id,
           amount: this.granTotal
@@ -1501,11 +1519,11 @@ export default {
             document.getElementById("dropParcelas").options.length = 0;
 
             response[0].payer_costs.forEach(installment => {
+              console.log("INstall", installment.installments);
               let opt = document.createElement("option");
               opt.text = installment.recommended_message;
               opt.value = installment.installments;
               opt.id = installment.installments;
-              opt.selected = true;
               document.getElementById("dropParcelas").appendChild(opt);
               if (opt.id == 12) {
                 document.getElementById(opt.id).selected = true;
@@ -1560,7 +1578,7 @@ export default {
     async iniciaPagamentoBackEnd(status, response) {
       if (status != 200 && status != 201) {
         console.log("Não foi possível gerar o token", response.message);
-        Mercadopago.clearSession();
+        window.Mercadopago.clearSession();
         API_NOTIFICATION.showNotificationW(
           "Oops!",
           "Não foi possível completar a ação. Tente novamente!",
@@ -1575,7 +1593,7 @@ export default {
         API_CHECKOUT.DoPayBackEnd(LCripto)
           .then(retornoPay => {
             console.log("Enviado para o backend");
-            Mercadopago.clearSession();
+            window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
           })
           .catch(error => {
@@ -1590,14 +1608,14 @@ export default {
       }
     },
     async iniciaPagamentoBackEndBoleto() {
-      Mercadopago.clearSession();
+      window.Mercadopago.clearSession();
       this.cardToken = response.id;
       const LCripto = await this.getDadosPagamentoTransacao();
       API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.DoPayBackEndTicket(LCripto)
         .then(retornoPay => {
           console.log("Enviado para o backend");
-          Mercadopago.clearSession();
+          window.Mercadopago.clearSession();
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
@@ -1613,7 +1631,7 @@ export default {
       const form = document.querySelector("#pay");
       //console.log("Form", form);
       if (this.formaPagamento == "creditCard") {
-        Mercadopago.createToken(form, this.iniciaPagamentoBackEnd);
+        window.Mercadopago.createToken(form, this.iniciaPagamentoBackEnd);
       } else if (this.formaPagamento == "boleto") {
       }
     }
