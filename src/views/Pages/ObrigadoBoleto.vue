@@ -8,7 +8,7 @@
           <div class="media-body">
             <h5
               class="m-0 text-bold"
-            >Obrigado(a), {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
+            >Obrigada, {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
           </div>
         </div>
       </div>
@@ -25,11 +25,11 @@
                   <strong><a v-bind:href="dadosStore.order.order_status_url" target="_blank">{{this.dadosStore.order.order_number}}</a></strong>
                 </h4>
               </div>
-              <small>clique no número do pedido para ver detalhes da compra</small>
+              <small>Clique no número do pedido para ver detalhes da compra.</small>
             </div>
             <h4 class="mt-4">Informação Importante:</h4>
             <p
-              class="mt-2"
+              class="mt-2 text-justify"
             >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</p>
           </div>
           <div class="col-xl-8">
@@ -43,9 +43,15 @@
             @click.stop.prevent="copyToClip(dadosCliente.dadosCompra.dataGateway.barcode.content)"
           >
             <h4
-              class="mt-2 mb-2"
-            >Para facilitar, pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
+              class="mt-2 mb-2 text-justify textInformativo "
+            >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
             <h5 class="text-center">{{this.dadosCliente.dadosCompra.dataGateway.barcode.content}}</h5>
+          </div>
+          <div class="col-xl-8 mt-2">
+            <button
+              class="btn btn-success btnDownload btn-block display-inline"
+              v-on:click="voltarLoja()"
+            >Voltar para a loja</button>
           </div>
         </div>
       </div>
@@ -135,17 +141,23 @@ export default {
     openInNewTab(url) {
       var win = window.open(url, "_blank");
       win.focus();
+    },
+    voltarLoja(){
+        window.location.href= "http://"+ this.DadosLoja.url_loja;
     }
   }
 };
 </script>
 <style scoped>
 .divBarCode {
-  background-color: gray;
+  background-color: #D8D8D8;
   cursor: pointer !important;
-  color: white;
+  color: gray;
 }
 .nomeLoja{
     font-size: 20px;
+}
+.textInformativo{
+    font-size: 13px;
 }
 </style>
