@@ -705,7 +705,8 @@
                     :class="getClassSelected('creditCard')"
                   >
                     <p>
-                      <span class="text-left pull-left float-left col-md-10">Cartão de Crédito</span>
+                      <span class="text-left pull-left float-left col-md-10">Cartão de Crédito </span>
+                      <span class="text-left pull-left float-left col-md-10"><img src="img/payment_form.png" style="width: 130px!important; height: auto"></span>
                     </p>
                     <p>
                       <span class="text-left pull-left float-left ml-0 col-md-10">
@@ -804,6 +805,7 @@
                           v-model="parcelas"
                           class="form-control"
                           name="installments"
+                          selectedIndex="0"
                         >
                           <option v-bind:value="parcelas" selected="selected"></option>
                         </select>
@@ -824,25 +826,26 @@
                   </div>
                   <button
                     type="button"
-                    v-on:click="formaPagamentoSelecionada('boleto')"
+                    v-on:click="formaPagamentoSelecionada('bolbradesco')"
                     class="btn btn-secondary col-md-11 pull-left float-left btnFormaPagamentoSelecionada"
-                    :class="getClassSelected('boleto')"
+                    :class="getClassSelected('bolbradesco')"
                   >
                     <p>
-                      <span class="text-left pull-left float-left col-md-10">Boleto</span>
+                      <span class="text-left pull-left float-left col-md-10 fa fa-ticket">Boleto</span>
+                      <span class="text-left pull-left float-left col-md-10"><img src="img/barcode.png" style="width: 35px!important; height: auto"></span>
                     </p>
                     <p>
                       <span class="text-left pull-left float-left ml-0 col-md-10">
                         <small>Processamento em 3 dias.</small>
                       </span>
                     </p>
-                    <p v-if="formaPagamento == 'boleto'">
+                    <p v-if="formaPagamento == 'bolbradesco'">
                       <span class="text-left pull-left float-left ml-0 col-md-10 selecionadoInfo">
                         <small>Selecionado</small>
                       </span>
                     </p>
                   </button>
-                  <div class="card-body minusmargintop" v-show="formaPagamento =='boleto'">
+                  <div class="card-body minusmargintop" v-show="formaPagamento =='bolbradesco'">
                     <div class="form-group row mt-2">
                       <small
                         class="text-justify col-md-12 smallInforFormaPagamentoBoleto"
@@ -1051,8 +1054,7 @@ export default {
       granSubTotal: 0
     };
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
@@ -1250,6 +1252,7 @@ export default {
                 "fretes",
                 JSON.stringify(retornoFretes.data)
               );
+              this.fretes = retornoFretes.data;
               retornoFretes.data.forEach((obj, i) => {
                 this.selecionaPadrao(obj.id, obj.preco, obj.nome);
               });
@@ -1322,7 +1325,6 @@ export default {
         this.fretes.find(x => x.id == this.freteSelecionado).preco
       );
       this.getTotal();
-      console.log("Novo Frte Selecionado", this.valorFrete);
     },
     selecionaPadrao(id, preco, nome) {
       if (
@@ -1345,6 +1347,7 @@ export default {
     },
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
+      this.payment_id = fmp;
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -1393,6 +1396,7 @@ export default {
       if (this.payment_id !== undefined && this.payment_id.length > 1) {
         let bandeira = this.payment_id;
         if (bandeira == "master") bandeira = "mastercard";
+        if(bandeira == "creditCard") bandeira="visa";
         return (
           "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
         );
@@ -1410,8 +1414,11 @@ export default {
             (status, response) => {
               if (status == 200) {
                 this.payment_id = response[0].id;
-                ////console.log("Payment ID", this.payment_id);
-                this.getParcelas();
+                ////console.log("P  ayment ID", this.payment_id);
+                if (document.getElementById("dropParcelas").length < 2) {
+                  this.getParcelas();
+                }
+                this.setParcelas();
               } else {
                 alert(`payment method info error: ${response}`);
               }
@@ -1507,7 +1514,6 @@ export default {
         //console.log(Mercadopago.getIdentificationTypes());
       }
     },
-
     getParcelas() {
       window.Mercadopago.getInstallments(
         {
@@ -1517,17 +1523,15 @@ export default {
         function(status, response) {
           if (status == 200) {
             document.getElementById("dropParcelas").options.length = 0;
-
             response[0].payer_costs.forEach(installment => {
-              console.log("INstall", installment.installments);
               let opt = document.createElement("option");
               opt.text = installment.recommended_message;
               opt.value = installment.installments;
-              opt.id = installment.installments;
+              opt.id = "parcel_" + installment.installments;
               document.getElementById("dropParcelas").appendChild(opt);
-              if (opt.id == 12) {
-                document.getElementById(opt.id).selected = true;
-              }
+              setTimeout(() => {
+                document.getElementById("dropParcelas").selectedIndex = 0;
+              }, 1000);
             });
           } else {
             console.log(`installments method info error: ${response}`);
@@ -1535,14 +1539,19 @@ export default {
         }
       );
     },
-    getDadosPagamentoTransacao() {
+    setParcelas() {
+      setTimeout(() => {
+        document.getElementById("dropParcelas").selectedIndex = 0;
+      }, 1000);
+    },
+    getDadosPagamentoTransacao() {      
       var transacao = {
         dadosComprador: {
           nome_completo: this.nome_completo,
           email: this.email,
           cpf: this.cpf,
           telefone: this.telefone,
-          cep: this.cep,
+          cep: this.CEP,
           endereco: this.endereco,
           numero_porta: this.numero_porta,
           bairro: this.bairro,
@@ -1592,7 +1601,16 @@ export default {
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT.DoPayBackEnd(LCripto)
           .then(retornoPay => {
-            console.log("Enviado para o backend");
+            console.log("Enviado para o backend", retornoPay.data);
+            var DadosCliente = {
+              nome: this.nome_completo,
+              dadosCompra: retornoPay.data
+            };
+            sessionStorage.setItem(
+              "dadosCliente",
+              JSON.stringify(DadosCliente)
+            );
+            this.$router.push("/obrigado-cartao");
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
           })
@@ -1609,12 +1627,17 @@ export default {
     },
     async iniciaPagamentoBackEndBoleto() {
       window.Mercadopago.clearSession();
-      this.cardToken = response.id;
       const LCripto = await this.getDadosPagamentoTransacao();
       API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.DoPayBackEndTicket(LCripto)
         .then(retornoPay => {
-          console.log("Enviado para o backend");
+          console.log("Enviado para o backend", retornoPay.data);
+          var DadosCliente = {
+            nome: this.nome_completo,
+            dadosCompra: retornoPay.data
+          };
+          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          this.$router.push("/obrigado-boleto");
           window.Mercadopago.clearSession();
           API_NOTIFICATION.HideLoading();
         })
@@ -1632,7 +1655,8 @@ export default {
       //console.log("Form", form);
       if (this.formaPagamento == "creditCard") {
         window.Mercadopago.createToken(form, this.iniciaPagamentoBackEnd);
-      } else if (this.formaPagamento == "boleto") {
+      } else if (this.formaPagamento == "bolbradesco") {
+        this.iniciaPagamentoBackEndBoleto();
       }
     }
   }

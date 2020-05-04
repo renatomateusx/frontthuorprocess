@@ -35,11 +35,11 @@ Vue.mixin({
 
 export default {
   created() {
+    API_NOTIFICATION.ShowLoading();
     if (sessionStorage.getItem("fretes") != null) {
       this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
       //console.log(fretes);
-    }
-    API_NOTIFICATION.ShowLoading();
+    }    
     this.checkURL();
   },
   computed: {},
@@ -54,6 +54,7 @@ export default {
         precision: 2,
         masked: false /* doesn't work with directive */
       },
+      componenteMPLoaded: "",
       DadosCheckout: {},
       produtosCart: [],
       fretes: [],
@@ -97,11 +98,16 @@ export default {
   },
   mounted() {
     const plugin = document.createElement("script");
+    plugin.onload = function() {
+      this.componenteMPLoaded = 1;
+      console.log("Carregado Script MP", this.componenteMPLoaded);
+    };
     plugin.setAttribute(
       "src",
       "https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"
     );
     plugin.async = true;
+
     document.head.appendChild(plugin);
   },
   methods: {
@@ -138,7 +144,7 @@ export default {
           this.produtosCart.push(lpro);
         }
         sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
-        API_NOTIFICATION.HideLoading();
+        
         //GUARDA O [1] PARA USAR COMO QUISER.
         window.location.href = newURL[0];
         if (redirectTo == "checkout") {
@@ -152,7 +158,7 @@ export default {
         const LCart = sessionStorage.getItem("cart");
         this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
         this.produtosCart = JSON.parse(LCart);
-        API_NOTIFICATION.HideLoading();
+        
       }
     },
 
@@ -176,24 +182,38 @@ export default {
           this.DadosCheckout = retornoCheckout.data;
           if (this.DadosCheckout.gateway == 1) {
             //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
-            this.iniciaCheckout();
+           
+              this.iniciaCheckout();
+            
           }
         })
         .catch(error => {
           console.log("Erro ao tentar pegar dados do checkout", error);
         });
     },
-    iniciaCheckout() {
+    async iniciaCheckout() {
       if (this.DadosCheckout.gateway == 1) {
-        var ComponentClass = Vue.extend(CheckoutMP);
-        var instance = new ComponentClass();
-        instance.$mount(); // pass nothing
-        this.$refs.container.appendChild(instance.$el);
-        this.ImageProcessor =
-          "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
-        window.Mercadopago.setPublishableKey(this.DadosCheckout.chave_publica);
-        //console.log(Mercadopago.getIdentificationTypes());
+        await this.sleep(1000);
+        if (window.Mercadopago != undefined) {
+          var ComponentClass = Vue.extend(CheckoutMP);
+          var instance = new ComponentClass();
+          instance.$mount(); // pass nothing
+          this.$refs.container.appendChild(instance.$el);
+          this.ImageProcessor =
+            "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
+          window.Mercadopago.setPublishableKey(
+            this.DadosCheckout.chave_publica
+          );
+          API_NOTIFICATION.HideLoading();
+          //console.log(Mercadopago.getIdentificationTypes());
+        }else{
+          await this.sleep(1000);
+          this.iniciaCheckout();
+        }
       }
+    },
+    sleep(seconds){
+      return new Promise(r => setTimeout(r, seconds));
     }
   }
 };
