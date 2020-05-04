@@ -135,7 +135,7 @@
   box-sizing: border-box;
 }
 .card-default {
-  border-radius: 20px;
+  border-radius: 7px;
 }
 .btnContinue {
   height: 50px;
@@ -143,7 +143,7 @@
   border-radius: 10px;
 }
 .rounded {
-  border-radius: 20px !important;
+  border-radius: 7px !important;
 }
 .disabledBox {
   cursor: default;
@@ -247,6 +247,14 @@
   width: 25px !important;
   height: 25px !important;
 }
+.valorTotalCollapse{
+  font-weight: 700;
+  color:#3FC583!important;
+  font-size: 15px!important;
+}
+.hidden{
+  display: none!important;
+}
 @media only screen and (max-width: 992px) {
   #btnTop {
     display: block !important;
@@ -309,7 +317,8 @@
                   style="cursor:pointer!important;"
                   class="ml-2 text-left textItems"
                 >{{totalQuantity}} Item(ns)</small>
-                <span class="fa fa-arrow-down comandoCollapse" id="comandoCollapse" role="button"></span>
+                <small class="valorTotalCollapse pull-right float-right">R$ {{this.formatPrice(granTotal)}}<span class="fa fa-arrow-down comandoCollapse pull-right float-right" id="comandoCollapse" role="button"></span></small>
+                
               </a>
 
               <div class="col-lg-12 collapse" id="collapseResumo" data-parent="#collapseParent">
@@ -325,7 +334,7 @@
                         :key="id_thuor"
                       >
                         <div class="row col-md-12">
-                          <div class="mt-3 w-100">
+                          <div class="mt-2 w-100">
                             <img class="rounded img-fluid float-left imgVariant" :src="variant_img" />
                             <div class="product-name">
                               <div class="product-name">
@@ -879,7 +888,7 @@
       </div>
     </div>
     <div id="formPayMP">
-      <form action="/processar_pagamento" method="post" id="pay" name="pay">
+      <form action="/processar_pagamento" method="post" id="pay" name="pay" class="hidden">
         <fieldset>
           <input type="text" name="description" id="description" v-bind:value="getNomeLoja()" />
           <input
