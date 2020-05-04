@@ -247,17 +247,34 @@
   width: 25px !important;
   height: 25px !important;
 }
-.valorTotalCollapse{
+.valorTotalCollapse {
   font-weight: 700;
-  color:#3FC583!important;
-  font-size: 15px!important;
+  color: #3fc583 !important;
+  font-size: 15px;
 }
-.hidden{
-  display: none!important;
+.hidden {
+  display: none !important;
 }
 @media only screen and (max-width: 992px) {
   #btnTop {
     display: block !important;
+  }
+  .valorTotalCollapse {
+    font-weight: 700;
+    color: #3fc583 !important;
+    font-size: 11px !important;
+    top: 3px !important;
+    position: relative;
+  }
+  .resumoCompra {
+    font-size: 13px !important;
+  }
+  .comandoCollapse {
+    margin-left: 5px;
+    top: 0px !important;
+    position: relative;
+    color: dodgerblue;
+    font-size: 15px !important;
   }
 }
 @media only screen and (max-width: 767px) {
@@ -271,6 +288,27 @@
     top: -54px;
     cursor: pointer;
     font-size: 25px;
+  }
+  .valorTotalCollapse {
+    font-weight: 700;
+    color: #3fc583;
+    font-size: 11px!important;
+    top: 3px!important;
+    position: relative;
+  }
+  .resumoCompra {
+    font-size: 13px !important;
+  }
+  .comandoCollapse {
+    margin-left: 5px;
+    top: 0px !important;
+    position: relative;
+    color: dodgerblue;
+    font-size: 15px !important;
+  }
+  .textItems{
+    position: relative;
+    top: 0px!important;
   }
 }
 </style>
@@ -301,9 +339,9 @@
       </div>
       <div class="row col-lg-4 col-lg-offset-2" style=" margin: 0 auto; display:block">
         <!-- START STEP 4-->
-        <div class="col-md-4 mt-0 cardSide">
+        <div class="col-md-4 mt-0 mb-0 cardSide">
           <!-- START card-->
-          <div class="card card-default mb-1">
+          <div class="card card-default mb-0">
             <div class="card-header rounded">
               <a
                 style="cursor:pointer!important;"
@@ -312,13 +350,23 @@
                 aria-controls="collapseResumo"
                 v-on:click="collapse('#collapseResumo','#comandoCollapse')"
               >
-                <span id="collapseParent" class="resumoCompra" role="button">Resumo da Compra</span>
+                <span
+                  id="collapseParent"
+                  class="resumoCompra pull-left float-left ml-0"
+                  role="button"
+                >Resumo da Compra</span>
                 <small
                   style="cursor:pointer!important;"
                   class="ml-2 text-left textItems"
                 >{{totalQuantity}} Item(ns)</small>
-                <small class="valorTotalCollapse pull-right float-right">R$ {{this.formatPrice(granTotal)}}<span class="fa fa-arrow-down comandoCollapse pull-right float-right" id="comandoCollapse" role="button"></span></small>
-                
+                <small class="valorTotalCollapse pull-right float-right">
+                  R$ {{this.formatPrice(granTotal)}}
+                  <span
+                    class="fa fa-arrow-down comandoCollapse pull-right float-right"
+                    id="comandoCollapse"
+                    role="button"
+                  ></span>
+                </small>
               </a>
 
               <div class="col-lg-12 collapse" id="collapseResumo" data-parent="#collapseParent">
@@ -372,9 +420,9 @@
         <!-- END STEP 4-->
         <!-- START STEP 1-->
         <form class="form-horizontal" id="formCheckout">
-          <div class="col-md-4 col-xl-4 mt-0 cardSide">
+          <div class="col-md-4 col-xl-4 mt-0 mb-0 cardSide">
             <!-- START card-->
-            <div class="card card-default">
+            <div class="card card-default mb-0">
               <div class="card-header rounded">
                 <span class="badge badge-blue iconBadge">1</span>
                 <span class="dadosPessoais">Dados Pessoais</span>
@@ -501,11 +549,11 @@
           <!-- END STEP 1-->
           <!-- START STEP 2-->
           <div
-            class="col-md-4 mt-0 cardSide"
+            class="col-md-4 mt-0 mb-0 cardSide"
             v-bind:class="currentStep == 2 || getStepDadosEnderecoFinalizado() == 1 ? '': 'disabledBox'"
           >
             <!-- START card-->
-            <div class="card card-default">
+            <div class="card card-default mb-0">
               <div class="card-header rounded">
                 <span class="badge badge-blue iconBadge">2</span>
                 <span class="dadosPessoais">Entrega</span>
@@ -685,9 +733,12 @@
           </div>
           <!-- END STEP 2-->
           <!-- START STEP 3-->
-          <div class="col-md-4 mt-0 cardSide" v-bind:class="currentStep == 3 ? '': 'disabledBoxX'">
+          <div
+            class="col-md-4 mt-0 mb-0 cardSide"
+            v-bind:class="currentStep == 3 ? '': 'disabledBoxX'"
+          >
             <!-- START card-->
-            <div class="card card-default">
+            <div class="card card-default mb-0">
               <div class="card-header rounded">
                 <span class="badge badge-blue iconBadge">3</span>
                 <span class="dadosPessoais">Pagamento</span>
@@ -714,8 +765,13 @@
                     :class="getClassSelected('creditCard')"
                   >
                     <p>
-                      <span class="text-left pull-left float-left col-md-10">Cartão de Crédito </span>
-                      <span class="text-left pull-left float-left col-md-10"><img src="img/payment_form.png" style="width: 130px!important; height: auto"></span>
+                      <span class="text-left pull-left float-left col-md-10">Cartão de Crédito</span>
+                      <span class="text-left pull-left float-left col-md-10">
+                        <img
+                          src="img/payment_form.png"
+                          style="width: 130px!important; height: auto"
+                        />
+                      </span>
                     </p>
                     <p>
                       <span class="text-left pull-left float-left ml-0 col-md-10">
@@ -841,7 +897,9 @@
                   >
                     <p>
                       <span class="text-left pull-left float-left col-md-10 fa fa-ticket">Boleto</span>
-                      <span class="text-left pull-left float-left col-md-10"><img src="img/barcode.png" style="width: 35px!important; height: auto"></span>
+                      <span class="text-left pull-left float-left col-md-10">
+                        <img src="img/barcode.png" style="width: 35px!important; height: auto" />
+                      </span>
                     </p>
                     <p>
                       <span class="text-left pull-left float-left ml-0 col-md-10">
@@ -984,7 +1042,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
-import router from '../../router.js'
+import router from "../../router.js";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1405,7 +1463,7 @@ export default {
       if (this.payment_id !== undefined && this.payment_id.length > 1) {
         let bandeira = this.payment_id;
         if (bandeira == "master") bandeira = "mastercard";
-        if(bandeira == "creditCard") bandeira="visa";
+        if (bandeira == "creditCard") bandeira = "visa";
         return (
           "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
         );
@@ -1556,7 +1614,7 @@ export default {
         this.parcelas = 1;
       }, 1000);
     },
-    getDadosPagamentoTransacao() {      
+    getDadosPagamentoTransacao() {
       var transacao = {
         dadosComprador: {
           nome_completo: this.nome_completo,
@@ -1622,7 +1680,7 @@ export default {
             sessionStorage.setItem(
               "dadosCliente",
               JSON.stringify(DadosCliente)
-            );            
+            );
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
             LRouter.push("/obrigado-cartao");
@@ -1650,7 +1708,7 @@ export default {
             nome: this.nome_completo,
             dadosCompra: retornoPay.data
           };
-          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));          
+          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
           window.Mercadopago.clearSession();
           API_NOTIFICATION.HideLoading();
           LRouter.push("/obrigado-boleto");
