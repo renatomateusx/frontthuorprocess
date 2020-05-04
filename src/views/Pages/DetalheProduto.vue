@@ -571,12 +571,7 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import Datatable from "@/components/Tables/Datatable";
 import money from "v-money";
 import moment from "moment";
-////import VueCryptojs from "vue-cryptojs";
-
-/////Vue.use(VueCryptojs);
-
 import Hashids from 'hashids';
-
 
 Vue.use(Loading);
 Vue.use(VeeValidate, {

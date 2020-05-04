@@ -975,7 +975,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
-
+import router from '../../router.js'
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1108,10 +1108,10 @@ export default {
         //GUARDA O [1] PARA USAR COMO QUISER.
         window.location.href = newURL[0];
         if (redirectTo == "checkout") {
-          this.$router.push("/checkout");
+          router.push("/checkout");
         }
         if (redirectTo == "cart") {
-          this.$router.push("/cart");
+          router.push("/cart");
         }
       } else {
         //console.log("1");
@@ -1189,7 +1189,7 @@ export default {
       this.changeQuantity(idThuor);
     },
     goToCheckout() {
-      this.$router.push("/checkout");
+      router.push("/checkout");
     },
     consultaCEP() {
       if (this.CEP.length >= 8) {
@@ -1414,7 +1414,6 @@ export default {
             (status, response) => {
               if (status == 200) {
                 this.payment_id = response[0].id;
-                ////console.log("P  ayment ID", this.payment_id);
                 if (document.getElementById("dropParcelas").length < 2) {
                   this.getParcelas();
                 }
@@ -1432,7 +1431,6 @@ export default {
       //console.log("Response", response);
       if (status == 200) {
         this.payment_id = response[0].id;
-        ////console.log("Payment ID", this.payment_id);
         this.getParcelas();
       } else {
         alert(`payment method info error: ${response}`);
@@ -1515,6 +1513,7 @@ export default {
       }
     },
     getParcelas() {
+      var self = this;
       window.Mercadopago.getInstallments(
         {
           payment_method_id: this.payment_id,
@@ -1531,6 +1530,8 @@ export default {
               document.getElementById("dropParcelas").appendChild(opt);
               setTimeout(() => {
                 document.getElementById("dropParcelas").selectedIndex = 0;
+                document.getElementById("dropParcelas").value = 1;
+                self.parcelas = 1;
               }, 1000);
             });
           } else {
@@ -1542,6 +1543,8 @@ export default {
     setParcelas() {
       setTimeout(() => {
         document.getElementById("dropParcelas").selectedIndex = 0;
+        document.getElementById("dropParcelas").value = 1;
+        this.parcelas = 1;
       }, 1000);
     },
     getDadosPagamentoTransacao() {      
@@ -1585,8 +1588,9 @@ export default {
       return LCripto;
     },
     async iniciaPagamentoBackEnd(status, response) {
+      var LRouter = router;
       if (status != 200 && status != 201) {
-        console.log("Não foi possível gerar o token", response.message);
+        //console.log("Não foi possível gerar o token", response.message);
         window.Mercadopago.clearSession();
         API_NOTIFICATION.showNotificationW(
           "Oops!",
@@ -1609,10 +1613,10 @@ export default {
             sessionStorage.setItem(
               "dadosCliente",
               JSON.stringify(DadosCliente)
-            );
-            this.$router.push("/obrigado-cartao");
+            );            
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
+            LRouter.push("/obrigado-cartao");
           })
           .catch(error => {
             console.log("Erro ao tentar efetuar o pagamento", error);
@@ -1626,20 +1630,21 @@ export default {
       }
     },
     async iniciaPagamentoBackEndBoleto() {
+      var LRouter = router;
       window.Mercadopago.clearSession();
       const LCripto = await this.getDadosPagamentoTransacao();
       API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.DoPayBackEndTicket(LCripto)
         .then(retornoPay => {
-          console.log("Enviado para o backend", retornoPay.data);
+          //console.log("Enviado para o backend", retornoPay.data);
           var DadosCliente = {
             nome: this.nome_completo,
             dadosCompra: retornoPay.data
           };
-          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
-          this.$router.push("/obrigado-boleto");
+          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));          
           window.Mercadopago.clearSession();
           API_NOTIFICATION.HideLoading();
+          LRouter.push("/obrigado-boleto");
         })
         .catch(error => {
           console.log("Erro ao tentar efetuar o pagamento", error);
