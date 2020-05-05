@@ -173,8 +173,8 @@ th.active .arrow {
               <tr v-for="{metodo, order_id, status, data, total, nome_comprador} in dataPerPage">
                 <td>{{metodo}}</td>
                 <td>
-                  <strong class="col-md-12">{{order_id}}</strong>
-                  <strong class="col-md-12">{{nome_comprador}}</strong>
+                  <p class="col-md-12">{{order_id}}</p>
+                  <p class="col-md-12 text-justify">{{nome_comprador}}</p>
                 </td>
                 <td>{{data}}</td>
                 <td>R$ {{formatPrice(total)}}</td>
