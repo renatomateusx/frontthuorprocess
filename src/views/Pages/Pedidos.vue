@@ -123,38 +123,76 @@ th.active .arrow {
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th v-for="key in columns" @click="sortBy(key)" :class="{ active: sortKey == key }">
-                {{ toUpperCase(key)}}
-                <span
-                  class="arrow"
-                  :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"
-                ></span>
+              <th>
+                <strong class="col-md-2">
+                  <b>Band</b>
+                </strong>
+                <span class="arrow"></span>
               </th>
+              <th>
+                <strong class="col-md-4">
+                  <b>Pedido</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th>
+                <strong class="col-md-6">
+                  <b>Data</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th>
+                <strong class="col-md-2">
+                  <b>Valor</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th>
+                <strong class="col-md-2">
+                  <b>Status</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+
+              <!-- <th
+                v-for="{metodo, order_id} in columns"
+                @click="sortBy(key)"
+                :class="{ active: sortKey == key }"
+              >
+                <strong>
+                  <b>{{ toUpperCase(key)}}</b>
+                </strong>
+                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
+              </th>-->
             </thead>
           </table>
         </div>
         <div class="table-body-wrapper">
           <table class="table-body">
             <tbody>
-              <!-- <tr v-for="{id, nome} in dataPerPage">
-                <div v-for="key in columns">
-                  <td >{{id}}</td>
-                  <td >{{nome}}</td>
-                </div>
-              </tr>-->
-              <tr v-for="entry in dataPerPage">
-                <td v-for="key in columns">{{entry[key]}}</td>
+              <tr v-for="{metodo, order_id, status, data, total, nome_comprador} in dataPerPage">
+                <td>{{metodo}}</td>
+                <td>
+                  <strong class="col-md-12">{{order_id}}</strong>
+                  <strong class="col-md-12">{{nome_comprador}}</strong>
+                </td>
+                <td>{{data}}</td>
+                <td>R$ {{formatPrice(total)}}</td>
+                <td>{{status}}</td>
               </tr>
+              <!-- <tr v-for="entry in dataPerPage">
+                <td v-for="key in columns">{{entry[key]}}</td>
+              </tr>-->
             </tbody>
           </table>
         </div>
       </div>
       <div id="page-navigation" class="col-xl-12 mt-3">
-        <button class="float-left btn btn-primary col-md-2" @click=movePages(-1)>Voltar</button>
+        <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
         <p
           class="float-left text-center auto col-md-8 mt-1"
         >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
-        <button class="float-right btn btn-primary col-md-2" @click=movePages(1)>Próxima</button>
+        <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>
   </ContentWrapper>
@@ -211,17 +249,18 @@ export default {
         password: "",
         rememberme: false
       },
-      columns: ["id", "nome"],
-      gridData: [
-        { id: "American alligator", nome: "Southeast United States" },
-        { id: "Chinese alligator", nome: "Eastern China" },
-        { id: "Spectacled caiman", nome: "Central & South America" },
-        { id: "Broad-snouted caiman", nome: "South America" },
-        { id: "Jacaré caiman", nome: "South America" },
-        { id: "Black caiman", nome: "South America" }
+      columns: [
+        "metodo",
+        "id",
+        "order_id",
+        "status",
+        "data",
+        "total",
+        "nome_comprador"
       ],
+      gridData: [],
       startRow: 0,
-      rowsPerPage: 3,
+      rowsPerPage: 10,
       pageSizeMenu: [10, 20, 50, 100],
       data: Array,
       pedidosList: {}
@@ -267,6 +306,10 @@ export default {
     }
   },
   methods: {
+    formatPrice(value) {
+      let val = (value / 1).toFixed(2).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
     checkIfLogged() {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
@@ -276,17 +319,36 @@ export default {
               sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
               API_TRANSACOES.GetTransacoes()
                 .then(retProd => {
+                  this.gridData = [];
                   //console.log("Retorno", retProd.data);
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
-                  this.pedidosList = retProd.data;
-                  this.pedidosList.forEach((obj, i) => {
+                  //this.pedidosList = retProd.data;
+                  retProd.data.forEach((obj, i) => {
                     const LID = obj.id;
                     const LStatus = obj.status;
-                    const PaymentID = 
-
+                    const LPaymentID = JSON.parse(obj.json_gw_response)
+                      .payment_method_id;
+                    const LData = JSON.parse(obj.json_gw_response).date_created;
+                    const LTotal = JSON.parse(obj.json_gw_response)
+                      .transaction_amount;
+                    const LNomeComprador = this.toCamelCase(
+                      JSON.parse(obj.json_front_end_user_data).dadosComprador
+                        .nome_completo
+                    );
+                    const LOrderID = JSON.parse(obj.json_shopify_response).order
+                      .id;
+                    this.gridData.push({
+                      metodo: LPaymentID,
+                      id: LID,
+                      order_id: LOrderID,
+                      status: LStatus,
+                      data: LData,
+                      total: LTotal,
+                      nome_comprador: LNomeComprador
+                    });
                     console.log(obj);
                   });
-
+                  console.log("Tamanhoa", this.gridData.length);
                   API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
@@ -334,11 +396,11 @@ export default {
     toUpperCase(str) {
       return str.toUpperCase();
     },
-    getImagePaymentID(paymentID){
-      if(paymentID== "bolbradesco") return 'img/barcode.png';
-      else if(paymentID== "master") return 'img/master.png';
-      else if(paymentID== "visa") return 'img/visa.png';
-      else return 'img/visa.png'
+    getImagePaymentID(paymentID) {
+      if (paymentID == "bolbradesco") return "img/barcode.png";
+      else if (paymentID == "master") return "img/master.png";
+      else if (paymentID == "visa") return "img/visa.png";
+      else return "img/visa.png";
     }
   }
 };
