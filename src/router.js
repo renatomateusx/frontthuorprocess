@@ -21,7 +21,7 @@ const Checkout = () => import('@/components/Cart/Checkout.vue');
 const Pay = () => import('@/components/Cart/Pay.vue');
 const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
-
+const Pedidos = () => import('@/views/Pages/Pedidos.vue')
 Vue.use(Router)
 
 export default new Router({
@@ -70,7 +70,11 @@ export default new Router({
             }, {
                 path: '/submenu',
                 component: SubMenu
-            }
+            },
+            {
+                path: '/pedidos',
+                component: Pedidos
+            },
         ]
     },
     {
@@ -97,6 +101,7 @@ export default new Router({
         path: '/obrigado-boleto',
         component: ObrigadoBoleto
     },
+
     // Not found route
     {
         path: '*',

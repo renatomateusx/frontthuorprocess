@@ -25,5 +25,7 @@ export default Object.freeze({
   PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',
   PATH_PAY_CHECKOUT: 'checkouts/DoPay',
   PATH_PAY_CHECKOUT_TICKET: 'checkouts/DoPayTicket',
+  PATH_PAY_GET_PEDIDOS: 'transacoes/GetPedidos',
+
   
 });

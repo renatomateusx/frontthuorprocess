@@ -1,6 +1,6 @@
 const Menu = [
     {
-        heading: 'Main Navigation',
+        heading: 'Navegação',
         translate: 'sidebar.heading.HEADER'
     },
     {
@@ -20,11 +20,11 @@ const Menu = [
         }]
     },
     {
-        name: 'Cart',
-        icon: 'icon-cart',
+        name: 'Pedidos',
+        icon: 'fa fa-donate',
         translate: 'sidebar.nav.MENU',
         label: { value: 1, color: 'info' },
-        path: 'cart'
+        path: 'pedidos'
         // submenu: [{
         //     name: 'Submenu',
         //     translate: 'sidebar.nav.SUBMENU',

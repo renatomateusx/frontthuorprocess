@@ -3,26 +3,30 @@
   <ContentWrapper>
     <div class="card b">
       <div class="card-header">
-        <div class="nomeLoja mb-4"><h3>{{DadosLoja.nome_loja}}</h3></div>
+        <div class="nomeLoja mb-4">
+          <h3>{{DadosLoja.nome_loja}}</h3>
+        </div>
         <div class="media mt-0 float-left pull-left">
           <div class="media-body">
-            <h5
-              class="m-0 text-bold"
-            >Obrigada, {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
+            <h5 class="m-0 text-bold">Obrigada, {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
           </div>
         </div>
       </div>
       <div class="card-body">
         <div class="row">
-          <div class="col-xl-4 text-center mb-3"></div>
           <div class="col-xl-8">
             <h4>Compra realizada com sucesso!</h4>
-            
-            <div class="">
-              <div class="">
+
+            <div class>
+              <div class>
                 <h4 class="mt-4 mb-0">
                   Pedido:
-                  <strong><a v-bind:href="dadosStore.order.order_status_url" target="_blank">{{this.dadosStore.order.order_number}}</a></strong>
+                  <strong>
+                    <a
+                      v-bind:href="dadosStore.order.order_status_url"
+                      target="_blank"
+                    >{{this.dadosStore.order.order_number}}</a>
+                  </strong>
                 </h4>
               </div>
               <small>Clique no número do pedido para ver detalhes da compra.</small>
@@ -32,13 +36,12 @@
               class="mt-2 text-justify"
             >Sua compra foi autorizada e assim que a operadora do seu cartão de crédito nos enviar a autorização, procederemos com o envio. Mas não se preocupe, sua encomenda já está reservada.</p>
           </div>
-          <div class="col-xl-8">
+          <div class="col-xl-12">
             <button
-              class="btn btn-success btnDownload btn-block display-inline"
+              class="btn btn-success btnDownload display-inline"
               v-on:click="voltarLoja()"
             >Voltar para a loja</button>
           </div>
-          
         </div>
       </div>
       <input type="hidden" id="copyClipBoard" />
@@ -69,7 +72,7 @@ export default {
     return {
       dadosCliente: {},
       dadosStore: {},
-      DadosLoja:{}
+      DadosLoja: {}
     };
   },
   methods: {
@@ -128,8 +131,8 @@ export default {
       var win = window.open(url, "_blank");
       win.focus();
     },
-    voltarLoja(){
-        window.location.href= "http://"+ this.DadosLoja.url_loja;
+    voltarLoja() {
+      window.location.href = "http://" + this.DadosLoja.url_loja;
     }
   }
 };
@@ -140,10 +143,23 @@ export default {
   cursor: pointer !important;
   color: white;
 }
-.nomeLoja{
-    font-size: 20px;
+.nomeLoja {
+  font-size: 20px;
 }
-.textInformativo{
-    font-size: 13px;
+.textInformativo {
+  font-size: 13px;
+}
+.btnDownload {
+  float: left !important;
+}
+@media only screen and (max-width: 992px) {
+  .btnDownload {
+    display: block !important;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .btnDownload {
+    width: 100%!important;
+  }
 }
 </style>

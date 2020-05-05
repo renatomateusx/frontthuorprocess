@@ -14,8 +14,7 @@
       </div>
       <div class="card-body">
         <div class="row">
-          <div class="col-xl-4 text-center mb-3"></div>
-          <div class="col-xl-8">
+          <div class="col-xl-12 btn-block">
             <h4>Compra realizada com sucesso!</h4>
             <h5>Sua compra foi realizada através de boleto.</h5>
             <div class="">
@@ -32,14 +31,14 @@
               class="mt-2 text-justify"
             >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</p>
           </div>
-          <div class="col-xl-8">
+          <div class="col-xl-12">
             <button
               class="btn btn-success btnDownload pull-right float-right"
               v-on:click="downloadBoleto()"
             >Download do Boleto</button>
           </div>
           <div
-            class="col-xl-8 divBarCode mt-2"
+            class="col-xl-12 divBarCode mt-2"
             @click.stop.prevent="copyToClip(dadosCliente.dadosCompra.dataGateway.barcode.content)"
           >
             <h4
@@ -47,9 +46,9 @@
             >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
             <h5 class="text-center">{{this.dadosCliente.dadosCompra.dataGateway.barcode.content}}</h5>
           </div>
-          <div class="col-xl-8 mt-2">
+          <div class="col-xl-12 mt-2">
             <button
-              class="btn btn-success btnDownload btn-block display-inline"
+              class="btn btn-success btnDownload"
               v-on:click="voltarLoja()"
             >Voltar para a loja</button>
           </div>
@@ -159,5 +158,15 @@ export default {
 }
 .textInformativo{
     font-size: 13px;
+}
+@media only screen and (max-width: 992px) {
+  .btnDownload {
+    display: block !important;
+  }
+}
+@media only screen and (max-width: 767px) {
+  .btnDownload {
+    width: 100%!important;
+  }
 }
 </style>

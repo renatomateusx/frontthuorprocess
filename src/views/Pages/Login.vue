@@ -3,7 +3,7 @@
   margin-top: 80px !important;
 }
 .bg-dark{
-  background-color: #23b7e5;
+  background-color: #23b7e5!important;
 }
 </style>
 <template>
