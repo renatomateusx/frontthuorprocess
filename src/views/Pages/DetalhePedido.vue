@@ -158,6 +158,11 @@ th.active .arrow {
   font-weight: 700;
   font-size: 15px;
 }
+.valorTransacaoTotal{
+  font-family: Rubik, sans-serif;
+  font-weight: 700;
+  font-size: 25px;
+}
 
 .emailComprador {
   font-size: 12px !important;
@@ -178,11 +183,20 @@ th.active .arrow {
 .linkBoleto {
   cursor: pointer !important;
 }
+.cardTotal{
+  border-left: 1px dashed  #d0d0d0;
+}
+.paddingLeftZero{
+  padding-left: 0px!important;
+}
+.dataCriacao{
+  font-size: 12px!important;
+}
 </style>
 <template>
   <ContentWrapper>
     <div class="content-heading mt-3">
-      <h4 class="contentHeading">Pedido: {{pedidoID}} em {{this.dataPedido}}</h4>
+      <h4 class="contentHeading">Pedido: {{pedidoID}} em <strong class="dataCriacao">{{this.dataPedido}}</strong></h4>
     </div>
 
     <div class="wrapper col-xl-12 row">
@@ -195,7 +209,7 @@ th.active .arrow {
         for="inlineFormInputGroup"
       >Atualizar Status</label>
       <select
-        v-model="statusAtual"
+        v-model="status"
         id="select"
         class="selectPage form-control pull-left float-left"
       >
@@ -207,7 +221,7 @@ th.active .arrow {
     </div>
     <div class="cardD row col-xl-12 mt-3">
       <div class="card col-md-3 mt-3 float-left mr-1">
-        <div class="card-header">
+        <div class="card-header paddingLeftZero">
           <div class="card-title text-left">Cliente</div>
         </div>
         <div class="card-body pt-0">
@@ -225,7 +239,7 @@ th.active .arrow {
                     <a
                       v-bind:href="'https://api.whatsapp.com/send?phone='+unMask(this.pedido.telefoneComprador)"
                     >
-                      <span class="fab fa-whatsapp foneWhats">{{this.pedido.telefoneComprador}}</span>
+                      <span class="fab fa-whatsapp foneWhats"><span class="ml-1">{{this.pedido.telefoneComprador}}</span></span>
                     </a>
                   </span>
                 </p>
@@ -239,16 +253,16 @@ th.active .arrow {
       </div>
 
       <div class="card col-md-3 float-left mt-1">
-        <div class="card-header">
+        <div class="card-header paddingLeftZero">
           <div class="card-title text-left">Pagamento</div>
         </div>
-        <div class="card-body pt-0">
+        <div class="card-body pt-0 pl-0">
           <div class="media-body pt-2">
             <div class="text-bold">
               <p class="col-md-12" v-if="this.pedido.bandeira != 'bolbradesco'">
                 <img
                   :src="getImagePaymentID(this.pedido.bandeira)"
-                  class="imgMethodo float-left pull-left mr-4"
+                  class="row imgMethodo float-left pull-left mr-4"
                 />
                 <span class="row mb-0 float-left pull-left mr-6">{{this.pedido.quatroDigitosCartao}}</span>
               </p>
@@ -263,16 +277,22 @@ th.active .arrow {
               <p class="col-md-12" v-if="this.pedido.bandeira == 'bolbradesco'">
                 <img
                   :src="getImagePaymentID(this.pedido.bandeira)"
-                  class="imgMethodo float-left pull-left mr-4"
+                  class="row imgMethodo float-left pull-left mr-4"
                 />
               </p>
-              <p class="col-md-12 mt-5" v-if="this.pedido.bandeira == 'bolbradesco'">
-                <span class="row valorTransacao mb-0 mt-0 ml-0">Boleto Bancário</span>
+              <p class="row col-md-12 mt-3 mb-0" v-if="this.pedido.bandeira == 'bolbradesco'">
+                <span class="row valorTransacao mb-0 mt-1 ml-0">Boleto Bancário</span>
+                
+              </p>
+              <p class="row col-md-12 mt-0 mb-0" v-if="this.pedido.bandeira == 'bolbradesco'">
+                
                 <a class="linkBoleto" v-bind:href="this.pedido.linkBoleto">
-                  <span class="row mb-0 mt-0 ml-0 fas fa-eye"> Ver Boleto</span>
+                  <span class="row mb-0 mt-0 ml-0 fas fa-eye mt-1 float-left"><span class="ml-1">Ver Boleto</span></span>
                 </a>
+              </p>
+              <p class="row col-md-12 mt-1" v-if="this.pedido.bandeira == 'bolbradesco'">
                 <a class="linkBoleto" v-bind:href="getLinkEnviarBoleto(this.pedido)">
-                  <span class="fab fa-whatsapp "> Enviar Boleto</span>
+                  <span class="fab fa-whatsapp"> <span class="ml-2">Enviar Boleto</span></span>
                 </a>
               </p>
             </div>
@@ -280,31 +300,39 @@ th.active .arrow {
         </div>
       </div>
 
-      <div class="card col-md-4 float-left mt-1">
-        <div class="card-header">
+      <div class="card col-md-3 float-left mt-1">
+        <div class="card-header paddingLeftZero">
           <div class="card-title text-left">Entrega</div>
         </div>
         <div class="card-body pt-0">
           <div class="media-body pt-2">
             <div class="text-bold">
-              <p class="col-md-12">
-                <img
-                  :src="getImagePaymentID(this.pedido.bandeira)"
-                  class="imgMethodo float-left pull-left mr-4"
-                />
-                <span
-                  class="row mb-0 float-left pull-left mr-6"
-                  v-if="this.pedido.bandeira != 'bolboleto'"
-                >{{this.pedido.quatroDigitosCartao}}</span>
-              </p>
               <p>
-                <span
-                  class="row valorTransacao mb-0 mt-4 ml-3"
-                >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
-                <span
-                  class="row valorTransacao mb-0 mt-1 ml-3"
-                >{{this.pedido.parcela}}x de R$ {{formatPrice(this.pedido.valorParcela)}}</span>
+                <span class="row nomeComprador mb-0">{{this.pedido.destinatario}}</span>
+                 <span class="row  mb-0">{{this.pedido.endereco}}, {{this.pedido.numero_porta}}</span>
+                 <span class="row  mb-0" v-if="this.pedido.complemento">Complemento: {{this.pedido.complemento}}</span>
+                  <span class="row  mb-0">{{this.pedido.cidade}} / {{this.pedido.estado}}</span>
+                   <span class="row  mb-0">CEP: <strong> <b>{{this.pedido.cep}}</b></strong></span>
               </p>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card col-md-2 float-left mt-1 cardTotal">
+        <div class="card-header paddingLeftZero">
+          <div class="card-title text-left">Valor Total</div>
+        </div>
+        <div class="card-body pt-0">
+          <div class="media-body pt-2">
+            <div class="text-bold">
+              <p class="mt-1" >
+                <span
+                  class="row valorTransacaoTotal mb-0 mt-0 ml-0"
+                >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
+               
+              </p>
+              
             </div>
           </div>
         </div>
@@ -366,13 +394,12 @@ export default {
       sortOrders: {},
       dataPedido: "",
       statusArray: [
-        "metodo",
-        "id",
-        "order_id",
-        "status",
-        "data",
-        "total",
-        "nome_comprador"
+        "APROVADA",
+        "CANCELADA",
+        "PENDENTE",
+        "REEMBOLSADA",
+        "ARQUIVADA",
+        "AGUARDANDO PROCESSAMENTO"
       ],
       statusAtual: 10,
       data: Array,
@@ -510,6 +537,14 @@ export default {
                     obj.json_gw_response
                   ).transaction_details.installment_amount;
 
+                  this.pedido.destinatario = JSON.parse(obj.json_front_end_user_data).dadosComprador.destinatario;
+                  this.pedido.endereco = JSON.parse(obj.json_front_end_user_data).dadosComprador.endereco;
+                  this.pedido.numero_porta = JSON.parse(obj.json_front_end_user_data).dadosComprador.numero_porta;
+                  this.pedido.complemlento = JSON.parse(obj.json_front_end_user_data).dadosComprador.complemento;
+                  this.pedido.cidade = JSON.parse(obj.json_front_end_user_data).dadosComprador.cidade;
+                  this.pedido.estado = JSON.parse(obj.json_front_end_user_data).dadosComprador.estado;
+                  this.pedido.cep = JSON.parse(obj.json_front_end_user_data).dadosComprador.cep;
+
                   API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
@@ -575,10 +610,10 @@ export default {
       else return "img/visa.png";
     },
     getClassStatus(status) {
-      if (status == "pendente") return "alert-info";
-      if (status == "cancelada") return "alert-danger";
-      if (status == "aprovada") return "alert-success";
-      if (status == "entregue") return "alert-success";
+      if (status.toUpperCase() == "PENDENTE") return "alert-info";
+      if (status.toUpperCase() == "CANCELADA") return "alert-danger";
+      if (status.toUpperCase() == "APROVADA") return "alert-success";
+      if (status.toUpperCase() == "ENTREGUE") return "alert-success";
       return "alert-warning";
     },
     getDeCripto(crypted) {
@@ -620,13 +655,15 @@ export default {
         produtoName
       )
         .replace("VALOR_VALOR", this.formatPrice(this.pedido.valorPedido))
-        .replace("VENCIMENTO", dateFormat(
-                    this.pedido.dataExpiracao,
-                    "dd/mm/yyyy"
-                  ))
+        .replace(
+          "VENCIMENTO",
+          dateFormat(this.pedido.dataExpiracao, "dd/mm/yyyy")
+        )
         .replace("CODIGO_BARRAS", this.pedido.codigoBarras)
         .replace("LINK_LINK", this.pedido.linkBoleto);
-        return linkBase + this.unMask(this.pedido.telefoneComprador) + "&text="+LLINK;
+      return (
+        linkBase + this.unMask(this.pedido.telefoneComprador) + "&text=" + LLINK
+      );
     }
   }
 };

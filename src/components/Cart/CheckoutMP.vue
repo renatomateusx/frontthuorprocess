@@ -1633,7 +1633,8 @@ export default {
           validade: this.validade,
           nome_titular: this.nome_titular,
           codigo_segurança: this.codigo_seguranca,
-          cpf_titular: this.cpf_titular
+          cpf_titular: this.cpf_titular,
+          frete: this.getFreteSelecionadoNome()
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
