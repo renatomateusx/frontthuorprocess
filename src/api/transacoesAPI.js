@@ -44,7 +44,32 @@ var API_TRANSACOES = {
                 });
 
         });
-    }
+    },
+    GetTransacaoByID(id) {
+        return new Promise((resolve, reject) => {
+            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            if (LUser !== null && LUser !== undefined) {
+                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                if (DadosLoja !== null && DadosLoja !== undefined) {
+                    let LBody = {
+                        id_usuario: LUser.user.id,
+                        shop: DadosLoja.url_loja,
+                        id: id
+                    }
+                    axios
+                        .post(constantes.WEBSITEAPI + constantes.PATH_PAY_GET_PEDIDOS_POR_ID, LBody)
+                        .then((response) => {
+                            //console.log("Response", response);
+                            resolve(response);
+                        })
+                        .catch((error) => {
+                            console.log("Reject", error);
+                            reject(error);
+                        });
+                }
+            }
+        });
+    },
 
 
 };

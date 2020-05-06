@@ -92,6 +92,54 @@ th.active .arrow {
 .selectPage {
   width: 80px;
 }
+.pedido {
+  padding: 10px 10px !important;
+}
+.padding1010 {
+  padding: 10px 10px !important;
+}
+.nomeComprador {
+  font-size: 11px !important;
+}
+
+.numeroPedido {
+  font-size: 14px !important;
+  font-family: Rubik, sans-serif;
+  font-weight: 700;
+}
+.imgMethodo {
+  width: 25px !important;
+  text-align: center;
+}
+.metodo {
+  max-width: 20px !important;
+  min-width: 20px !important;
+  width: 20px !important;
+}
+.data {
+  width: 100px !important;
+}
+.dataPedido {
+  font-size: 13px !important;
+  margin: 0;
+  padding: 0;
+}
+.tempoPedido {
+  font-size: 11px !important;
+  margin: 0;
+  padding: 0;
+}
+.total {
+  width: 100px !important;
+  min-width: 100px !important;
+  margin-left: 0px !important;
+}
+.spanStatus {
+  border-radius: 4px !important;
+  height: 20px;
+  padding: 3px !important;
+  font-size: 12px !important;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -123,62 +171,69 @@ th.active .arrow {
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th>
-                <strong class="col-md-2">
-                  <b>Band</b>
+              <th class="metodo">
+                <strong>
+                  <b></b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th>
-                <strong class="col-md-4">
+              <th style="width: 160px!important;">
+                <strong class="col-md-4 pedido">
                   <b>Pedido</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th>
-                <strong class="col-md-6">
+              <th class="data pl-0">
+                <strong class>
                   <b>Data</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th>
-                <strong class="col-md-2">
+              <th class="data pl-0" style="min-width: 80px!important; width: 80px!important;">
+                <strong class>
                   <b>Valor</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th>
+              <th class="status pl-2">
                 <strong class="col-md-2">
                   <b>Status</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-
-              <!-- <th
-                v-for="{metodo, order_id} in columns"
-                @click="sortBy(key)"
-                :class="{ active: sortKey == key }"
-              >
-                <strong>
-                  <b>{{ toUpperCase(key)}}</b>
-                </strong>
-                <span class="arrow" :class="sortOrders[key] > 0 ? 'asc' : 'dsc'"></span>
-              </th>-->
+              <th></th>
+              <th></th>
             </thead>
           </table>
         </div>
         <div class="table-body-wrapper">
           <table class="table-body">
             <tbody>
-              <tr v-for="{metodo, order_id, status, data, total, nome_comprador} in dataPerPage">
-                <td>{{metodo}}</td>
-                <td>
-                  <p class="col-md-12">{{order_id}}</p>
-                  <p class="col-md-12 text-justify">{{nome_comprador}}</p>
+              <tr
+                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago} in dataPerPage"
+              >
+                <td class="metodo">
+                  <img :src="getImagePaymentID(metodo)" class="imgMethodo" />
                 </td>
-                <td>{{data}}</td>
-                <td>R$ {{formatPrice(total)}}</td>
-                <td>{{status}}</td>
+                <td class="pedido" style="width: 120px!important;">
+                  <router-link :to="{path: '/pedidos/detalhe/' + getCripto(id, order_id)}">
+                    <p class="col-md-12 numeroPedido mb-0">{{order_id}}</p>
+                  </router-link>
+                  <p class="col-md-12 text-left nomeComprador grey mb-0">{{nome_comprador}}</p>
+                </td>
+                <td class="data padding1010">
+                  <p class="col-md-12 mb-0 dataPedido">{{data}}</p>
+                  <p class="col-md-12 mb-0 tempoPedido">{{time_ago}}</p>
+                </td>
+                <td class="total pl-0">R$ {{formatPrice(total)}}</td>
+                <td class="pl-0" style="min-width: 80px!important; width: 80px!important;">
+                  <span
+                    class="spanStatus alert"
+                    v-bind:class="getClassStatus(status)"
+                  >{{status.toUpperCase()}}</span>
+                </td>
+                <td></td>
+                <td></td>
               </tr>
               <!-- <tr v-for="entry in dataPerPage">
                 <td v-for="key in columns">{{entry[key]}}</td>
@@ -211,6 +266,11 @@ import API_TRANSACOES from "../../api/transacoesAPI";
 import API_LOJA from "../../api/lojaAPI";
 import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
+import dateFormat from "dateformat";
+import TimeAgo from "javascript-time-ago";
+import pt from "javascript-time-ago/locale/pt";
+import Hashids from 'hashids';
+TimeAgo.addLocale(pt);
 Vue.use(Loading);
 
 Vue.use(VeeValidate, {
@@ -229,6 +289,8 @@ export default {
   },
 
   created() {
+    this.timeAgo = new TimeAgo("pt-BR");
+
     let sortOrders = {};
 
     this.columns.forEach(function(key) {
@@ -241,6 +303,7 @@ export default {
   },
   data() {
     return {
+      timeAgo: "",
       searchQuery: "",
       sortKey: "",
       sortOrders: {},
@@ -325,10 +388,25 @@ export default {
                   //this.pedidosList = retProd.data;
                   retProd.data.forEach((obj, i) => {
                     const LID = obj.id;
-                    const LStatus = obj.status;
+
                     const LPaymentID = JSON.parse(obj.json_gw_response)
                       .payment_method_id;
-                    const LData = JSON.parse(obj.json_gw_response).date_created;
+                    let LStatus;
+                    if (obj.status == null) {
+                      if (this.LPaymentID == "bolbradesco") {
+                        LStatus = "pendente";
+                      } else {
+                        LStatus = "aprovada";
+                      }
+                    } else {
+                      LStatus = obj.status;
+                    }
+                    const LData = dateFormat(
+                      JSON.parse(obj.json_gw_response).date_created,
+                      "dd/mm/yyyy  HH:MM:ss"
+                    );
+                    const LTimeAgo = JSON.parse(obj.json_gw_response)
+                      .date_created;
                     const LTotal = JSON.parse(obj.json_gw_response)
                       .transaction_amount;
                     const LNomeComprador = this.toCamelCase(
@@ -344,11 +422,17 @@ export default {
                       status: LStatus,
                       data: LData,
                       total: LTotal,
-                      nome_comprador: LNomeComprador
+                      nome_comprador: LNomeComprador,
+                      time_ago: this.timeAgo.format(
+                        Date.parse(LTimeAgo),
+                        Date.now(),
+                        "time"
+                      )
                     });
-                    console.log(obj);
+
+                    //console.log(Date.now(), Date.parse(LData));
                   });
-                  console.log("Tamanhoa", this.gridData.length);
+
                   API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
@@ -384,13 +468,24 @@ export default {
       }
     },
     toCamelCase(str) {
-      var LStr = str.split("");
       var LSTR2 = "";
-      LStr.forEach((obj, i) => {
-        if (i == 0) LSTR2 = LSTR2 + obj.toString().toUpperCase();
-        if (i > 0) LSTR2 = LSTR2 + obj.toString().toLowerCase();
-      });
-
+      if (str.indexOf(" ") > -1) {
+        var LSpace = str.split(" ");
+        LSpace.forEach((objS, i) => {
+          var LStr = objS.split("");
+          LStr.forEach((obj, i) => {
+            if (i == 0) LSTR2 = LSTR2 + obj.toString().toUpperCase();
+            if (i > 0) LSTR2 = LSTR2 + obj.toString().toLowerCase();
+          });
+          LSTR2 = LSTR2 + " ";
+        });
+      } else {
+        var LStr = str.split("");
+        LStr.forEach((obj, i) => {
+          if (i == 0) LSTR2 = LSTR2 + obj.toString().toUpperCase();
+          if (i > 0) LSTR2 = LSTR2 + obj.toString().toLowerCase();
+        });
+      }
       return LSTR2;
     },
     toUpperCase(str) {
@@ -401,6 +496,22 @@ export default {
       else if (paymentID == "master") return "img/master.png";
       else if (paymentID == "visa") return "img/visa.png";
       else return "img/visa.png";
+    },
+    getClassStatus(status) {
+      if (status == "pendente") return "alert-info";
+      if (status == "cancelada") return "alert-danger";
+      if (status == "aprovada") return "alert-success";
+      if (status == "entregue") return "alert-success";
+      return "alert-warning";
+    },
+    getCripto(id_pedido, id_ordem) {
+      // console.log(id_produto);
+      const hashids = new Hashids('', 0, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+      const produtHashed= hashids.encode(id_pedido.toString(), id_ordem.toString());
+      // const numbers = hashids.decode(produtHashed);
+      // console.log("ID Hashedid", produtHashed);
+      // console.log("ID Deshashed", numbers);
+      return produtHashed;
     }
   }
 };

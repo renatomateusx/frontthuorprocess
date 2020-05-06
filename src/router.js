@@ -21,7 +21,11 @@ const Checkout = () => import('@/components/Cart/Checkout.vue');
 const Pay = () => import('@/components/Cart/Pay.vue');
 const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
-const Pedidos = () => import('@/views/Pages/Pedidos.vue')
+const Pedidos = () => import('@/views/Pages/Pedidos.vue');
+const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
+
+
+
 Vue.use(Router)
 
 export default new Router({
@@ -74,6 +78,10 @@ export default new Router({
             {
                 path: '/pedidos',
                 component: Pedidos
+            },
+            {
+                path: '/pedidos/detalhe/:id',
+                component: DetalhePedido
             },
         ]
     },

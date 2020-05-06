@@ -1,0 +1,633 @@
+<style scoped>
+@media only screen and (max-width: 992px) {
+}
+@media only screen and (max-width: 767px) {
+  .contentHeading {
+    margin-top: 15px;
+    font-size: 12px !important;
+  }
+}
+.card-flat {
+  margin-top: 80px !important;
+}
+.shopifysvg {
+  width: 20px !important;
+  height: 20px !important;
+}
+.borderButton {
+  border: solid 1px grey;
+}
+.titulo_produto {
+  position: relative;
+  top: 1.5em;
+}
+.circle {
+  width: 70px;
+  height: auto;
+}
+.id_produto {
+  float: left;
+  font-size: 12px !important;
+}
+.display-inline {
+  float: left;
+  display: inline-flex;
+}
+.td {
+  width: 150px;
+}
+table {
+  border-spacing: 0;
+  width: 100%;
+}
+
+th {
+  background-color: #5d9cec;
+  color: white;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+td {
+  border-bottom: 1px #cfdbe2 solid;
+}
+
+th,
+td {
+  min-width: 150px;
+  padding: 10px 20px;
+}
+
+th.active {
+  color: #fff;
+}
+
+th.active .arrow {
+  opacity: 1;
+}
+
+.arrow {
+  display: inline-block;
+  vertical-align: middle;
+  width: 0;
+  height: 0;
+  margin-left: 5px;
+  opacity: 0.66;
+}
+
+.arrow.asc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid #fae042;
+}
+
+.arrow.dsc {
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #fae042;
+}
+
+#grid-template {
+  display: flex;
+  display: -webkit-flex;
+  flex-direction: column;
+  -webkit-flex-direction: column;
+  width: 100%;
+}
+.selectPage {
+  width: 180px;
+}
+.pedido {
+  padding: 10px 10px !important;
+}
+.padding1010 {
+  padding: 10px 10px !important;
+}
+
+.numeroPedido {
+  font-size: 14px !important;
+  font-family: Rubik, sans-serif;
+  font-weight: 700;
+}
+.imgMethodo {
+  width: 40px !important;
+  text-align: center;
+}
+.metodo {
+  max-width: 20px !important;
+  min-width: 20px !important;
+  width: 20px !important;
+}
+.data {
+  width: 100px !important;
+}
+.dataPedido {
+  font-size: 13px !important;
+  margin: 0;
+  padding: 0;
+}
+.tempoPedido {
+  font-size: 11px !important;
+  margin: 0;
+  padding: 0;
+}
+.total {
+  width: 100px !important;
+  min-width: 100px !important;
+  margin-left: 0px !important;
+}
+.spanStatus {
+  border-radius: 4px !important;
+  height: 20px;
+  padding: 3px !important;
+  font-size: 12px !important;
+}
+.cardD {
+  background-color: white;
+}
+.nomeComprador {
+  font-family: Rubik, sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+}
+.valorTransacao {
+  font-family: Rubik, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.emailComprador {
+  font-size: 12px !important;
+}
+.cpfComprador {
+  font-size: 12px !important;
+}
+.telefoneComprador {
+  color: #02a681;
+  font-size: 13px !important;
+}
+.foneWhats {
+  cursor: pointer !important;
+  color: #02a681;
+  font-weight: 700;
+  font-size: 15px !important;
+}
+.linkBoleto {
+  cursor: pointer !important;
+}
+</style>
+<template>
+  <ContentWrapper>
+    <div class="content-heading mt-3">
+      <h4 class="contentHeading">Pedido: {{pedidoID}} em {{this.dataPedido}}</h4>
+    </div>
+
+    <div class="wrapper col-xl-12 row">
+      <span
+        class="spanStatus alert mr-2 mt-2 mb-0"
+        v-bind:class="getClassStatus(status)"
+      >{{status.toUpperCase()}}</span>
+      <label
+        class="float-left mr-2 col-form-label labelForm"
+        for="inlineFormInputGroup"
+      >Atualizar Status</label>
+      <select
+        v-model="statusAtual"
+        id="select"
+        class="selectPage form-control pull-left float-left"
+      >
+        <option v-for="status in statusArray" :value="status">{{status}}</option>
+      </select>
+      <!-- <form id="search" class="form-group pull-right float-right">
+        <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
+      </form>-->
+    </div>
+    <div class="cardD row col-xl-12 mt-3">
+      <div class="card col-md-3 mt-3 float-left mr-1">
+        <div class="card-header">
+          <div class="card-title text-left">Cliente</div>
+        </div>
+        <div class="card-body pt-0">
+          <div class="media">
+            <div class="media-body py-2">
+              <div class="text-bold">
+                <p>
+                  <span class="row nomeComprador mb-0">{{this.pedido.nomeComprador}}</span>
+                </p>
+                <p>
+                  <span class="row emailComprador mb-0">{{this.pedido.emailComprador}}</span>
+                </p>
+                <p>
+                  <span class="row telefoneComprador mb-0">
+                    <a
+                      v-bind:href="'https://api.whatsapp.com/send?phone='+unMask(this.pedido.telefoneComprador)"
+                    >
+                      <span class="fab fa-whatsapp foneWhats">{{this.pedido.telefoneComprador}}</span>
+                    </a>
+                  </span>
+                </p>
+                <p>
+                  <span class="row cpfComprador">CPF: {{this.pedido.cpfComprador}}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card col-md-3 float-left mt-1">
+        <div class="card-header">
+          <div class="card-title text-left">Pagamento</div>
+        </div>
+        <div class="card-body pt-0">
+          <div class="media-body pt-2">
+            <div class="text-bold">
+              <p class="col-md-12" v-if="this.pedido.bandeira != 'bolbradesco'">
+                <img
+                  :src="getImagePaymentID(this.pedido.bandeira)"
+                  class="imgMethodo float-left pull-left mr-4"
+                />
+                <span class="row mb-0 float-left pull-left mr-6">{{this.pedido.quatroDigitosCartao}}</span>
+              </p>
+              <p class="mt-5" v-if="this.pedido.bandeira != 'bolbradesco'">
+                <span
+                  class="row valorTransacao mb-0 mt-4 ml-3"
+                >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
+                <span
+                  class="row valorTransacao mb-0 mt-1 ml-3"
+                >{{this.pedido.parcela}}x de R$ {{formatPrice(this.pedido.valorParcela)}}</span>
+              </p>
+              <p class="col-md-12" v-if="this.pedido.bandeira == 'bolbradesco'">
+                <img
+                  :src="getImagePaymentID(this.pedido.bandeira)"
+                  class="imgMethodo float-left pull-left mr-4"
+                />
+              </p>
+              <p class="col-md-12 mt-5" v-if="this.pedido.bandeira == 'bolbradesco'">
+                <span class="row valorTransacao mb-0 mt-0 ml-0">Boleto Bancário</span>
+                <a class="linkBoleto" v-bind:href="this.pedido.linkBoleto">
+                  <span class="row mb-0 mt-0 ml-0 fas fa-eye"> Ver Boleto</span>
+                </a>
+                <a class="linkBoleto" v-bind:href="getLinkEnviarBoleto(this.pedido)">
+                  <span class="fab fa-whatsapp "> Enviar Boleto</span>
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card col-md-4 float-left mt-1">
+        <div class="card-header">
+          <div class="card-title text-left">Entrega</div>
+        </div>
+        <div class="card-body pt-0">
+          <div class="media-body pt-2">
+            <div class="text-bold">
+              <p class="col-md-12">
+                <img
+                  :src="getImagePaymentID(this.pedido.bandeira)"
+                  class="imgMethodo float-left pull-left mr-4"
+                />
+                <span
+                  class="row mb-0 float-left pull-left mr-6"
+                  v-if="this.pedido.bandeira != 'bolboleto'"
+                >{{this.pedido.quatroDigitosCartao}}</span>
+              </p>
+              <p>
+                <span
+                  class="row valorTransacao mb-0 mt-4 ml-3"
+                >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
+                <span
+                  class="row valorTransacao mb-0 mt-1 ml-3"
+                >{{this.pedido.parcela}}x de R$ {{formatPrice(this.pedido.valorParcela)}}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ContentWrapper>
+</template>
+
+<script>
+import Vue from "vue";
+import VeeValidate from "vee-validate";
+import Loading from "vue-loading-overlay";
+import API_NOTIFICATION from "../../api/notification";
+// Import stylesheet
+import "vue-loading-overlay/dist/vue-loading.css";
+import API_LOGIN from "../../api/loginAPI";
+import API_HEADERS from "../../api/configAxios";
+import API_TRANSACOES from "../../api/transacoesAPI";
+import API_LOJA from "../../api/lojaAPI";
+import Datatable from "@/components/Tables/Datatable";
+import moment from "moment";
+import dateFormat from "dateformat";
+import TimeAgo from "javascript-time-ago";
+import pt from "javascript-time-ago/locale/pt";
+import Hashids from "hashids";
+import constantes from "../../api/constantes";
+
+TimeAgo.addLocale(pt);
+Vue.use(Loading);
+
+Vue.use(VeeValidate, {
+  fieldsBagName: "formFields" // fix issue with b-table
+});
+Vue.filter("formatDate", function(value) {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY hh:mm");
+  }
+});
+
+export default {
+  props: {
+    //data: Array
+    // columns: Array
+  },
+
+  async created() {
+    this.pedidoID = this.$route.params.id;
+    this.PedidoString = await this.getDeCripto(this.pedidoID);
+    this.pedidoID = this.PedidoString[1];
+    this.timeAgo = new TimeAgo("pt-BR");
+    this.checkIfLogged();
+  },
+  data() {
+    return {
+      pedidoID: 0,
+      timeAgo: "",
+      searchQuery: "",
+      sortKey: "",
+      sortOrders: {},
+      dataPedido: "",
+      statusArray: [
+        "metodo",
+        "id",
+        "order_id",
+        "status",
+        "data",
+        "total",
+        "nome_comprador"
+      ],
+      statusAtual: 10,
+      data: Array,
+      pedido: {},
+      status: ""
+    };
+  },
+  computed: {
+    filteredData: function() {
+      let sortKey = this.sortKey;
+      let filterKey = this.searchQuery && this.searchQuery.toLowerCase();
+      let order = this.sortOrders[sortKey] || 1;
+      let data = this.gridData;
+
+      if (filterKey) {
+        data = data.filter(function(row) {
+          return Object.keys(row).some(function(key) {
+            return (
+              String(row[key])
+                .toLowerCase()
+                .indexOf(filterKey) > -1
+            );
+          });
+        });
+      }
+      if (sortKey) {
+        data = data.slice().sort(function(a, b) {
+          a = a[sortKey];
+          b = b[sortKey];
+          return (a === b ? 0 : a > b ? 1 : -1) * order;
+        });
+      }
+      return data;
+    },
+    dataPerPage: function() {
+      return this.filteredData.filter(
+        (item, index) =>
+          index >= this.startRow && index < this.startRow + this.rowsPerPage
+      );
+    }
+  },
+  filters: {
+    capitalize: function(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+  },
+  methods: {
+    formatPrice(value) {
+      let val = (value / 1).toFixed(2).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    checkIfLogged() {
+      API_NOTIFICATION.ShowLoading();
+      API_LOGIN.VerificaToken()
+        .then(res => {
+          API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
+            .then(resLoja => {
+              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+              API_TRANSACOES.GetTransacaoByID(this.PedidoString[0])
+                .then(retProd => {
+                  const obj = retProd.data[0];
+                  const LID = obj.id;
+                  console.log(obj);
+                  const LPaymentID = JSON.parse(obj.json_gw_response)
+                    .payment_method_id;
+                  let LStatus;
+                  if (obj.status == null) {
+                    if (this.LPaymentID == "bolbradesco") {
+                      LStatus = "pendente";
+                    } else {
+                      LStatus = "aprovada";
+                    }
+                  } else {
+                    LStatus = obj.status;
+                  }
+                  this.status = LStatus;
+                  const LData = dateFormat(
+                    JSON.parse(obj.json_gw_response).date_created,
+                    "dd/mm/yyyy  HH:MM:ss"
+                  );
+                  const LTimeAgo = JSON.parse(obj.json_gw_response)
+                    .date_created;
+                  const LTotal = JSON.parse(obj.json_gw_response)
+                    .transaction_amount;
+
+                  //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
+                  const LOrderID = JSON.parse(obj.json_shopify_response).order
+                    .id;
+                  this.dataPedido = dateFormat(
+                    JSON.parse(obj.json_gw_response).date_created,
+                    "dd/mm/yyyy  HH:MM:ss"
+                  );
+                  this.pedido.json_front_end_user_data = JSON.parse(
+                    obj.json_front_end_user_data
+                  );
+                  //console.log(Date.now(), Date.parse(LData));
+                  this.pedido.nomeComprador = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.nome_completo;
+                  this.pedido.emailComprador = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.email;
+                  this.pedido.cpfComprador = this.maskCPF(
+                    JSON.parse(obj.json_front_end_user_data).dadosComprador.cpf
+                  );
+                  this.pedido.telefoneComprador = this.maskCPF(
+                    JSON.parse(obj.json_front_end_user_data).dadosComprador
+                      .telefone
+                  );
+                  this.pedido.bandeira = JSON.parse(
+                    obj.json_gw_response
+                  ).payment_method_id;
+                  if (this.pedido.bandeira != "bolbradesco") {
+                    this.pedido.quatroDigitosCartao = JSON.parse(
+                      obj.json_gw_response
+                    ).card.last_four_digits;
+                  } else if (this.pedido.bandeira == "bolbradesco") {
+                    this.pedido.linkBoleto = JSON.parse(
+                      obj.json_gw_response
+                    ).transaction_details.external_resource_url;
+                    this.pedido.dataExpiracao = JSON.parse(
+                      obj.json_gw_response
+                    ).date_of_expiration;
+                    this.pedido.codigoBarras = JSON.parse(
+                      obj.json_gw_response
+                    ).barcode.content;
+                  }
+                  this.pedido.valorPedido = JSON.parse(
+                    obj.json_gw_response
+                  ).transaction_amount;
+                  this.pedido.parcela = JSON.parse(
+                    obj.json_gw_response
+                  ).installments;
+                  this.pedido.valorParcela = JSON.parse(
+                    obj.json_gw_response
+                  ).transaction_details.installment_amount;
+
+                  API_NOTIFICATION.HideLoading();
+                })
+                .catch(error => {
+                  console.log("Erro ao pegar produtos", error);
+                });
+            })
+            .catch(error => {
+              console.log("Erro ao pegar dados da loja", error);
+            });
+        })
+        .catch(error => {
+          console.log("Erro ao verificar token", error);
+          if (error.response.status === 401) {
+            this.$router.go("login");
+          }
+        });
+    },
+    getID(id) {
+      return id;
+    },
+    sortBy: function(key) {
+      this.sortKey = key;
+      this.sortOrders[key] = this.sortOrders[key] * -1;
+    },
+    movePages: function(amount) {
+      let newStartRow = this.startRow + amount * this.rowsPerPage;
+      if (
+        this.filteredData != undefined &&
+        newStartRow >= 0 &&
+        newStartRow < this.filteredData.length
+      ) {
+        this.startRow = newStartRow;
+      }
+    },
+    toCamelCase(str) {
+      var LSTR2 = "";
+      if (str.indexOf(" ") > -1) {
+        var LSpace = str.split(" ");
+        LSpace.forEach((objS, i) => {
+          var LStr = objS.split("");
+          LStr.forEach((obj, i) => {
+            if (i == 0) LSTR2 = LSTR2 + obj.toString().toUpperCase();
+            if (i > 0) LSTR2 = LSTR2 + obj.toString().toLowerCase();
+          });
+          LSTR2 = LSTR2 + " ";
+        });
+      } else {
+        var LStr = str.split("");
+        LStr.forEach((obj, i) => {
+          if (i == 0) LSTR2 = LSTR2 + obj.toString().toUpperCase();
+          if (i > 0) LSTR2 = LSTR2 + obj.toString().toLowerCase();
+        });
+      }
+      return LSTR2;
+    },
+    toUpperCase(str) {
+      return str.toUpperCase();
+    },
+    getImagePaymentID(paymentID) {
+      if (paymentID == "bolbradesco") return "img/barcode.svg";
+      else if (paymentID == "master") return "img/master.png";
+      else if (paymentID == "visa") return "img/visa.png";
+      else return "img/visa.png";
+    },
+    getClassStatus(status) {
+      if (status == "pendente") return "alert-info";
+      if (status == "cancelada") return "alert-danger";
+      if (status == "aprovada") return "alert-success";
+      if (status == "entregue") return "alert-success";
+      return "alert-warning";
+    },
+    getDeCripto(crypted) {
+      try {
+        // console.log(id_produto);
+        const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        ///const produtHashed= hashids.encode(id_produto.toString(), id_variante.toString());
+        // console.log("ID Hashedid", produtHashed);
+        // console.log("ID Deshashed", numbers);
+        return hashids.decode(crypted);
+      } catch (error) {
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "Parâmetros Inválidos na URL",
+          "error"
+        );
+      }
+    },
+    maskCPF(cpf) {
+      return (cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"));
+    },
+    unMask(telefone) {
+      if (telefone) return telefone.replace(/\D/g, "");
+
+      return "";
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(2).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
+    getLinkEnviarBoleto(pedido) {
+      var linkBase = "https://api.whatsapp.com/send?phone=";
+      var produtoName = "";
+      this.pedido.json_front_end_user_data.produtos.forEach((obj, i) => {
+        produtoName = produtoName + obj.title + ", ";
+      });
+      var LLINK = constantes.MSG_BOLETO_ENVIO.replace(
+        "PRODUTO_NAME",
+        produtoName
+      )
+        .replace("VALOR_VALOR", this.formatPrice(this.pedido.valorPedido))
+        .replace("VENCIMENTO", dateFormat(
+                    this.pedido.dataExpiracao,
+                    "dd/mm/yyyy"
+                  ))
+        .replace("CODIGO_BARRAS", this.pedido.codigoBarras)
+        .replace("LINK_LINK", this.pedido.linkBoleto);
+        return linkBase + this.unMask(this.pedido.telefoneComprador) + "&text="+LLINK;
+    }
+  }
+};
+</script>

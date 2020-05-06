@@ -1,5 +1,6 @@
 export default Object.freeze({
   WEBSITEAPI: 'http://localhost:3000/',
+  MSG_BOLETO_ENVIO: 'Aqui está o boleto do produto *PRODUTO_NAME*, no valor de R$ VALOR_VALOR Vencimento: *VENCIMENTO* Código de barras: *CODIGO_BARRAS* Link: LINK_LINK',
   PATH_GET: 'index',
   PATH_LOGIN: 'users/EfetuaLogin',
   PATH_TOKEN: 'users/VerificaToken',
@@ -26,6 +27,7 @@ export default Object.freeze({
   PATH_PAY_CHECKOUT: 'checkouts/DoPay',
   PATH_PAY_CHECKOUT_TICKET: 'checkouts/DoPayTicket',
   PATH_PAY_GET_PEDIDOS: 'transacoes/GetPedidos',
+  PATH_PAY_GET_PEDIDOS_POR_ID: 'transacoes/GetPedidosByID',
 
   
 });
