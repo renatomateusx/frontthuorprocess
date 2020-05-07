@@ -28,6 +28,7 @@ export default Object.freeze({
   PATH_PAY_CHECKOUT_TICKET: 'checkouts/DoPayTicket',
   PATH_PAY_GET_PEDIDOS: 'transacoes/GetPedidos',
   PATH_PAY_GET_PEDIDOS_POR_ID: 'transacoes/GetPedidosByID',
+  PATH_PAY_REEMDBOLSAR_PEDIDOS_POR_ID: 'transacoes/ReembolsarPedidoByID',
 
   
 });

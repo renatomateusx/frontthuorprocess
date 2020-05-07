@@ -292,8 +292,8 @@
   .valorTotalCollapse {
     font-weight: 700;
     color: #3fc583;
-    font-size: 11px!important;
-    top: 3px!important;
+    font-size: 11px !important;
+    top: 3px !important;
     position: relative;
   }
   .resumoCompra {
@@ -306,9 +306,9 @@
     color: dodgerblue;
     font-size: 15px !important;
   }
-  .textItems{
+  .textItems {
     position: relative;
-    top: 0px!important;
+    top: 0px !important;
   }
 }
 </style>
@@ -1617,22 +1617,22 @@ export default {
     getDadosPagamentoTransacao() {
       var transacao = {
         dadosComprador: {
-          nome_completo: this.nome_completo,
+          nome_completo: this.removeAcento(this.nome_completo),
           email: this.email,
           cpf: this.cpf,
           telefone: this.telefone,
           cep: this.CEP,
-          endereco: this.endereco,
+          endereco: this.removeAcento(this.endereco),
           numero_porta: this.numero_porta,
           bairro: this.bairro,
           cidade: this.cidade,
           estado: this.estado,
-          complemento: this.complemento,
-          destinatario: this.destinatario,
+          complemento: this.removeAcento(this.complemento),
+          destinatario: this.removeAcento(this.destinatario),
           numero_cartao: this.numero_cartao,
           validade: this.validade,
           nome_titular: this.nome_titular,
-          codigo_segurança: this.codigo_seguranca,
+          codigo_seguranca: this.codigo_seguranca,
           cpf_titular: this.cpf_titular,
           frete: this.getFreteSelecionadoNome()
         },
@@ -1731,6 +1731,16 @@ export default {
       } else if (this.formaPagamento == "bolbradesco") {
         this.iniciaPagamentoBackEndBoleto();
       }
+    },
+    removeAcento(text) {
+      text = text.toLowerCase();
+      text = text.replace(new RegExp("[ÁÀÂÃ]", "gi"), "a");
+      text = text.replace(new RegExp("[ÉÈÊ]", "gi"), "e");
+      text = text.replace(new RegExp("[ÍÌÎ]", "gi"), "i");
+      text = text.replace(new RegExp("[ÓÒÔÕ]", "gi"), "o");
+      text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
+      text = text.replace(new RegExp("[Ç]", "gi"), "c");
+      return text;
     }
   }
 };

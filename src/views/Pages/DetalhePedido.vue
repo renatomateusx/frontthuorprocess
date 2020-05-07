@@ -158,7 +158,7 @@ th.active .arrow {
   font-weight: 700;
   font-size: 15px;
 }
-.valorTransacaoTotal{
+.valorTransacaoTotal {
   font-family: Rubik, sans-serif;
   font-weight: 700;
   font-size: 25px;
@@ -183,20 +183,23 @@ th.active .arrow {
 .linkBoleto {
   cursor: pointer !important;
 }
-.cardTotal{
-  border-left: 1px dashed  #d0d0d0;
+.cardTotal {
+  border-left: 1px dashed #d0d0d0;
 }
-.paddingLeftZero{
-  padding-left: 0px!important;
+.paddingLeftZero {
+  padding-left: 0px !important;
 }
-.dataCriacao{
-  font-size: 12px!important;
+.dataCriacao {
+  font-size: 12px !important;
 }
 </style>
 <template>
   <ContentWrapper>
     <div class="content-heading mt-3">
-      <h4 class="contentHeading">Pedido: {{pedidoID}} em <strong class="dataCriacao">{{this.dataPedido}}</strong></h4>
+      <h4 class="contentHeading">
+        Pedido: {{pedidoID}} em
+        <strong class="dataCriacao">{{this.dataPedido}}</strong>
+      </h4>
     </div>
 
     <div class="wrapper col-xl-12 row">
@@ -209,7 +212,7 @@ th.active .arrow {
         for="inlineFormInputGroup"
       >Atualizar Status</label>
       <select
-        v-model="status"
+        v-model="statusAtual"
         id="select"
         class="selectPage form-control pull-left float-left"
       >
@@ -239,7 +242,9 @@ th.active .arrow {
                     <a
                       v-bind:href="'https://api.whatsapp.com/send?phone='+unMask(this.pedido.telefoneComprador)"
                     >
-                      <span class="fab fa-whatsapp foneWhats"><span class="ml-1">{{this.pedido.telefoneComprador}}</span></span>
+                      <span class="fab fa-whatsapp foneWhats">
+                        <span class="ml-1">{{this.pedido.telefoneComprador}}</span>
+                      </span>
                     </a>
                   </span>
                 </p>
@@ -264,14 +269,14 @@ th.active .arrow {
                   :src="getImagePaymentID(this.pedido.bandeira)"
                   class="row imgMethodo float-left pull-left mr-4"
                 />
-                <span class="row mb-0 float-left pull-left mr-6">{{this.pedido.quatroDigitosCartao}}</span>
+                <span class="row mb-0 float-left pull-left mr-6 mt-1">{{this.pedido.quatroDigitosCartao}}</span>
               </p>
               <p class="mt-5" v-if="this.pedido.bandeira != 'bolbradesco'">
                 <span
-                  class="row valorTransacao mb-0 mt-4 ml-3"
+                  class="row valorTransacao mb-0 mt-3 ml-0"
                 >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
                 <span
-                  class="row valorTransacao mb-0 mt-1 ml-3"
+                  class="row valorTransacao mb-0 mt-1 ml-0"
                 >{{this.pedido.parcela}}x de R$ {{formatPrice(this.pedido.valorParcela)}}</span>
               </p>
               <p class="col-md-12" v-if="this.pedido.bandeira == 'bolbradesco'">
@@ -282,17 +287,19 @@ th.active .arrow {
               </p>
               <p class="row col-md-12 mt-3 mb-0" v-if="this.pedido.bandeira == 'bolbradesco'">
                 <span class="row valorTransacao mb-0 mt-1 ml-0">Boleto Bancário</span>
-                
               </p>
               <p class="row col-md-12 mt-0 mb-0" v-if="this.pedido.bandeira == 'bolbradesco'">
-                
                 <a class="linkBoleto" v-bind:href="this.pedido.linkBoleto">
-                  <span class="row mb-0 mt-0 ml-0 fas fa-eye mt-1 float-left"><span class="ml-1">Ver Boleto</span></span>
+                  <span class="row mb-0 mt-0 ml-0 fas fa-eye mt-1 float-left">
+                    <span class="ml-1">Ver Boleto</span>
+                  </span>
                 </a>
               </p>
               <p class="row col-md-12 mt-1" v-if="this.pedido.bandeira == 'bolbradesco'">
                 <a class="linkBoleto" v-bind:href="getLinkEnviarBoleto(this.pedido)">
-                  <span class="fab fa-whatsapp"> <span class="ml-2">Enviar Boleto</span></span>
+                  <span class="fab fa-whatsapp">
+                    <span class="ml-2">Enviar Boleto</span>
+                  </span>
                 </a>
               </p>
             </div>
@@ -309,12 +316,19 @@ th.active .arrow {
             <div class="text-bold">
               <p>
                 <span class="row nomeComprador mb-0">{{this.pedido.destinatario}}</span>
-                 <span class="row  mb-0">{{this.pedido.endereco}}, {{this.pedido.numero_porta}}</span>
-                 <span class="row  mb-0" v-if="this.pedido.complemento">Complemento: {{this.pedido.complemento}}</span>
-                  <span class="row  mb-0">{{this.pedido.cidade}} / {{this.pedido.estado}}</span>
-                   <span class="row  mb-0">CEP: <strong> <b>{{this.pedido.cep}}</b></strong></span>
+                <span class="row mb-0">{{this.pedido.endereco}}, {{this.pedido.numero_porta}}</span>
+                <span
+                  class="row mb-0"
+                  v-if="this.pedido.complemento"
+                >Complemento: {{this.pedido.complemento}}</span>
+                <span class="row mb-0">{{this.pedido.cidade}} / {{this.pedido.estado}}</span>
+                <span class="row mb-0">
+                  CEP:
+                  <strong>
+                    <b>{{this.pedido.cep}}</b>
+                  </strong>
+                </span>
               </p>
-              
             </div>
           </div>
         </div>
@@ -325,18 +339,26 @@ th.active .arrow {
         </div>
         <div class="card-body pt-0">
           <div class="media-body pt-2">
-            <div class="text-bold">
-              <p class="mt-1" >
+            <div class="text-bold row">
+              <p class="mt-1">
                 <span
                   class="row valorTransacaoTotal mb-0 mt-0 ml-0"
                 >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
-               
               </p>
-              
+              <button
+          class="form-control btn btn-danger" v-if="this.status.toUpperCase()!= 'CANCELADA' ||this.status.toUpperCase()!= 'REEMBOLSADA' "
+          v-on:click="devolverPagamento(pedido)"
+        >Reembolsar</button>
             </div>
           </div>
         </div>
       </div>
+      <!-- <div class="col-xl-12 pull-right float-right">
+        <button
+          class="form-control btn btn-danger" v-if="this.status.toUpperCase()!= 'CANCELADA' ||this.status.toUpperCase()!= 'REEMBOLSADA' "
+          v-on:click="devolverPagamento(pedido)"
+        >Reembolsar Cliente</button>
+      </div> -->
     </div>
   </ContentWrapper>
 </template>
@@ -401,7 +423,7 @@ export default {
         "ARQUIVADA",
         "AGUARDANDO PROCESSAMENTO"
       ],
-      statusAtual: 10,
+      statusAtual: "",
       data: Array,
       pedido: {},
       status: ""
@@ -476,6 +498,7 @@ export default {
                     LStatus = obj.status;
                   }
                   this.status = LStatus;
+                  this.statusAtual = this.status.toUpperCase();
                   const LData = dateFormat(
                     JSON.parse(obj.json_gw_response).date_created,
                     "dd/mm/yyyy  HH:MM:ss"
@@ -496,6 +519,7 @@ export default {
                     obj.json_front_end_user_data
                   );
                   //console.log(Date.now(), Date.parse(LData));
+                  this.pedido.id =  obj.id;
                   this.pedido.nomeComprador = JSON.parse(
                     obj.json_front_end_user_data
                   ).dadosComprador.nome_completo;
@@ -537,13 +561,27 @@ export default {
                     obj.json_gw_response
                   ).transaction_details.installment_amount;
 
-                  this.pedido.destinatario = JSON.parse(obj.json_front_end_user_data).dadosComprador.destinatario;
-                  this.pedido.endereco = JSON.parse(obj.json_front_end_user_data).dadosComprador.endereco;
-                  this.pedido.numero_porta = JSON.parse(obj.json_front_end_user_data).dadosComprador.numero_porta;
-                  this.pedido.complemlento = JSON.parse(obj.json_front_end_user_data).dadosComprador.complemento;
-                  this.pedido.cidade = JSON.parse(obj.json_front_end_user_data).dadosComprador.cidade;
-                  this.pedido.estado = JSON.parse(obj.json_front_end_user_data).dadosComprador.estado;
-                  this.pedido.cep = JSON.parse(obj.json_front_end_user_data).dadosComprador.cep;
+                  this.pedido.destinatario = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.destinatario;
+                  this.pedido.endereco = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.endereco;
+                  this.pedido.numero_porta = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.numero_porta;
+                  this.pedido.complemlento = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.complemento;
+                  this.pedido.cidade = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.cidade;
+                  this.pedido.estado = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.estado;
+                  this.pedido.cep = JSON.parse(
+                    obj.json_front_end_user_data
+                  ).dadosComprador.cep;
 
                   API_NOTIFICATION.HideLoading();
                 })
@@ -664,6 +702,31 @@ export default {
       return (
         linkBase + this.unMask(this.pedido.telefoneComprador) + "&text=" + LLINK
       );
+    },
+    devolverPagamento(pPedido) {
+      API_NOTIFICATION.showNotificationConfirm(
+        "Atenção. Esta ação não poderá ser revertida",
+        "Deseja cancelar a compra e reembolsar o cliente?",
+        "warning",
+        event => {
+          API_NOTIFICATION.ShowLoading();
+          API_TRANSACOES.ReembolsarCliente(pPedido.id)
+            .then(res => {
+              API_NOTIFICATION.showNotification(
+                "Reembolsado com sucesso",
+                "success"
+              );
+              this.checkIfLogged();
+            })
+            .catch(error => {
+              console.log("Erro ao reembolsar o cliente", error);
+            });
+        }
+      );
+    },
+    acaoConfirmadaDevolvePagamento(event) {
+      console.log("Event", event);
+      API_NOTIFICATION.ShowLoading();
     }
   }
 };

@@ -84,6 +84,23 @@ var API_NOTIFICATION = {
             message,
             type
         );
+    },
+    showNotificationConfirm(title, message, type, callback) {
+        Vue.swal({
+            title: title,
+            text: message,
+            icon: type,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, faça isso!',
+            cancelButtonText: 'Não'
+        }).then((result) => {
+            
+            if (result.value) {
+                callback();
+            }
+        })
     }
 }
 export default API_NOTIFICATION 
