@@ -6,14 +6,14 @@ const Menu = [
     {
         name: 'Página Inicial',
         path: 'home',
-        icon : 'icon-grid',
+        icon: 'icon-grid',
         translate: 'sidebar.nav.SINGLEVIEW'
     },
     {
         name: 'Produtos',
         path: 'produtos',
-        icon : 'icon-tag',        
-        submenu:[{
+        icon: 'icon-tag',
+        submenu: [{
             name: 'Ver Todos',
             translate: 'sidebar.nav.SUBMENU',
             path: 'todos'
@@ -30,7 +30,23 @@ const Menu = [
         //     translate: 'sidebar.nav.SUBMENU',
         //     path: 'submenu'
         // }]
-    }
+    },
+    {
+        name: 'Configurações',
+        path: 'configuracoes',
+        icon: 'icon-settings',
+        submenu: [{
+            name: 'Checkout',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-donate',
+            path: '/configs/checkouts'
+        }, {
+            name: 'Integrações',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-donate',
+            path: '/configs/integracoes'
+        },]
+    },
 ];
 
 export default Menu;

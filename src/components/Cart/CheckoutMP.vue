@@ -1438,7 +1438,7 @@ export default {
       return this.stepDadosPessoaisFinalizados;
     },
     getCheckouts() {
-      API_LOJA.GetCheckouts()
+      API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
           if (this.DadosCheckout.gateway == 1) {

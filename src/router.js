@@ -23,7 +23,7 @@ const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
 const Pedidos = () => import('@/views/Pages/Pedidos.vue');
 const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
-
+const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
 
 
 Vue.use(Router)
@@ -114,6 +114,23 @@ export default new Router({
     {
         path: '*',
         redirect: '/'
-    }
+    },
+    {
+        path: '/',
+        component: Layout,
+        children: [
+            {
+                path: '/configs/checkouts',
+                component: IntegracaoCheckout
+            }, {
+                path: '/configs/checkouts/mercadopago',
+                component: Home
+            }, {
+                path: '/configs/integracoes',
+                component: Home
+            },
+
+        ]
+    },
     ]
 })
