@@ -60,6 +60,28 @@ var API_CHECKOUT = {
             }
         });
     },
+    GetCheckoutsByID(id) {
+        return new Promise((resolve, reject) => {
+            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
+                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario,
+                    gateway: id
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CHECKOUTS_BY_ID, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
     GetIntegracaoCheckout() {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {

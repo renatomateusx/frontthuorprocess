@@ -24,6 +24,7 @@ export default Object.freeze({
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_GET_FRETE: 'logisticas/GetFretes',
   PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',
+  PATH_GET_CHECKOUTS_BY_ID: 'checkouts/GetCheckoutByID',
   PATH_PAY_CHECKOUT: 'checkouts/DoPay',
   PATH_INTEGRACAO_CHECKOUT: 'checkouts/GetIntegracaoCheckout',
   PATH_INTEGRACAO_CHECKOUT_BY_ID: 'checkouts/GetIntegracaoCheckoutByID',

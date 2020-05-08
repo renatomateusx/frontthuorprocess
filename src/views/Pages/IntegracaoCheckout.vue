@@ -21,7 +21,7 @@
   height: 20px;
   width: 20px;
 }
-.imgIntegracao{
+.imgIntegracao {
   width: 120px;
   height: auto;
 }
@@ -56,13 +56,20 @@
         <div class="card b">
           <div class="card-header">
             <div class="my-2 row p-0">
-              <img class="mr-2 img-fluid thumb24 col-md-2 imgIntegracao mt-2" v-bind:src="getImageIntegracaoCheckout(id)" alt="App" />
-              <span class="col-md-5 mt-2">{{apelido}}</span>
-              <button class="btn btn-info col-md-3" v-on:click="acaoVerEditarIntegracaoCheckout(id)">
+              <img
+                class="mr-2 img-fluid thumb24 col-md-2 imgIntegracao mt-2"
+                v-bind:src="getImageIntegracaoCheckout(id)"
+                alt="App"
+              />
+              <span class="col-md-5 mt-2">{{getApelidoByID(id)}}</span>
+              <button
+                class="btn btn-info col-md-3"
+                v-on:click="acaoVerEditarIntegracaoCheckout(id)"
+              >
                 <span class="fa fa-edit">Criar / Editar</span>
               </button>
               <div class="float-right mt-2 col-md-1">
-                <span class="CheckoutStatusAtivo pull-right float-right"></span>
+                <span class="pull-right float-right" v-bind:class="getStatusClassByID(id)"></span>
               </div>
             </div>
           </div>
@@ -96,7 +103,8 @@ export default {
   },
   data() {
     return {
-      checkoutList: []
+      checkoutList: [],
+      checkoutIDList: []
     };
   },
   methods: {
@@ -107,9 +115,12 @@ export default {
           API_CHECKOUT.GetIntegracaoCheckout()
             .then(resCheckout => {
               this.checkoutList = resCheckout.data;
-              console.log("Checkout", this.checkoutList);
-              console.log(this.checkoutList.length);
-              API_NOTIFICATION.HideLoading();
+              this.checkoutList.forEach((obj, i) => {
+                API_CHECKOUT.GetCheckoutsByID(obj.id).then(resCheckoutByID => {
+                  this.checkoutIDList.push(resCheckoutByID.data);
+                  API_NOTIFICATION.HideLoading();
+                });
+              });
             })
             .catch(error => {
               console.log("Erro ao pegar dados da loja", error);
@@ -122,17 +133,37 @@ export default {
           }
         });
     },
-    acaoVerEditarIntegracaoCheckout(id){
-      if(id == 1){
-        
-        this.$router.push('/configs/checkouts/mercadopago');
+    acaoVerEditarIntegracaoCheckout(id) {
+      if (id == 1) {
+        this.$router.push("/configs/checkouts/mercadopago");
       }
     },
-    getImageIntegracaoCheckout(id){
-      if(id == 1){
+    getImageIntegracaoCheckout(id) {
+      if (id == 1) {
         return "/img/mercadopago.png";
       }
       return "";
+    },
+    getApelidoByID(id) {
+      if (id > 0) {
+        if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
+          return this.checkoutIDList.find(x => x.gateway == id).nome;
+        }
+      }
+
+      return "";
+    },
+    getStatusByID(id) {
+      if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
+        return this.checkoutIDList.find(x => x.gateway == id).status;
+      }
+    },
+    getStatusClassByID(id) {
+      if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
+        return this.checkoutIDList.find(x => x.gateway == id).status
+          ? "CheckoutStatusAtivo"
+          : "CheckoutStatusInativo";
+      }
     }
   }
 };
