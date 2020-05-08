@@ -25,7 +25,8 @@ const Pedidos = () => import('@/views/Pages/Pedidos.vue');
 const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
 const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
 const MercadoPago = () => import('@/components/Checkouts/MercadoPago.vue');
-
+const IntegracaoPlataforma = () => import('@/views/Pages/IntegracaoPlataforma.vue');
+const IntegracaoShopify = () => import('@/views/Pages/IntegracaoShopify.vue');
 Vue.use(Router)
 
 export default new Router({
@@ -127,7 +128,10 @@ export default new Router({
                 component: MercadoPago
             }, {
                 path: '/configs/integracoes',
-                component: Home
+                component: IntegracaoPlataforma
+            },{
+                path: '/configs/integracoes/shopify',
+                component: IntegracaoShopify
             },
 
         ]

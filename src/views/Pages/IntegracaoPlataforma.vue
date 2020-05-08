@@ -29,15 +29,15 @@
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-donate"></span>Checkouts
+      <span class="fa fa-share-alt-square"><span class="ml-2"></span></span>Integrações
     </div>
     <strong>
-      Todos os checkouts que fazemos integração estão aqui.
+      Tadas as integrações que fazemos atualmente estão aqui.
       <br />
-      Caso queira integrar com outro gateway de pagamento, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.
+      Caso queira integrar com alguma plataforma ou ferramenta, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.
     </strong>
 
-    <div class="row mt-3" v-for="{id, nome} in checkoutList" :key="id">
+    <div class="row mt-3" v-for="{id, nome} in integracaoList" :key="id">
       <div class="col-xl-4">
         <!-- Aside card-->
         <div class="card b">
@@ -57,14 +57,14 @@
           <div class="card-header">
             <div class="my-2 row p-0">
               <img
-                class="mr-2 img-fluid thumb24 col-md-2 imgIntegracao mt-2"
-                v-bind:src="getImageIntegracaoCheckout(id)"
+                class="mr-2 img-fluid thumb36 col-md-2 imgIntegracao mt-0"
+                v-bind:src="getImageIntegracaoPlataforma(id)"
                 alt="App"
               />
               <span class="col-md-5 mt-2">{{getApelidoByID(id)}}</span>
               <button
                 class="btn btn-info col-md-3"
-                v-on:click="acaoVerEditarIntegracaoCheckout(id)"
+                v-on:click="acaoVerEditarIntegracaoPlataforma(id)"
               >
                 <span class="fa fa-edit">Criar / Editar</span>
               </button>
@@ -91,6 +91,7 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
+import API_LOJA from '../../api/lojaAPI';
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -103,8 +104,8 @@ export default {
   },
   data() {
     return {
-      checkoutList: [],
-      checkoutIDList: []
+      integracaoList: [],
+      integracaoIDList: []
     };
   },
   methods: {
@@ -112,12 +113,14 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_CHECKOUT.GetIntegracaoCheckout()
-            .then(resCheckout => {
-              this.checkoutList = resCheckout.data;
-              this.checkoutList.forEach((obj, i) => {
-                API_CHECKOUT.GetCheckoutsByID(obj.id).then(resCheckoutByID => {
-                  this.checkoutIDList.push(resCheckoutByID.data);
+          API_LOJA.GetIntegracaoPlataforma()
+            .then(resPlataforma => {
+              this.integracaoList = resPlataforma.data;
+              console.log("this", this.integracaoList);
+              this.integracaoList.forEach((obj, i) => {
+                API_LOJA.GetIntegracaoPlataformaByID(obj.id).then(resIntegraID => {
+                  console.log(resIntegraID.data);
+                  this.integracaoIDList.push(resIntegraID.data);
                   API_NOTIFICATION.HideLoading();
                 });
               });
@@ -133,34 +136,34 @@ export default {
           }
         });
     },
-    acaoVerEditarIntegracaoCheckout(id) {
+    acaoVerEditarIntegracaoPlataforma(id) {
       if (id == 1) {
-        this.$router.push("/configs/checkouts/mercadopago");
+        this.$router.push("/configs/integracoes/shopify");
       }
     },
-    getImageIntegracaoCheckout(id) {
+    getImageIntegracaoPlataforma(id) {
       if (id == 1) {
-        return "/img/mercadopago.png";
+        return "/img/shopify.png";
       }
       return "";
     },
     getApelidoByID(id) {
-      if (id > 0) {
-        if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
-          return this.checkoutIDList.find(x => x.gateway == id).nome;
+        console.log(this.integracaoIDList.find(x => x.plataforma == id));
+        if (this.integracaoIDList.find(x => x.plataforma == id) !== undefined) {
+          return this.integracaoIDList.find(x => x.plataforma == id).nome_loja;
         }
-      }
+      
 
       return "";
     },
     getStatusByID(id) {
-      if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
-        return this.checkoutIDList.find(x => x.gateway == id).status;
+      if (this.integracaoIDList.find(x => x.plataforma == id) !== undefined) {
+        return this.integracaoIDList.find(x => x.plataforma == id).status;
       }
     },
     getStatusClassByID(id) {
-      if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
-        return this.checkoutIDList.find(x => x.gateway == id).status
+      if (this.integracaoIDList.find(x => x.plataforma == id) !== undefined) {
+        return this.integracaoIDList.find(x => x.plataforma == id).status
           ? "CheckoutStatusAtivo"
           : "CheckoutStatusInativo";
       }
