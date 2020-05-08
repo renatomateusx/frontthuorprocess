@@ -24,7 +24,7 @@ const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
 const Pedidos = () => import('@/views/Pages/Pedidos.vue');
 const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
 const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
-
+const MercadoPago = () => import('@/components/Checkouts/MercadoPago.vue');
 
 Vue.use(Router)
 
@@ -124,7 +124,7 @@ export default new Router({
                 component: IntegracaoCheckout
             }, {
                 path: '/configs/checkouts/mercadopago',
-                component: Home
+                component: MercadoPago
             }, {
                 path: '/configs/integracoes',
                 component: Home

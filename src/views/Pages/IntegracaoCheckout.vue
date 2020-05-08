@@ -124,7 +124,8 @@ export default {
     },
     acaoVerEditarIntegracaoCheckout(id){
       if(id == 1){
-        this.$router.push('/mercadopago');
+        
+        this.$router.push('/configs/checkouts/mercadopago');
       }
     },
     getImageIntegracaoCheckout(id){
