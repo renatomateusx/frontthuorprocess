@@ -29,7 +29,7 @@
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-donate"></span>Checkouts
+      <span class="fa fa-donate"><span class="ml-2"></span></span>Checkouts
     </div>
     <strong>
       Preencha o checkout do {{getNomePlataforma()}} corretamente. Lembre-se: nós te avisaremos se houver erros. Mas a responsabilidade de informar os dados é sua!
@@ -47,6 +47,7 @@
               <div class="float-left p-1">
                 <span class="spanNome">{{getNomePlataforma()}}</span>
               </div>
+              <button class="btn btn-block btn btn-primary btn-lg" v-if="plataforma.url_loja" v-on:click="reInstalarTema()">Reinstalar integração</button>
             </div>
           </div>
         </div>
@@ -91,7 +92,6 @@
               <div class="form-group">
                 <label class="col-form-label">URL Loja *</label>
                 <input
-                  
                   :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.url_loja')}"
                   v-model="plataforma_form.url_loja"
                   v-validate="'required'"
@@ -106,7 +106,6 @@
               <div class="form-group">
                 <label class="col-form-label">Chave API Key *</label>
                 <input
-                 
                   :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.chave_api_key')}"
                   v-model="plataforma_form.chave_api_key"
                   v-validate="'required'"
@@ -121,7 +120,6 @@
               <div class="form-group">
                 <label class="col-form-label">Senha *</label>
                 <input
-                 
                   :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.senha')}"
                   v-model="plataforma_form.senha"
                   v-validate="'required'"
@@ -136,7 +134,6 @@
               <div class="form-group">
                 <label class="col-form-label">Segredo Compartilhado *</label>
                 <input
-                 
                   :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.segredo_compartilhado')}"
                   v-model="plataforma_form.segredo_compartilhado"
                   v-validate="'required'"
@@ -177,7 +174,6 @@
               <div class="form-group">
                 <label class="col-form-label">Tipo de Integração *</label>
                 <select
-                  
                   id="tipo_integracao"
                   name="tipo_integracao"
                   class="form-control"
@@ -189,7 +185,6 @@
               <div class="form-group">
                 <label class="col-form-label">Quais Pedidos Enviar*</label>
                 <select
-                  
                   id="quais_pedidos_enviar"
                   name="quais_pedidos_enviar"
                   class="form-control"
@@ -211,7 +206,7 @@
                   <option value="0">Não</option>
                 </select>
               </div>
-              
+
               <div class="required">* Campos requeridos</div>
             </div>
             <div class="card-footer">
@@ -264,7 +259,7 @@ export default {
   data() {
     return {
       plataforma: {
-        nome: ''
+        nome: ""
       },
       plataforma_form: {
         status: 0,
@@ -280,7 +275,7 @@ export default {
         limpa_carrinho: "",
         nome_loja: "",
         plataforma: "",
-        id: 0,
+        id: 0
       }
     };
   },
@@ -320,7 +315,7 @@ export default {
           }
         });
     },
-    
+
     getImageIntegracaoCheckout(id) {
       if (id == 1) {
         return "/img/shopify.png";
@@ -342,15 +337,28 @@ export default {
         }
       });
     },
+    reInstalarTema() {
+      API_NOTIFICATION.ShowLoading();
+      API_LOJA.InstalarReinstalarShopify().then(resInstalarShopify => {
+        API_NOTIFICATION.showNotificationW(
+          "Pronto!",
+          "Aguarde alguns instantes para que a integração esteja completa.",
+          "success"
+        );
+      });
+    },
     salvarPlataforma() {
       API_NOTIFICATION.ShowLoading();
       API_LOJA.InsertPlataformShopify(this.plataforma_form)
         .then(res => {
           //this.checkIfLogged();
-          API_NOTIFICATION.showNotification(
-            "Checkout Salvo com Sucesso",
-            "success"
-          );
+          API_LOJA.InstalarReinstalarShopify().then(resInstalarShopify => {
+            API_NOTIFICATION.showNotificationW(
+              "Aê!",
+              "Integração salvao com sucesso! Aguarde alguns instantes para que a integração esteja completa.",
+              "success"
+            );
+          });
         })
         .catch(error => {
           console.log("Erro ao salvar o checkout MP", error);

@@ -190,7 +190,26 @@ var API_LOJA = {
             }
         });
     },
-
+    InstalarReinstalarShopify() {
+        return new Promise((resolve, reject) => {
+            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
+                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+                var LBody = {
+                    id_usuario : LDadosLoja.id_usuario
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
 
 
 

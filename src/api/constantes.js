@@ -27,6 +27,7 @@ export default Object.freeze({
   PATH_AUTO_SINC_PLATAFORMA_SHOPIFY: 'integracaoShopify/AutoSinc',
   PATH_LIMPA_CARRINHO_PLATAFORMA_SHOPIFY: 'integracaoShopify/PulaCarrinho',
   PATH_PULA_CARRINHO_PLATAFORMA_SHOPIFY: 'integracaoShopify/LimpaCarrinho',
+  PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY: 'importarProdutosShopify/ReInstalarIntegracao',
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_GET_FRETE: 'logisticas/GetFretes',
