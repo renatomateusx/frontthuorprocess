@@ -227,7 +227,7 @@
   margin: 0 auto;
   text-align: center;
   top: 5px;
-  float:left!important;
+  float: left !important;
 }
 .textItems {
   color: black;
@@ -747,7 +747,7 @@
                   <small class="textInformation col-md-10">Escolha abaixo uma forma de pagamento.</small>
                 </p>
                 <p class="mt-5 col-md-12">
-                  <small class>
+                  <small>
                     Processado por:
                     <img
                       v-bind:src="getImageProcessor()"
@@ -797,7 +797,7 @@
                       </label>
                       <div class="col-md-7">
                         <input
-                          @input="verificaDigitosCartao()"
+                          @input="maskCardNumber()"
                           class="form-control required"
                           autocomplete="cc-number"
                           type="text"
@@ -946,7 +946,7 @@
         <!-- END STEP 3-->
       </div>
     </div>
-    <div id="formPayMP">
+    <!-- <div id="formPayMP">
       <form action="/processar_pagamento" method="post" id="pay" name="pay" class="hidden">
         <fieldset>
           <input type="text" name="description" id="description" v-bind:value="getNomeLoja()" />
@@ -1024,7 +1024,7 @@
           <input type="hidden" name="payment_method_id" v-model="payment_id" id="payment_method_id" />
         </fieldset>
       </form>
-    </div>
+    </div>-->
   </div>
 </template>
 <script>
@@ -1037,6 +1037,7 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
+import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
 // Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
@@ -1060,8 +1061,9 @@ Vue.mixin({
 });
 
 export default {
-  name: "CheckoutMP",
+  name: "CheckoutPS",
   created() {
+    console.log("Checkout PS ");
     if (sessionStorage.getItem("fretes") != null) {
       this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
       //console.log(fretes);
@@ -1119,7 +1121,8 @@ export default {
       granTotal: 0,
       granDesconto: 0,
       granQuantity: 0,
-      granSubTotal: 0
+      granSubTotal: 0,
+      public_key: ""
     };
   },
   mounted() {},
@@ -1337,7 +1340,7 @@ export default {
         }
       } else if (this.currentStep == 3) {
         ///Verifica se o gateway é o MERCADO PAGO
-        if (this.DadosCheckout.gateway == 1) {
+        if (this.DadosCheckout.gateway == 2) {
           this.pay();
         }
       }
@@ -1442,9 +1445,10 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
-          if (this.DadosCheckout.gateway == 1) {
+          if (this.DadosCheckout.gateway == 2) {
             //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
             this.iniciaCheckout();
+            this.getParcelas();
           }
         })
         .catch(error => {
@@ -1470,31 +1474,31 @@ export default {
         );
       }
     },
-    verificaDigitosCartao() {
-      if (this.DadosCheckout.gateway == 1) {
-        const binCard = this.card_number.replace(/ /g, "");
-        if (binCard.length >= 6) {
-          let bin = binCard.substring(0, 6);
-          window.Mercadopago.getPaymentMethod(
-            {
-              bin: bin
-            },
-            (status, response) => {
-              if (status == 200) {
-                this.payment_id = response[0].id;
-                if (document.getElementById("dropParcelas").length < 2) {
-                  this.getParcelas();
-                }
-                this.setParcelas();
-              } else {
-                alert(`payment method info error: ${response}`);
-              }
-            }
-          );
-        }
-      }
-      this.maskCardNumber();
-    },
+    // verificaDigitosCartao() {
+    //   if (this.DadosCheckout.gateway == 1) {
+    //     const binCard = this.card_number.replace(/ /g, "");
+    //     if (binCard.length >= 6) {
+    //       let bin = binCard.substring(0, 6);
+    //       window.Mercadopago.getPaymentMethod(
+    //         {
+    //           bin: bin
+    //         },
+    //         (status, response) => {
+    //           if (status == 200) {
+    //             this.payment_id = response[0].id;
+    //             if (document.getElementById("dropParcelas").length < 2) {
+    //               this.getParcelas();
+    //             }
+    //             this.setParcelas();
+    //           } else {
+    //             alert(`payment method info error: ${response}`);
+    //           }
+    //         }
+    //       );
+    //     }
+    //   }
+    //   this.maskCardNumber();
+    // },
     setPaymentMethod(status, response) {
       //console.log("Response", response);
       if (status == 200) {
@@ -1573,46 +1577,46 @@ export default {
       return this.fretes;
     },
     iniciaCheckout() {
-      if (this.DadosCheckout.gateway == 1) {
+      if (this.DadosCheckout.gateway == 2) {
         this.ImageProcessor =
-          "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
-        window.Mercadopago.setPublishableKey(this.DadosCheckout.chave_publica);
-        //console.log(Mercadopago.getIdentificationTypes());
+          "http://github.bubbstore.com/gateways-e-adquirentes/pag-seguro-uol.svg";
+
+        API_CHECKOUT_PS.GetPublicKey(
+          this.DadosCheckout.email,
+          this.DadosCheckout.token_acesso
+        )
+          .then(resPublicKey => {
+            console.log("Retorno", resPublicKey);
+          })
+          .catch(error => {
+            console.log("Erro", error);
+          });
       }
     },
     getParcelas() {
       var self = this;
-      window.Mercadopago.getInstallments(
-        {
-          payment_method_id: this.payment_id,
-          amount: this.granTotal
-        },
-        function(status, response) {
-          if (status == 200) {
-            document.getElementById("dropParcelas").options.length = 0;
-            response[0].payer_costs.forEach(installment => {
-              let opt = document.createElement("option");
-              opt.text = installment.recommended_message;
-              opt.value = installment.installments;
-              opt.id = "parcel_" + installment.installments;
-              document.getElementById("dropParcelas").appendChild(opt);
-              setTimeout(() => {
-                document.getElementById("dropParcelas").selectedIndex = 0;
-                document.getElementById("dropParcelas").value = 1;
-                self.parcelas = 1;
-              }, 1000);
-            });
-          } else {
-            console.log(`installments method info error: ${response}`);
-          }
-        }
-      );
-    },
-    setParcelas() {
+      var arParcel = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      document.getElementById("dropParcelas").options.length = 0;
+      arParcel.forEach((obj, i) => {
+        const LParcel = obj;
+        let opt = document.createElement("option");
+        opt.text = "Desejo dividir em " + LParcel + " Parcela(s)";
+        opt.value = LParcel;
+        opt.id = "parcel_" + LParcel;
+        document.getElementById("dropParcelas").appendChild(opt);
+      });
       setTimeout(() => {
         document.getElementById("dropParcelas").selectedIndex = 0;
         document.getElementById("dropParcelas").value = 1;
-        this.parcelas = 1;
+        self.parcelas = 1;
+      }, 1000);
+    },
+    setParcelas() {
+      var self = this;
+      setTimeout(() => {
+        document.getElementById("dropParcelas").selectedIndex = 0;
+        document.getElementById("dropParcelas").value = 1;
+        self.parcelas = 1;
       }, 1000);
     },
     getDadosPagamentoTransacao() {
@@ -1641,13 +1645,18 @@ export default {
         dadosLoja: this.dadosLoja,
         dadosCheckout: this.DadosCheckout,
         paymentData: {
-          transaction_amount: this.formatPrice(this.granTotal),
-          token: this.cardToken,
-          description: this.dadosLoja.nome_loja,
-          installments: this.parcelas,
-          payment_method_id: this.payment_id,
-          payer: {
-            email: this.email
+          description: this.getNomeLoja(),
+          amount: {
+            value: this.formatPrice(this.granTotal),
+            currency: "BRL"
+          },
+          payment_method: {
+            type: "CREDIT_CARD",
+            installments: this.parcelas,
+            capture: true,
+            card: {
+              encrypted: this.cardToken
+            }
           }
         }
       };
@@ -1723,15 +1732,57 @@ export default {
           );
         });
     },
+    getAnoValidadeCartao() {
+      const LAno = "20" + this.getValidadeCartao().ano;
+      return LAno;
+    },
     pay() {
       API_NOTIFICATION.ShowLoading();
-      const form = document.querySelector("#pay");
-      //console.log("Form", form);
-      if (this.formaPagamento == "creditCard") {
-        window.Mercadopago.createToken(form, this.iniciaPagamentoBackEnd);
-      } else if (this.formaPagamento == "bolbradesco") {
-        this.iniciaPagamentoBackEndBoleto();
-      }
+      API_CHECKOUT_PS.GetPublicKey(
+        this.DadosCheckout.email,
+        this.DadosCheckout.token_acesso
+      )
+        .then(resPublicKey => {
+          this.public_key = resPublicKey.data.public_key;
+          if (this.formaPagamento == "creditCard") {
+            var card = PagSeguro.encryptCard({
+              publicKey: this.public_key,
+              holder: this.nome_titular,
+              number: this.card_number,
+              expMonth: this.getValidadeCartao().mes,
+              expYear: this.getAnoValidadeCartao(),
+              securityCode: this.codigo_seguranca
+            });
+            this.cardToken = card.encryptedCard;
+            var LPayment = {
+              description: this.getNomeLoja(),
+              amount: {
+                value: this.formatPrice(this.granTotal),
+                currency: "BRL"
+              },
+              payment_method: {
+                type: "CREDIT_CARD",
+                installments: this.parcelas,
+                capture: true,
+                card: {
+                  encrypted: this.cardToken
+                }
+              }
+            };
+            API_CHECKOUT_PS.DoPayPagSeguro(LPayment)
+              .then(retornoPaymentPagSeguro => {
+                console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+              })
+              .catch(error => {
+                console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+              });
+          } else if (this.formaPagamento == "bolbradesco") {
+            this.iniciaPagamentoBackEndBoleto();
+          }
+        })
+        .catch(error => {
+          console.log("Erro ao pegar a public key do pag seguro");
+        });
     },
     removeAcento(text) {
       text = text.toLowerCase();

@@ -90,6 +90,7 @@
   font-size: 13px;
   font-weight: 700;
   font-family: Rubik, sans-serif !important;
+  word-break: break-word;
   color: purple;
 }
 .myDropDownPrazo /deep/ .dropdown-menu {
@@ -571,7 +572,7 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import Datatable from "@/components/Tables/Datatable";
 import money from "v-money";
 import moment from "moment";
-import Hashids from 'hashids';
+import Hashids from "hashids";
 
 Vue.use(Loading);
 Vue.use(VeeValidate, {
@@ -837,7 +838,7 @@ export default {
     },
     getImageVariantById(idImage) {
       var images = this.produtoByID.images;
-      if(idImage == undefined) return "";
+      if (idImage == undefined) return "";
       return images.find(x => x.id === idImage).src || ``;
       // images.forEach((obj, i) => {
 
@@ -997,8 +998,11 @@ export default {
     },
     getCripto(id_produto, id_variante) {
       // console.log(id_produto);
-      const hashids = new Hashids('', 0, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-      const produtHashed= hashids.encode(id_produto.toString(), id_variante.toString());
+      const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      const produtHashed = hashids.encode(
+        id_produto.toString(),
+        id_variante.toString()
+      );
       // const numbers = hashids.decode(produtHashed);
       // console.log("ID Hashedid", produtHashed);
       // console.log("ID Deshashed", numbers);

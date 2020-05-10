@@ -1,5 +1,9 @@
 export default Object.freeze({
   WEBSITEAPI: 'http://localhost:3000/',
+  //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
+  API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
+  PATH_PS_SESSION: 'sessions',
+  PATH_PS_CHARGE: 'charges',
   MSG_BOLETO_ENVIO: 'Aqui está o boleto do produto *PRODUTO_NAME*, no valor de R$ VALOR_VALOR Vencimento: *VENCIMENTO* Código de barras: *CODIGO_BARRAS* Link: LINK_LINK',
   PATH_GET: 'index',
   PATH_LOGIN: 'users/EfetuaLogin',

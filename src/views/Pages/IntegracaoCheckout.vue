@@ -134,14 +134,17 @@ export default {
         });
     },
     acaoVerEditarIntegracaoCheckout(id) {
+      console.log("ID", id);
       if (id == 1) {
         this.$router.push("/configs/checkouts/mercadopago");
       }
+      if (id == 2) {
+        this.$router.push("/configs/checkouts/pagseguro");
+      }
     },
     getImageIntegracaoCheckout(id) {
-      if (id == 1) {
-        return "/img/mercadopago.png";
-      }
+      if (id == 1) return "/img/mercadopago.png";
+      else if (id == 2) return "/img/pagseguro.png";
       return "";
     },
     getApelidoByID(id) {

@@ -11,6 +11,7 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
+import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
 // Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
@@ -18,6 +19,7 @@ import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import CheckoutMP from "./CheckoutMP.vue";
+import CheckoutPS from "./CheckoutPS.vue";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -39,7 +41,7 @@ export default {
     if (sessionStorage.getItem("fretes") != null) {
       this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
       //console.log(fretes);
-    }    
+    }
     this.checkURL();
   },
   computed: {},
@@ -96,20 +98,7 @@ export default {
       granSubTotal: 0
     };
   },
-  mounted() {
-    const plugin = document.createElement("script");
-    plugin.onload = function() {
-      this.componenteMPLoaded = 1;
-      console.log("Carregado Script MP", this.componenteMPLoaded);
-    };
-    plugin.setAttribute(
-      "src",
-      "https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"
-    );
-    plugin.async = true;
-
-    document.head.appendChild(plugin);
-  },
+  mounted() {},
   methods: {
     async checkURL() {
       var url = window.location.href;
@@ -144,7 +133,7 @@ export default {
           this.produtosCart.push(lpro);
         }
         sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
-        
+
         //GUARDA O [1] PARA USAR COMO QUISER.
         window.location.href = newURL[0];
         if (redirectTo == "checkout") {
@@ -158,7 +147,6 @@ export default {
         const LCart = sessionStorage.getItem("cart");
         this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
         this.produtosCart = JSON.parse(LCart);
-        
       }
     },
 
@@ -180,39 +168,76 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
-          if (this.DadosCheckout.gateway == 1) {
-            //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
-           
-              this.iniciaCheckout();
-            
-          }
+          this.iniciaCheckout();
         })
         .catch(error => {
           console.log("Erro ao tentar pegar dados do checkout", error);
         });
     },
-    async iniciaCheckout() {
-      if (this.DadosCheckout.gateway == 1) {
+    async FCheckoutMP() {
+      const plugin = document.createElement("script");
+      plugin.onload = function() {
+        this.componenteMPLoaded = 1;
+        console.log("Carregado Script MP", this.componenteMPLoaded);
+      };
+      plugin.setAttribute(
+        "src",
+        "https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"
+      );
+      plugin.async = true;
+      document.head.appendChild(plugin);
+      await this.sleep(1000);
+      if (window.Mercadopago != undefined) {
+        var ComponentClass = Vue.extend(CheckoutMP);
+        var instance = new ComponentClass();
+        instance.$mount(); // pass nothing
+        this.$refs.container.appendChild(instance.$el);
+        this.ImageProcessor =
+          "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
+        window.Mercadopago.setPublishableKey(this.DadosCheckout.chave_publica);
+        API_NOTIFICATION.HideLoading();
+        //console.log(Mercadopago.getIdentificationTypes());
+        return true;
+      } else {
         await this.sleep(1000);
-        if (window.Mercadopago != undefined) {
-          var ComponentClass = Vue.extend(CheckoutMP);
-          var instance = new ComponentClass();
-          instance.$mount(); // pass nothing
-          this.$refs.container.appendChild(instance.$el);
-          this.ImageProcessor =
-            "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
-          window.Mercadopago.setPublishableKey(
-            this.DadosCheckout.chave_publica
-          );
-          API_NOTIFICATION.HideLoading();
-          //console.log(Mercadopago.getIdentificationTypes());
-        }else{
-          await this.sleep(1000);
-          this.iniciaCheckout();
-        }
+        this.FCheckoutMP();
       }
     },
-    sleep(seconds){
+    async FCheckoutPS(PDadosCheckout) {
+      const pluginPS = document.createElement("script");
+      pluginPS.onload = function() {
+        this.componenteMPLoaded = 1;
+        console.log("Carregado Script PS", this.componenteMPLoaded);
+      };
+      pluginPS.setAttribute(
+        "src",
+        "https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"
+      );
+      pluginPS.async = true;
+      document.head.appendChild(pluginPS);
+      await this.sleep(1000);
+      if (PagSeguroDirectPayment !== undefined) {
+        console.log(PagSeguroDirectPayment);
+        var ComponentClassCheckoutPS = Vue.extend(CheckoutPS);
+        var instanceCheckoutPS = new ComponentClassCheckoutPS();
+        instanceCheckoutPS.$mount(); // pass nothing
+        this.$refs.container.appendChild(instanceCheckoutPS.$el);
+        API_NOTIFICATION.HideLoading();
+        return true;
+      } else {
+        await this.sleep(1000);
+        this.FCheckoutPS();
+      }
+    },
+    async iniciaCheckout() {
+      console.log("Gateway", this.DadosCheckout.gateway);
+      if (this.DadosCheckout.gateway == 1) {
+        const LCheckMP = await this.FCheckoutMP();
+      } else if (this.DadosCheckout.gateway == 2) {
+        const LCheckPS = await this.FCheckoutPS(this.DadosCheckout);
+      }
+    },
+    sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
     }
   }
