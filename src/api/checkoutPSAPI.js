@@ -3,29 +3,18 @@ import axios from 'axios';
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 var API_CHECKOUT = {
-    GetPublicKey(email, token) {
+    GetPublicKey(type, token) {
         return new Promise((resolve, reject) => {
 
             let LBody = {
-                "email": email,
+                "type": type,
                 "token": token
-            }
-            const formData = new FormData();
-            Object.keys(LBody).forEach(key => formData.append(key, LBody[key]));
-            var config ={
-                headers:{
-                    'content-type': 'application/x-www-form-urlencoded',
-                    'access-control-allow-origin': 'https://sandbox.pagseguro.uol.com.br',
-                    'access-control-allow-headers': '*',
-                    'access-control-allow-methods': 'POST, GET, OPTIONS, PUT, DELETE',
-                    'access-control-allow-credentials': 'true',
-                    'allow': 'POST, GET, OPTIONS, PUT, DELETE'
-                }
-            }
+            }           
+           
             axios
-                .post(constantes.API_PAG_SEGURO + constantes.PATH_PS_SESSION, formData, config)
+                .post(constantes.WEBSITEAPI + constantes.PATH_PS_SESSION, LBody)
                 .then((response) => {
-                    //console.log("Response", response);
+                    console.log("Response", response);
                     resolve(response);
                 })
                 .catch((error) => {
@@ -35,13 +24,14 @@ var API_CHECKOUT = {
 
         });
     },
-    DoPayPagSeguro(LPayment) {
+    DoPayPagSeguro(pCrypto) {
         return new Promise((resolve, reject) => {
+            var LBody={
+                LCrypto : pCrypto
+            }
             axios
-                .post(constantes.API_PAG_SEGURO + constantes.PATH_PS_CHARGE, LPayment, {
+                .post(constantes.WEBSITEAPI + constantes.PATH_PS_CHARGE, LBody, {
                     'Content-Type': 'application/json',
-                    'Authorization': "Bearer " + token,
-                    'Access-Control-Allow-Origin': 'https://sandbox.pagseguro.uol.com.br'
                 })
                 .then((response) => {
                     //console.log("Response", response);

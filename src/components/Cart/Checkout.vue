@@ -211,13 +211,13 @@ export default {
       };
       pluginPS.setAttribute(
         "src",
-        "https://stc.sandbox.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"
+        "https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"
       );
       pluginPS.async = true;
       document.head.appendChild(pluginPS);
       await this.sleep(1000);
-      if (PagSeguroDirectPayment !== undefined) {
-        console.log(PagSeguroDirectPayment);
+      if (PagSeguro !== undefined) {
+        console.log(PagSeguro);
         var ComponentClassCheckoutPS = Vue.extend(CheckoutPS);
         var instanceCheckoutPS = new ComponentClassCheckoutPS();
         instanceCheckoutPS.$mount(); // pass nothing

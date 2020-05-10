@@ -1045,6 +1045,9 @@ import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import router from "../../router.js";
+import Hashids from "hashids";
+import dateFormat from "dateformat";
+import constantes from "../../api/constantes";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1122,7 +1125,8 @@ export default {
       granDesconto: 0,
       granQuantity: 0,
       granSubTotal: 0,
-      public_key: ""
+      public_key: "",
+      reference_id: ""
     };
   },
   mounted() {},
@@ -1264,6 +1268,7 @@ export default {
     },
     consultaCEP() {
       if (this.CEP.length >= 8) {
+        API_NOTIFICATION.ShowLoading();
         this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
         UTILIS_API.VIA_CEP(this.CEP)
           .then(retornoCEP => {
@@ -1273,6 +1278,7 @@ export default {
             this.estado = retornoCEP.uf;
             this.complemento = retornoCEP.complemento;
             this.destinatario = this.nome_completo;
+            API_NOTIFICATION.HideLoading();
           })
           .catch(error => {
             this.endereco = "";
@@ -1285,6 +1291,7 @@ export default {
               "Erro ao tentar pegar dados do endereço do usuário",
               error
             );
+            API_NOTIFICATION.HideLoading();
           });
       } else {
         this.endereco = "";
@@ -1581,12 +1588,10 @@ export default {
         this.ImageProcessor =
           "http://github.bubbstore.com/gateways-e-adquirentes/pag-seguro-uol.svg";
 
-        API_CHECKOUT_PS.GetPublicKey(
-          this.DadosCheckout.email,
-          this.DadosCheckout.token_acesso
-        )
+        API_CHECKOUT_PS.GetPublicKey("card", this.DadosCheckout.token_acesso)
           .then(resPublicKey => {
-            console.log("Retorno", resPublicKey);
+            this.public_key = resPublicKey.data;
+            //console.log("Public Key", this.public_key);
           })
           .catch(error => {
             console.log("Erro", error);
@@ -1620,7 +1625,9 @@ export default {
       }, 1000);
     },
     getDadosPagamentoTransacao() {
+      this.DadosCheckout.chave_publica = this.public_key;
       var transacao = {
+        token: this.DadosCheckout.token_acesso,
         dadosComprador: {
           nome_completo: this.removeAcento(this.nome_completo),
           email: this.email,
@@ -1645,6 +1652,9 @@ export default {
         dadosLoja: this.dadosLoja,
         dadosCheckout: this.DadosCheckout,
         paymentData: {
+          reference_id: this.reference_id.substring(0, 64),
+          sync: true,
+          reference: this.reference_id.substring(0, 64),
           description: this.getNomeLoja(),
           amount: {
             value: this.formatPrice(this.granTotal),
@@ -1660,129 +1670,165 @@ export default {
           }
         }
       };
+      console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
       const LCripto = btoa(JSONString);
-
       return LCripto;
     },
-    async iniciaPagamentoBackEnd(status, response) {
-      var LRouter = router;
-      if (status != 200 && status != 201) {
-        //console.log("Não foi possível gerar o token", response.message);
-        window.Mercadopago.clearSession();
-        API_NOTIFICATION.showNotificationW(
-          "Oops!",
-          "Não foi possível completar a ação. Tente novamente!",
-          "warning"
-        );
-      } else {
-        this.cardToken = response.id;
-        //while (this.try == false) {
-        ///console.log(this.cardToken);
-        const LCripto = await this.getDadosPagamentoTransacao();
-        API_NOTIFICATION.ShowLoading();
-        API_CHECKOUT.DoPayBackEnd(LCripto)
-          .then(retornoPay => {
-            console.log("Enviado para o backend", retornoPay.data);
-            var DadosCliente = {
-              nome: this.nome_completo,
-              dadosCompra: retornoPay.data
-            };
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
-            window.Mercadopago.clearSession();
-            API_NOTIFICATION.HideLoading();
-            LRouter.push("/obrigado-cartao");
-          })
-          .catch(error => {
-            console.log("Erro ao tentar efetuar o pagamento", error);
-            API_NOTIFICATION.showNotification(
-              "Por favor, tente novamente ",
-              "error"
-            );
-          });
+    getDadosPagamentoTransacaoBoleto() {
+      const LDaysVenceBoleto =
+        this.DadosCheckout.vencimento_boleto ||
+        constantes.CONSTANTE_VENCIMENTO_BOLETO;
+      var LData = new Date();
+      LData.setDate(LData.getDate() + LDaysVenceBoleto);
+      const LDataVencimento = dateFormat(LData, "dd/mm/yyyy");
 
-        //break;
-      }
+      this.DadosCheckout.chave_publica = this.public_key;
+      var transacao = {
+        token: this.DadosCheckout.token_acesso,
+        dadosComprador: {
+          nome_completo: this.removeAcento(this.nome_completo),
+          email: this.email,
+          cpf: this.cpf,
+          telefone: this.telefone,
+          cep: this.CEP,
+          endereco: this.removeAcento(this.endereco),
+          numero_porta: this.numero_porta,
+          bairro: this.bairro,
+          cidade: this.cidade,
+          estado: this.estado,
+          complemento: this.removeAcento(this.complemento),
+          destinatario: this.removeAcento(this.destinatario),
+          numero_cartao: this.numero_cartao,
+          validade: this.validade,
+          nome_titular: this.nome_titular,
+          codigo_seguranca: this.codigo_seguranca,
+          cpf_titular: this.cpf_titular,
+          frete: this.getFreteSelecionadoNome()
+        },
+        produtos: this.produtosCart,
+        dadosLoja: this.dadosLoja,
+        dadosCheckout: this.DadosCheckout,
+        paymentData: {
+          reference_id: this.reference_id.substring(0, 64),
+          sync: true,
+          reference: this.reference_id.substring(0, 64),
+          description: this.getNomeLoja(),
+          amount: {
+            value: this.formatPrice(this.granTotal),
+            currency: "BRL"
+          },
+          payment_method: {
+            type: "BOLETO",
+            boleto: {
+              due_date: LDataVencimento,
+              instruction_lines: {
+                line_1:
+                  this.DadosCheckout.linha_um_boleto ||
+                  "Pagável em qualquer lotérica",
+                line_2:
+                  this.DadosCheckout.linha_dois_boleto ||
+                  "Não aceitar após o vencimento"
+              },
+              holder: {
+                name: this.nome_completo,
+                tax_id: this.cpf.replace(/[-,.]/g, ""),
+                email: constantes.CONSTANTE_EMAIL_PAG_SEGURO,
+                address: {
+                  country: "Brasil",
+                  region: this.estado,
+                  region_code: "--",
+                  city: this.cidade,
+                  postal_code: this.CEP.replace(/[-,.]/g, ""),
+                  street: this.endereco,
+                  number: this.numero_porta,
+                  locality: this.bairro
+                }
+              }
+            }
+          },
+          notification_urls: [
+            "https://thuor.com/webhookpagseguro/NotificaBoleto/"
+          ]
+        }
+      };
+      console.log("Transacao", transacao);
+      const JSONString = JSON.stringify(transacao);
+      const LCripto = btoa(JSONString);
+      return LCripto;
     },
     async iniciaPagamentoBackEndBoleto() {
-      var LRouter = router;
-      window.Mercadopago.clearSession();
-      const LCripto = await this.getDadosPagamentoTransacao();
       API_NOTIFICATION.ShowLoading();
-      API_CHECKOUT.DoPayBackEndTicket(LCripto)
-        .then(retornoPay => {
-          //console.log("Enviado para o backend", retornoPay.data);
-          var DadosCliente = {
-            nome: this.nome_completo,
-            dadosCompra: retornoPay.data
-          };
-          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
-          window.Mercadopago.clearSession();
+      var LRouter = router;
+     
+      const ParamUm = this.cpf.replace(/[.-]/g, "");
+      const ParamDois = this.nome_completo.replace(/ /g, "");
+      const LRefID = await this.getCripto(ParamUm, ParamUm);
+      this.reference_id = LRefID;
+      console.log("Reference ID", this.reference_id);
+       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
+      API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
+        .then(retornoPaymentPagSeguro => {
+          console.log("Retorno Pagamento", retornoPaymentPagSeguro);
           API_NOTIFICATION.HideLoading();
-          LRouter.push("/obrigado-boleto");
         })
         .catch(error => {
-          console.log("Erro ao tentar efetuar o pagamento", error);
-          API_NOTIFICATION.showNotification(
-            "Por favor, tente novamente ",
+          console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+        });
+    },
+    async iniciaPagamentoBackEndCard() {
+      var card = await PagSeguro.encryptCard({
+        publicKey: this.public_key,
+        holder: this.nome_titular,
+        number: this.card_number.replace(/ /g, ""),
+        expMonth: this.getValidadeCartao().mes,
+        expYear: this.getAnoValidadeCartao(),
+        securityCode: this.codigo_seguranca
+      });
+      if (card.errors.length > 0) {
+        if (
+          card.errors[0] != undefined &&
+          card.errors[0].code == "INVALID_NUMBER"
+        ) {
+          API_NOTIFICATION.showNotificationW(
+            "Oops!",
+            "Número de Cartão Inválido",
             "error"
           );
-        });
+        }
+      } else {
+        this.cardToken = card.encryptedCard;
+        const ParamUm = this.cpf.replace(/[.-]/g, "");
+        const ParamDois = this.nome_completo.replace(/ /g, "");
+        const LRefID = await this.getCripto(ParamUm, ParamUm);
+        this.reference_id = LRefID;
+        console.log("Reference ID", this.reference_id);
+        const LCripto = await this.getDadosPagamentoTransacao();
+        API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
+          .then(retornoPaymentPagSeguro => {
+            console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+            API_NOTIFICATION.HideLoading();
+          })
+          .catch(error => {
+            console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+          });
+      }
     },
     getAnoValidadeCartao() {
       const LAno = "20" + this.getValidadeCartao().ano;
+      console.log("ANO Validad3e", LAno);
       return LAno;
     },
-    pay() {
+    async pay() {
       API_NOTIFICATION.ShowLoading();
-      API_CHECKOUT_PS.GetPublicKey(
-        this.DadosCheckout.email,
-        this.DadosCheckout.token_acesso
-      )
-        .then(resPublicKey => {
-          this.public_key = resPublicKey.data.public_key;
-          if (this.formaPagamento == "creditCard") {
-            var card = PagSeguro.encryptCard({
-              publicKey: this.public_key,
-              holder: this.nome_titular,
-              number: this.card_number,
-              expMonth: this.getValidadeCartao().mes,
-              expYear: this.getAnoValidadeCartao(),
-              securityCode: this.codigo_seguranca
-            });
-            this.cardToken = card.encryptedCard;
-            var LPayment = {
-              description: this.getNomeLoja(),
-              amount: {
-                value: this.formatPrice(this.granTotal),
-                currency: "BRL"
-              },
-              payment_method: {
-                type: "CREDIT_CARD",
-                installments: this.parcelas,
-                capture: true,
-                card: {
-                  encrypted: this.cardToken
-                }
-              }
-            };
-            API_CHECKOUT_PS.DoPayPagSeguro(LPayment)
-              .then(retornoPaymentPagSeguro => {
-                console.log("Retorno Pagamento", retornoPaymentPagSeguro);
-              })
-              .catch(error => {
-                console.log("Erro ao efetuar o pagamento no PagSeguro", error);
-              });
-          } else if (this.formaPagamento == "bolbradesco") {
-            this.iniciaPagamentoBackEndBoleto();
-          }
-        })
-        .catch(error => {
-          console.log("Erro ao pegar a public key do pag seguro");
-        });
+      if (this.public_key !== null) {
+        if (this.formaPagamento == "creditCard") {
+          this.iniciaPagamentoBackEndCard();
+        } else if (this.formaPagamento == "bolbradesco") {
+          this.iniciaPagamentoBackEndBoleto();
+        }
+      } else {
+      }
     },
     removeAcento(text) {
       text = text.toLowerCase();
@@ -1793,6 +1839,17 @@ export default {
       text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
       text = text.replace(new RegExp("[Ç]", "gi"), "c");
       return text;
+    },
+    getCripto(parametro_um, parametro_dois) {
+      const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      const produtHashed = hashids.encode(
+        parametro_um.toString(),
+        parametro_dois.toString()
+      );
+      // const numbers = hashids.decode(produtHashed);
+      console.log("ID Hashedid", produtHashed);
+      // console.log("ID Deshashed", numbers);
+      return produtHashed;
     }
   }
 };
