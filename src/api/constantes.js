@@ -48,6 +48,7 @@ export default Object.freeze({
   PATH_PAY_GET_PEDIDOS: 'transacoes/GetPedidos',
   PATH_PAY_GET_PEDIDOS_POR_ID: 'transacoes/GetPedidosByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_POR_ID: 'transacoes/ReembolsarPedidoByID',
+  PATH_PAY_REEMDBOLSAR_PEDIDOS_PS_POR_ID: 'transacoes/ReembolsarPedidoPSByID',
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
 

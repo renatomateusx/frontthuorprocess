@@ -269,7 +269,9 @@ th.active .arrow {
                   :src="getImagePaymentID(this.pedido.bandeira)"
                   class="row imgMethodo float-left pull-left mr-4"
                 />
-                <span class="row mb-0 float-left pull-left mr-6 mt-1">{{this.pedido.quatroDigitosCartao}}</span>
+                <span
+                  class="row mb-0 float-left pull-left mr-6 mt-1"
+                >{{this.pedido.quatroDigitosCartao}}</span>
               </p>
               <p class="mt-5" v-if="this.pedido.bandeira != 'bolbradesco'">
                 <span
@@ -346,9 +348,10 @@ th.active .arrow {
                 >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
               </p>
               <button
-          class="form-control btn btn-danger" v-if="this.status.toUpperCase()!= 'CANCELADA' ||this.status.toUpperCase()!= 'REEMBOLSADA' "
-          v-on:click="devolverPagamento(pedido)"
-        >Reembolsar</button>
+                class="form-control btn btn-danger"
+                v-if="this.status.toUpperCase()!= 'CANCELADA' ||this.status.toUpperCase()!= 'REEMBOLSADA' "
+                v-on:click="devolverPagamento(pedido)"
+              >Reembolsar</button>
             </div>
           </div>
         </div>
@@ -358,7 +361,7 @@ th.active .arrow {
           class="form-control btn btn-danger" v-if="this.status.toUpperCase()!= 'CANCELADA' ||this.status.toUpperCase()!= 'REEMBOLSADA' "
           v-on:click="devolverPagamento(pedido)"
         >Reembolsar Cliente</button>
-      </div> -->
+      </div>-->
     </div>
   </ContentWrapper>
 </template>
@@ -374,6 +377,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_TRANSACOES from "../../api/transacoesAPI";
 import API_LOJA from "../../api/lojaAPI";
+import API_CHECKOUT from "../../api/checkoutAPI";
 import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
 import dateFormat from "dateformat";
@@ -426,7 +430,8 @@ export default {
       statusAtual: "",
       data: Array,
       pedido: {},
-      status: ""
+      status: "",
+      DadosCheckout: {}
     };
   },
   computed: {
@@ -480,6 +485,7 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+              this.getCheckouts();
               API_TRANSACOES.GetTransacaoByID(this.PedidoString[0])
                 .then(retProd => {
                   const obj = retProd.data[0];
@@ -519,7 +525,7 @@ export default {
                     obj.json_front_end_user_data
                   );
                   //console.log(Date.now(), Date.parse(LData));
-                  this.pedido.id =  obj.id;
+                  this.pedido.id = obj.id;
                   this.pedido.nomeComprador = JSON.parse(
                     obj.json_front_end_user_data
                   ).dadosComprador.nome_completo;
@@ -654,6 +660,15 @@ export default {
       if (status.toUpperCase() == "ENTREGUE") return "alert-success";
       return "alert-warning";
     },
+    getCheckouts() {
+      API_CHECKOUT.GetCheckouts()
+        .then(retornoCheckout => {
+          this.DadosCheckout = retornoCheckout.data;
+        })
+        .catch(error => {
+          console.log("Erro ao tentar pegar dados do checkout", error);
+        });
+    },
     getDeCripto(crypted) {
       try {
         // console.log(id_produto);
@@ -710,23 +725,43 @@ export default {
         "warning",
         event => {
           API_NOTIFICATION.ShowLoading();
-          API_TRANSACOES.ReembolsarCliente(pPedido.id)
-            .then(res => {
-              API_NOTIFICATION.showNotification(
-                "Reembolsado com sucesso",
-                "success"
-              );
-              this.checkIfLogged();
-            })
-            .catch(error => {
-              console.log("Erro ao reembolsar o cliente", error);
-            });
+          if (this.DadosCheckout.gateway == 1) {
+            this.devolverPagamentoMP(pPedido);
+          } else if (this.DadosCheckout.gateway == 2) {
+            this.devolverPagamentoPS(pPedido);
+          }
         }
       );
     },
     acaoConfirmadaDevolvePagamento(event) {
       console.log("Event", event);
       API_NOTIFICATION.ShowLoading();
+    },
+    devolverPagamentoMP(pPedido) {
+      API_TRANSACOES.ReembolsarCliente(pPedido.id)
+        .then(res => {
+          API_NOTIFICATION.showNotification(
+            "Reembolsado com sucesso",
+            "success"
+          );
+          this.checkIfLogged();
+        })
+        .catch(error => {
+          console.log("Erro ao reembolsar o cliente", error);
+        });
+    },
+    devolverPagamentoPS(pPedido) {
+      API_TRANSACOES.ReembolsarClienteCheckoutPS(pPedido.id)
+        .then(res => {
+          API_NOTIFICATION.showNotification(
+            "Reembolsado com sucesso",
+            "success"
+          );
+          this.checkIfLogged();
+        })
+        .catch(error => {
+          console.log("Erro ao reembolsar o cliente", error);
+        });
     }
   }
 };
