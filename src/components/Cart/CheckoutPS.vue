@@ -339,7 +339,7 @@
         <div class="badge badge-blue iconStep" style="display:none;">1</div>
       </div>
       <div class="row col-lg-4 col-lg-offset-2" style=" margin: 0 auto; display:block">
-        <up-sell-card @recalcula="getTotal()"></up-sell-card>
+        <up-sell-card @recalcula="getTotal()" :noCheckout="1"></up-sell-card>
         <!-- START STEP 4-->
         <div class="col-md-4 mt-0 mb-0 cardSide">
           <!-- START card-->
@@ -1182,8 +1182,6 @@ export default {
           );
           //console.log("LPro", lpro);
           this.produtosCart.push(lpro);
-
-          
         }
         sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
         API_NOTIFICATION.HideLoading();
@@ -1777,6 +1775,12 @@ export default {
       API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
         .then(retornoPaymentPagSeguro => {
           //console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+          const LUpSell = sessionStorage.getItem("UpSell");
+          if (LUpSell == 2) {
+            ///DIRECIONA PARA UPSELL
+          } else {
+            LRouter.push("/obrigado-boleto");
+          }
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
@@ -1814,6 +1818,12 @@ export default {
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
             //console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+            const LUpSell = sessionStorage.getItem("UpSell");
+            if (LUpSell == 2) {
+              ///DIRECIONA PARA UPSELL
+            } else {
+              LRouter.push("/obrigado-cartao");
+            }
             API_NOTIFICATION.HideLoading();
           })
           .catch(error => {

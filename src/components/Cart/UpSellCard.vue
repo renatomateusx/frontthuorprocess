@@ -321,10 +321,10 @@
   <!-- START STEP 4-->
   <!-- 1= "No Checkout";
         2= "Na Finalização";
-        3= "E-mail e WhatsApp";-->
-  <div class="col-md-4 mt-0 mb-0 cardSide" v-show="UpSellNoCheckout == 1">
+  3= "E-mail e WhatsApp";-->
+  <div class="col-md-4 mt-0 mb-0 cardSide" v-show="UpSellNoCheckout == noCheckout">
     <!-- START card-->
-    <div class="card card-default mb-0" v-show="UpSellNoCheckout == 1">
+    <div class="card card-default mb-0" v-show="UpSellNoCheckout == noCheckout">
       <div class="card-header rounded">
         <a
           style="cursor:pointer!important;"
@@ -437,7 +437,9 @@ export default {
     //API_NOTIFICATION.ShowLoading();
     this.checkUpSell();
   },
-  props: {},
+  props: {
+    noCheckout: { type: Number, required: true }
+  },
   computed: {},
   data() {
     return {
@@ -497,8 +499,9 @@ export default {
             API_MKT.GetUpSellsByProductID(item.id_thuor).then(
               resProductUpSell => {
                 //console.log(resProductUpSell.data);
-                this.UpSellNoCheckout = resProductUpSell.data.tipo_checkout || 0;
-                console.log(this.UpSellNoCheckout);
+                this.UpSellNoCheckout =
+                  resProductUpSell.data.tipo_checkout || 0;
+                
                 const ProdUS = resProductUpSell.data.id_produto_to;
                 API_PRODUTOS.GetProdutoIDThuor(ProdUS)
                   .then(resProdTo => {
@@ -560,6 +563,10 @@ export default {
                   .catch(errorProd => {
                     console.log("Erro ao pegar o produto", errorProd);
                   });
+
+                  if(this.UpSellNoCheckout == 2){
+                    sessionStorage.setItem("UpSell", "2");
+                  }
               }
             );
           });
@@ -584,34 +591,7 @@ export default {
     },
     getNomeLoja() {
       return this.dadosLoja.nome_loja;
-    },
-    async changeQuantity(idThuor) {
-      var Comp = document.getElementById("qtd_" + idThuor);
-      for (const [i, item] of this.produtosCart.entries()) {
-        if (item.id_thuor == idThuor) {
-          item.quantity = Comp.value;
-          this.produtosCart[i].quantity = Comp.value;
-          sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
-          this.getTotal();
-          break;
-        }
-      }
-    },
-    incrementaQuantidade(idThuor) {
-      var Comp = document.getElementById("qtd_" + idThuor);
-      var qtd = parseInt(Comp.value) + 1;
-      document.getElementById("qtd_" + idThuor).value = qtd;
-      this.changeQuantity(idThuor);
-    },
-    decrementaQuantidade(idThuor) {
-      var Comp = document.getElementById("qtd_" + idThuor);
-      var qtd = parseInt(Comp.value) - 1;
-      document.getElementById("qtd_" + idThuor).value = qtd;
-      this.changeQuantity(idThuor);
-    },
-    goToCheckout() {
-      router.push("/checkout");
-    },
+    },    
 
     getClassSelected(opcao) {
       return this.formaPagamento == opcao

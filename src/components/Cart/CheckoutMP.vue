@@ -339,6 +339,7 @@
         <div class="badge badge-blue iconStep" style="display:none;">1</div>
       </div>
       <div class="row col-lg-4 col-lg-offset-2" style=" margin: 0 auto; display:block">
+        <up-sell-card @recalcula="getTotal()" :noCheckout="1"></up-sell-card>
         <!-- START STEP 4-->
         <div class="col-md-4 mt-0 mb-0 cardSide">
           <!-- START card-->
