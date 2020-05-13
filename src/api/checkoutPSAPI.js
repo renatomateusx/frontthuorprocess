@@ -14,7 +14,7 @@ var API_CHECKOUT = {
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_PS_SESSION, LBody)
                 .then((response) => {
-                    console.log("Response", response);
+                    //console.log("Response", response);
                     resolve(response);
                 })
                 .catch((error) => {

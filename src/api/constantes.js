@@ -55,5 +55,6 @@ export default Object.freeze({
   PATH_GET_UPSELL: 'upsells/GetUpSells',
   PATH_SAVE_UPSELL: 'upsells/SaveUpSells',
   PATH_DELETE_UPSELL: 'upsells/DeleteUpSellByID',
+  PATH_GET_UPSELL_BY_PRODUCT_ID: 'upsells/GetUpSellByProductID',
 
 });

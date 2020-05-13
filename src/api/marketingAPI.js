@@ -66,5 +66,26 @@ var API_MKT = {
             }
         });
     },
+    GetUpSellsByProductID(id) {
+        return new Promise((resolve, reject) => {
+            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
+                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario,
+                    id_produto: id,
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_UPSELL_BY_PRODUCT_ID, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
 }
 export default API_MKT 

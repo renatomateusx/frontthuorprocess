@@ -258,6 +258,7 @@ th.active .arrow {
         <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>
+    
   </ContentWrapper>
 </template>
 
@@ -298,7 +299,7 @@ export default {
     //data: Array
     // columns: Array
   },
-
+ 
   created() {
     this.timeAgo = new TimeAgo("pt-BR");
 

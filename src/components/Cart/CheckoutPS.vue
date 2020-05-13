@@ -339,6 +339,7 @@
         <div class="badge badge-blue iconStep" style="display:none;">1</div>
       </div>
       <div class="row col-lg-4 col-lg-offset-2" style=" margin: 0 auto; display:block">
+        <up-sell-card @recalcula="getTotal()"></up-sell-card>
         <!-- START STEP 4-->
         <div class="col-md-4 mt-0 mb-0 cardSide">
           <!-- START card-->
@@ -1048,6 +1049,7 @@ import router from "../../router.js";
 import Hashids from "hashids";
 import dateFormat from "dateformat";
 import constantes from "../../api/constantes";
+import UpSellCard from "../../components/Cart/UpSellCard";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1073,6 +1075,9 @@ export default {
     }
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
+  },
+  components: {
+    UpSellCard
   },
   computed: {},
   data() {
@@ -1177,6 +1182,8 @@ export default {
           );
           //console.log("LPro", lpro);
           this.produtosCart.push(lpro);
+
+          
         }
         sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
         API_NOTIFICATION.HideLoading();
@@ -1670,7 +1677,7 @@ export default {
           }
         }
       };
-      console.log("Transacao", transacao);
+      //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
       const LCripto = btoa(JSONString);
       return LCripto;
@@ -1752,7 +1759,7 @@ export default {
           ]
         }
       };
-      console.log("Transacao", transacao);
+      //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
       const LCripto = btoa(JSONString);
       return LCripto;
@@ -1760,16 +1767,16 @@ export default {
     async iniciaPagamentoBackEndBoleto() {
       API_NOTIFICATION.ShowLoading();
       var LRouter = router;
-     
+
       const ParamUm = this.cpf.replace(/[.-]/g, "");
       const ParamDois = this.nome_completo.replace(/ /g, "");
       const LRefID = await this.getCripto(ParamUm, ParamUm);
       this.reference_id = LRefID;
-      console.log("Reference ID", this.reference_id);
-       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
+      //console.log("Reference ID", this.reference_id);
+      const LCripto = await this.getDadosPagamentoTransacaoBoleto();
       API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
         .then(retornoPaymentPagSeguro => {
-          console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+          //console.log("Retorno Pagamento", retornoPaymentPagSeguro);
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
@@ -1802,11 +1809,11 @@ export default {
         const ParamDois = this.nome_completo.replace(/ /g, "");
         const LRefID = await this.getCripto(ParamUm, ParamUm);
         this.reference_id = LRefID;
-        console.log("Reference ID", this.reference_id);
+        //console.log("Reference ID", this.reference_id);
         const LCripto = await this.getDadosPagamentoTransacao();
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
-            console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+            //console.log("Retorno Pagamento", retornoPaymentPagSeguro);
             API_NOTIFICATION.HideLoading();
           })
           .catch(error => {
@@ -1847,7 +1854,7 @@ export default {
         parametro_dois.toString()
       );
       // const numbers = hashids.decode(produtHashed);
-      console.log("ID Hashedid", produtHashed);
+      //console.log("ID Hashedid", produtHashed);
       // console.log("ID Deshashed", numbers);
       return produtHashed;
     }
