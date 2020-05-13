@@ -8,7 +8,7 @@ const Menu = [
         path: 'home',
         icon: 'icon-grid',
         translate: 'sidebar.nav.SINGLEVIEW'
-    },
+    },    
     {
         name: 'Produtos',
         path: 'produtos',
@@ -46,6 +46,17 @@ const Menu = [
             icon: 'fa fa-donate',
             path: '/configs/integracoes'
         },]
+    },
+    {
+        name: 'Marketing',
+        path: 'marketing',
+        icon: 'fa fa-bullhorn',
+        submenu: [{
+            name: 'UpSell',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-donate',
+            path: '/marketing/upsell'
+        }]
     },
 ];
 

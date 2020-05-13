@@ -63,6 +63,24 @@ var API_PRODUTOS = {
 
         });
     },
+    GetProdutoIDThuor(id) {
+        return new Promise((resolve, reject) => {
+            let LBody = {
+                id_produto: id
+            }
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_ID_THUOR, LBody)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(response);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+
+        });
+    },
     GetProdutoByIDImported(id, quant, variant) {
         return new Promise((resolve, reject) => {
             let LBody = {

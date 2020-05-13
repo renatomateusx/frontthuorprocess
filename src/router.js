@@ -28,6 +28,11 @@ const MercadoPago = () => import('@/components/Checkouts/MercadoPago.vue');
 const PagSeguro = () => import('@/components/Checkouts/PagSeguro.vue');
 const IntegracaoPlataforma = () => import('@/views/Pages/IntegracaoPlataforma.vue');
 const IntegracaoShopify = () => import('@/views/Pages/IntegracaoShopify.vue');
+const UpSell = () => import('@/views/Pages/UpSell.vue')
+const UpSellAdd = () => import('@/views/Pages/UpSellAdd.vue');
+
+
+
 Vue.use(Router)
 
 export default new Router({
@@ -73,7 +78,8 @@ export default new Router({
             {
                 path: '/home',
                 component: Home
-            }, {
+            },
+            {
                 path: '/submenu',
                 component: SubMenu
             },
@@ -85,6 +91,14 @@ export default new Router({
                 path: '/pedidos/detalhe/:id',
                 component: DetalhePedido
             },
+            {
+                path: '/marketing/upsell',
+                component: UpSell
+            },
+            {
+                path: '/marketing/upsell/add',
+                component: UpSellAdd
+            }
         ]
     },
     {

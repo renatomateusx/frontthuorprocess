@@ -11,6 +11,7 @@ export default Object.freeze({
   PATH_PRODUTOS: 'produtos/GetProdutos',
   PATH_PRODUTO_BY_ID: 'produtos/GetProdutoByID',
   PATH_PRODUTO_BY_ID_THUOR: 'produtos/GetProdutoByIDThuor',
+  PATH_PRODUTO_ID_THUOR: 'produtos/GetProdutoIDThuor',
   PATH_PRODUTO_BY_ID_IMPORTED: 'produtos/GetProdutoByIDImported',
   PATH_UPDATE_STATUS_PRODUTO: 'produtos/UpdateStatusProduto',
   PATH_UPDATE_TIPO_PRODUTO: 'produtos/UpdateTipoProduto',
@@ -51,6 +52,8 @@ export default Object.freeze({
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PS_POR_ID: 'transacoes/ReembolsarPedidoPSByID',
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
-
+  PATH_GET_UPSELL: 'upsells/GetUpSells',
+  PATH_SAVE_UPSELL: 'upsells/SaveUpSells',
+  PATH_DELETE_UPSELL: 'upsells/DeleteUpSellByID',
 
 });
