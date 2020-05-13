@@ -316,18 +316,19 @@
   }
 }
 </style>
-<template>
+<template >
   <!-- <div class="row col-lg-4 col-lg-offset-2" style=" margin: 0 auto; display:block"> -->
   <!-- START STEP 4-->
-  <div class="col-md-4 mt-0 mb-0 cardSide">
+  <!-- 1= "No Checkout";
+        2= "Na Finalização";
+        3= "E-mail e WhatsApp";-->
+  <div class="col-md-4 mt-0 mb-0 cardSide" v-show="UpSellNoCheckout == 1">
     <!-- START card-->
-    <div class="card card-default mb-0">
+    <div class="card card-default mb-0" v-show="UpSellNoCheckout == 1">
       <div class="card-header rounded">
         <a
           style="cursor:pointer!important;"
-          
           aria-expanded="false"
-          
           v-on:click="collapseUpSell('#collaUpSell','#comandoUpSell')"
         >
           <span
@@ -465,7 +466,8 @@ export default {
       VarianteImageUpSellSelected: "",
       VarianteSKUUpSellSelected: "",
       VariantePriceUpSellSelected: 0,
-      VarianteTitleUPSellSelected: ""
+      VarianteTitleUPSellSelected: "",
+      UpSellNoCheckout: 0
     };
   },
   mounted() {},
@@ -494,6 +496,9 @@ export default {
           this.produtosCart.forEach((item, i) => {
             API_MKT.GetUpSellsByProductID(item.id_thuor).then(
               resProductUpSell => {
+                //console.log(resProductUpSell.data);
+                this.UpSellNoCheckout = resProductUpSell.data.tipo_checkout || 0;
+                console.log(this.UpSellNoCheckout);
                 const ProdUS = resProductUpSell.data.id_produto_to;
                 API_PRODUTOS.GetProdutoIDThuor(ProdUS)
                   .then(resProdTo => {
@@ -657,8 +662,7 @@ export default {
       this.VariantePriceUpSellSelected = LPrice;
       this.VarianteTitleUPSellSelected = this.variant_title;
     },
-    async adicionarProdutoUpSell() {      
-
+    async adicionarProdutoUpSell() {
       var lpro = await this.pushProducts(
         this.VarianteIDProdutoJSONUpSellSelected,
         this.quantity,
@@ -672,15 +676,19 @@ export default {
       );
       if (LExists == undefined) {
         this.produtosCart.push(lpro);
-      }
-      else{
-        var LQuantidade = this.produtosCart.find(x => x.variant_id == this.VarianteIDUpSellSelected).quantity;
+      } else {
+        var LQuantidade = this.produtosCart.find(
+          x => x.variant_id == this.VarianteIDUpSellSelected
+        ).quantity;
         LQuantidade = LQuantidade + lpro.quantity;
-        this.produtosCart.find(x => x.variant_id == this.VarianteIDUpSellSelected).quantity = LQuantidade;
+        this.produtosCart.find(
+          x => x.variant_id == this.VarianteIDUpSellSelected
+        ).quantity = LQuantidade;
       }
       /*'ATÉ AQUI PARA GERENCIAR' */
       sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
       this.$emit("recalcula");
+      //this.UpSellNoCheckout = 0;
     },
     async pushProducts(product, quantity, variante_id) {
       return new Promise((resolve, reject) => {
