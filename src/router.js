@@ -124,7 +124,7 @@ export default new Router({
     {
         path: '/obrigado-boleto',
         component: ObrigadoBoleto
-    },
+    },   
 
     // Not found route
     {

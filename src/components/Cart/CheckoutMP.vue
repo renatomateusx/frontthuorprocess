@@ -227,7 +227,7 @@
   margin: 0 auto;
   text-align: center;
   top: 5px;
-  float:left!important;
+  float: left !important;
 }
 .textItems {
   color: black;
@@ -1686,6 +1686,7 @@ export default {
             );
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
+            const LUpSell = sessionStorage.getItem("UpSell");
             LRouter.push("/obrigado-cartao");
           })
           .catch(error => {

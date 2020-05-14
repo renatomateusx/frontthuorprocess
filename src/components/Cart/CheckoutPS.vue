@@ -880,7 +880,7 @@
                     </div>
 
                     <div class="form-group row mt-3">
-                      <div class="col-xl-12">
+                      <div class="col-md-11">
                         <button
                           class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
                           v-on:click="validarStep(currentStep)"
@@ -917,7 +917,7 @@
                   <div class="card-body minusmargintop" v-show="formaPagamento =='bolbradesco'">
                     <div class="form-group row mt-2">
                       <small
-                        class="text-justify col-md-12 smallInforFormaPagamentoBoleto"
+                        class="text-justify col-md-11 smallInforFormaPagamentoBoleto"
                       >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</small>
                     </div>
                     <div class="form-group row mt-2">
@@ -947,85 +947,6 @@
         <!-- END STEP 3-->
       </div>
     </div>
-    <!-- <div id="formPayMP">
-      <form action="/processar_pagamento" method="post" id="pay" name="pay" class="hidden">
-        <fieldset>
-          <input type="text" name="description" id="description" v-bind:value="getNomeLoja()" />
-          <input
-            name="transaction_amount"
-            id="transaction_amount"
-            v-bind:value="formatPrice(granTotal)"
-          />
-          <input
-            :value="card_number.replace(/ /g,'')"
-            type="text"
-            id="cardNumber"
-            data-checkout="cardNumber"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="cardholderName"
-            :value="nome_titular"
-            data-checkout="cardholderName"
-          />
-          <input
-            type="text"
-            id="cardExpirationMonth"
-            data-checkout="cardExpirationMonth"
-            :value="getValidadeCartao().mes"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="cardExpirationYear"
-            :value="getValidadeCartao().ano"
-            data-checkout="cardExpirationYear"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="securityCode"
-            v-model="codigo_seguranca"
-            data-checkout="securityCode"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <select id="installments" v-model="parcelas" class="form-control" name="installments">
-            <option v-bind:value="parcelas" selected="selected"></option>
-          </select>
-          <select id="docType" data-checkout="docType">
-            <option value="CPF" selected="selected">CPF</option>
-          </select>
-          <input type="text" id="docNumber" v-model="cpf_titular" data-checkout="docNumber" />
-          <input type="email" id="email" name="email" v-model="email" />
-          <input type="hidden" name="payment_method_id" v-model="payment_id" id="payment_method_id" />
-        </fieldset>
-      </form>
-    </div>-->
   </div>
 </template>
 <script>
@@ -1686,7 +1607,7 @@ export default {
         constantes.CONSTANTE_VENCIMENTO_BOLETO;
       var LData = new Date();
       LData.setDate(LData.getDate() + LDaysVenceBoleto);
-      const LDataVencimento = dateFormat(LData, "dd/mm/yyyy");
+      const LDataVencimento = dateFormat(LData, "yyyy-mm-dd");
 
       this.DadosCheckout.chave_publica = this.public_key;
       var transacao = {
@@ -1720,7 +1641,7 @@ export default {
           reference: this.reference_id.substring(0, 64),
           description: this.getNomeLoja(),
           amount: {
-            value: this.formatPrice(this.granTotal),
+            value: parseFloat(this.granTotal),
             currency: "BRL"
           },
           payment_method: {
@@ -1742,7 +1663,7 @@ export default {
                 address: {
                   country: "Brasil",
                   region: this.estado,
-                  region_code: "--",
+                  region_code: this.estado,
                   city: this.cidade,
                   postal_code: this.CEP.replace(/[-,.]/g, ""),
                   street: this.endereco,
@@ -1774,13 +1695,12 @@ export default {
       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
       API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
         .then(retornoPaymentPagSeguro => {
-          //console.log("Retorno Pagamento", retornoPaymentPagSeguro);
-          const LUpSell = sessionStorage.getItem("UpSell");
-          if (LUpSell == 2) {
-            ///DIRECIONA PARA UPSELL
-          } else {
-            LRouter.push("/obrigado-boleto");
-          }
+          var DadosCliente = {
+            nome: this.nome_completo,
+            dadosCompra: retornoPaymentPagSeguro.data
+          };
+          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          LRouter.push("/obrigado-boleto");
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
@@ -1788,6 +1708,7 @@ export default {
         });
     },
     async iniciaPagamentoBackEndCard() {
+      var LRouter = router;
       var card = await PagSeguro.encryptCard({
         publicKey: this.public_key,
         holder: this.nome_titular,
@@ -1817,13 +1738,15 @@ export default {
         const LCripto = await this.getDadosPagamentoTransacao();
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
-            //console.log("Retorno Pagamento", retornoPaymentPagSeguro);
-            const LUpSell = sessionStorage.getItem("UpSell");
-            if (LUpSell == 2) {
-              ///DIRECIONA PARA UPSELL
-            } else {
-              LRouter.push("/obrigado-cartao");
-            }
+            var DadosCliente = {
+              nome: this.nome_completo,
+              dadosCompra: retornoPaymentPagSeguro.data
+            };
+            sessionStorage.setItem(
+              "dadosCliente",
+              JSON.stringify(DadosCliente)
+            );
+            LRouter.push("/obrigado-cartao");
             API_NOTIFICATION.HideLoading();
           })
           .catch(error => {

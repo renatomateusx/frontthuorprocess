@@ -3,12 +3,12 @@
   <ContentWrapper>
     <div class="card b">
       <div class="card-header">
-        <div class="nomeLoja mb-4"><h3>{{DadosLoja.nome_loja}}</h3></div>
+        <div class="nomeLoja mb-4">
+          <h3>{{DadosLoja.nome_loja}}</h3>
+        </div>
         <div class="media mt-0 float-left pull-left">
           <div class="media-body">
-            <h5
-              class="m-0 text-bold"
-            >Obrigada, {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
+            <h5 class="m-0 text-bold">Obrigada, {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
           </div>
         </div>
       </div>
@@ -17,11 +17,16 @@
           <div class="col-xl-12 btn-block">
             <h4>Compra realizada com sucesso!</h4>
             <h5>Sua compra foi realizada através de boleto.</h5>
-            <div class="">
-              <div class="">
+            <div class>
+              <div class>
                 <h4 class="mt-4 mb-0">
                   Pedido:
-                  <strong><a v-bind:href="dadosStore.order.order_status_url" target="_blank">{{this.dadosStore.order.order_number}}</a></strong>
+                  <strong>
+                    <a
+                      v-bind:href="dadosStore.order.order_status_url"
+                      target="_blank"
+                    >{{this.dadosStore.order.order_number}}</a>
+                  </strong>
                 </h4>
               </div>
               <small>Clique no número do pedido para ver detalhes da compra.</small>
@@ -31,6 +36,7 @@
               class="mt-2 text-justify"
             >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</p>
           </div>
+          <up-sell-card @recalcula="comprarComUmClique()" :noCheckout="2"></up-sell-card>
           <div class="col-xl-12">
             <button
               class="btn btn-success btnDownload pull-right float-right"
@@ -42,15 +48,12 @@
             @click.stop.prevent="copyToClip(dadosCliente.dadosCompra.dataGateway.barcode.content)"
           >
             <h4
-              class="mt-2 mb-2 text-justify textInformativo "
+              class="mt-2 mb-2 text-justify textInformativo"
             >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
             <h5 class="text-center">{{this.dadosCliente.dadosCompra.dataGateway.barcode.content}}</h5>
           </div>
           <div class="col-xl-12 mt-2">
-            <button
-              class="btn btn-success btnDownload"
-              v-on:click="voltarLoja()"
-            >Voltar para a loja</button>
+            <button class="btn btn-success btnDownload" v-on:click="voltarLoja()">Voltar para a loja</button>
           </div>
         </div>
       </div>
@@ -71,18 +74,21 @@ import API_CHECKOUT from "../../api/checkoutAPI";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
-
+import UpSellCard from "../../components/Cart/UpSellCard";
 export default {
   template: `#templateObrigado`,
   created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
   },
+  components: {
+    UpSellCard
+  },
   data() {
     return {
       dadosCliente: {},
       dadosStore: {},
-      DadosLoja:{}
+      DadosLoja: {}
     };
   },
   methods: {
@@ -141,23 +147,24 @@ export default {
       var win = window.open(url, "_blank");
       win.focus();
     },
-    voltarLoja(){
-        window.location.href= "http://"+ this.DadosLoja.url_loja;
-    }
+    voltarLoja() {
+      window.location.href = "http://" + this.DadosLoja.url_loja;
+    },
+    comprarComUmClique() {}
   }
 };
 </script>
 <style scoped>
 .divBarCode {
-  background-color: #D8D8D8;
+  background-color: #d8d8d8;
   cursor: pointer !important;
   color: gray;
 }
-.nomeLoja{
-    font-size: 20px;
+.nomeLoja {
+  font-size: 20px;
 }
-.textInformativo{
-    font-size: 13px;
+.textInformativo {
+  font-size: 13px;
 }
 @media only screen and (max-width: 992px) {
   .btnDownload {
@@ -166,7 +173,7 @@ export default {
 }
 @media only screen and (max-width: 767px) {
   .btnDownload {
-    width: 100%!important;
+    width: 100% !important;
   }
 }
 </style>

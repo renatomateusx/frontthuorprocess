@@ -31,6 +31,7 @@
               </div>
               <small>Clique no número do pedido para ver detalhes da compra.</small>
             </div>
+            <up-sell-card @recalcula="comprarComUmClique()" :noCheckout="2"></up-sell-card>
             <h4 class="mt-4">Informação Importante:</h4>
             <p
               class="mt-2 text-justify"
@@ -61,12 +62,15 @@ import API_CHECKOUT from "../../api/checkoutAPI";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
-
+import UpSellCard from "../../components/Cart/UpSellCard";
 export default {
   template: `#templateObrigado`,
   created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
+  },
+  components:{
+    UpSellCard
   },
   data() {
     return {
@@ -133,6 +137,9 @@ export default {
     },
     voltarLoja() {
       window.location.href = "http://" + this.DadosLoja.url_loja;
+    },
+    comprarComUmClique(){
+
     }
   }
 };

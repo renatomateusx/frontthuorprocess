@@ -376,10 +376,15 @@
                           </div>
                           <div class="product-info row col-md-4" id="productOptions"></div>
                           <button
-                            v-show="VarianteIDUpSellSelected > 0"
+                            v-show="VarianteIDUpSellSelected > 0 && UpSellNoCheckout == 1"
                             v-on:click="adicionarProdutoUpSell()"
                             class="mt-2 btn btn-primary btn-lg btn-block float-left pull-left btnContinue"
                           >Adicionar</button>
+                          <button
+                            v-show="VarianteIDUpSellSelected > 0 && UpSellNoCheckout == 2"
+                            v-on:click="adicionarProdutoUpSell()"
+                            class="mt-2 btn btn-primary btn-lg btn-block float-left pull-left btnContinue"
+                          >Comprar com um CLIQUE</button>
                         </div>
                       </div>
                     </div>
