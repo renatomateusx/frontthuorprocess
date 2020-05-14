@@ -960,7 +960,7 @@ import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
-// Import stylesheet
+
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
@@ -1567,7 +1567,7 @@ export default {
           estado: this.estado,
           complemento: this.removeAcento(this.complemento),
           destinatario: this.removeAcento(this.destinatario),
-          numero_cartao: this.numero_cartao,
+          numero_cartao: this.card_number,
           validade: this.validade,
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
@@ -1651,10 +1651,10 @@ export default {
               instruction_lines: {
                 line_1:
                   this.DadosCheckout.linha_um_boleto ||
-                  "Pagável em qualquer lotérica",
+                  this.removeAcento("Pagável em qualquer lotérica"),
                 line_2:
                   this.DadosCheckout.linha_dois_boleto ||
-                  "Não aceitar após o vencimento"
+                  this.removeAcento("Não aceitar após o vencimento")
               },
               holder: {
                 name: this.nome_completo,
@@ -1693,12 +1693,14 @@ export default {
       this.reference_id = LRefID;
       //console.log("Reference ID", this.reference_id);
       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
+      sessionStorage.setItem("LCrypto", LCripto);
       API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
         .then(retornoPaymentPagSeguro => {
           var DadosCliente = {
             nome: this.nome_completo,
             dadosCompra: retornoPaymentPagSeguro.data
           };
+          sessionStorage.setItem('TipoCheck', 'bo');
           sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
           LRouter.push("/obrigado-boleto");
           API_NOTIFICATION.HideLoading();
@@ -1736,12 +1738,14 @@ export default {
         this.reference_id = LRefID;
         //console.log("Reference ID", this.reference_id);
         const LCripto = await this.getDadosPagamentoTransacao();
+        sessionStorage.setItem("LCrypto", LCripto);
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
             var DadosCliente = {
               nome: this.nome_completo,
               dadosCompra: retornoPaymentPagSeguro.data
             };
+            sessionStorage.setItem('TipoCheck', 'ca');
             sessionStorage.setItem(
               "dadosCliente",
               JSON.stringify(DadosCliente)

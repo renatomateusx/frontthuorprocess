@@ -168,6 +168,7 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
+          sessionStorage.setItem("DadosCheckout", JSON.stringify(this.DadosCheckout));
           this.iniciaCheckout();
         })
         .catch(error => {
@@ -231,6 +232,7 @@ export default {
     },
     async iniciaCheckout() {
       console.log("Gateway", this.DadosCheckout.gateway);
+      this.LUp = sessionStorage.setItem('up', '0');
       if (this.DadosCheckout.gateway == 1) {
         const LCheckMP = await this.FCheckoutMP();
       } else if (this.DadosCheckout.gateway == 2) {

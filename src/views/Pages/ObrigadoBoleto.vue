@@ -8,7 +8,9 @@
         </div>
         <div class="media mt-0 float-left pull-left">
           <div class="media-body">
-            <h5 class="m-0 text-bold">Obrigada, {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
+            <h5
+              class="m-0 text-bold"
+            >Obrigada, {{toCamelCase(getDadosCliente().nome.split(" ")[0])}}!</h5>
           </div>
         </div>
       </div>
@@ -17,6 +19,7 @@
           <div class="col-xl-12 btn-block">
             <h4>Compra realizada com sucesso!</h4>
             <h5>Sua compra foi realizada através de boleto.</h5>
+            <small>Você vai receber um e-mail com os detalhes do seu pedido.</small>
             <div class>
               <div class>
                 <h4 class="mt-4 mb-0">
@@ -36,21 +39,18 @@
               class="mt-2 text-justify"
             >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</p>
           </div>
-          <up-sell-card @recalcula="comprarComUmClique()" :noCheckout="2"></up-sell-card>
+          <up-sell-card @update="getDadosCompra()" :noCheckout="2" class="mb-3"></up-sell-card>
           <div class="col-xl-12">
             <button
               class="btn btn-success btnDownload pull-right float-right"
               v-on:click="downloadBoleto()"
             >Download do Boleto</button>
           </div>
-          <div
-            class="col-xl-12 divBarCode mt-2"
-            @click.stop.prevent="copyToClip(dadosCliente.dadosCompra.dataGateway.barcode.content)"
-          >
+          <div class="col-xl-12 divBarCode mt-2" @click.stop.prevent="copyToClip(getBarCode())">
             <h4
               class="mt-2 mb-2 text-justify textInformativo"
             >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
-            <h5 class="text-center">{{this.dadosCliente.dadosCompra.dataGateway.barcode.content}}</h5>
+            <h5 class="text-center">{{getBarCode()}}</h5>
           </div>
           <div class="col-xl-12 mt-2">
             <button class="btn btn-success btnDownload" v-on:click="voltarLoja()">Voltar para a loja</button>
@@ -88,7 +88,9 @@ export default {
     return {
       dadosCliente: {},
       dadosStore: {},
-      DadosLoja: {}
+      DadosLoja: {},
+      DadosCheckout: {},
+      Links: []
     };
   },
   methods: {
@@ -96,6 +98,11 @@ export default {
       return new Promise(r => setTimeout(r, seconds));
     },
     getDadosCompra() {
+      if (sessionStorage.getItem("DadosCheckout") != null) {
+        this.DadosCheckout = JSON.parse(
+          sessionStorage.getItem("DadosCheckout")
+        );
+      }
       if (sessionStorage.getItem("dadosCliente") != null) {
         this.dadosCliente = JSON.parse(sessionStorage.getItem("dadosCliente"));
         this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
@@ -128,8 +135,16 @@ export default {
       window.getSelection().removeAllRanges();
     },
     downloadBoleto() {
-      const url = this.dadosCliente.dadosCompra.transaction_details
-        .external_resource_url;
+      "application/json"
+      var url = "";
+      if (this.DadosCheckout.gateway == 1) {
+        url = this.dadosCliente.dadosCompra.transaction_details
+          .external_resource_url;
+      }
+      if(this.DadosCheckout.gateway == 2){
+        this.Links = JSON.parse(this.dadosCliente.dadosCompra.dataGateway).links;
+        url = this.Links.find(x => x.media == "application/pdf").href;
+      }
       //console.log("Download Boleto", url);
       this.openInNewTab(url);
     },
@@ -150,7 +165,17 @@ export default {
     voltarLoja() {
       window.location.href = "http://" + this.DadosLoja.url_loja;
     },
-    comprarComUmClique() {}
+    getBarCode() {
+      if (this.DadosCheckout.gateway == 1)
+        return this.dadosCliente.dadosCompra.dataGateway.barcode.content;
+      if (this.DadosCheckout.gateway == 2)
+        return  JSON.parse(this.dadosCliente.dadosCompra.dataGateway).payment_method.boleto
+          .formatted_barcode;
+    },
+    getDadosCliente() {
+      return this.dadosCliente;
+    },
+    
   }
 };
 </script>

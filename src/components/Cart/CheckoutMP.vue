@@ -1045,6 +1045,7 @@ import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import router from "../../router.js";
+import UpSellCard from "../../components/Cart/UpSellCard";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1069,6 +1070,9 @@ export default {
     }
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
+  },
+  components: {
+    UpSellCard
   },
   computed: {},
   data() {
@@ -1631,7 +1635,7 @@ export default {
           estado: this.estado,
           complemento: this.removeAcento(this.complemento),
           destinatario: this.removeAcento(this.destinatario),
-          numero_cartao: this.numero_cartao,
+          numero_cartao: this.card_number,
           validade: this.validade,
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
@@ -1672,6 +1676,7 @@ export default {
         //while (this.try == false) {
         ///console.log(this.cardToken);
         const LCripto = await this.getDadosPagamentoTransacao();
+        sessionStorage.setItem("LCrypto", LCripto);
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT.DoPayBackEnd(LCripto)
           .then(retornoPay => {
@@ -1680,13 +1685,10 @@ export default {
               nome: this.nome_completo,
               dadosCompra: retornoPay.data
             };
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
+            sessionStorage.setItem("TipoCheck", "ca");
+            sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
-            const LUpSell = sessionStorage.getItem("UpSell");
             LRouter.push("/obrigado-cartao");
           })
           .catch(error => {
@@ -1704,6 +1706,7 @@ export default {
       var LRouter = router;
       window.Mercadopago.clearSession();
       const LCripto = await this.getDadosPagamentoTransacao();
+      sessionStorage.setItem("LCrypto", LCripto);
       API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.DoPayBackEndTicket(LCripto)
         .then(retornoPay => {
@@ -1712,6 +1715,7 @@ export default {
             nome: this.nome_completo,
             dadosCompra: retornoPay.data
           };
+          sessionStorage.setItem("TipoCheck", "bo");
           sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
           window.Mercadopago.clearSession();
           API_NOTIFICATION.HideLoading();

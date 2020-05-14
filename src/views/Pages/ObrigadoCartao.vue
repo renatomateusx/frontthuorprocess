@@ -16,7 +16,7 @@
         <div class="row">
           <div class="col-xl-8">
             <h4>Compra realizada com sucesso!</h4>
-
+            <small>Você vai receber um e-mail com os detalhes do seu pedido.</small>
             <div class>
               <div class>
                 <h4 class="mt-4 mb-0">
@@ -31,7 +31,7 @@
               </div>
               <small>Clique no número do pedido para ver detalhes da compra.</small>
             </div>
-            <up-sell-card @recalcula="comprarComUmClique()" :noCheckout="2"></up-sell-card>
+            <up-sell-card @update="getDadosCompra()" :noCheckout="2"></up-sell-card>
             <h4 class="mt-4">Informação Importante:</h4>
             <p
               class="mt-2 text-justify"
@@ -69,7 +69,7 @@ export default {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
   },
-  components:{
+  components: {
     UpSellCard
   },
   data() {
@@ -115,12 +115,6 @@ export default {
       textToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
     },
-    downloadBoleto() {
-      const url = this.dadosCliente.dadosCompra.transaction_details
-        .external_resource_url;
-      //console.log("Download Boleto", url);
-      this.openInNewTab(url);
-    },
     toCamelCase(str) {
       var LStr = str.split("");
       var LSTR2 = "";
@@ -137,9 +131,6 @@ export default {
     },
     voltarLoja() {
       window.location.href = "http://" + this.DadosLoja.url_loja;
-    },
-    comprarComUmClique(){
-
     }
   }
 };
@@ -166,7 +157,7 @@ export default {
 }
 @media only screen and (max-width: 767px) {
   .btnDownload {
-    width: 100%!important;
+    width: 100% !important;
   }
 }
 </style>

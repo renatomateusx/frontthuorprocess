@@ -382,7 +382,7 @@
                           >Adicionar</button>
                           <button
                             v-show="VarianteIDUpSellSelected > 0 && UpSellNoCheckout == 2"
-                            v-on:click="adicionarProdutoUpSell()"
+                            v-on:click="comprarComUmClique()"
                             class="mt-2 btn btn-primary btn-lg btn-block float-left pull-left btnContinue"
                           >Comprar com um CLIQUE</button>
                         </div>
@@ -413,7 +413,6 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
-// Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
@@ -421,6 +420,8 @@ import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import router from "../../router.js";
 import API_MKT from "../../api/marketingAPI";
+import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
+
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -441,6 +442,7 @@ export default {
   created() {
     //API_NOTIFICATION.ShowLoading();
     this.checkUpSell();
+    //document.addEventListener('beforeunload', this.clearSessionStorage);
   },
   props: {
     noCheckout: { type: Number, required: true }
@@ -474,7 +476,8 @@ export default {
       VarianteSKUUpSellSelected: "",
       VariantePriceUpSellSelected: 0,
       VarianteTitleUPSellSelected: "",
-      UpSellNoCheckout: 0
+      UpSellNoCheckout: 0,
+      LUp: 0
     };
   },
   mounted() {},
@@ -496,17 +499,24 @@ export default {
     },
     async checkUpSell() {
       if (sessionStorage.getItem("DadosLoja") != undefined) {
+        this.dadosLoja = sessionStorage.getItem("DadosLoja");
         if (sessionStorage.getItem("cart") != null) {
           this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
         }
         if (this.produtosCart != null) {
+          this.LUp = sessionStorage.getItem("up", "1");
+          console.log(this.LUp);
+          if (this.LUp == 1) {
+            this.UpSellNoCheckout = -1;
+            return;
+          }
           this.produtosCart.forEach((item, i) => {
             API_MKT.GetUpSellsByProductID(item.id_thuor).then(
               resProductUpSell => {
                 //console.log(resProductUpSell.data);
                 this.UpSellNoCheckout =
                   resProductUpSell.data.tipo_checkout || 0;
-                
+                console.log(this.UpSellNoCheckout);
                 const ProdUS = resProductUpSell.data.id_produto_to;
                 API_PRODUTOS.GetProdutoIDThuor(ProdUS)
                   .then(resProdTo => {
@@ -548,6 +558,8 @@ export default {
                         select.onchange = function() {
                           self.toggleSelect(select);
                         };
+                        document.getElementById("productOptions").innerHTML =
+                          "";
                         document
                           .getElementById("productOptions")
                           .append(select);
@@ -569,9 +581,9 @@ export default {
                     console.log("Erro ao pegar o produto", errorProd);
                   });
 
-                  if(this.UpSellNoCheckout == 2){
-                    sessionStorage.setItem("UpSell", "2");
-                  }
+                if (this.UpSellNoCheckout == 2) {
+                  sessionStorage.setItem("UpSell", "2");
+                }
               }
             );
           });
@@ -595,8 +607,9 @@ export default {
       }
     },
     getNomeLoja() {
+      this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja")) || "";
       return this.dadosLoja.nome_loja;
-    },    
+    },
 
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -690,6 +703,252 @@ export default {
           console.log("Erro ao pegar os dados do produto na API", error);
         }
       });
+    },
+    clearSessionStorage() {
+      sessionStorage.clear();
+    },
+    async FCheckoutMP() {
+      const self = this;
+      const plugin = document.createElement("script");
+      plugin.onload = async () => {
+        //await self.sleep(1000);
+        if (window.Mercadopago != undefined) {
+          window.Mercadopago.setPublishableKey(
+            this.DadosCheckout.chave_publica
+          );
+          await this.sleep(1000);
+          const LTipoCompra = sessionStorage.getItem("TipoCheck");
+          var LRouter = router;
+          let LCripto = sessionStorage.getItem("LCrypto");
+          if (LTipoCompra == "bo") {
+            API_CHECKOUT.DoPayBackEndTicket(LCripto)
+              .then(async retornoPay => {
+                //console.log("Enviado para o backend", retornoPay.data);
+                let LocalDecrypto = atob(LCripto);
+                LocalDecrypto = JSON.parse(LocalDecrypto);
+
+                var DadosCliente = {
+                  nome: LocalDecrypto.dadosComprador.nome_completo,
+                  dadosCompra: retornoPay.data
+                };
+                sessionStorage.setItem(
+                  "dadosCliente",
+                  JSON.stringify(DadosCliente)
+                );
+                this.dadosCli;
+                window.Mercadopago.clearSession();
+                sessionStorage.setItem("up", "1");
+                this.UpSellNoCheckout = -1;
+                this.$emit("update");
+                await this.sleep(1000);
+                API_NOTIFICATION.HideLoading();
+                LRouter.push("/obrigado-boleto");
+              })
+              .catch(error => {
+                console.log("Erro ao tentar efetuar o pagamento", error);
+                API_NOTIFICATION.showNotification(
+                  "Por favor, tente novamente ",
+                  "error"
+                );
+              });
+          }
+          if (LTipoCompra == "ca") {
+            let LocalDecrypto = atob(LCripto);
+            LocalDecrypto = JSON.parse(LocalDecrypto);
+            var FormToken = await UTILIS_API.CREATE_FORM_MP(
+              this.getNomeLoja(),
+              this.formatPrice(LocalDecrypto.paymentData.transaction_amount),
+              LocalDecrypto.dadosComprador.numero_cartao.trim().replace(/ /g, ""),
+              LocalDecrypto.dadosComprador.nome_titular,
+              LocalDecrypto.dadosComprador.validade.split("/")[0],
+              '20'+LocalDecrypto.dadosComprador.validade.split("/")[1],
+              LocalDecrypto.dadosComprador.codigo_seguranca,
+              LocalDecrypto.paymentData.installments,
+              LocalDecrypto.dadosComprador.cpf_titular.replace(/[.-]/g, ""),
+              LocalDecrypto.paymentData.payer.email,
+              LocalDecrypto.paymentData.payment_method_id
+            );
+            //console.log(FormToken);            
+            window.Mercadopago.createToken(FormToken, (status, response) => {
+              //console.log("Response", response);
+              //console.log(1, LocalDecrypto.paymentData);
+              LocalDecrypto.paymentData.token = response.id;
+              //console.log(2, LocalDecrypto.paymentData);
+              var LAuxCripto = LocalDecrypto;
+             
+              LocalDecrypto = JSON.stringify(LocalDecrypto);
+              LocalDecrypto = btoa(LocalDecrypto);
+              API_CHECKOUT.DoPayBackEnd(LocalDecrypto)
+                .then(async retornoPay => {
+                  var DadosCliente = {
+                    nome: LAuxCripto.dadosComprador.nome_completo,
+                    dadosCompra: retornoPay.data
+                  };
+                  sessionStorage.setItem(
+                    "dadosCliente",
+                    JSON.stringify(DadosCliente)
+                  );
+                  sessionStorage.setItem("up", "1");
+                  this.UpSellNoCheckout = -1;
+                  this.$emit("update");
+                  await this.sleep(1000);
+                  window.Mercadopago.clearSession();
+                  API_NOTIFICATION.HideLoading();
+                  return true;
+                  LRouter.push("/obrigado-cartao");
+                })
+                .catch(error => {
+                  console.log("Erro ao tentar efetuar o pagamento", error);
+                  API_NOTIFICATION.showNotification(
+                    "Por favor, tente novamente ",
+                    "error"
+                  );
+                });
+            });
+          }
+        } else {
+          await self.sleep(1000);
+          this.FCheckoutMP();
+        }
+      };
+      plugin.setAttribute(
+        "src",
+        "https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"
+      );
+      plugin.async = true;
+      document.head.appendChild(plugin);
+    },
+    async FCheckoutPS(PDadosCheckout) {
+      const pluginPS = document.createElement("script");
+      pluginPS.onload = function() {
+        this.componenteMPLoaded = 1;
+        console.log("Carregado Script PS", this.componenteMPLoaded);
+      };
+      pluginPS.setAttribute(
+        "src",
+        "https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"
+      );
+      pluginPS.async = true;
+      document.head.appendChild(pluginPS);
+      await this.sleep(1000);
+      if (PagSeguro !== undefined) {
+        return true;
+      } else {
+        await this.sleep(1000);
+        this.FCheckoutPS();
+      }
+    },
+    sleep(seconds) {
+      return new Promise(r => setTimeout(r, seconds));
+    },
+    async comprarComUmClique() {
+      API_NOTIFICATION.ShowLoading();
+      var LRouter = router;
+      let LCripto = sessionStorage.getItem("LCrypto");
+      this.DadosCheckout = JSON.parse(sessionStorage.getItem("DadosCheckout"));
+
+      if (this.DadosCheckout.gateway == 1) {
+        const LReturn = await this.FCheckoutMP();
+      }
+      if (this.DadosCheckout.gateway == 2) {
+        const LReturn = await this.FCheckoutPS();
+        const LTipoCompra = sessionStorage.getItem("TipoCheck");
+        if (LTipoCompra == "ca") {
+          let LDecripto = atob(LCripto);
+          LDecripto = JSON.parse(LDecripto);
+
+          API_CHECKOUT_PS.GetPublicKey("card", this.DadosCheckout.token_acesso)
+            .then(async resPublicKey => {
+              var card = await PagSeguro.encryptCard({
+                publicKey: resPublicKey.data,
+                holder: LDecripto.dadosComprador.nome_titular,
+                number: LDecripto.dadosComprador.numero_cartao.replace(
+                  / /g,
+                  ""
+                ),
+                expMonth: LDecripto.dadosComprador.validade.split("/")[0],
+                expYear: "20" + LDecripto.dadosComprador.validade.split("/")[1],
+                securityCode: LDecripto.dadosComprador.codigo_seguranca
+              });
+              if (card.errors.length > 0) {
+                if (
+                  card.errors[0] != undefined &&
+                  card.errors[0].code == "INVALID_NUMBER"
+                ) {
+                  API_NOTIFICATION.showNotificationW(
+                    "Oops!",
+                    "Número de Cartão Inválido",
+                    "error"
+                  );
+                }
+                return;
+              }
+              //console.log(1, LDecripto.paymentData.payment_method.card.encrypted);
+              LDecripto.paymentData.payment_method.card.encrypted =
+                card.encryptedCard;
+              //console.log(2, LDecripto.paymentData.payment_method.card.encrypted);
+              LCripto = JSON.stringify(LDecripto);
+              LCripto = btoa(LCripto);
+              API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
+                .then(async retornoPaymentPagSeguro => {
+                  var DadosCliente = {
+                    nome: this.nome_completo,
+                    dadosCompra: retornoPaymentPagSeguro.data
+                  };
+                  sessionStorage.setItem(
+                    "dadosCliente",
+                    JSON.stringify(DadosCliente)
+                  );
+                  sessionStorage.setItem("up", "1");
+                  this.UpSellNoCheckout = -1;
+                  this.$emit("update");
+                  await this.sleep(1000);
+                  API_NOTIFICATION.HideLoading();
+                  LRouter.push("/obrigado-cartao");
+                })
+                .catch(error => {
+                  console.log(
+                    "Erro ao efetuar o pagamento no PagSeguro",
+                    error
+                  );
+                  API_NOTIFICATION.showNotification(
+                    "Por favor, tente novamente ",
+                    "error"
+                  );
+                });
+            })
+            .catch(error => {
+              console.log("Erro", error);
+            });
+        }
+        if (LTipoCompra == "bo") {
+          API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
+            .then(async retornoPaymentPagSeguro => {
+              var DadosCliente = {
+                nome: this.nome_completo,
+                dadosCompra: retornoPaymentPagSeguro.data
+              };
+              sessionStorage.setItem(
+                "dadosCliente",
+                JSON.stringify(DadosCliente)
+              );
+              sessionStorage.setItem("up", "1");
+              this.UpSellNoCheckout = -1;
+              this.$emit("update");
+              await this.sleep(1000);
+              API_NOTIFICATION.HideLoading();
+              LRouter.push("/obrigado-cartao");
+            })
+            .catch(error => {
+              console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+              API_NOTIFICATION.showNotification(
+                "Por favor, tente novamente ",
+                "error"
+              );
+            });
+          LRouter.push("/obrigado-boleto");
+        }
+      }
     }
   }
 };
