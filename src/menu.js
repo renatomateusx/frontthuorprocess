@@ -24,7 +24,7 @@ const Menu = [
         icon: 'fa fa-donate',
         translate: 'sidebar.nav.MENU',
         label: { value: 1, color: 'info' },
-        path: 'pedidos'
+        path: '/pedidos'
         // submenu: [{
         //     name: 'Submenu',
         //     translate: 'sidebar.nav.SUBMENU',

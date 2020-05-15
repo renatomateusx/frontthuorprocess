@@ -269,7 +269,8 @@ import moment from "moment";
 import dateFormat from "dateformat";
 import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
-import Hashids from 'hashids';
+import Hashids from "hashids";
+import API_CHECKOUT from "../../api/checkoutAPI";
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
 
@@ -380,6 +381,7 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+
               API_TRANSACOES.GetTransacoes()
                 .then(retProd => {
                   this.gridData = [];
@@ -389,11 +391,11 @@ export default {
                   retProd.data.forEach((obj, i) => {
                     const LID = obj.id;
 
-                    const LPaymentID = JSON.parse(obj.json_gw_response)
-                      .payment_method_id;
+                    const LPaymentID = this.getPaymentMethodID(obj);
+                    //console.log(LPaymentID);
                     let LStatus;
                     if (obj.status == null) {
-                      if (this.LPaymentID == "bolbradesco") {
+                      if (this.LPaymentID == "BOLETO") {
                         LStatus = "pendente";
                       } else {
                         LStatus = "aprovada";
@@ -402,13 +404,11 @@ export default {
                       LStatus = obj.status;
                     }
                     const LData = dateFormat(
-                      JSON.parse(obj.json_gw_response).date_created,
+                      this.getDataCreated(obj),
                       "dd/mm/yyyy  HH:MM:ss"
                     );
-                    const LTimeAgo = JSON.parse(obj.json_gw_response)
-                      .date_created;
-                    const LTotal = JSON.parse(obj.json_gw_response)
-                      .transaction_amount;
+                    const LTimeAgo = this.getDataCreated(obj);
+                    const LTotal = this.getValue(obj);
                     const LNomeComprador = this.toCamelCase(
                       JSON.parse(obj.json_front_end_user_data).dadosComprador
                         .nome_completo
@@ -491,11 +491,14 @@ export default {
     toUpperCase(str) {
       return str.toUpperCase();
     },
-    getImagePaymentID(paymentID) {
-      if (paymentID == "bolbradesco") return "img/barcode.png";
-      else if (paymentID == "master") return "img/master.png";
-      else if (paymentID == "visa") return "img/visa.png";
-      else return "img/visa.png";
+    getImagePaymentID(paymentID) {      
+      if (paymentID !== undefined) {
+        if (paymentID == "BOLETO" || paymentID == "bolbradesco")
+          return "img/barcode.png";
+        else if (paymentID.toUpperCase() == "MASTER") return "img/master.png";
+        else if (paymentID.toUpperCase() == "VISA") return "img/visa.png";
+        else return "img/visa.png";
+      }
     },
     getClassStatus(status) {
       if (status == "pendente") return "alert-info";
@@ -506,12 +509,35 @@ export default {
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
-      const hashids = new Hashids('', 0, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-      const produtHashed= hashids.encode(id_pedido.toString(), id_ordem.toString());
+      const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      const produtHashed = hashids.encode(
+        id_pedido.toString(),
+        id_ordem.toString()
+      );
       // const numbers = hashids.decode(produtHashed);
       // console.log("ID Hashedid", produtHashed);
       // console.log("ID Deshashed", numbers);
       return produtHashed;
+    },
+    getPaymentMethodID(obj) {
+      const LJSON = JSON.parse(obj.json_gw_response);
+      //console.log(LJSON.payment_method);
+      if(LJSON.hasOwnProperty('payment_method_id')) return LJSON.payment_method_id;
+      if(LJSON.hasOwnProperty('payment_method') && LJSON.payment_method.type == "CREDIT_CARD")  return LJSON.payment_method.card.brand;
+      if(LJSON.hasOwnProperty('payment_method') && LJSON.payment_method.type == "BOLETO") return LJSON.payment_method.type;
+      
+    },
+    getDataCreated(obj) {
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("date_created"))
+        return JSON.parse(obj.json_gw_response).date_created;
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("created_at"))
+        return JSON.parse(obj.json_gw_response).created_at;
+    },
+    getValue(obj) {
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("transaction_amount"))
+        return JSON.parse(obj.json_gw_response).transaction_amount;
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("amount"))
+        return JSON.parse(obj.json_gw_response).amount.summary.total;
     }
   }
 };
