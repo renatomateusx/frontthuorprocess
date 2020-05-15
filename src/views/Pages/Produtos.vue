@@ -24,7 +24,8 @@
 .display-inline {
   float: left;
   display: inline-flex;
-}.card-flat {
+}
+.card-flat {
   margin-top: 80px !important;
 }
 .shopifysvg {
@@ -201,33 +202,34 @@ th.active .arrow {
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th style="width: 160px!important;">
+              <th style="width: 150px!important;">
                 <strong class="col-md-4 pedido">
                   <b>ID</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0">
+              <th class="data pl-0" style="width: 348px!important;min-width: 348px!important;">
                 <strong class>
                   <b>NOME</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0" style="min-width: 80px!important; width: 80px!important;">
+              <th class="data pl-0" style="min-width: 60px!important; width: 60px!important;">
                 <strong class>
                   <b>VARIANTES</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="status pl-2">
+              <th class="status pl-2"  style="min-width: 120px!important; width: 120px!important;">
                 <strong class="col-md-2">
                   <b>ESTOQUE</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="status pl-2">
+              
+              <th class="status pl-2" style="min-width: 60px!important; width: 60px!important;">
                 <strong class="col-md-2">
-                  <b>MOD. EM</b>
+                  <b>MODIFICADO</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
@@ -235,11 +237,11 @@ th.active .arrow {
           </table>
         </div>
         <div class="table-body-wrapper">
-           <!-- table table-striped table-hover w-100 -->
+          <!-- table table-striped table-hover w-100 -->
           <table class="table-body">
             <tbody>
               <tr v-for="{id_produto_json, titulo_produto, json_dados_produto} in dataPerPage">
-                <td>
+                <td class="padding1010"  style="min-width: 145px!important; width: 145px!important;">
                   <div class="checkbox c-checkbox">
                     <label>
                       <input type="checkbox" />
@@ -248,26 +250,28 @@ th.active .arrow {
                   </div>
                   <span class="id_produto">{{id_produto_json}}</span>
                 </td>
-                <td>
-                  <div class="media">
+                <td class="padding1010"  style="min-width: 400px!important; width: 390px!important;">
+                  <div class="media ml-0 mr-0">
                     <img
-                      class="img-fluid circle"
+                      class="img-fluid circle ml-0 mr-0"
                       v-bind:src="JSON.parse(json_dados_produto).image.src"
                       alt="Image"
                     />
-                    <span class="titulo_produto">
+                    <span class="titulo_produto ml-2">
                       <router-link :to="{path: '/produtos/detalhe/' + id_produto_json}">
                         <b>{{titulo_produto}}</b>
                       </router-link>
                     </span>
                   </div>
                 </td>
-                <td>{{JSON.parse(json_dados_produto).variants.length}}</td>
+                <td
+                  style="min-width: 80px!important; width: 80px!important;"
+                >{{JSON.parse(json_dados_produto).variants.length}}</td>
                 <td class="text-center">
                   <span class="badge badge-success">Ativo</span>
                 </td>
 
-                <td>{{JSON.parse(json_dados_produto).updated_at | formatDate}}</td>
+                <td >{{JSON.parse(json_dados_produto).updated_at | formatDate}}</td>
               </tr>
             </tbody>
           </table>
@@ -369,7 +373,7 @@ export default {
       searchQuery: "",
       sortKey: "",
       sortOrders: {},
-      columns: ["id", "nome", "variantes", "estoque", "mod. em"],
+      columns: ["id", "nome", "variantes", "estoque", "modificado"],
       gridData: [],
       startRow: 0,
       rowsPerPage: 10,
