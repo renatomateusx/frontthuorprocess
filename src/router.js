@@ -47,11 +47,11 @@ export default new Router({
         component: Login
     },
     {
-        path: 'produtos',
+        path: '/',
         component: Layout,
         children: [
             {
-                path: '/todos',
+                path: '/produtos/todos',
                 component: Produtos
             },
             {

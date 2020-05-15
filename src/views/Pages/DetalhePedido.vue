@@ -206,7 +206,7 @@ th.active .arrow {
       <span
         class="spanStatus alert mr-2 mt-2 mb-0"
         v-bind:class="getClassStatus(status)"
-      >{{status.toUpperCase()}}</span>
+      >{{getStatus()}}</span>
       <label
         class="float-left mr-2 col-form-label labelForm"
         for="inlineFormInputGroup"
@@ -318,7 +318,7 @@ th.active .arrow {
             <div class="text-bold">
               <p>
                 <span class="row nomeComprador mb-0">{{this.pedido.destinatario}}</span>
-                <span class="row mb-0">{{this.pedido.endereco}}, {{this.pedido.numero_porta}}</span>
+                <span class="row mb-0">{{getEndereco()}}, {{this.pedido.numero_porta}}</span>
                 <span
                   class="row mb-0"
                   v-if="this.pedido.complemento"
@@ -489,106 +489,7 @@ export default {
               API_TRANSACOES.GetTransacaoByID(this.PedidoString[0])
                 .then(retProd => {
                   const obj = retProd.data[0];
-                  const LID = obj.id;
-                  console.log(obj);
-                  const LPaymentID = JSON.parse(obj.json_gw_response)
-                    .payment_method_id;
-                  let LStatus;
-                  if (obj.status == null) {
-                    if (this.LPaymentID == "bolbradesco") {
-                      LStatus = "pendente";
-                    } else {
-                      LStatus = "aprovada";
-                    }
-                  } else {
-                    LStatus = obj.status;
-                  }
-                  this.status = LStatus;
-                  this.statusAtual = this.status.toUpperCase();
-                  const LData = dateFormat(
-                    JSON.parse(obj.json_gw_response).date_created,
-                    "dd/mm/yyyy  HH:MM:ss"
-                  );
-                  const LTimeAgo = JSON.parse(obj.json_gw_response)
-                    .date_created;
-                  const LTotal = JSON.parse(obj.json_gw_response)
-                    .transaction_amount;
-
-                  //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
-                  const LOrderID = JSON.parse(obj.json_shopify_response).order
-                    .id;
-                  this.dataPedido = dateFormat(
-                    JSON.parse(obj.json_gw_response).date_created,
-                    "dd/mm/yyyy  HH:MM:ss"
-                  );
-                  this.pedido.json_front_end_user_data = JSON.parse(
-                    obj.json_front_end_user_data
-                  );
-                  //console.log(Date.now(), Date.parse(LData));
-                  this.pedido.id = obj.id;
-                  this.pedido.nomeComprador = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.nome_completo;
-                  this.pedido.emailComprador = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.email;
-                  this.pedido.cpfComprador = this.maskCPF(
-                    JSON.parse(obj.json_front_end_user_data).dadosComprador.cpf
-                  );
-                  this.pedido.telefoneComprador = this.maskCPF(
-                    JSON.parse(obj.json_front_end_user_data).dadosComprador
-                      .telefone
-                  );
-                  this.pedido.bandeira = JSON.parse(
-                    obj.json_gw_response
-                  ).payment_method_id;
-                  if (this.pedido.bandeira != "bolbradesco") {
-                    this.pedido.quatroDigitosCartao = JSON.parse(
-                      obj.json_gw_response
-                    ).card.last_four_digits;
-                  } else if (this.pedido.bandeira == "bolbradesco") {
-                    this.pedido.linkBoleto = JSON.parse(
-                      obj.json_gw_response
-                    ).transaction_details.external_resource_url;
-                    this.pedido.dataExpiracao = JSON.parse(
-                      obj.json_gw_response
-                    ).date_of_expiration;
-                    this.pedido.codigoBarras = JSON.parse(
-                      obj.json_gw_response
-                    ).barcode.content;
-                  }
-                  this.pedido.valorPedido = JSON.parse(
-                    obj.json_gw_response
-                  ).transaction_amount;
-                  this.pedido.parcela = JSON.parse(
-                    obj.json_gw_response
-                  ).installments;
-                  this.pedido.valorParcela = JSON.parse(
-                    obj.json_gw_response
-                  ).transaction_details.installment_amount;
-
-                  this.pedido.destinatario = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.destinatario;
-                  this.pedido.endereco = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.endereco;
-                  this.pedido.numero_porta = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.numero_porta;
-                  this.pedido.complemlento = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.complemento;
-                  this.pedido.cidade = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.cidade;
-                  this.pedido.estado = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.estado;
-                  this.pedido.cep = JSON.parse(
-                    obj.json_front_end_user_data
-                  ).dadosComprador.cep;
-
+                  this.populaDadosPedido(obj);
                   API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
@@ -648,10 +549,13 @@ export default {
       return str.toUpperCase();
     },
     getImagePaymentID(paymentID) {
-      if (paymentID == "bolbradesco") return "img/barcode.svg";
-      else if (paymentID == "master") return "img/master.png";
-      else if (paymentID == "visa") return "img/visa.png";
-      else return "img/visa.png";
+      if (paymentID !== undefined) {
+        if (paymentID == "BOLETO" || paymentID == "bolbradesco")
+          return "img/barcode.png";
+        else if (paymentID.toUpperCase() == "MASTER") return "img/master.png";
+        else if (paymentID.toUpperCase() == "VISA") return "img/visa.png";
+        else return "img/visa.png";
+      }
     },
     getClassStatus(status) {
       if (status.toUpperCase() == "PENDENTE") return "alert-info";
@@ -762,6 +666,214 @@ export default {
         .catch(error => {
           console.log("Erro ao reembolsar o cliente", error);
         });
+    },
+    getLasSixDigits(obj) {
+      //card.last_four_digits
+      if (
+        (this.pedido.bandeira != "bolbradesco") &
+        (this.pedido.bandeira != "BOLETO")
+      ) {
+        const LJSON = JSON.parse(obj.json_gw_response);
+        if (LJSON.hasOwnProperty("payment_method_id"))
+          return LJSON.card.last_four_digits;
+        if (
+          LJSON.hasOwnProperty("payment_method") &&
+          LJSON.payment_method.type == "CREDIT_CARD"
+        )
+          return LJSON.payment_method.card.last_digits;
+        if (
+          LJSON.hasOwnProperty("payment_method") &&
+          LJSON.payment_method.type == "BOLETO"
+        )
+          return LJSON.payment_method.type;
+      }
+      return "";
+    },
+    getLinkBoleto(obj) {
+      if (
+        (this.pedido.bandeira == "bolbradesco") &
+        (this.pedido.bandeira == "BOLETO")
+      ) {
+        const LJSON = JSON.parse(obj.json_gw_response);
+        if (LJSON.hasOwnProperty("payment_method_id"))
+          return LJSON.transaction_details.external_resource_url;
+        if (
+          LJSON.hasOwnProperty("payment_method") &&
+          LJSON.payment_method.hasOwnProperty("boleto")
+        )
+          return LJSON.payment_method.links.find(
+            x => x.media == "application/pdf"
+          ).href;
+      }
+      return "";
+    },
+    getBarCodeBoleto(obj) {
+      //barcode.content;
+      if (
+        (this.pedido.bandeira == "bolbradesco") &
+        (this.pedido.bandeira == "BOLETO")
+      ) {
+        const LJSON = JSON.parse(obj.json_gw_response);
+        if (LJSON.hasOwnProperty("payment_method_id"))
+          return LJSON.barcode.content;
+        if (
+          LJSON.hasOwnProperty("payment_method") &&
+          LJSON.payment_method.hasOwnProperty("boleto")
+        )
+          return LJSON.payment_method.boleto.formatted_barcode;
+      }
+      return "";
+    },
+    getExpiracaoBoleto(obj) {
+      //date_of_expiration
+      if (
+        (this.pedido.bandeira == "bolbradesco") &
+        (this.pedido.bandeira == "BOLETO")
+      ) {
+        const LJSON = JSON.parse(obj.json_gw_response);
+        if (LJSON.hasOwnProperty("payment_method_id"))
+          return LJSON.date_of_expiration;
+        if (
+          LJSON.hasOwnProperty("payment_method") &&
+          LJSON.payment_method.hasOwnProperty("boleto")
+        )
+          return LJSON.payment_method.boleto.due_date;
+      }
+      return "";
+    },
+    getBandeira(obj) {
+      const LJSON = JSON.parse(obj.json_gw_response);
+      if (LJSON.hasOwnProperty("payment_method_id"))
+        return LJSON.payment_method_id;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "CREDIT_CARD"
+      )
+        return LJSON.payment_method.card.brand;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "BOLETO"
+      )
+        return LJSON.payment_method.type;
+      return "";
+    },
+    getValor(obj) {
+      const LJSON = JSON.parse(obj.json_gw_response);
+      if (LJSON.hasOwnProperty("transaction_amount"))
+        return LJSON.transaction_amount;
+      if (
+        LJSON.hasOwnProperty("amount") &&
+        LJSON.amount.hasOwnProperty("summary")
+      )
+        return LJSON.amount.summary.total;
+      return "";
+    },
+    getParcela(obj) {
+      const LJSON = JSON.parse(obj.json_gw_response);
+      if (LJSON.hasOwnProperty("transaction_amount")) return LJSON.installments;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "CREDIT_CARD"
+      )
+        return LJSON.payment_method.installments;
+      return "";
+    },
+    getValorParcela(obj) {
+      const LJSON = JSON.parse(obj.json_gw_response);
+      if (LJSON.hasOwnProperty("transaction_amount"))
+        return LJSON.transaction_details.installment_amount;
+      //if(LJSON.hasOwnProperty('amount') && LJSON.amount.hasOwnProperty('summary'))  return LJSON.amount.sumary.installment_total || "";
+      return "";
+    },
+    getEndereco(){
+      if(this.pedido.endereco !== undefined){
+        return this.toCamelCase(this.pedido.endereco);
+      }
+      return;
+    },
+    getStatus() {
+      if (this.pedido.status !== undefined) {
+        return this.pedido.status.toUpperCase();
+      }
+      return;
+    },
+    populaDadosPedido(obj) {
+      const LID = obj.id;
+
+      const LPaymentID = JSON.parse(obj.json_gw_response).payment_method_id;
+      let LStatus;
+      if (obj.status == null) {
+        if (this.LPaymentID == "bolbradesco" || this.LPaymentID == "BOLETO") {
+          LStatus = "pendente";
+        } else {
+          LStatus = "aprovada";
+        }
+      } else {
+        LStatus = obj.status;
+      }
+      this.status = LStatus;
+      this.statusAtual = this.status.toUpperCase();
+      const LData = dateFormat(
+        JSON.parse(obj.json_gw_response).date_created,
+        "dd/mm/yyyy  HH:MM:ss"
+      );
+      const LTimeAgo = JSON.parse(obj.json_gw_response).date_created;
+      const LTotal = JSON.parse(obj.json_gw_response).transaction_amount;
+
+      //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
+      const LOrderID = JSON.parse(obj.json_shopify_response).order.id;
+      this.dataPedido = dateFormat(
+        JSON.parse(obj.json_gw_response).date_created,
+        "dd/mm/yyyy  HH:MM:ss"
+      );
+      this.pedido.json_front_end_user_data = JSON.parse(
+        obj.json_front_end_user_data
+      );
+      //console.log(Date.now(), Date.parse(LData));
+      this.pedido.id = obj.id;
+      this.pedido.status = LStatus;
+      this.pedido.nomeComprador = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.nome_completo.toUpperCase();
+      this.pedido.emailComprador = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.email;
+      this.pedido.cpfComprador = this.maskCPF(
+        JSON.parse(obj.json_front_end_user_data).dadosComprador.cpf
+      );
+      this.pedido.telefoneComprador = this.maskCPF(
+        JSON.parse(obj.json_front_end_user_data).dadosComprador.telefone
+      );
+      this.pedido.bandeira = this.getBandeira(obj);
+      this.pedido.quatroDigitosCartao = this.getLasSixDigits(obj);
+      this.pedido.linkBoleto = this.getLinkBoleto(obj);
+      this.pedido.dataExpiracao = this.getExpiracaoBoleto(obj);
+      this.pedido.codigoBarras = this.getBarCodeBoleto(obj);
+      this.pedido.valorPedido = this.getValor(obj);
+      this.pedido.parcela = this.getParcela(obj);
+      this.pedido.valorParcela = this.getValorParcela(obj);
+
+      this.pedido.destinatario = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.destinatario.toUpperCase();
+      this.pedido.endereco = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.endereco;
+      this.pedido.numero_porta = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.numero_porta;
+      this.pedido.complemlento = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.complemento;
+      this.pedido.cidade = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.cidade;
+      this.pedido.estado = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.estado;
+      this.pedido.cep = JSON.parse(
+        obj.json_front_end_user_data
+      ).dadosComprador.cep;
     }
   }
 };

@@ -16,7 +16,7 @@ const Menu = [
         submenu: [{
             name: 'Ver Todos',
             translate: 'sidebar.nav.SUBMENU',
-            path: 'todos'
+            path: '/produtos/todos'
         }]
     },
     {
