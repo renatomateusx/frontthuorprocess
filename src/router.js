@@ -30,6 +30,8 @@ const IntegracaoPlataforma = () => import('@/views/Pages/IntegracaoPlataforma.vu
 const IntegracaoShopify = () => import('@/views/Pages/IntegracaoShopify.vue');
 const UpSell = () => import('@/views/Pages/UpSell.vue')
 const UpSellAdd = () => import('@/views/Pages/UpSellAdd.vue');
+const Mensagens = () => import('@/views/Pages/Mensagens.vue');
+const MensagensAdd = () => import('@/views/Pages/MensagensAdd.vue');
 
 
 
@@ -98,6 +100,18 @@ export default new Router({
             {
                 path: '/marketing/upsell/add',
                 component: UpSellAdd
+            },
+            {
+                path: '/marketing/mensageria',
+                component: Mensagens
+            },
+            {
+                path: '/marketing/mensageria/add',
+                component: MensagensAdd
+            },
+            {
+                path: '/marketing/mensageria/edit/:id',
+                component: MensagensAdd
             }
         ]
     },

@@ -13,6 +13,9 @@
     width: 100%!important;
     margin-top: 5px;
   }
+  .paddingInMobile{
+    padding: 10px 20px !important;
+  }
 }
 .card-flat {
   margin-top: 80px !important;
@@ -218,32 +221,32 @@ th.active .arrow {
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th style="width: 115px!important; min-width: 115px!important" class="hiddenMobile">
+              <th style="width: 10em!important; min-width: 10em!important" class="hiddenMobile">
                 <strong class="col-md-4 pedido">
                   <b>ID</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0" style="width: 348px!important;min-width: 348px!important;">
+              <th class="data pl-0 paddingInMobile" style="width: 30em!important;min-width: 30em!important;">
                 <strong class>
                   <b>NOME</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0 hiddenMobile" style="min-width: 60px!important; width: 60px!important;">
+              <th class="data pl-0 hiddenMobile" style="min-width: 9em!important; width: 9em!important;">
                 <strong class>
                   <b>VARIANTES</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="status pl-2 hiddenMobile"  style="min-width: 120px!important; width: 120px!important;">
+              <th class="status pl-2 hiddenMobile"  style="min-width: 9em!important; width: 9em!important;">
                 <strong class="col-md-2">
                   <b>ESTOQUE</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               
-              <th class="status pl-2 hiddenMobile" style="min-width: 60px!important; width: 60px!important;">
+              <th class="status pl-2 hiddenMobile" style="min-width: 9em!important; width: 9em!important;">
                 <strong class="col-md-2">
                   <b>MODIFICADO</b>
                 </strong>
@@ -257,7 +260,7 @@ th.active .arrow {
           <table class="table-body">
             <tbody>
               <tr v-for="{id_produto_json, titulo_produto, json_dados_produto} in dataPerPage">
-                <td class="hiddenMobile"  style="min-width: 145px!important; width: 145px!important;">
+                <td class="hiddenMobile"  style="min-width: 10em!important; width: 10em!important;">
                   <div class="row">
                   <div class="checkbox c-checkbox">
                     <label>
@@ -268,7 +271,7 @@ th.active .arrow {
                   <span class="id_produto">{{id_produto_json}}</span>
                   </div>
                 </td>
-                <td class="padding1010"  style="min-width: 515px !important; width: 515px !important;">
+                <td class="padding1010" style="width: 34em!important;min-width: 34em!important;">
                   <div class="media ml-0 mr-0">
                     <img
                       class="img-fluid circle ml-0 mr-0"
@@ -283,9 +286,9 @@ th.active .arrow {
                   </div>
                 </td>
                 <td
-                  style="min-width: 90px!important; width: 80px!important;" class="ml-4 hiddenMobile"
+                  style="width: 3em!important;min-width: 3em!important;" class=" hiddenMobile"
                 >{{JSON.parse(json_dados_produto).variants.length}}</td>
-                <td class="text-center hiddenMobile">
+                <td class="text-center hiddenMobile" style="width: 15em!important;min-width: 15em!important;">
                   <span class="badge badge-success">Ativo</span>
                 </td>
 

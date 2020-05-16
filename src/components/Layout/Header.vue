@@ -16,7 +16,7 @@
             <!-- END navbar header-->
             <!-- START Left navbar-->
             <ul class="navbar-nav mr-auto flex-row">
-                <li class="nav-item">
+                <li class="nav-item" style="display:none!important;">
                     <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
                      <a href="" class="nav-link d-none d-md-block d-lg-block d-xl-block" @click.prevent="toggleAsideCollapsed">
                         <em class="fas fa-bars"></em>

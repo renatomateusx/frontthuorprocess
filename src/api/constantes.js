@@ -56,5 +56,9 @@ export default Object.freeze({
   PATH_SAVE_UPSELL: 'upsells/SaveUpSells',
   PATH_DELETE_UPSELL: 'upsells/DeleteUpSellByID',
   PATH_GET_UPSELL_BY_PRODUCT_ID: 'upsells/GetUpSellByProductID',
+  PATH_GET_MENSAGERIA: 'mensageria/GetMensagens',
+  PATH_SAVE_MENSAGERIA: 'mensageria/SaveMensagem',
+  PATH_DELETE_MENSAGERIA: 'mensageria/DeleteMensagensByID',
+  PATH_GET_MENSAGERIA_BY_ID: 'mensageria/GetMensagemByID',
 
 });
