@@ -242,7 +242,7 @@ th.active .arrow {
               <tr
                 v-for="{id, nome_pixel, status, tipo} in dataPerPage"
                 class="cursorP"
-                v-on:click="SelectPixel(id, nome)"
+                v-on:click="SelectPixel(id, nome_pixel)"
               >
                 <td  class="col- padding1010">
                   <router-link :to="{path: '/marketing/pixels/edit/' + getCripto(id, status)}">
@@ -516,10 +516,10 @@ export default {
       this.nomeselectedPixel = nome;
     },
     excluirPixelSelecionado(){
-      API_NOTIFICATION.showConfirmDialog('EXCLUSÃO', 'Deseja realmente excluir ' + this.nomeselectedPixel + '?', 'warning', this.ExcluirUpSell);
+      API_NOTIFICATION.showConfirmDialog('EXCLUSÃO', 'Deseja realmente excluir ' + this.nomeselectedPixel + '?', 'warning', this.Excluir);
     },
-    ExcluirUpSell(){
-      API_MKT.DeleteUpSellByID(this.selectedPixel)
+    Excluir(){
+      API_PIXEL.DeletePixelByID(this.selectedPixel)
       .then((resExclude)=>{
         API_NOTIFICATION.showNotification('Excluído com Sucesso!', 'success');
         setTimeout(() => {
