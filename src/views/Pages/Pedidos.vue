@@ -142,9 +142,13 @@ th.active .arrow {
 }
 .background-whatsapp {
   background-image: url("/img/whatsapp.png");
-  width: 25px;
   margin-left: 0px !important;
   padding-left: 0px !important;
+    -webkit-appearance: none;  /* Remove estilo padrão do Chrome */
+   -moz-appearance: none; /* Remove estilo padrão do FireFox */
+   appearance: none; /* Remove estilo padrão do FireFox*/
+   background-position: 218px center;  /*Posição da imagem do background*/   
+   border:1px solid #ddd;
 }
 </style>
 <template>
@@ -249,10 +253,10 @@ th.active .arrow {
                     <select
                       v-bind:id="getCripto(id, order_id)"
                       @change="selecionaMensagemEnviar(id)"
-                      class="form-control col-md-8"
+                      class="form-control col-md-8 background-whatsapp"
                     >                    
                       <option
-                        style="background-image:url('/img/whatsapp.png');"
+                        
                         v-for="{id_mensagem, nome_mensagem} in arrayWhatsAppMessage"
                         :key="id_mensagem"
                         :value="id_mensagem"
