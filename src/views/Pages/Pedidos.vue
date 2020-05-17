@@ -142,13 +142,18 @@ th.active .arrow {
 }
 .background-whatsapp {
   background-image: url("/img/whatsapp.png");
+  background-repeat: no-repeat;
   margin-left: 0px !important;
   padding-left: 0px !important;
-    -webkit-appearance: none;  /* Remove estilo padrão do Chrome */
-   -moz-appearance: none; /* Remove estilo padrão do FireFox */
-   appearance: none; /* Remove estilo padrão do FireFox*/
-   background-position: 218px center;  /*Posição da imagem do background*/   
-   border:1px solid #ddd;
+  margin-right: 20px !important;
+  background-position: 0px center; /*Posição da imagem do background*/
+  border: 1px solid #ddd;
+  background-size: 25px 25px;
+}
+option {
+  position: 20px !important;
+  margin-left: 20px !important;
+  text-indent: 20px;
 }
 </style>
 <template>
@@ -252,15 +257,15 @@ th.active .arrow {
                   <div class="row">
                     <select
                       v-bind:id="getCripto(id, order_id)"
-                      @change="selecionaMensagemEnviar(id)"
+                      @change="selecionaMensagemEnviar($event)"
                       class="form-control col-md-8 background-whatsapp"
-                    >                    
+                    >
+                      <option value="-1">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspEnvie uma Mensagem</option>
                       <option
-                        
                         v-for="{id_mensagem, nome_mensagem} in arrayWhatsAppMessage"
                         :key="id_mensagem"
                         :value="id_mensagem"
-                      >{{nome_mensagem}}</option>
+                      >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{nome_mensagem}}</option>
                     </select>
                     <button
                       v-on:click="enviarMensagemAcao(id, mensagemEnviarSelecionada)"
@@ -272,7 +277,6 @@ th.active .arrow {
                 </td>
                 <td></td>
               </tr>
-             
             </tbody>
           </table>
         </div>
@@ -371,6 +375,7 @@ export default {
       pedidosList: {},
       acaoWhats: -1,
       arrayWhatsAppMessage: [],
+      arrayWhatsAppMessageOriginal: [],
       mensagemEnviarSelecionada: -1
     };
   },
@@ -428,6 +433,7 @@ export default {
               API_MENSAGERIA.GetMensagensWhatsApp()
                 .then(resMensagensWhats => {
                   console.log(resMensagensWhats.data);
+                  this.arrayWhatsAppMessageOriginal = resMensagensWhats.data;
                   resMensagensWhats.data.forEach((obj, i) => {
                     this.arrayWhatsAppMessage.push({
                       id_mensagem: obj.id,
@@ -483,7 +489,8 @@ export default {
                         Date.parse(LTimeAgo),
                         Date.now(),
                         "time"
-                      )
+                      ),
+                      json_front_end_user_data: obj.json_front_end_user_data
                     });
 
                     //console.log(Date.now(), Date.parse(LData));
@@ -603,11 +610,30 @@ export default {
       if (JSON.parse(obj.json_gw_response).hasOwnProperty("amount"))
         return JSON.parse(obj.json_gw_response).amount.summary.total;
     },
-    selecionaMensagemEnviar(id) {
-      this.mensagemEnviarSelecionada = id;
+    selecionaMensagemEnviar(event) {
+      this.mensagemEnviarSelecionada = event.target.value;
     },
     enviarMensagemAcao(id, id_mensagem) {
-      console.log(id, id_mensagem);
+      const LURL =
+        "https://api.whatsapp.com/send?phone={@PHONE}&text={@MENSAGEM}";
+      var Mensagem = this.arrayWhatsAppMessageOriginal.find(
+        x => x.id == id_mensagem
+      ).mensagem;
+      const Telefone =
+        "55" +
+        JSON.parse(
+          this.gridData.find(x => x.id == id).json_front_end_user_data
+        ).dadosComprador.telefone.replace(/[^0-9\.]+/g, "");
+      const Nome = JSON.parse(
+        this.gridData.find(x => x.id == id).json_front_end_user_data
+      ).dadosComprador.nome_completo.split(" ")[0];
+      Mensagem = Mensagem.replace("{first_name}", Nome);
+      const LURLFinal = LURL.replace("{@PHONE}", Telefone).replace(
+        "{@MENSAGEM}",
+        Mensagem
+      );
+      var win = window.open(LURLFinal, "_blank");
+      win.focus();
     }
   }
 };
