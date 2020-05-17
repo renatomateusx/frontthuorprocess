@@ -60,5 +60,6 @@ export default Object.freeze({
   PATH_SAVE_MENSAGERIA: 'mensageria/SaveMensagem',
   PATH_DELETE_MENSAGERIA: 'mensageria/DeleteMensagensByID',
   PATH_GET_MENSAGERIA_BY_ID: 'mensageria/GetMensagemByID',
+  PATH_GET_MENSAGERIA_WHATS_APP: 'mensageria/GetMensagensWhatsApp',
 
 });

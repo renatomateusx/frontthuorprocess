@@ -140,11 +140,19 @@ th.active .arrow {
   padding: 3px !important;
   font-size: 12px !important;
 }
+.background-whatsapp {
+  background-image: url("/img/whatsapp.png");
+  width: 25px;
+  margin-left: 0px !important;
+  padding-left: 0px !important;
+}
 </style>
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-donate"><span class="ml-2"></span></span>Pedidos
+      <span class="fa fa-donate">
+        <span class="ml-2"></span>
+      </span>Pedidos
     </div>
     <small>
       Todos os pedidos processados pelo Thuor estão aqui.
@@ -201,7 +209,11 @@ th.active .arrow {
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th></th>
+              <th class="pl-2">
+                <strong class="col-md-2">
+                  <b>Ação</b>
+                </strong>
+              </th>
               <th></th>
             </thead>
           </table>
@@ -232,12 +244,31 @@ th.active .arrow {
                     v-bind:class="getClassStatus(status)"
                   >{{status.toUpperCase()}}</span>
                 </td>
-                <td></td>
+                <td>
+                  <div class="row">
+                    <select
+                      v-bind:id="getCripto(id, order_id)"
+                      @change="selecionaMensagemEnviar(id)"
+                      class="form-control col-md-8"
+                    >                    
+                      <option
+                        style="background-image:url('/img/whatsapp.png');"
+                        v-for="{id_mensagem, nome_mensagem} in arrayWhatsAppMessage"
+                        :key="id_mensagem"
+                        :value="id_mensagem"
+                      >{{nome_mensagem}}</option>
+                    </select>
+                    <button
+                      v-on:click="enviarMensagemAcao(id, mensagemEnviarSelecionada)"
+                      class="btn btn-primary col-md-2 ml-1"
+                    >
+                      <span class="fa fa-paper-plane"></span>
+                    </button>
+                  </div>
+                </td>
                 <td></td>
               </tr>
-              <!-- <tr v-for="entry in dataPerPage">
-                <td v-for="key in columns">{{entry[key]}}</td>
-              </tr>-->
+             
             </tbody>
           </table>
         </div>
@@ -271,6 +302,12 @@ import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import API_CHECKOUT from "../../api/checkoutAPI";
+import API_MENSAGERIA from "../../api/mensageriaAPI";
+
+import vSelect from "vue-select";
+import "vue-select/dist/vue-select.css";
+Vue.component("v-select", vSelect);
+
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
 
@@ -327,7 +364,10 @@ export default {
       rowsPerPage: 10,
       pageSizeMenu: [10, 20, 50, 100],
       data: Array,
-      pedidosList: {}
+      pedidosList: {},
+      acaoWhats: -1,
+      arrayWhatsAppMessage: [],
+      mensagemEnviarSelecionada: -1
     };
   },
   computed: {
@@ -381,7 +421,19 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
-
+              API_MENSAGERIA.GetMensagensWhatsApp()
+                .then(resMensagensWhats => {
+                  console.log(resMensagensWhats.data);
+                  resMensagensWhats.data.forEach((obj, i) => {
+                    this.arrayWhatsAppMessage.push({
+                      id_mensagem: obj.id,
+                      nome_mensagem: obj.nome
+                    });
+                  });
+                })
+                .catch(error => {
+                  console.log("Erro ao pegar produtos", error);
+                });
               API_TRANSACOES.GetTransacoes()
                 .then(retProd => {
                   this.gridData = [];
@@ -491,7 +543,7 @@ export default {
     toUpperCase(str) {
       return str.toUpperCase();
     },
-    getImagePaymentID(paymentID) {      
+    getImagePaymentID(paymentID) {
       if (paymentID !== undefined) {
         if (paymentID == "BOLETO" || paymentID == "bolbradesco")
           return "img/barcode.png";
@@ -522,10 +574,18 @@ export default {
     getPaymentMethodID(obj) {
       const LJSON = JSON.parse(obj.json_gw_response);
       //console.log(LJSON.payment_method);
-      if(LJSON.hasOwnProperty('payment_method_id')) return LJSON.payment_method_id;
-      if(LJSON.hasOwnProperty('payment_method') && LJSON.payment_method.type == "CREDIT_CARD")  return LJSON.payment_method.card.brand;
-      if(LJSON.hasOwnProperty('payment_method') && LJSON.payment_method.type == "BOLETO") return LJSON.payment_method.type;
-      
+      if (LJSON.hasOwnProperty("payment_method_id"))
+        return LJSON.payment_method_id;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "CREDIT_CARD"
+      )
+        return LJSON.payment_method.card.brand;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "BOLETO"
+      )
+        return LJSON.payment_method.type;
     },
     getDataCreated(obj) {
       if (JSON.parse(obj.json_gw_response).hasOwnProperty("date_created"))
@@ -538,6 +598,12 @@ export default {
         return JSON.parse(obj.json_gw_response).transaction_amount;
       if (JSON.parse(obj.json_gw_response).hasOwnProperty("amount"))
         return JSON.parse(obj.json_gw_response).amount.summary.total;
+    },
+    selecionaMensagemEnviar(id) {
+      this.mensagemEnviarSelecionada = id;
+    },
+    enviarMensagemAcao(id, id_mensagem) {
+      console.log(id, id_mensagem);
     }
   }
 };
