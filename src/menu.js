@@ -61,6 +61,11 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-chat',
             path: '/marketing/mensageria'
+        }, {
+            name: 'Pixel',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-donate',
+            path: '/marketing/pixels'
         }]
     },
 ];

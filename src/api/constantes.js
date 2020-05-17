@@ -61,5 +61,9 @@ export default Object.freeze({
   PATH_DELETE_MENSAGERIA: 'mensageria/DeleteMensagensByID',
   PATH_GET_MENSAGERIA_BY_ID: 'mensageria/GetMensagemByID',
   PATH_GET_MENSAGERIA_WHATS_APP: 'mensageria/GetMensagensWhatsApp',
+  PATH_GET_PIXEL: 'pixels/GetPixels',
+  PATH_SAVE_PIXEL: 'pixels/SavePixels',
+  PATH_DELETE_PIXEL: 'pixels/DeletePixelByID',
+  PATH_GET_PIXEL_BY_ID: 'pixels/GetPixelByID',
 
 });

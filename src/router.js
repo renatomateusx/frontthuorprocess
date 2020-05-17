@@ -30,6 +30,8 @@ const IntegracaoPlataforma = () => import('@/views/Pages/IntegracaoPlataforma.vu
 const IntegracaoShopify = () => import('@/views/Pages/IntegracaoShopify.vue');
 const UpSell = () => import('@/views/Pages/UpSell.vue')
 const UpSellAdd = () => import('@/views/Pages/UpSellAdd.vue');
+const Pixels = () => import('@/views/Pages/Pixels.vue');
+const PixelAdd = () => import('@/views/Pages/PixelAdd.vue');
 const Mensagens = () => import('@/views/Pages/Mensagens.vue');
 const MensagensAdd = () => import('@/views/Pages/MensagensAdd.vue');
 
@@ -112,7 +114,21 @@ export default new Router({
             {
                 path: '/marketing/mensageria/edit/:id',
                 component: MensagensAdd
+            },
+            {
+                path: '/marketing/pixels',
+                component: Pixels
+            },
+            {
+                path: '/marketing/pixels/add',
+                component: PixelAdd
+            },
+            {
+                path: '/marketing/pixels/edit/:id',
+                component: PixelAdd
             }
+            
+            
         ]
     },
     {
