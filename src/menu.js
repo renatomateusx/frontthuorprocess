@@ -5,7 +5,7 @@ const Menu = [
     },
     {
         name: 'Página Inicial',
-        path: 'home',
+        path: '/home',
         icon: 'icon-grid',
         translate: 'sidebar.nav.SINGLEVIEW'
     },

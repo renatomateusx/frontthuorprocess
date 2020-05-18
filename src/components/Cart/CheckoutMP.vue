@@ -493,6 +493,7 @@
                   <div class="col-md-7">
                     <input
                       @input="maskCPF()"
+                      @focus="saveLead()" 
                       minlength="14"
                       maxlength="14"
                       class="form-control required"
@@ -1048,6 +1049,7 @@ import router from "../../router.js";
 import UpSellCard from "../../components/Cart/UpSellCard";
 import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
 import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
+import API_CLIENTES from "../../api/clientesAPI";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1752,6 +1754,15 @@ export default {
       text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
       text = text.replace(new RegExp("[Ç]", "gi"), "c");
       return text;
+    },
+    saveLead(){
+      API_CLIENTES.SaveLead(this.email, this.nome_completo)
+      .then((resLead)=>{
+        console.log("Lead Salva com Suceso");
+      })
+      .catch((error)=>{
+        console.log("Erro ao salvar lead", error);
+      });
     }
   }
 };

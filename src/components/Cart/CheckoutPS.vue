@@ -493,6 +493,7 @@
                   <div class="col-md-7">
                     <input
                       @input="maskCPF()"
+                      @focus="saveLead()" 
                       minlength="14"
                       maxlength="14"
                       class="form-control required"
@@ -1797,6 +1798,15 @@ export default {
       //console.log("ID Hashedid", produtHashed);
       // console.log("ID Deshashed", numbers);
       return produtHashed;
+    },
+    saveLead(){
+      API_CLIENTES.SaveLead(this.email, this.nome_completo)
+      .then((resLead)=>{
+        console.log("Lead Salva com Suceso");
+      })
+      .catch((error)=>{
+        console.log("Erro ao salvar lead", error);
+      });
     }
   }
 };

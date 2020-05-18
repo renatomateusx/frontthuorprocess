@@ -66,4 +66,10 @@ export default Object.freeze({
   PATH_DELETE_PIXEL: 'pixels/DeletePixelByID',
   PATH_GET_PIXEL_BY_ID: 'pixels/GetPixelByID',
 
+  PATH_GET_CLIENTES: 'clientes/GetClientes',
+  PATH_SAVE_CLIENTES: 'clientes/SaveClientes',
+  PATH_DELETE_CLIENTES: 'clientes/DeleteClienteByID',
+  PATH_GET_CLIENTE_BY_ID: 'clientes/GetClienteByID',
+  PATH_SAVE_LEAD: 'clientes/SaveLead',
+
 });
