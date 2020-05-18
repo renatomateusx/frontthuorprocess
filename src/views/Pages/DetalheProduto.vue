@@ -262,7 +262,7 @@
               </div>
             </div>
           </b-tab>
-          <b-tab title="Estoque">
+          <b-tab title="ESTOQUE">
             <div v-for="optionsValues in this.produtoByID.options">
               <div class="card card-default" v-for="(title, index) in optionsValues.values">
                 <div class="popover-body">
