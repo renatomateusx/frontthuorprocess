@@ -960,7 +960,8 @@ import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
-
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
@@ -1352,6 +1353,8 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent('AddPaymentInfo');
+      API_GOOGLE_PIXEL.TriggerGoogleEvent('add_payment_info');
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao

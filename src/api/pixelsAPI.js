@@ -2,7 +2,7 @@ const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 import router from '../router';
-var API_MKT = {
+var API_PIXEL = {
     GetPixels() {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
@@ -88,4 +88,4 @@ var API_MKT = {
         });
     },
 }
-export default API_MKT 
+export default API_PIXEL 

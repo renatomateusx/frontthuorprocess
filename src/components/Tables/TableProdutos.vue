@@ -146,12 +146,21 @@ th.active .arrow {
   height: auto;
   border-radius: 50%;
 }
-.cursorP{
-  cursor: pointer!important;
+.cursorP {
+  cursor: pointer !important;
 }
-.cursorP:hover{
+.cursorP:hover {
   background-color: #5d9cec;
   color: white;
+}
+.selected{
+  background-color: #5d9cec;
+  color: white;
+  border-color: white;
+}
+.deselected{
+  color: gray;
+  background-color: white;
 }
 </style>
 <template>
@@ -185,7 +194,10 @@ th.active .arrow {
           <table class="table-body">
             <tbody>
               <tr v-for="{id, titulo_produto, image} in dataPerPage">
-                <td class="data padding1010 cursorP" v-on:click="functionClick(id, titulo_produto, image)">
+                <td
+                  class="data padding1010 cursorP" :class="getSelected(id)"
+                  v-on:click="functionClick(id, titulo_produto, image)"
+                >
                   <img class="col-md-2 mb-0 avatar float-left pull-left" v-bind:src="image" />
                   <p class="col-md-10 mb-0 dataPedido mt-2">{{titulo_produto}}</p>
                 </td>
@@ -238,7 +250,8 @@ Vue.filter("formatDate", function(value) {
 export default {
   name: "prods",
   props: {
-    functionClick: Function
+    functionClick: Function,
+    arrayAux: Array
   },
 
   created() {
@@ -328,7 +341,7 @@ export default {
       return new Promise((resolve, reject) => {
         var LImageSRC = "";
         const LImages = JSON.parse(obj.json_dados_produto).images;
-        const LImag = JSON.parse(obj.json_dados_produto).image;        
+        const LImag = JSON.parse(obj.json_dados_produto).image;
         if (LImag != undefined) {
           LImageSRC = LImag.src;
         } else if (LImages != undefined) {
@@ -350,7 +363,7 @@ export default {
                   this.gridData = [];
                   retProd.data.forEach(async (obj, i) => {
                     const LImageSRC = await self.getImageSRC(obj);
-                    
+
                     const LID = obj.id_thuor;
                     const LTitulo = obj.titulo_produto;
                     this.gridData.push({
@@ -444,6 +457,15 @@ export default {
       // console.log("ID Hashedid", produtHashed);
       // console.log("ID Deshashed", numbers);
       return produtHashed;
+    },
+    getSelected(id) {
+      if (this.arrayAux != undefined && this.arrayAux.length > 0) {
+        //this.gridData.forEach((obj, i)=>{
+          const LFinded=this.arrayAux.find(x => x.id_thuor == id);
+          if(LFinded != undefined) return 'selected';
+          if(LFinded == undefined) return 'deselected';
+       // })
+      }
     }
   }
 };

@@ -20,6 +20,11 @@ import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import CheckoutMP from "./CheckoutMP.vue";
 import CheckoutPS from "./CheckoutPS.vue";
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
+import API_PIXEL from "../../api/pixelsAPI";
+
+
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -105,6 +110,7 @@ export default {
       if (sessionStorage.getItem("DadosLoja") != null) {
         this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
         this.getCheckouts();
+        this.getPixels();
         //console.log("loja", dadosLoja);
       }
 
@@ -241,6 +247,22 @@ export default {
     },
     sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
+    },
+    getPixels(){
+      API_PIXEL.GetPixels()
+      .then((resPixels)=>{
+        sessionStorage.setItem("pixels", JSON.stringify(resPixels.data));
+        API_FACEBOOK_PIXEL.InsertScript();
+        API_GOOGLE_PIXEL.InsertScript();
+        API_FACEBOOK_PIXEL.TriggerFacebookEvent('InitiateCheckout');
+        API_GOOGLE_PIXEL.TriggerGoogleEvent('begin_checkout');
+
+        
+        
+      })
+      .catch((error)=>{
+        console.log("Erro ao pegar dados do Pixels", error);
+      })
     }
   }
 };

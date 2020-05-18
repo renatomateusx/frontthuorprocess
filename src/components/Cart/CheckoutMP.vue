@@ -1046,6 +1046,8 @@ import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import router from "../../router.js";
 import UpSellCard from "../../components/Cart/UpSellCard";
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1421,6 +1423,8 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent('AddPaymentInfo');
+      API_GOOGLE_PIXEL.TriggerGoogleEvent('add_payment_info');
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao

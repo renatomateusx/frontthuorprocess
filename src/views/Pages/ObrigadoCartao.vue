@@ -58,6 +58,8 @@ import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 // Import stylesheet
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
@@ -87,13 +89,12 @@ export default {
       if (sessionStorage.getItem("dadosCliente") != null) {
         this.dadosCliente = JSON.parse(sessionStorage.getItem("dadosCliente"));
         this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-        //console.log(this.dadosCliente);
-        //console.log(this.dadosStore.order.order_number);
       }
       if (sessionStorage.getItem("DadosLoja") != null) {
         this.DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
-        //console.log(this.DadosLoja);
       }
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase");
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase");
       API_NOTIFICATION.HideLoading();
     },
     copyToClip(comp) {

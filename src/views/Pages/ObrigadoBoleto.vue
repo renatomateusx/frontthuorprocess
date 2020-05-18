@@ -69,6 +69,9 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
+
 // Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
@@ -112,7 +115,9 @@ export default {
       if (sessionStorage.getItem("DadosLoja") != null) {
         this.DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
         //console.log(this.DadosLoja);
-      }
+      }      
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent('Purchase', 'boleto');
+      API_GOOGLE_PIXEL.TriggerGoogleEvent('purchase', 'boleto');
       API_NOTIFICATION.HideLoading();
     },
     copyToClip(comp) {

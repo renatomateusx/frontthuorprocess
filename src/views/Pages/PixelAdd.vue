@@ -31,6 +31,9 @@
 .marginZeroAuto {
   margin: 0 auto !important;
 }
+#buttonProdutoUm {
+  height: 60px !important;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -124,6 +127,20 @@
                 >{{ errors.first('pixel.facebook_id_pixel') }}</span>
               </div>
               <div class="form-group" v-show="pixel.tipo == 2">
+                <label class="col-form-label">ID do Analytics *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('pixel.google_analytics_id')}"
+                  v-model="pixel.google_analytics_id"
+                  v-validate="{'required': pixel.tipo == 2}"
+                  type="text"
+                  name="google_analytics_id"
+                />
+                <span
+                  v-show="errors.has('pixel.google_analytics_id')"
+                  class="invalid-feedback"
+                >{{ errors.first('pixel.google_analytics_id') }}</span>
+              </div>
+              <div class="form-group" v-show="pixel.tipo == 2">
                 <label class="col-form-label">ID de Conversão *</label>
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('pixel.google_id_conversao')}"
@@ -166,6 +183,40 @@
                   v-show="errors.has('pixel.marca_boleto')"
                   class="invalid-feedback"
                 >{{ errors.first('pixel.marca_boleto') }}</span>
+              </div>
+              <div class="form-group">
+                <label class="col-form-label">Pixel exclusivo para o produto... *</label>
+                <button
+                  type="button"
+                  id="buttonProdutoUm"
+                  :class="{'custom-control-input':false, 'is-invalid': errors.has('pixel.id_produto_selecionado_um'), 'opcaoSelecionada': pixel.array_produtos_id.length > 0, 'opcaoDeselecionada': pixel.array_produtos_id.length == 0} "
+                  v-on:click="collapse('#collapseExample', '#collapseExample', '#buttonProdutoUm')"
+                  class="btn btn-secondary btn-lg col-md-12 p-0 pl-0 pd-0 pt-0 pb-0"
+                >{{lhtml}}</button>
+
+                <div
+                  class="collapse"
+                  id="collapseExample"
+                  :class="{'show':pixel.array_produtos_id.length > 0}"
+                >
+                  <div class="card">
+                    <prods
+                      :functionClick="selectedProduct"
+                      :arrayAux="arrayAux"
+                    ></prods>
+                  </div>
+                </div>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('pixel.array_produtos_id')}"
+                  v-model="pixel.array_produtos_id"
+                  v-validate="{'required': false}"
+                  type="hidden"
+                  name="array_produtos_id"
+                />
+                <span
+                  v-show="errors.has('pixel.id_produto_selecionado_um')"
+                  class="invalid-feedback"
+                >{{ errors.first('pixel.id_produto_selecionado_um') }}</span>
               </div>
               <div class="required">* Required fields</div>
             </div>
@@ -224,6 +275,7 @@ Vue.use(VeeValidate, {
 
 export default {
   async created() {
+  
     if (this.$route.params.id != undefined) {
       this.mensagemID = this.$route.params.id;
       this.MensagemString = await this.getDeCripto(this.mensagemID);
@@ -247,28 +299,30 @@ export default {
   },
   data() {
     return {
+      arrayAux: [],
       pixel: {
         id_usuario: 0,
         nome_pixel: "",
-        facebook_id_pixel: '',
+        facebook_id_pixel: "",
         marca_boleto: 1,
-        google_id_conversao: '',
-        google_rotulo_conversao: '',
+        google_id_conversao: "",
+        google_rotulo_conversao: "",
         status: 1,
         array_produtos_id: [],
         tipo: 0,
+        google_analytics_id: '',
       },
       buttonPressed: 0,
       buttonPressedDois: 0,
       vueSelectMultipleValue: "",
       titulo_produto_selecionado_um: "",
-      lhtml: "Clique aqui para selecionar um produto"
+      lhtml: "Clique aqui para selecionar um ou mais produtos"
     };
   },
   methods: {
     getDeCripto(crypted) {
       try {
-        const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");  
+        const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
         return hashids.decode(crypted);
       } catch (error) {
         API_NOTIFICATION.showNotificationW(
@@ -283,7 +337,7 @@ export default {
       this.$validator
         .validateAll(scope)
         .then(result => {
-          if (result) {            
+          if (result) {
             console.log("Form Submitted!");
             self.salvarPixel();
             return;
@@ -296,6 +350,11 @@ export default {
     },
     salvarPixel() {
       API_NOTIFICATION.ShowLoading();
+      if (this.pixel.array_produtos_id.length > 0) {
+        this.pixel.array_produtos_id = JSON.stringify(
+          this.pixel.array_produtos_id
+        );
+      }
       API_PIXEL.SalvarPixel(this.pixel)
         .then(res => {
           API_NOTIFICATION.showNotificationW(
@@ -350,33 +409,28 @@ export default {
         element.classList.add("show");
       }
     },
-    SelectedValueProdutoUm(id, titulo, image) {
-      var LDiv =
-        '<div class="data padding1010 cursorP"><img style="border-radius:50%!important; padding-top: 0px!important;    height: 47px!important;    padding: 0px!important;    width: 50px!important;    margin-left: 12px;" class="col-md-2 mb-0 avatar float-left pull-left text-left mt-2" src="' +
-        image +
-        '" />  <p class="col-md-8 mb-0 dataPedido mt-2 pull-left float-left" style="top: 15px!important; text-align:left!important">' +
-        titulo +
-        "</p></div>";
-      this.pixel.id_produto_selecionado_um = id;
-      const el = document.getElementById("buttonProdutoUm");
-      el.innerHTML = LDiv;
-      this.collapse("#collapseExample", "#collapseExample", "#buttonProdutoUm");
-    },
-    SelectedValueProdutoDois(id, titulo, image) {
-      var LDiv =
-        '<div class="data padding1010 cursorP"><img style="border-radius:50%!important; padding-top: 0px!important;    height: 47px!important;    padding: 0px!important;    width: 50px!important;    margin-left: 12px;" class="col-md-2 mb-0 avatar float-left pull-left text-left mt-2" src="' +
-        image +
-        '" />  <p class="col-md-8 mb-0 dataPedido mt-2 pull-left float-left" style="top: 15px!important; text-align:left!important">' +
-        titulo +
-        "</p></div>";
-      this.pixel.id_produto_selecionado_dois = id;
-      const el = document.getElementById("buttonProdutoDois");
-      el.innerHTML = LDiv;
-      this.collapse(
-        "#collapseExampleDois",
-        "#collapseExampleDois",
-        "#buttonProdutoDois"
-      );
+    selectedProduct(id, titulo, image) {
+      if (this.pixel.array_produtos_id.length > 0) {
+        const LFind = this.pixel.array_produtos_id.find(x => x.id_thuor == id);
+        console.log("find", LFind);
+        if (LFind != undefined) {
+          this.pixel.array_produtos_id.forEach((obj, i) => {
+            if (id == obj.id_thuor) {
+              this.pixel.array_produtos_id.splice(i, 1);
+            }
+          });
+          console.log("Updated", this.pixel.array_produtos_id);
+          return;
+        } else if (LFind == undefined) {
+          this.pixel.array_produtos_id.push({ id_thuor: id });
+          console.log("Pushed", this.pixel.array_produtos_id);
+          return;
+        }
+      } else {
+        this.pixel.array_produtos_id.push({ id_thuor: id });
+        console.log("Pushed", this.pixel.array_produtos_id);
+        return;
+      }
     },
     removeItem(id) {
       console.log("Removendo ID", id);
@@ -388,12 +442,20 @@ export default {
       if (id == 1) return "https://github.bubbstore.com/svg/facebook.svg";
       if (id == 2) return "https://github.bubbstore.com/svg/google_ads.svg";
     },
-    getPixelByID(id){
+    getPixelByID(id) {
       API_NOTIFICATION.ShowLoading();
       API_PIXEL.GetPixelByID(id)
         .then(res => {
           console.log(res.data);
           this.pixel = res.data;
+          if (this.pixel.array_produtos_id != null & this.pixel.array_produtos_id.length > 2) {            
+            this.pixel.array_produtos_id = JSON.parse(
+              this.pixel.array_produtos_id
+            );
+          } else {
+            this.pixel.array_produtos_id = [];
+          }
+          this.arrayAux = this.pixel.array_produtos_id;
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
