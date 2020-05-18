@@ -71,5 +71,6 @@ export default Object.freeze({
   PATH_DELETE_CLIENTES: 'clientes/DeleteClienteByID',
   PATH_GET_CLIENTE_BY_ID: 'clientes/GetClienteByID',
   PATH_SAVE_LEAD: 'clientes/SaveLead',
+  
 
 });

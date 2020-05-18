@@ -1166,7 +1166,9 @@ export default {
     getNomeLoja() {
       return this.dadosLoja.nome_loja;
     },
-
+  getNomeFatura() {
+      return this.DadosCheckout.nome_fatura || this.getNomeLoja();
+    },
     async changeQuantity(idThuor) {
       var Comp = document.getElementById("qtd_" + idThuor);
       for (const [i, item] of this.produtosCart.entries()) {
@@ -1585,7 +1587,7 @@ export default {
           reference_id: this.reference_id.substring(0, 64),
           sync: true,
           reference: this.reference_id.substring(0, 64),
-          description: this.getNomeLoja(),
+          description: this.getNomeFatura(),
           amount: {
             value: this.formatPrice(this.granTotal),
             currency: "BRL"
@@ -1643,7 +1645,7 @@ export default {
           reference_id: this.reference_id.substring(0, 64),
           sync: true,
           reference: this.reference_id.substring(0, 64),
-          description: this.getNomeLoja(),
+          description: this.getNomeFatura(),
           amount: {
             value: parseFloat(this.granTotal),
             currency: "BRL"

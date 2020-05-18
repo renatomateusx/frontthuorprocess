@@ -213,7 +213,7 @@ export default {
         processa_automaticamente: 1,
         status: 1,
         ativa_boleto: 1,
-        gateway: 0,
+        gateway: 1,
         id_usuario: 0
       }
     };
@@ -226,9 +226,9 @@ export default {
           API_CHECKOUT.GetIntegracaoCheckoutByID(1)
             .then(resCheckout => {
               this.checkout = resCheckout.data;
-              this.checkout_form.status = this.checkout.status;
-              this.checkout_form.ativa_boleto = this.checkout.ativa_boleto;
-              this.checkout_form.processa_automaticamente = this.checkout.captura_auto;
+              this.checkout_form.status = this.checkout.status || 1;
+              this.checkout_form.ativa_boleto = this.checkout.ativa_boleto || 1;
+              this.checkout_form.processa_automaticamente = this.checkout.captura_auto || 1;
               this.checkout_form.gateway = this.checkout.gateway;
               this.checkout_form.id_usuario = this.checkout.id_usuario;
               this.checkout_form.token_acesso = this.checkout.token_acesso;

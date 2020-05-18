@@ -61,7 +61,7 @@
               <div class="form-group">
                 <label class="control-label" for="status">Ativo</label>
                 <select
-                  @change="updateStatusMP()"
+                  @change="updateStatus()"
                   id="status"
                   name="status"
                   class="form-control"
@@ -103,7 +103,7 @@
               <div class="form-group">
                 <label class="col-form-label">Processar transação no Market Place automaticamente? *</label>
                 <select
-                  @change="UpdateAtivaAutoProcessamentoMP()"
+                  @change="UpdateAtivaAutoProcessamento()"
                   id="processa_automaticamente"
                   name="processa_automaticamente"
                   class="form-control"
@@ -116,7 +116,7 @@
               <div class="form-group">
                 <label class="col-form-label">Ativa boleto? *</label>
                 <select
-                  @change="UpdateAtivaBoletoMP()"
+                  @change="UpdateAtivaBoleto()"
                   id="ativa_boleto"
                   name="ativa_boleto"
                   class="form-control"
@@ -127,32 +127,60 @@
                 </select>
               </div>
               <div class="form-group">
-                <label class="col-form-label">Chave Pública *</label>
+                <label class="col-form-label">ID do Merchan *</label>
                 <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.chave_publica')}"
-                  v-model="checkout_form.chave_publica"
+                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.merchan_id')}"
+                  v-model="checkout_form.merchan_id"
                   v-validate="'required'"
                   type="text"
-                  name="chave_publica"
+                  name="merchan_id"
                 />
                 <span
-                  v-show="errors.has('checkout_form.chave_publica')"
+                  v-show="errors.has('checkout_form.merchan_id')"
                   class="invalid-feedback"
-                >{{ errors.first('checkout_form.chave_publica') }}</span>
+                >{{ errors.first('checkout_form.merchan_id') }}</span>
               </div>
               <div class="form-group">
-                <label class="col-form-label">Token de Acesso *</label>
+                <label class="col-form-label">API Login *</label>
                 <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.token_acesso')}"
-                  v-model="checkout_form.token_acesso"
+                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.api_login')}"
+                  v-model="checkout_form.api_login"
                   v-validate="'required'"
                   type="text"
-                  name="token_acesso"
+                  name="api_login"
                 />
                 <span
-                  v-show="errors.has('checkout_form.token_acesso')"
+                  v-show="errors.has('checkout_form.api_login')"
                   class="invalid-feedback"
-                >{{ errors.first('checkout_form.token_acesso') }}</span>
+                >{{ errors.first('checkout_form.api_login') }}</span>
+              </div>
+              <div class="form-group">
+                <label class="col-form-label">API Key *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.api_key')}"
+                  v-model="checkout_form.api_key"
+                  v-validate="'required'"
+                  type="text"
+                  name="api_key"
+                />
+                <span
+                  v-show="errors.has('checkout_form.api_key')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.api_key') }}</span>
+              </div>
+              <div class="form-group">
+                <label class="col-form-label">Account ID *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.account_id')}"
+                  v-model="checkout_form.account_id"
+                  v-validate="'required'"
+                  type="text"
+                  name="account_id"
+                />
+                <span
+                  v-show="errors.has('checkout_form.account_id')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.account_id') }}</span>
               </div>
               <div class="required">* Campos requeridos</div>
             </div>
@@ -182,7 +210,7 @@ import API_NOTIFICATION from "../../api/notification";
 // Import stylesheet
 
 import API_LOGIN from "../../api/loginAPI";
-import API_CHECKOUT from "../../api/checkoutAPI";
+import API_CHECKOUT_PU from "../../api/checkoutPayUAPI";
 import API_HEADERS from "../../api/configAxios";
 
 Vue.use(VeeValidate, {
@@ -208,12 +236,14 @@ export default {
       checkout_form: {
         nome: "",
         nome_fatura: "",
-        chave_publica: "",
-        token_acesso: "",
+        merchan_id: "",
+        api_login: "",
+        api_key: "",
+        account_id: "",
         processa_automaticamente: 1,
         status: 1,
         ativa_boleto: 1,
-        gateway: 0,
+        gateway: 3,
         id_usuario: 0
       }
     };
@@ -223,18 +253,20 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_CHECKOUT.GetIntegracaoCheckoutByID(3)
+          API_CHECKOUT_PU.GetIntegracaoCheckoutByID(3)
             .then(resCheckout => {
               this.checkout = resCheckout.data;
-              this.checkout_form.status = this.checkout.status;
-              this.checkout_form.ativa_boleto = this.checkout.ativa_boleto;
-              this.checkout_form.processa_automaticamente = this.checkout.captura_auto;
-              this.checkout_form.gateway = this.checkout.gateway;
+              this.checkout_form.status = this.checkout.status || 1;
+              this.checkout_form.ativa_boleto = this.checkout.ativa_boleto || 1;
+              this.checkout_form.processa_automaticamente = this.checkout.captura_auto || 1;
+              this.checkout_form.gateway = this.checkout.gateway ||3;
               this.checkout_form.id_usuario = this.checkout.id_usuario;
-              this.checkout_form.token_acesso = this.checkout.token_acesso;
+              this.checkout_form.api_login = this.checkout.api_login;
+              this.checkout_form.api_key = this.checkout.api_key;
+              this.checkout_form.account_id = this.checkout.account_id;
               this.checkout_form.nome_fatura = this.checkout.nome_fatura;
               this.checkout_form.nome = this.checkout.nome;
-              this.checkout_form.chave_publica = this.checkout.chave_publica;
+              this.checkout_form.merchan_id = this.checkout.merchan_id;
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -260,7 +292,7 @@ export default {
       return "";
     },
     getNomeGateway() {
-      return this.checkout.nome;
+      return 'Pay U';
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
@@ -272,7 +304,7 @@ export default {
     },
     salvarCheckout() {
       API_NOTIFICATION.ShowLoading();
-      API_CHECKOUT.InsertCheckoutMP(this.checkout_form)
+      API_CHECKOUT_PU.InsertCheckout(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();
           API_NOTIFICATION.showNotification(
@@ -284,10 +316,10 @@ export default {
           console.log("Erro ao salvar o checkout MP", error);
         });
     },
-    updateStatusMP() {
+    updateStatus() {
       API_NOTIFICATION.ShowLoading();
 
-      API_CHECKOUT.UpdateStatusMP(this.checkout_form)
+      API_CHECKOUT_PU.UpdateStatus(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();
           API_NOTIFICATION.showNotification(
@@ -299,10 +331,10 @@ export default {
           console.log("Erro ao salvar o checkout MP", error);
         });
     },
-    UpdateAtivaBoletoMP() {
+    UpdateAtivaBoleto() {
       API_NOTIFICATION.ShowLoading();
 
-      API_CHECKOUT.UpdateAtivaBoletoMP(this.checkout_form)
+      API_CHECKOUT_PU.UpdateAtivaBoleto(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();
           var stat = this.checkout_form.ativa_boleto ? "ativado" : "desativado";
@@ -315,9 +347,9 @@ export default {
           console.log("Erro ao salvar o checkout MP", error);
         });
     },
-    UpdateAtivaAutoProcessamentoMP() {
+    UpdateAtivaAutoProcessamento() {
       API_NOTIFICATION.ShowLoading();
-      API_CHECKOUT.UpdateAutoProcessamentoMP(this.checkout_form)
+      API_CHECKOUT_PU.UpdateAutoProcessamento(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();
           var stat = this.checkout_form.processa_automaticamente

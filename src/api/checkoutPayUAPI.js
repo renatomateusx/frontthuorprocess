@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 import constantes from "./constantes";
-import API_HEADERS from "../api/configAxios";
-var API_CHECKOUT = {
+import API_HEADERS from "./configAxios";
+var API_CHECKOUT_PU = {
     DoPayBackEnd(cripto) {
         return new Promise((resolve, reject) => {
             let LBody = {
@@ -124,12 +124,13 @@ var API_CHECKOUT = {
             }
         });
     },
-    InsertCheckoutMP(checkout_form) {
+    InsertCheckout(checkout_form) {
         return new Promise((resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
                 const LUser = JSON.parse(sessionStorage.getItem('user'));
                 if (LUser !== null && LUser !== undefined) {
+                    checkout_form.id_usuario = LUser.user.id;
                     axios
                         .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_CHECKOUT_MP, checkout_form)
                         .then((response) => {   
@@ -145,7 +146,7 @@ var API_CHECKOUT = {
         });
     },
 
-    UpdateStatusMP(checkout_form) {
+    UpdateStatus(checkout_form) {
         return new Promise((resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
@@ -165,7 +166,7 @@ var API_CHECKOUT = {
             }
         });
     },
-    UpdateAtivaBoletoMP(checkout_form) {
+    UpdateAtivaBoleto(checkout_form) {
         return new Promise((resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
@@ -185,7 +186,7 @@ var API_CHECKOUT = {
             }
         });
     },
-    UpdateAutoProcessamentoMP(checkout_form) {
+    UpdateAutoProcessamento(checkout_form) {
         return new Promise((resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
@@ -208,4 +209,4 @@ var API_CHECKOUT = {
 
 
 };
-export default API_CHECKOUT 
+export default API_CHECKOUT_PU 

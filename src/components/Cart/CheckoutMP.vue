@@ -493,7 +493,7 @@
                   <div class="col-md-7">
                     <input
                       @input="maskCPF()"
-                      @focus="saveLead()" 
+                      @focus="saveLead()"
                       minlength="14"
                       maxlength="14"
                       class="form-control required"
@@ -951,7 +951,7 @@
     <div id="formPayMP">
       <form action="/processar_pagamento" method="post" id="pay" name="pay" class="hidden">
         <fieldset>
-          <input type="text" name="description" id="description" v-bind:value="getNomeLoja()" />
+          <input type="text" name="description" id="description" v-bind:value="getNomeFatura()" />
           <input
             name="transaction_amount"
             id="transaction_amount"
@@ -1240,7 +1240,9 @@ export default {
     getNomeLoja() {
       return this.dadosLoja.nome_loja;
     },
-
+    getNomeFatura() {
+      return this.DadosCheckout.nome_fatura || this.getNomeLoja();
+    },
     async changeQuantity(idThuor) {
       var Comp = document.getElementById("qtd_" + idThuor);
       for (const [i, item] of this.produtosCart.entries()) {
@@ -1425,8 +1427,8 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent('AddPaymentInfo');
-      API_GOOGLE_PIXEL.TriggerGoogleEvent('add_payment_info');
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -1654,7 +1656,7 @@ export default {
         paymentData: {
           transaction_amount: this.formatPrice(this.granTotal),
           token: this.cardToken,
-          description: this.dadosLoja.nome_loja,
+          description: this.getNomeFatura(),
           installments: this.parcelas,
           payment_method_id: this.payment_id,
           payer: {
@@ -1692,7 +1694,10 @@ export default {
               dadosCompra: retornoPay.data
             };
             sessionStorage.setItem("TipoCheck", "ca");
-            sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+            sessionStorage.setItem(
+              "dadosCliente",
+              JSON.stringify(DadosCliente)
+            );
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
             LRouter.push("/obrigado-cartao");
@@ -1755,14 +1760,14 @@ export default {
       text = text.replace(new RegExp("[Ç]", "gi"), "c");
       return text;
     },
-    saveLead(){
+    saveLead() {
       API_CLIENTES.SaveLead(this.email, this.nome_completo)
-      .then((resLead)=>{
-        console.log("Lead Salva com Suceso");
-      })
-      .catch((error)=>{
-        console.log("Erro ao salvar lead", error);
-      });
+        .then(resLead => {
+          console.log("Lead Salva com Suceso");
+        })
+        .catch(error => {
+          console.log("Erro ao salvar lead", error);
+        });
     }
   }
 };

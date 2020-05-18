@@ -213,7 +213,7 @@ export default {
         processa_automaticamente: 1,
         status: 1,
         ativa_boleto: 1,
-        gateway: 0,
+        gateway: 2,
         id_usuario: 0
       }
     };
@@ -260,7 +260,7 @@ export default {
       return "";
     },
     getNomeGateway() {
-      return this.checkout.nome;
+      return 'Pag Seguro';
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
