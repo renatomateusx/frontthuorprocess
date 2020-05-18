@@ -126,12 +126,12 @@
                   <option value="0">Não</option>
                 </select>
               </div>
-              <div class="form-group" style="display:none;">
+              <div class="form-group">
                 <label class="col-form-label">Chave Pública *</label>
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.chave_publica')}"
                   v-model="checkout_form.chave_publica"
-                  v-validate="{'required': false}"
+                  v-validate="'required'"
                   type="text"
                   name="chave_publica"
                 />
@@ -223,7 +223,7 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_CHECKOUT.GetIntegracaoCheckoutByID(2)
+          API_CHECKOUT.GetIntegracaoCheckoutByID(3)
             .then(resCheckout => {
               this.checkout = resCheckout.data;
               this.checkout_form.status = this.checkout.status;
@@ -317,7 +317,6 @@ export default {
     },
     UpdateAtivaAutoProcessamentoMP() {
       API_NOTIFICATION.ShowLoading();
-
       API_CHECKOUT.UpdateAutoProcessamentoMP(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();

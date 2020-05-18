@@ -141,10 +141,14 @@ export default {
       if (id == 2) {
         this.$router.push("/configs/checkouts/pagseguro");
       }
+      if (id == 3) {
+        this.$router.push("/configs/checkouts/payu");
+      }
     },
     getImageIntegracaoCheckout(id) {
       if (id == 1) return "/img/mercadopago.png";
       else if (id == 2) return "/img/pagseguro.png";
+      else if (id == 3) return "/img/payu.png";
       return "";
     },
     getApelidoByID(id) {
