@@ -89,7 +89,7 @@ var UTILIS_API = {
             installments.id = "installments";
             var option = document.createElement("option");
             option.setAttribute('value', parcela);
-            option.setAttribute('selected', 'selected');            
+            option.setAttribute('selected', 'selected');
             installments.appendChild(option);
             fieldSet.appendChild(installments);
 
@@ -99,7 +99,7 @@ var UTILIS_API = {
             docType.setAttribute('data-checkout', 'docType');
             var optionD = document.createElement("option");
             optionD.setAttribute('value', "CPF");
-            optionD.setAttribute('selected', 'selected');            
+            optionD.setAttribute('selected', 'selected');
             docType.appendChild(optionD);
             fieldSet.appendChild(docType);
 
@@ -128,6 +128,20 @@ var UTILIS_API = {
             fieldSet.appendChild(payment_method_id);
             f.appendChild(fieldSet);
             resolve(f);
+        });
+    },
+    getIPRequest() {
+        return new Promise((resolve, reject) => {
+            axios
+                .get(constantes.WEBSITEAPI + constantes.URL_GET_IP)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(JSON.parse(response.data));
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
         });
     }
 

@@ -22,7 +22,7 @@ var API_GOOGLE_PIXEL = {
                 if (obj.tipo == 2) {                    
                     var LProdutos = [];
                     if (obj.google_id_conversao != undefined && obj.google_id_conversao.length > 0) {
-                        if (obj.array_produtos_id != null & obj.array_produtos_id.length > 3) {
+                        if (obj.array_produtos_id != null && obj.array_produtos_id.length > 3) {
                             LProdutos = JSON.parse(obj.array_produtos_id);
                             if (LProdutos.length > 0) {
                                 const LProdutosCart = JSON.parse(sessionStorage.getItem("cart"));

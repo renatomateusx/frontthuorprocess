@@ -23,7 +23,7 @@ var API_FACEBOOK_PIXEL = {
                 if (obj.tipo == 1) {
                     var LProdutos = [];
                     if (obj.facebook_id_pixel != undefined && obj.facebook_id_pixel.length > 0) {
-                        if (obj.array_produtos_id != null & obj.array_produtos_id.length > 0) {
+                        if (obj.array_produtos_id != null && obj.array_produtos_id.length > 3) {
                             LProdutos = JSON.parse(obj.array_produtos_id);
                             if (LProdutos.length > 0) {
                                 const LProdutosCart = JSON.parse(sessionStorage.getItem("cart"));
