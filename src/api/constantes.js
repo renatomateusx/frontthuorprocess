@@ -1,6 +1,6 @@
 export default Object.freeze({
   WEBSITEAPI: 'http://localhost:3000/',
-  URL_GET_IP: 'https://json.geoiplookup.io/api',
+  URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
   API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
   PATH_PS_SESSION: 'checkouts/SessionPagSeguro',
@@ -73,6 +73,7 @@ export default Object.freeze({
   PATH_GET_CLIENTE_BY_ID: 'clientes/GetClienteByID',
   PATH_SAVE_LEAD: 'clientes/SaveLead',
   
+  PATH_PAY_CHECKOUT_PAY_U: 'checkouts/DoPayCardPayU',
   
   
 

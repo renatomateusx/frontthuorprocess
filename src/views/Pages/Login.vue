@@ -164,7 +164,7 @@ export default {
       });
     },
     checkIfLogged() {
-      sessionStorage.removeItem("user");
+      //sessionStorage.removeItem("user");
     }
   }
 };

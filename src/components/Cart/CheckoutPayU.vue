@@ -245,7 +245,7 @@
   white-space: pre-wrap;
 }
 .imageCard {
-  width: 25px !important;
+  /*width: 25px !important;*/
   height: 25px !important;
 }
 .valorTotalCollapse {
@@ -960,7 +960,7 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
-import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
+import API_CHECKOUT_PAYU from "../../api/checkoutPayUAPI";
 import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
 import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 
@@ -973,7 +973,9 @@ import Hashids from "hashids";
 import dateFormat from "dateformat";
 import constantes from "../../api/constantes";
 import UpSellCard from "../../components/Cart/UpSellCard";
-var md5 = require('md5');
+import API_CLIENTES from "../../api/clientesAPI";
+import md5 from "md5";
+import creditCardType from "credit-card-type";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1055,7 +1057,8 @@ export default {
       granQuantity: 0,
       granSubTotal: 0,
       public_key: "",
-      reference_id: ""
+      reference_id: "",
+      signature: ""
     };
   },
   mounted() {},
@@ -1245,6 +1248,7 @@ export default {
           this.nome_completo = this.nome_completo.toUpperCase();
           this.stepDadosPessoaisFinalizados = 1;
           this.currentStep = 2;
+          this.saveLead();
           API_NOTIFICATION.HideLoading();
         }
       } else if (this.currentStep == 2) {
@@ -1405,13 +1409,28 @@ export default {
       return LVal;
     },
     getImageCard() {
-      if (this.payment_id !== undefined && this.payment_id.length > 1) {
-        let bandeira = this.payment_id;
-        if (bandeira == "master") bandeira = "mastercard";
-        if (bandeira == "creditCard") bandeira = "visa";
-        return (
-          "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
-        );
+      if (this.card_number.replace(/ /g, "").length > 0) {
+        var bandeira =
+          creditCardType(this.card_number.replace(/ /g, ""))[0].type || "";
+        if (
+          bandeira == "maestro" ||
+          bandeira == "unionpay" ||
+          bandeira == "mir"
+        )
+          return "/img/credit-card.png";
+        if (bandeira == "diners-club") bandeira = "diners";
+        if (bandeira == "american-express") bandeira = "amex-american-express";
+        if (bandeira != "") {
+          return (
+            "http://github.bubbstore.com/formas-de-pagamento/" +
+              bandeira +
+              ".svg" || "/img/credit-card.png"
+          );
+        } else {
+          return "img/credit-card.png";
+        }
+      } else {
+        return "img/credit-card.png";
       }
     },
     // verificaDigitosCartao() {
@@ -1518,17 +1537,7 @@ export default {
     },
     iniciaCheckout() {
       if (this.DadosCheckout.gateway == 3) {
-        this.ImageProcessor =
-          "https://github.bubbstore.com/svg/payu.svg";
-
-        // API_CHECKOUT_PS.GetPublicKey("card", this.DadosCheckout.token_acesso)
-        //   .then(resPublicKey => {
-        //     this.public_key = resPublicKey.data;
-        //     //console.log("Public Key", this.public_key);
-        //   })
-        //   .catch(error => {
-        //     console.log("Erro", error);
-        //   });
+        this.ImageProcessor = "https://github.bubbstore.com/svg/payu.svg";
       }
     },
     getParcelas() {
@@ -1558,18 +1567,30 @@ export default {
       }, 1000);
     },
     randomString(length, chars) {
-    var result = '';
-    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-    return result;
-},
-    getRandomReferenceCode(){
-      this.reference_id = md5(this.randomString(255, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'));
+      var result = "";
+      for (var i = length; i > 0; --i)
+        result += chars[Math.floor(Math.random() * chars.length)];
+      return result;
     },
-    getSignature(){
-      var LSign = this.DadosCheckout.api_key+'~'+this.DadosCheckout.merchan_id+'~'+this.reference_id+'~'+this.formatPrice(this.granTotal)+'~BRL';
+    getRandomReferenceCode() {},
+    getSignature() {
+      this.reference_id = this.randomString(
+        10,
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      );
+      this.signature = md5(
+        this.DadosCheckout.api_key +
+          "~" +
+          this.DadosCheckout.merchan_id +
+          "~" +
+          this.reference_id +
+          "~" +
+          this.granTotal +
+          "~BRL"
+      );
     },
     getDadosPagamentoTransacao() {
-      this.getRandomReferenceCode();
+      this.getSignature();
       var transacao = {
         token: this.DadosCheckout.token_acesso,
         dadosComprador: {
@@ -1609,61 +1630,69 @@ export default {
               description: this.getNomeFatura(),
               language: "pt",
               notifyUrl: "https://api.thuor.com/webhooks/webhookpayu",
-              signature: this.getSignature(),
+              signature: this.signature,
               shippingAddress: {
                 country: "BR"
               },
               buyer: {
-                fullName: "APPROVED",
+                fullName: this.nome_completo,
                 emailAddress: this.email,
-                dniNumber: this.cpf.replace(/[-.]/g,''),
+                dniNumber: this.cpf.replace(/[-.]/g, ""),
                 shippingAddress: {
-                  street1: this.endereco,
+                  street1: this.removeAcento(this.endereco),
                   city: this.cidade,
                   state: this.estado,
-                  country: 'BRL',
-                  postalCode: this.CEP.replace(/[-.]/g,''),
-                  phone: this.telefone.replace(/[()-]/g,'').replace(/ /g,'')
+                  country: "BR",
+                  postalCode: this.CEP.replace(/[-.]/g, ""),
+                  phone: this.telefone.replace(/[()-]/g, "").replace(/ /g, "")
                 }
               },
               additionalValues: {
                 TX_VALUE: {
-                  value: this.formatPrice(this.granTotal),
+                  value: this.granTotal,
                   currency: "BRL"
                 }
               }
             },
             creditCard: {
-              number: this.numero_cartao.replace(/ /g,''),
+              number: this.card_number.replace(/ /g, ""),
               securityCode: this.codigo_seguranca,
-              expirationDate: this.getAnoValidadeCartao() + '/' + this.getValidadeCartao().mes,
+              expirationDate:
+                this.getAnoValidadeCartao() +
+                "/" +
+                this.getValidadeCartao().mes,
               name: this.nome_titular
             },
             type: "AUTHORIZATION_AND_CAPTURE",
-            paymentMethod: "VISA",
+            paymentMethod: UTILIS_API.GetCardType(
+              this.card_number.replace(/ /g, "")
+            ),
             paymentCountry: "BR",
             payer: {
-              fullName: "APPROVED",
+              fullName: this.nome_titular,
               emailAddress: this.email
             },
             ipAddress: UTILIS_API.getIPRequest().ip,
-            cookie: this.randomString(255, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
-            userAgent: navigator.userAgent,
+            cookie: this.randomString(
+              255,
+              "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            ),
+            userAgent: navigator.userAgent.split("/")[0],
             extraParameters: {
               INSTALLMENTS_NUMBER: this.parcelas,
               RESPONSE_URL: this.dadosLoja.url_loja
             }
           },
-          test: true
+          test: false
         }
       };
       //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
-      console.log(JSONString);
-      const LCripto = btoa(JSONString);
+      const LCripto = btoa(JSONString);      
       return LCripto;
     },
     getDadosPagamentoTransacaoBoleto() {
+      this.getSignature();
       const LDaysVenceBoleto =
         this.DadosCheckout.vencimento_boleto ||
         constantes.CONSTANTE_VENCIMENTO_BOLETO;
@@ -1687,7 +1716,7 @@ export default {
           estado: this.estado,
           complemento: this.removeAcento(this.complemento),
           destinatario: this.removeAcento(this.destinatario),
-          numero_cartao: this.numero_cartao,
+          numero_cartao: this.card_number,
           validade: this.validade,
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
@@ -1698,51 +1727,53 @@ export default {
         dadosLoja: this.dadosLoja,
         dadosCheckout: this.DadosCheckout,
         paymentData: {
-          reference_id: this.reference_id.substring(0, 64),
-          sync: true,
-          reference: this.reference_id.substring(0, 64),
-          description: this.getNomeFatura(),
-          amount: {
-            value: parseFloat(this.granTotal),
-            currency: "BRL"
+          language: "pt",
+          command: "SUBMIT_TRANSACTION",
+          merchant: {
+            apiKey: this.DadosCheckout.api_key,
+            apiLogin: this.DadosCheckout.api_login
           },
-          payment_method: {
-            type: "BOLETO",
-            boleto: {
-              due_date: LDataVencimento,
-              instruction_lines: {
-                line_1:
-                  this.DadosCheckout.linha_um_boleto ||
-                  this.removeAcento("Pagável em qualquer lotérica"),
-                line_2:
-                  this.DadosCheckout.linha_dois_boleto ||
-                  this.removeAcento("Não aceitar após o vencimento")
+          transaction: {
+            order: {
+              accountId: this.DadosCheckout.account_id,
+              referenceCode: this.reference_id,
+              description: this.getNomeFatura(),
+              language: "es",
+              signature: this.signature,
+              notifyUrl: "https://api.thuor.com/webhooks/webhookpayu",
+              additionalValues: {
+                TX_VALUE: {
+                  value: this.granTotal,
+                  currency: "BRL"
+                }
               },
-              holder: {
-                name: this.nome_completo,
-                tax_id: this.cpf.replace(/[-,.]/g, ""),
-                email: constantes.CONSTANTE_EMAIL_PAG_SEGURO,
-                address: {
-                  country: "Brasil",
-                  region: this.estado,
-                  region_code: this.estado,
+              buyer: {
+                fullName: this.nome_completo,
+                emailAddress: this.email,
+                dniNumber: this.cpf,
+                shippingAddress: {
+                  street1: this.removeAcento(this.endereco),
+                  street2: this.complemento,
                   city: this.cidade,
-                  postal_code: this.CEP.replace(/[-,.]/g, ""),
-                  street: this.endereco,
-                  number: this.numero_porta,
-                  locality: this.bairro
+                  state: this.estado,
+                  country: "BR",
+                  postalCode: this.CEP
                 }
               }
-            }
+            },
+            type: "AUTHORIZATION_AND_CAPTURE",
+            paymentMethod: "BOLETO_BANCARIO",
+            paymentCountry: "BR",
+            expirationDate: LDataVencimento,
+            ipAddress: UTILIS_API.getIPRequest().ip
           },
-          notification_urls: [
-            "https://thuor.com/webhookpagseguro/NotificaBoleto/"
-          ]
+          test: true
         }
       };
       //console.log("Transacao", transacao);
-      const JSONString = JSON.stringify(transacao);
+      const JSONString = JSON.stringify(transacao);      
       const LCripto = btoa(JSONString);
+      console.log(LCripto);
       return LCripto;
     },
     async iniciaPagamentoBackEndBoleto() {
@@ -1756,11 +1787,15 @@ export default {
       //console.log("Reference ID", this.reference_id);
       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
       sessionStorage.setItem("LCrypto", LCripto);
-      API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
-        .then(retornoPaymentPagSeguro => {
+      API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
+        .then(retornoPayment => {
+          if(retornoPayment.data.transactionResponse != undefined && retornoPayment.data.transactionResponse.state.toUpperCase() == "DECLINED"){
+            API_NOTIFICATION.showNotificationW("Oops!","Pagamento Rejeitado. Por favor, tente novamente.", 'error');
+            return;
+          }
           var DadosCliente = {
             nome: this.nome_completo,
-            dadosCompra: retornoPaymentPagSeguro.data
+            dadosCompra: retornoPayment.data
           };
           sessionStorage.setItem("TipoCheck", "bo");
           sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
@@ -1773,52 +1808,27 @@ export default {
     },
     async iniciaPagamentoBackEndCard() {
       var LRouter = router;
-      var card = await PagSeguro.encryptCard({
-        publicKey: this.public_key,
-        holder: this.nome_titular,
-        number: this.card_number.replace(/ /g, ""),
-        expMonth: this.getValidadeCartao().mes,
-        expYear: this.getAnoValidadeCartao(),
-        securityCode: this.codigo_seguranca
-      });
-      if (card.errors.length > 0) {
-        if (
-          card.errors[0] != undefined &&
-          card.errors[0].code == "INVALID_NUMBER"
-        ) {
-          API_NOTIFICATION.showNotificationW(
-            "Oops!",
-            "Número de Cartão Inválido",
-            "error"
-          );
-        }
-      } else {
-        this.cardToken = card.encryptedCard;
-        const ParamUm = this.cpf.replace(/[.-]/g, "");
-        const ParamDois = this.nome_completo.replace(/ /g, "");
-        const LRefID = await this.getCripto(ParamUm, ParamUm);
-        this.reference_id = LRefID;
-        //console.log("Reference ID", this.reference_id);
-        const LCripto = await this.getDadosPagamentoTransacao();
-        sessionStorage.setItem("LCrypto", LCripto);
-        API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
-          .then(retornoPaymentPagSeguro => {
-            var DadosCliente = {
-              nome: this.nome_completo,
-              dadosCompra: retornoPaymentPagSeguro.data
-            };
-            sessionStorage.setItem("TipoCheck", "ca");
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
-            LRouter.push("/obrigado-cartao");
-            API_NOTIFICATION.HideLoading();
-          })
-          .catch(error => {
-            console.log("Erro ao efetuar o pagamento no PagSeguro", error);
-          });
-      }
+      const LCripto = await this.getDadosPagamentoTransacao();
+      sessionStorage.setItem("LCrypto", LCripto);
+      API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
+        .then(retornoPayment => {
+          if(retornoPayment.data.transactionResponse != undefined && retornoPayment.data.transactionResponse.state.toUpperCase() == "DECLINED"){
+            API_NOTIFICATION.showNotificationW("Oops!","Pagamento Rejeitado. Por favor, tente novamente.", 'error');
+            return;
+          }
+          var DadosCliente = {
+            nome: this.nome_completo,
+            dadosCompra: retornoPayment.data
+          };
+          sessionStorage.setItem("TipoCheck", "ca");
+          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          LRouter.push("/obrigado-cartao");
+          API_NOTIFICATION.HideLoading();
+        })
+        .catch(error => {
+          console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+        });
+      //}
     },
     getAnoValidadeCartao() {
       const LAno = "20" + this.getValidadeCartao().ano;
@@ -1858,7 +1868,7 @@ export default {
       return produtHashed;
     },
     saveLead() {
-      API_CLIENTES.SaveLead(this.email, this.nome_completo)
+      API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)
         .then(resLead => {
           console.log("Lead Salva com Suceso");
         })

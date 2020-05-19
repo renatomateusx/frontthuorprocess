@@ -493,7 +493,7 @@
                   <div class="col-md-7">
                     <input
                       @input="maskCPF()"
-                      @focus="saveLead()" 
+                      @focus="saveLead()"
                       minlength="14"
                       maxlength="14"
                       class="form-control required"
@@ -973,6 +973,7 @@ import Hashids from "hashids";
 import dateFormat from "dateformat";
 import constantes from "../../api/constantes";
 import UpSellCard from "../../components/Cart/UpSellCard";
+import API_CLIENTES from "../../api/clientesAPI";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1166,7 +1167,7 @@ export default {
     getNomeLoja() {
       return this.dadosLoja.nome_loja;
     },
-  getNomeFatura() {
+    getNomeFatura() {
       return this.DadosCheckout.nome_fatura || this.getNomeLoja();
     },
     async changeQuantity(idThuor) {
@@ -1244,6 +1245,7 @@ export default {
           this.nome_completo = this.nome_completo.toUpperCase();
           this.stepDadosPessoaisFinalizados = 1;
           this.currentStep = 2;
+          this.saveLead();
           API_NOTIFICATION.HideLoading();
         }
       } else if (this.currentStep == 2) {
@@ -1356,8 +1358,8 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent('AddPaymentInfo');
-      API_GOOGLE_PIXEL.TriggerGoogleEvent('add_payment_info');
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -1404,13 +1406,28 @@ export default {
       return LVal;
     },
     getImageCard() {
-      if (this.payment_id !== undefined && this.payment_id.length > 1) {
-        let bandeira = this.payment_id;
-        if (bandeira == "master") bandeira = "mastercard";
-        if (bandeira == "creditCard") bandeira = "visa";
-        return (
-          "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
-        );
+      if (this.card_number.replace(/ /g, "").length > 0) {
+        var bandeira =
+          creditCardType(this.card_number.replace(/ /g, ""))[0].type || "";
+        if (
+          bandeira == "maestro" ||
+          bandeira == "unionpay" ||
+          bandeira == "mir"
+        )
+          return "/img/credit-card.png";
+        if (bandeira == "diners-club") bandeira = "diners";
+        if (bandeira == "american-express") bandeira = "amex-american-express";
+        if (bandeira != "") {
+          return (
+            "http://github.bubbstore.com/formas-de-pagamento/" +
+              bandeira +
+              ".svg" || "/img/credit-card.png"
+          );
+        } else {
+          return "img/credit-card.png";
+        }
+      } else {
+        return "img/credit-card.png";
       }
     },
     // verificaDigitosCartao() {
@@ -1631,7 +1648,7 @@ export default {
           estado: this.estado,
           complemento: this.removeAcento(this.complemento),
           destinatario: this.removeAcento(this.destinatario),
-          numero_cartao: this.numero_cartao,
+          numero_cartao: this.card_number,
           validade: this.validade,
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
@@ -1702,11 +1719,23 @@ export default {
       sessionStorage.setItem("LCrypto", LCripto);
       API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
         .then(retornoPaymentPagSeguro => {
+          if (
+            retornoPaymentPagSeguro.data.status != undefined &&
+            (retornoPaymentPagSeguro.data.status.toUpperCase() == "DECLINED" ||
+              retornoPaymentPagSeguro.data.status.toUpperCase() == "CANCELED")
+          ) {
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Rejeitado. Por favor, tente novamente.",
+              "error"
+            );
+            return;
+          }
           var DadosCliente = {
             nome: this.nome_completo,
             dadosCompra: retornoPaymentPagSeguro.data
           };
-          sessionStorage.setItem('TipoCheck', 'bo');
+          sessionStorage.setItem("TipoCheck", "bo");
           sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
           LRouter.push("/obrigado-boleto");
           API_NOTIFICATION.HideLoading();
@@ -1747,11 +1776,24 @@ export default {
         sessionStorage.setItem("LCrypto", LCripto);
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
+            if (
+              retornoPaymentPagSeguro.data.status != undefined &&
+              (retornoPaymentPagSeguro.data.status.toUpperCase() ==
+                "DECLINED" ||
+                retornoPaymentPagSeguro.data.status.toUpperCase() == "CANCELED")
+            ) {
+              API_NOTIFICATION.showNotificationW(
+                "Oops!",
+                "Pagamento Rejeitado. Por favor, tente novamente.",
+                "error"
+              );
+              return;
+            }
             var DadosCliente = {
               nome: this.nome_completo,
               dadosCompra: retornoPaymentPagSeguro.data
             };
-            sessionStorage.setItem('TipoCheck', 'ca');
+            sessionStorage.setItem("TipoCheck", "ca");
             sessionStorage.setItem(
               "dadosCliente",
               JSON.stringify(DadosCliente)
@@ -1801,14 +1843,14 @@ export default {
       // console.log("ID Deshashed", numbers);
       return produtHashed;
     },
-    saveLead(){
-      API_CLIENTES.SaveLead(this.email, this.nome_completo)
-      .then((resLead)=>{
-        console.log("Lead Salva com Suceso");
-      })
-      .catch((error)=>{
-        console.log("Erro ao salvar lead", error);
-      });
+    saveLead() {
+      API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)
+        .then(resLead => {
+          console.log("Lead Salva com Suceso");
+        })
+        .catch(error => {
+          console.log("Erro ao salvar lead", error);
+        });
     }
   }
 };

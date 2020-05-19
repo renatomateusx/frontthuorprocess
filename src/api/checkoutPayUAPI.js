@@ -6,10 +6,10 @@ var API_CHECKOUT_PU = {
     DoPayBackEnd(cripto) {
         return new Promise((resolve, reject) => {
             let LBody = {
-                pay: cripto
+                LCrypto: cripto
             }
             axios
-                .post(constantes.WEBSITEAPI + constantes.PATH_PAY_CHECKOUT, LBody)
+                .post(constantes.WEBSITEAPI + constantes.PATH_PAY_CHECKOUT_PAY_U, LBody)
                 .then((response) => {
                     //console.log("Response", response);
                     resolve(response);

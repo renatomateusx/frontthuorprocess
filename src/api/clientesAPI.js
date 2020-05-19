@@ -87,14 +87,15 @@ var API_CLIENTES = {
             }
         });
     },
-    SaveLead(email, nome) {
+    SaveLead(email, nome, telefone) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
                     email: email,
-                    nome: nome
+                    nome: nome,
+                    telefone: telefone
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_LEAD, LBody)

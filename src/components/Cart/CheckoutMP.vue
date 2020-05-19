@@ -1315,6 +1315,7 @@ export default {
           this.nome_completo = this.nome_completo.toUpperCase();
           this.stepDadosPessoaisFinalizados = 1;
           this.currentStep = 2;
+          this.saveLead();
           API_NOTIFICATION.HideLoading();
         }
       } else if (this.currentStep == 2) {
@@ -1688,7 +1689,19 @@ export default {
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT.DoPayBackEnd(LCripto)
           .then(retornoPay => {
-            console.log("Enviado para o backend", retornoPay.data);
+            if (
+              retornoPay.data.status != undefined &&
+              (retornoPay.data.status.toUpperCase() == "REJECTED" ||
+                retornoPay.data.status.toUpperCase() == "CANCELED" ||
+                retornoPay.data.status.toUpperCase() == "VACATED")
+            ) {
+              API_NOTIFICATION.showNotificationW(
+                "Oops!",
+                "Pagamento Rejeitado. Por favor, tente novamente.",
+                "error"
+              );
+              return;
+            }
             var DadosCliente = {
               nome: this.nome_completo,
               dadosCompra: retornoPay.data
@@ -1721,7 +1734,19 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.DoPayBackEndTicket(LCripto)
         .then(retornoPay => {
-          //console.log("Enviado para o backend", retornoPay.data);
+          if (
+            retornoPay.data.status != undefined &&
+            (retornoPay.data.status.toUpperCase() == "REJECTED" ||
+              retornoPay.data.status.toUpperCase() == "CANCELED" ||
+              retornoPay.data.status.toUpperCase() == "VACATED")
+          ) {
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Rejeitado. Por favor, tente novamente.",
+              "error"
+            );
+            return;
+          }
           var DadosCliente = {
             nome: this.nome_completo,
             dadosCompra: retornoPay.data
@@ -1761,7 +1786,7 @@ export default {
       return text;
     },
     saveLead() {
-      API_CLIENTES.SaveLead(this.email, this.nome_completo)
+      API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)
         .then(resLead => {
           console.log("Lead Salva com Suceso");
         })
