@@ -82,13 +82,13 @@ a {
   color: white !important;
   font-size: 18px;
 }
-.color-icon{
+.color-icon {
   color: #23b7e5;
 }
-.fontSize{
- font-size: 18px;
+.fontSize {
+  font-size: 18px;
 }
-.fontCarrier{
+.fontCarrier {
   font-size: 14px;
 }
 </style>
@@ -135,11 +135,12 @@ a {
           <span class="dot"></span>
           <p class="article-date">{{ track.date | formatDate}}</p>
           <h3>
-            
-            <a class="ml-2 fontSize"
-              href="/track"
-              :class="getClassHeader(track.description)"
-            ><span :class="getClassIcon(track.status)" ><span class="ml-2"></span></span>{{ track.description }}</a>
+            <a class="ml-2 fontSize" href="/track" :class="getClassHeader(track.description)">
+              <span :class="getClassIcon(track.status)">
+                <span class="ml-2"></span>
+              </span>
+              {{ track.description }}
+            </a>
           </h3>
           <p class="fontCarrier">{{ getCarrier(track.carrier, track.details) }}</p>
         </div>
@@ -314,8 +315,7 @@ export default {
           );
         });
         return searchedObj.reverse();
-      }
-      else{
+      } else {
         return null;
       }
     }
@@ -355,12 +355,21 @@ export default {
       if (this.trackingCode.length > 1) {
         UTILIS_API.GetTrackCode(this.trackingCode)
           .then(resTrackingCode => {
-            console.log(resTrackingCode.data);
-            this.dataTracker = resTrackingCode.data[0];
-            API_NOTIFICATION.HideLoading();
+            if (resTrackingCode.data.length > 0) {
+              this.dataTracker = resTrackingCode.data[0];
+              API_NOTIFICATION.HideLoading();
+            }
+            else{
+              API_NOTIFICATION.showNotificationW('Oops!', 'Não encontramos esse código de rastreio. Verifique se você digitou corretamente', 'error');
+            }
+            
           })
           .catch(error => {
             console.log("Erro ao rastrear o código de rastreio", error);
+            API_NOTIFICATION.showNotification(
+              "Ocorreu um erro ao tentar rastrear o seu código, tente novamente.",
+              "error"
+            );
           });
       } else {
         API_NOTIFICATION.showNotification(
@@ -369,10 +378,10 @@ export default {
         );
       }
     },
-    getClassIcon(status){
-      if(status == "TRANSIT") return "fas fa-box-open";
-      if(status == "DELIVERED") return "fas fa-people-carry";
-      if(status == "PICKUP") return "fas fa-truck-moving";
+    getClassIcon(status) {
+      if (status == "TRANSIT") return "fas fa-box-open";
+      if (status == "DELIVERED") return "fas fa-people-carry";
+      if (status == "PICKUP") return "fas fa-truck-moving";
     }
   }
 };
