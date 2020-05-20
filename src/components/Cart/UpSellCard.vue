@@ -1,4 +1,3 @@
-
 <style scoped>
 .card-flat {
   margin-top: 80px !important;
@@ -316,7 +315,7 @@
   }
 }
 </style>
-<template >
+<template>
   <!-- <div class="row col-lg-4 col-lg-offset-2" style=" margin: 0 auto; display:block"> -->
   <!-- START STEP 4-->
   <!-- 1= "No Checkout";
@@ -329,7 +328,7 @@
         <a
           style="cursor:pointer!important;"
           aria-expanded="false"
-          v-on:click="collapseUpSell('#collaUpSell','#comandoUpSell')"
+          v-on:click="collapseUpSell('#collaUpSell', '#comandoUpSell')"
         >
           <span
             id="DcollaUpSell"
@@ -358,30 +357,40 @@
                       <img class="rounded img-fluid float-left imgVariant" :src="variant_img" />
                       <div class="product-name">
                         <div class="product-name">
-                          <a class="ml-2 w-100 mt-2" href="#">{{title}}</a>
+                          <a class="ml-2 w-100 mt-2" href="#">{{ title }}</a>
                           <div class="product-info">
                             <div>
-                              <span class="value ml-2">{{variant_title}}</span>
+                              <span class="value ml-2">
+                                {{
+                                variant_title
+                                }}
+                              </span>
                             </div>
                           </div>
                           <div class="product-info">
                             <div>
                               <span class="value ml-2">
                                 <small>
-                                  {{quantity}} Unidade(s) -
-                                  <b>R$ {{formatPrice(variant_price)}}</b>
+                                  {{ quantity }} Unidade(s) -
+                                  <b>R$ {{ formatPrice(variant_price) }}</b>
                                 </small>
                               </span>
                             </div>
                           </div>
                           <div class="product-info row col-md-4" id="productOptions"></div>
                           <button
-                            v-show="VarianteIDUpSellSelected > 0 && UpSellNoCheckout == 1"
+                            v-show="
+                              VarianteIDUpSellSelected > 0 &&
+                                UpSellNoCheckout == 1
+                            "
                             v-on:click="adicionarProdutoUpSell()"
                             class="mt-2 btn btn-primary btn-lg btn-block float-left pull-left btnContinue"
                           >Adicionar</button>
                           <button
-                            v-show="VarianteIDUpSellSelected > 0 && UpSellNoCheckout == 2"
+                            v-show="
+                              VarianteIDUpSellSelected > 0 &&
+                                UpSellNoCheckout == 2
+                            "
                             v-on:click="comprarComUmClique()"
                             class="mt-2 btn btn-primary btn-lg btn-block float-left pull-left btnContinue"
                           >Comprar com um CLIQUE</button>
@@ -477,7 +486,8 @@ export default {
       VariantePriceUpSellSelected: 0,
       VarianteTitleUPSellSelected: "",
       UpSellNoCheckout: 0,
-      LUp: 0
+      LUp: 0,
+      reference_id: ""
     };
   },
   mounted() {},
@@ -657,7 +667,7 @@ export default {
       this.VarianteIDUpSellSelected = Selected;
       this.VarianteImageUpSellSelected = this.variant_img;
       this.VarianteSKUUpSellSelected = LSKU;
-      this.VariantePriceUpSellSelected = LPrice;
+      this.VariantePriceUpSellSelected = parseFloat(LPrice);
       this.VarianteTitleUPSellSelected = this.variant_title;
     },
     async adicionarProdutoUpSell() {
@@ -707,7 +717,7 @@ export default {
     clearSessionStorage() {
       sessionStorage.clear();
     },
-    async FCheckoutMP() {
+    async FCheckoutMP(LDecripto) {
       const self = this;
       const plugin = document.createElement("script");
       plugin.onload = async () => {
@@ -719,14 +729,19 @@ export default {
           await this.sleep(1000);
           const LTipoCompra = sessionStorage.getItem("TipoCheck");
           var LRouter = router;
-          let LCripto = sessionStorage.getItem("LCrypto");
+          LDecripto.paymentData.transaction_amount = this.formatPrice(
+            this.VariantePriceUpSellSelected
+          );
+
+          let LCripto = JSON.stringify(LDecripto);
+          LCripto = btoa(LCripto);
+          sessionStorage.setItem("LCrypto", LCripto);
           if (LTipoCompra == "bo") {
             API_CHECKOUT.DoPayBackEndTicket(LCripto)
               .then(async retornoPay => {
                 //console.log("Enviado para o backend", retornoPay.data);
                 let LocalDecrypto = atob(LCripto);
                 LocalDecrypto = JSON.parse(LocalDecrypto);
-
                 var DadosCliente = {
                   nome: LocalDecrypto.dadosComprador.nome_completo,
                   dadosCompra: retornoPay.data
@@ -753,32 +768,30 @@ export default {
               });
           }
           if (LTipoCompra == "ca") {
-            let LocalDecrypto = atob(LCripto);
-            LocalDecrypto = JSON.parse(LocalDecrypto);
             var FormToken = await UTILIS_API.CREATE_FORM_MP(
               this.getNomeLoja(),
-              this.formatPrice(LocalDecrypto.paymentData.transaction_amount),
-              LocalDecrypto.dadosComprador.numero_cartao.trim().replace(/ /g, ""),
-              LocalDecrypto.dadosComprador.nome_titular,
-              LocalDecrypto.dadosComprador.validade.split("/")[0],
-              '20'+LocalDecrypto.dadosComprador.validade.split("/")[1],
-              LocalDecrypto.dadosComprador.codigo_seguranca,
-              LocalDecrypto.paymentData.installments,
-              LocalDecrypto.dadosComprador.cpf_titular.replace(/[.-]/g, ""),
-              LocalDecrypto.paymentData.payer.email,
-              LocalDecrypto.paymentData.payment_method_id
+              this.formatPrice(LDecripto.paymentData.transaction_amount),
+              LDecripto.dadosComprador.numero_cartao.trim().replace(/ /g, ""),
+              LDecripto.dadosComprador.nome_titular,
+              LDecripto.dadosComprador.validade.split("/")[0],
+              "20" + LDecripto.dadosComprador.validade.split("/")[1],
+              LDecripto.dadosComprador.codigo_seguranca,
+              LDecripto.paymentData.installments,
+              LDecripto.dadosComprador.cpf_titular.replace(/[.-]/g, ""),
+              LDecripto.paymentData.payer.email,
+              LDecripto.paymentData.payment_method_id
             );
-            //console.log(FormToken);            
+            //console.log(FormToken);
             window.Mercadopago.createToken(FormToken, (status, response) => {
               //console.log("Response", response);
               //console.log(1, LocalDecrypto.paymentData);
-              LocalDecrypto.paymentData.token = response.id;
+              LDecripto.paymentData.token = response.id;
               //console.log(2, LocalDecrypto.paymentData);
-              var LAuxCripto = LocalDecrypto;
-             
-              LocalDecrypto = JSON.stringify(LocalDecrypto);
-              LocalDecrypto = btoa(LocalDecrypto);
-              API_CHECKOUT.DoPayBackEnd(LocalDecrypto)
+              var LAuxCripto = LDecripto;
+
+              let LCripto = JSON.stringify(LDecripto);
+              LCripto = btoa(LCripto);
+              API_CHECKOUT.DoPayBackEnd(LCripto)
                 .then(async retornoPay => {
                   var DadosCliente = {
                     nome: LAuxCripto.dadosComprador.nome_completo,
@@ -818,45 +831,20 @@ export default {
       plugin.async = true;
       document.head.appendChild(plugin);
     },
-    async FCheckoutPS(PDadosCheckout) {
+    async FCheckoutPS(LDecripto) {
       const pluginPS = document.createElement("script");
       pluginPS.onload = function() {
+        var LRouter = router;
+
+        this.DadosCheckout = JSON.parse(
+          sessionStorage.getItem("DadosCheckout")
+        );
         this.componenteMPLoaded = 1;
-        console.log("Carregado Script PS", this.componenteMPLoaded);
-      };
-      pluginPS.setAttribute(
-        "src",
-        "https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"
-      );
-      pluginPS.async = true;
-      document.head.appendChild(pluginPS);
-      await this.sleep(1000);
-      if (PagSeguro !== undefined) {
-        return true;
-      } else {
-        await this.sleep(1000);
-        this.FCheckoutPS();
-      }
-    },
-    sleep(seconds) {
-      return new Promise(r => setTimeout(r, seconds));
-    },
-    async comprarComUmClique() {
-      API_NOTIFICATION.ShowLoading();
-      var LRouter = router;
-      let LCripto = sessionStorage.getItem("LCrypto");
-      this.DadosCheckout = JSON.parse(sessionStorage.getItem("DadosCheckout"));
-
-      if (this.DadosCheckout.gateway == 1) {
-        const LReturn = await this.FCheckoutMP();
-      }
-      if (this.DadosCheckout.gateway == 2) {
-        const LReturn = await this.FCheckoutPS();
         const LTipoCompra = sessionStorage.getItem("TipoCheck");
+        LDecripto.paymentData.amount.value = this.formatPrice(
+          this.VariantePriceUpSellSelected
+        );
         if (LTipoCompra == "ca") {
-          let LDecripto = atob(LCripto);
-          LDecripto = JSON.parse(LDecripto);
-
           API_CHECKOUT_PS.GetPublicKey("card", this.DadosCheckout.token_acesso)
             .then(async resPublicKey => {
               var card = await PagSeguro.encryptCard({
@@ -887,8 +875,9 @@ export default {
               LDecripto.paymentData.payment_method.card.encrypted =
                 card.encryptedCard;
               //console.log(2, LDecripto.paymentData.payment_method.card.encrypted);
-              LCripto = JSON.stringify(LDecripto);
+              let LCripto = JSON.stringify(LDecripto);
               LCripto = btoa(LCripto);
+              sessionStorage.setItem("LCrypto", LCripto);
               API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
                 .then(async retornoPaymentPagSeguro => {
                   var DadosCliente = {
@@ -922,6 +911,9 @@ export default {
             });
         }
         if (LTipoCompra == "bo") {
+          let LCripto = JSON.stringify(LDecripto);
+          LCripto = btoa(LCripto);
+          sessionStorage.setItem("LCrypto", LCripto);
           API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
             .then(async retornoPaymentPagSeguro => {
               var DadosCliente = {
@@ -948,6 +940,124 @@ export default {
             });
           LRouter.push("/obrigado-boleto");
         }
+      };
+      pluginPS.setAttribute(
+        "src",
+        "https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"
+      );
+      pluginPS.async = true;
+      document.head.appendChild(pluginPS);
+      await this.sleep(1000);
+      if (PagSeguro !== undefined) {
+        return true;
+      } else {
+        await this.sleep(1000);
+        this.FCheckoutPS();
+      }
+    },
+    async FCheckoutPayU(LDecripto) {
+      var self = this;
+      const SessionID = Date.now();
+      const pluginPayU = document.createElement("script");
+      pluginPayU.onload = async function() {
+        var LRouter = router;
+        this.DadosCheckout = JSON.parse(
+          sessionStorage.getItem("DadosCheckout")
+        );
+        LDecripto.paymentData.transaction.order.additionalValues.TX_VALUE.value = parseFloat(
+          this.VariantePriceUpSellSelected
+        );
+        this.getSignature(
+          LDecripto.paymentData.transaction.order.additionalValues.TX_VALUE
+            .value
+        );
+        /* ADICIONAR O NOVO PRODUTO - ALTERAR O VALOR,  */
+
+        let LCripto = JSON.stringify(LDecripto);
+        LCripto = btoa(LCripto);
+        sessionStorage.setItem("LCrypto", LCripto);
+        API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
+          .then(retornoPayment => {
+            if (
+              retornoPayment.data.transactionResponse != undefined &&
+              retornoPayment.data.transactionResponse.state.toUpperCase() ==
+                "DECLINED"
+            ) {
+              API_NOTIFICATION.showNotificationW(
+                "Oops!",
+                "Pagamento Rejeitado. Por favor, tente novamente.",
+                "error"
+              );
+              return;
+            }
+            var DadosCliente = {
+              nome: this.nome_completo,
+              dadosCompra: retornoPayment.data
+            };
+            sessionStorage.setItem(
+              "dadosCliente",
+              JSON.stringify(DadosCliente)
+            );
+            LRouter.push("/obrigado-boleto");
+            API_NOTIFICATION.HideLoading();
+          })
+          .catch(error => {
+            console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+          });
+      };
+      pluginPayU.setAttribute(
+        "src",
+        "https://maf.pagosonline.net/ws/fp/tags.js?id=" + SessionID + "80200"
+      );
+      pluginPayU.async = true;
+      document.head.appendChild(pluginPayU);
+    },
+    sleep(seconds) {
+      return new Promise(r => setTimeout(r, seconds));
+    },
+    randomString(length, chars) {
+      var result = "";
+      for (var i = length; i > 0; --i)
+        result += chars[Math.floor(Math.random() * chars.length)];
+      return result;
+    },
+    getSignature(total) {
+      this.reference_id = this.randomString(
+        10,
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      );
+      this.signature = md5(
+        this.DadosCheckout.api_key +
+          "~" +
+          this.DadosCheckout.merchan_id +
+          "~" +
+          this.reference_id +
+          "~" +
+          total +
+          "~BRL"
+      );
+    },
+    async comprarComUmClique() {
+      API_NOTIFICATION.ShowLoading();
+      var LRouter = router;
+      let LCripto = sessionStorage.getItem("LCrypto");
+      this.DadosCheckout = JSON.parse(sessionStorage.getItem("DadosCheckout"));
+      this.produtosCart = [];
+      var lpro = await this.pushProducts(
+        this.VarianteIDProdutoJSONUpSellSelected,
+        this.quantity,
+        this.VarianteIDUpSellSelected
+      );
+      this.produtosCart.push(lpro);
+      let LDecripto = atob(LCripto);
+      LDecripto = JSON.parse(LDecripto);
+      LDecripto.produtos = this.produtosCart;
+      if (this.DadosCheckout.gateway == 1) {
+        const LReturn = await this.FCheckoutMP(LDecripto);
+      } else if (this.DadosCheckout.gateway == 2) {
+        const LReturn = await this.FCheckoutPS(LDecripto);
+      } else if (this.DadosCheckout.gateway == 3) {
+        const LReturn = await this.FCheckoutPayU(LDecripto);
       }
     }
   }

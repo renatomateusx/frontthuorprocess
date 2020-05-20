@@ -1572,7 +1572,6 @@ export default {
         result += chars[Math.floor(Math.random() * chars.length)];
       return result;
     },
-    getRandomReferenceCode() {},
     getSignature() {
       this.reference_id = this.randomString(
         10,
@@ -1773,7 +1772,6 @@ export default {
       //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);      
       const LCripto = btoa(JSONString);
-      console.log(LCripto);
       return LCripto;
     },
     async iniciaPagamentoBackEndBoleto() {
