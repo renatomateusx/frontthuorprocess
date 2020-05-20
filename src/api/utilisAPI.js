@@ -201,13 +201,30 @@ var UTILIS_API = {
             discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/,
             jcb: /^(?:2131|1800|35\d{3})\d{11}$/
         }
-    
-        for(var key in re) {
-            if(re[key].test(number)) {
+
+        for (var key in re) {
+            if (re[key].test(number)) {
                 return key
             }
         }
-    }
+    },
+    GetTrackCode(code) {
+        return new Promise((resolve, reject) => {
+            let LBody = {
+                code: code
+            }
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_GET_TRACKING_CODE, LBody)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(response);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+        });
+    },
 
 };
 
