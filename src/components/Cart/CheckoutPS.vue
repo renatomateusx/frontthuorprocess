@@ -1595,7 +1595,14 @@ export default {
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
           cpf_titular: this.cpf_titular,
-          frete: this.getFreteSelecionadoNome()
+          frete: this.getFreteSelecionadoNome(),
+          valor: this.formatPrice(this.granTotal),
+          forma: this.formaPagamento,
+          barcode: "",
+          urlBoleto: "",
+          parcela: this.parcelas,
+          valorParcela: "",
+          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""))
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
@@ -1653,7 +1660,11 @@ export default {
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
           cpf_titular: this.cpf_titular,
-          frete: this.getFreteSelecionadoNome()
+          frete: this.getFreteSelecionadoNome(),
+          valor: this.formatPrice(this.granTotal),
+          forma: this.formaPagamento,
+          barcode: "",
+          urlBoleto: ""
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,

@@ -68,6 +68,14 @@ const Menu = [
             path: '/marketing/pixels'
         }]
     },
+    {
+        name: 'Rastrear Encomenda',
+        path: '/track',
+        icon: 'fa fa-thumbtack',
+        translate: 'sidebar.nav.SINGLEVIEW'
+    },
+
+
 ];
 
 export default Menu;

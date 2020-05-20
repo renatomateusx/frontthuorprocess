@@ -667,126 +667,44 @@ export default {
           console.log("Erro ao reembolsar o cliente", error);
         });
     },
-    getLasSixDigits(obj) {
-      //card.last_four_digits
-      if (
-        (this.pedido.bandeira != "bolbradesco") &
-        (this.pedido.bandeira != "BOLETO")
-      ) {
-        const LJSON = JSON.parse(obj.json_gw_response);
-        if (LJSON.hasOwnProperty("payment_method_id"))
-          return LJSON.card.last_four_digits;
-        if (
-          LJSON.hasOwnProperty("payment_method") &&
-          LJSON.payment_method.type == "CREDIT_CARD"
-        )
-          return LJSON.payment_method.card.last_digits;
-        if (
-          LJSON.hasOwnProperty("payment_method") &&
-          LJSON.payment_method.type == "BOLETO"
-        )
-          return LJSON.payment_method.type;
+    getLastFourDigits(obj) {
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      if(LJSON.forma == "bolbradesco"){
+        let LCard = LJSON.numero_cartao.replace(/ /g, '');
+        return LCard.substring(LCard.length - 4, LCard.length);
       }
-      return "";
+      return "";      
     },
     getLinkBoleto(obj) {
-      if (
-        (this.pedido.bandeira == "bolbradesco") &
-        (this.pedido.bandeira == "BOLETO")
-      ) {
-        const LJSON = JSON.parse(obj.json_gw_response);
-        if (LJSON.hasOwnProperty("payment_method_id"))
-          return LJSON.transaction_details.external_resource_url;
-        if (
-          LJSON.hasOwnProperty("payment_method") &&
-          LJSON.payment_method.hasOwnProperty("boleto")
-        )
-          return LJSON.payment_method.links.find(
-            x => x.media == "application/pdf"
-          ).href;
-      }
-      return "";
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      return LJSON.urlBoleto;
     },
     getBarCodeBoleto(obj) {
-      //barcode.content;
-      if (
-        (this.pedido.bandeira == "bolbradesco") &
-        (this.pedido.bandeira == "BOLETO")
-      ) {
-        const LJSON = JSON.parse(obj.json_gw_response);
-        if (LJSON.hasOwnProperty("payment_method_id"))
-          return LJSON.barcode.content;
-        if (
-          LJSON.hasOwnProperty("payment_method") &&
-          LJSON.payment_method.hasOwnProperty("boleto")
-        )
-          return LJSON.payment_method.boleto.formatted_barcode;
-      }
-      return "";
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      return LJSON.barcode;      
     },
     getExpiracaoBoleto(obj) {
-      //date_of_expiration
-      if (
-        (this.pedido.bandeira == "bolbradesco") &
-        (this.pedido.bandeira == "BOLETO")
-      ) {
-        const LJSON = JSON.parse(obj.json_gw_response);
-        if (LJSON.hasOwnProperty("payment_method_id"))
-          return LJSON.date_of_expiration;
-        if (
-          LJSON.hasOwnProperty("payment_method") &&
-          LJSON.payment_method.hasOwnProperty("boleto")
-        )
-          return LJSON.payment_method.boleto.due_date;
-      }
-      return "";
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      return LJSON.vencimentoBoleto;      
     },
     getBandeira(obj) {
-      const LJSON = JSON.parse(obj.json_gw_response);
-      if (LJSON.hasOwnProperty("payment_method_id"))
-        return LJSON.payment_method_id;
-      if (
-        LJSON.hasOwnProperty("payment_method") &&
-        LJSON.payment_method.type == "CREDIT_CARD"
-      )
-        return LJSON.payment_method.card.brand;
-      if (
-        LJSON.hasOwnProperty("payment_method") &&
-        LJSON.payment_method.type == "BOLETO"
-      )
-        return LJSON.payment_method.type;
-      return "";
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      return LJSON.bandeira;
     },
     getValor(obj) {
-      const LJSON = JSON.parse(obj.json_gw_response);
-      if (LJSON.hasOwnProperty("transaction_amount"))
-        return LJSON.transaction_amount;
-      if (
-        LJSON.hasOwnProperty("amount") &&
-        LJSON.amount.hasOwnProperty("summary")
-      )
-        return LJSON.amount.summary.total;
-      return "";
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      return LJSON.valor;
     },
     getParcela(obj) {
-      const LJSON = JSON.parse(obj.json_gw_response);
-      if (LJSON.hasOwnProperty("transaction_amount")) return LJSON.installments;
-      if (
-        LJSON.hasOwnProperty("payment_method") &&
-        LJSON.payment_method.type == "CREDIT_CARD"
-      )
-        return LJSON.payment_method.installments;
-      return "";
+     const LJSON = JSON.parse(obj.json_front_end_user_data);
+      return LJSON.parcela;
     },
     getValorParcela(obj) {
-      const LJSON = JSON.parse(obj.json_gw_response);
-      if (LJSON.hasOwnProperty("transaction_amount"))
-        return LJSON.transaction_details.installment_amount;
-      //if(LJSON.hasOwnProperty('amount') && LJSON.amount.hasOwnProperty('summary'))  return LJSON.amount.sumary.installment_total || "";
-      return "";
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      return LJSON.valorParcela;
     },
-    getEndereco(){
-      if(this.pedido.endereco !== undefined){
+    getEndereco() {
+      if (this.pedido.endereco !== undefined) {
         return this.toCamelCase(this.pedido.endereco);
       }
       return;
@@ -845,7 +763,7 @@ export default {
         JSON.parse(obj.json_front_end_user_data).dadosComprador.telefone
       );
       this.pedido.bandeira = this.getBandeira(obj);
-      this.pedido.quatroDigitosCartao = this.getLasSixDigits(obj);
+      this.pedido.quatroDigitosCartao = this.getLastFourDigits(obj);
       this.pedido.linkBoleto = this.getLinkBoleto(obj);
       this.pedido.dataExpiracao = this.getExpiracaoBoleto(obj);
       this.pedido.codigoBarras = this.getBarCodeBoleto(obj);

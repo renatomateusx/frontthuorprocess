@@ -1610,7 +1610,14 @@ export default {
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
           cpf_titular: this.cpf_titular,
-          frete: this.getFreteSelecionadoNome()
+          frete: this.getFreteSelecionadoNome(),
+          valor: this.formatPrice(this.granTotal),
+          forma: this.formaPagamento,
+          barcode: "",
+          urlBoleto: "",
+          parcela: this.parcelas,
+          valorParcela: "",
+          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""))
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
@@ -1687,7 +1694,7 @@ export default {
       };
       //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
-      const LCripto = btoa(JSONString);      
+      const LCripto = btoa(JSONString);
       return LCripto;
     },
     getDadosPagamentoTransacaoBoleto() {
@@ -1720,7 +1727,11 @@ export default {
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
           cpf_titular: this.cpf_titular,
-          frete: this.getFreteSelecionadoNome()
+          frete: this.getFreteSelecionadoNome(),
+          valor: this.formatPrice(this.granTotal),
+          forma: this.formaPagamento,
+          barcode: "",
+          urlBoleto: ""
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
@@ -1770,7 +1781,7 @@ export default {
         }
       };
       //console.log("Transacao", transacao);
-      const JSONString = JSON.stringify(transacao);      
+      const JSONString = JSON.stringify(transacao);
       const LCripto = btoa(JSONString);
       return LCripto;
     },
@@ -1787,8 +1798,16 @@ export default {
       sessionStorage.setItem("LCrypto", LCripto);
       API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
         .then(retornoPayment => {
-          if(retornoPayment.data.transactionResponse != undefined && retornoPayment.data.transactionResponse.state.toUpperCase() == "DECLINED"){
-            API_NOTIFICATION.showNotificationW("Oops!","Pagamento Rejeitado. Por favor, tente novamente.", 'error');
+          if (
+            retornoPayment.data.transactionResponse != undefined &&
+            retornoPayment.data.transactionResponse.state.toUpperCase() ==
+              "DECLINED"
+          ) {
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Rejeitado. Por favor, tente novamente.",
+              "error"
+            );
             return;
           }
           var DadosCliente = {
@@ -1810,8 +1829,16 @@ export default {
       sessionStorage.setItem("LCrypto", LCripto);
       API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
         .then(retornoPayment => {
-          if(retornoPayment.data.transactionResponse != undefined && retornoPayment.data.transactionResponse.state.toUpperCase() == "DECLINED"){
-            API_NOTIFICATION.showNotificationW("Oops!","Pagamento Rejeitado. Por favor, tente novamente.", 'error');
+          if (
+            retornoPayment.data.transactionResponse != undefined &&
+            retornoPayment.data.transactionResponse.state.toUpperCase() ==
+              "DECLINED"
+          ) {
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Rejeitado. Por favor, tente novamente.",
+              "error"
+            );
             return;
           }
           var DadosCliente = {

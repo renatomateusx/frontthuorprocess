@@ -26,7 +26,7 @@ const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
 const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
 const MercadoPago = () => import('@/components/Checkouts/MercadoPago.vue');
 const PagSeguro = () => import('@/components/Checkouts/PagSeguro.vue');
-const PayU = () => import ('@/components/Checkouts/PayU.vue');
+const PayU = () => import('@/components/Checkouts/PayU.vue');
 const IntegracaoPlataforma = () => import('@/views/Pages/IntegracaoPlataforma.vue');
 const IntegracaoShopify = () => import('@/views/Pages/IntegracaoShopify.vue');
 const UpSell = () => import('@/views/Pages/UpSell.vue')
@@ -35,6 +35,7 @@ const Pixels = () => import('@/views/Pages/Pixels.vue');
 const PixelAdd = () => import('@/views/Pages/PixelAdd.vue');
 const Mensagens = () => import('@/views/Pages/Mensagens.vue');
 const MensagensAdd = () => import('@/views/Pages/MensagensAdd.vue');
+const Rastreio = () => import('@/views/Pages/Rastreio.vue');
 
 
 
@@ -156,13 +157,12 @@ export default new Router({
         path: '/obrigado-boleto',
         component: ObrigadoBoleto
     },
-
-    // Not found route
     {
-        path: '*',
-        redirect: '/'
+        path: '/track',
+        component: Rastreio
     },
     {
+
         path: '/',
         component: Layout,
         children: [
@@ -187,6 +187,12 @@ export default new Router({
             },
 
         ]
+    },
+
+    // Not found route
+    {
+        path: '*',
+        redirect: '/'
     },
     ]
 })
