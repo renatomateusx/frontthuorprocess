@@ -633,6 +633,8 @@ export default {
             this.devolverPagamentoMP(pPedido);
           } else if (this.DadosCheckout.gateway == 2) {
             this.devolverPagamentoPS(pPedido);
+          } else if (this.DadosCheckout.gateway == 3) {
+            this.devolverPagamentoPayU(pPedido);
           }
         }
       );
@@ -667,13 +669,26 @@ export default {
           console.log("Erro ao reembolsar o cliente", error);
         });
     },
+    devolverPagamentoPayU(pPedido) {
+      API_TRANSACOES.ReembolsarClienteCheckoutPS(pPedido.id)
+        .then(res => {
+          API_NOTIFICATION.showNotification(
+            "Reembolsado com sucesso",
+            "success"
+          );
+          this.checkIfLogged();
+        })
+        .catch(error => {
+          console.log("Erro ao reembolsar o cliente", error);
+        });
+    },
     getLastFourDigits(obj) {
       const LJSON = JSON.parse(obj.json_front_end_user_data);
-      if(LJSON.forma == "bolbradesco"){
-        let LCard = LJSON.numero_cartao.replace(/ /g, '');
+      if (LJSON.forma == "bolbradesco") {
+        let LCard = LJSON.numero_cartao.replace(/ /g, "");
         return LCard.substring(LCard.length - 4, LCard.length);
       }
-      return "";      
+      return "";
     },
     getLinkBoleto(obj) {
       const LJSON = JSON.parse(obj.json_front_end_user_data);
@@ -681,11 +696,11 @@ export default {
     },
     getBarCodeBoleto(obj) {
       const LJSON = JSON.parse(obj.json_front_end_user_data);
-      return LJSON.barcode;      
+      return LJSON.barcode;
     },
     getExpiracaoBoleto(obj) {
       const LJSON = JSON.parse(obj.json_front_end_user_data);
-      return LJSON.vencimentoBoleto;      
+      return LJSON.vencimentoBoleto;
     },
     getBandeira(obj) {
       const LJSON = JSON.parse(obj.json_front_end_user_data);
@@ -696,7 +711,7 @@ export default {
       return LJSON.valor;
     },
     getParcela(obj) {
-     const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = JSON.parse(obj.json_front_end_user_data);
       return LJSON.parcela;
     },
     getValorParcela(obj) {
@@ -741,7 +756,7 @@ export default {
       //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
       const LOrderID = JSON.parse(obj.json_shopify_response).order.id;
       this.dataPedido = dateFormat(
-        JSON.parse(obj.json_gw_response).date_created,
+        JSON.parse(obj.json_front_end_user_data).data,
         "dd/mm/yyyy  HH:MM:ss"
       );
       this.pedido.json_front_end_user_data = JSON.parse(

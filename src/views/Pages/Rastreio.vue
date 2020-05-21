@@ -162,6 +162,12 @@ Vue.filter("formatDate", function(value) {
   }
 });
 export default {
+  created(){
+    if(this.$route.params.id && this.$route.params.id != undefined){
+      this.trackingCode = this.$route.params.id;
+      this.initializeTrack();
+    }
+  },
   data() {
     return {
       searchQuery: "",

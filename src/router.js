@@ -162,6 +162,10 @@ export default new Router({
         component: Rastreio
     },
     {
+        path: '/track/:id',
+        component: Rastreio
+    },
+    {
 
         path: '/',
         component: Layout,
