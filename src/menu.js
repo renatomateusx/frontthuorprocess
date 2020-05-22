@@ -66,13 +66,18 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-donate',
             path: '/marketing/pixels'
+        }, {
+            name: 'Cupons',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-tag',
+            path: '/marketing/cupons'
         }]
     },
     {
         name: 'Rastrear Encomenda',
         path: '/track',
         icon: 'fa fa-thumbtack',
-        translate: 'sidebar.nav.SINGLEVIEW'
+        translate: 'sidebar.nav.MENU'
     },
 
 

@@ -12,7 +12,7 @@
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
 import VueI18Next from '@panter/vue-i18next';
-
+import 'element-ui/lib/theme-chalk/index.css';
 import './vendor.js'
 
 import App from './App.vue'

@@ -36,7 +36,8 @@ const PixelAdd = () => import('@/views/Pages/PixelAdd.vue');
 const Mensagens = () => import('@/views/Pages/Mensagens.vue');
 const MensagensAdd = () => import('@/views/Pages/MensagensAdd.vue');
 const Rastreio = () => import('@/views/Pages/Rastreio.vue');
-
+const Cupons = () => import('@/views/Pages/Cupons.vue');
+const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
 
 
 Vue.use(Router)
@@ -128,8 +129,15 @@ export default new Router({
             {
                 path: '/marketing/pixels/edit/:id',
                 component: PixelAdd
-            }
-
+            },
+            {
+                path: '/marketing/cupons',
+                component: Cupons
+            },
+            {
+                path: '/marketing/cupons/add',
+                component: CupomAdd
+            },
 
         ]
     },
