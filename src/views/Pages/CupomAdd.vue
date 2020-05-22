@@ -163,7 +163,7 @@
                       type="datetime"
                       :bootstrapStyling="true"
                       :calendar-button="true"
-                      placeholder="Pick a day"
+                      placeholder="Escolha uma data"
                       :picker-options="pickerOptions1"
                     ></el-date-picker>
                   </div>
