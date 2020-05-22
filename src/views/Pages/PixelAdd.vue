@@ -37,12 +37,17 @@
 </style>
 <template>
   <ContentWrapper>
-    <div class="content-heading">
+    <div class="content-heading" v-show="pixel.nome_pixel.length < 2">
       <span class="fa fa-plus">
         <span class="ml-2"></span>
       </span>Novo Pixel
     </div>
-    <small>Preencha os campos abaixo para adicionar o Pixel.</small>
+    <div class="content-heading" v-show="pixel.nome_pixel.length > 2">
+      <span class="fa fa-edit">
+        <span class="ml-2"></span>
+      </span>Pixel: {{pixel.nome_pixel}}
+    </div>
+    <small v-show="pixel.nome_pixel.length < 2">Preencha os campos abaixo para adicionar o Pixel.</small>
     <!-- START row-->
     <div class="row">
       <div class="col-xl-12">
@@ -200,10 +205,7 @@
                   :class="{'show':pixel.array_produtos_id.length > 0}"
                 >
                   <div class="card">
-                    <prods
-                      :functionClick="selectedProduct"
-                      :arrayAux="arrayAux"
-                    ></prods>
+                    <prods :functionClick="selectedProduct" :arrayAux="pixel.array_produtos_id"></prods>
                   </div>
                 </div>
                 <input
@@ -275,12 +277,11 @@ Vue.use(VeeValidate, {
 
 export default {
   async created() {
-  
     if (this.$route.params.id != undefined) {
-      this.mensagemID = this.$route.params.id;
-      this.MensagemString = await this.getDeCripto(this.mensagemID);
-      console.log(this.MensagemString);
-      this.getPixelByID(this.MensagemString[0]);
+      this.pixelID = this.$route.params.id;
+      this.pixelString = await this.getDeCripto(this.pixelID);
+      console.log(this.pixelString);
+      this.getPixelByID(this.pixelString[0]);
     } else {
       this.checkIfLogged();
     }
@@ -299,7 +300,10 @@ export default {
   },
   data() {
     return {
+      pixelID: '',
+      pixelString: '',
       arrayAux: [],
+     
       pixel: {
         id_usuario: 0,
         nome_pixel: "",
@@ -310,7 +314,7 @@ export default {
         status: 1,
         array_produtos_id: [],
         tipo: 0,
-        google_analytics_id: '',
+        google_analytics_id: ""
       },
       buttonPressed: 0,
       buttonPressedDois: 0,
@@ -412,25 +416,29 @@ export default {
     selectedProduct(id, titulo, image) {
       if (this.pixel.array_produtos_id.length > 0) {
         const LFind = this.pixel.array_produtos_id.find(x => x.id_thuor == id);
-        console.log("find", LFind);
+        //console.log("find", LFind);
         if (LFind != undefined) {
           this.pixel.array_produtos_id.forEach((obj, i) => {
             if (id == obj.id_thuor) {
               this.pixel.array_produtos_id.splice(i, 1);
             }
           });
-          console.log("Updated", this.pixel.array_produtos_id);
+          //console.log("Updated", this.pixel.array_produtos_id);
+           this.arrayAux = this.pixel.array_produtos_id;
           return;
         } else if (LFind == undefined) {
           this.pixel.array_produtos_id.push({ id_thuor: id });
-          console.log("Pushed", this.pixel.array_produtos_id);
+           this.arrayAux = this.pixel.array_produtos_id;
+          //console.log("Pushed", this.pixel.array_produtos_id);
           return;
         }
       } else {
         this.pixel.array_produtos_id.push({ id_thuor: id });
-        console.log("Pushed", this.pixel.array_produtos_id);
+         this.arrayAux = this.pixel.array_produtos_id;
+        //console.log("Pushed", this.pixel.array_produtos_id);
         return;
       }
+     
     },
     removeItem(id) {
       console.log("Removendo ID", id);
@@ -448,7 +456,10 @@ export default {
         .then(res => {
           console.log(res.data);
           this.pixel = res.data;
-          if (this.pixel.array_produtos_id != null & this.pixel.array_produtos_id.length > 2) {            
+          if (
+            this.pixel.array_produtos_id != null &&
+            this.pixel.array_produtos_id.length > 2
+          ) {
             this.pixel.array_produtos_id = JSON.parse(
               this.pixel.array_produtos_id
             );

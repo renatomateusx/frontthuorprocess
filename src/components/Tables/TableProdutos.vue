@@ -459,12 +459,10 @@ export default {
       return produtHashed;
     },
     getSelected(id) {
-      if (this.arrayAux != undefined && this.arrayAux.length > 0) {
-        //this.gridData.forEach((obj, i)=>{
+      if (this.arrayAux != undefined && this.arrayAux.length > 0) {       
           const LFinded=this.arrayAux.find(x => x.id_thuor == id);
           if(LFinded != undefined) return 'selected';
           if(LFinded == undefined) return 'deselected';
-       // })
       }
     }
   }

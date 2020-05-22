@@ -107,6 +107,10 @@ export default new Router({
                 component: UpSellAdd
             },
             {
+                path: '/marketing/upsell/edit/:id',
+                component: UpSellAdd
+            },
+            {
                 path: '/marketing/mensageria',
                 component: Mensagens
             },
@@ -136,6 +140,10 @@ export default new Router({
             },
             {
                 path: '/marketing/cupons/add',
+                component: CupomAdd
+            },
+            {
+                path: '/marketing/cupons/edit/:id',
                 component: CupomAdd
             },
 

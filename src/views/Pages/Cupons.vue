@@ -5,15 +5,14 @@
   }
 }
 @media only screen and (max-width: 1000px) {
-  .hiddenMobile{
+  .hiddenMobile {
     display: none;
   }
-  .expandInMobile{
-    
-    width: 100%!important;
+  .expandInMobile {
+    width: 100% !important;
     margin-top: 5px;
   }
-  .paddingInMobile{
+  .paddingInMobile {
     padding: 10px 20px !important;
   }
 }
@@ -116,8 +115,8 @@ th.active .arrow {
 .padding1010 {
   padding: 10px 10px !important;
 }
-.paddingStatus{
-  padding-left: 25px!important;
+.paddingStatus {
+  padding-left: 25px !important;
 }
 .nomeComprador {
   font-size: 11px !important;
@@ -157,7 +156,7 @@ th.active .arrow {
 }
 .spanStatus {
   border-radius: 50% !important;
-  width: 20px!important;
+  width: 20px !important;
   height: 20px;
   padding: 3px !important;
   font-size: 12px !important;
@@ -165,9 +164,11 @@ th.active .arrow {
 .cursorP {
   cursor: pointer !important;
 }
-.imagemServico{
-  height: 20px!important;
-  width: 80px!important;
+.imagemServico {
+  height: 20px !important;
+  width: 80px !important;
+}
+.expirado {
 }
 </style>
 <template>
@@ -217,22 +218,24 @@ th.active .arrow {
             <thead>
               <th>
                 <strong class="col- pedido" style="top: 2px">
-                  <b>Nome</b>
+                  <b>CÓDIGO</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class=" hiddenMobile padding1010">
+              <th class="hiddenMobile padding1010">
                 <strong class="col pedido">
-                  <b>Serviço</b>
+                  <b>DESCRIÇÃO</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class=" hiddenMobile padding1010">
+              <th class="hiddenMobile padding1010">
                 <strong class="col- pedido">
-                  <b>Status</b>
+                  <b>UTILIZADOS</b>
                 </strong>
                 <span class="arrow"></span>
-              </th>              
+              </th>
+              <th></th>
+              <th></th>
             </thead>
           </table>
         </div>
@@ -240,26 +243,36 @@ th.active .arrow {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, nome_cupom, status, tipo} in dataPerPage"
+                v-for="{id, code, descricao, numero_utilizacao, status, data_fim, data_inicio} in dataPerPage"
                 class="cursorP"
-                v-on:click="SelectCupom(id, nome_cupom)"
+                v-on:click="SelectCupom(id, descricao)"
               >
-                <td  class="col- padding1010">
-                  <router-link :to="{path: '/marketing/pixels/edit/' + getCripto(id, status)}">
-                    <p class="col-md-12 mb-0 numeroPedido">{{nome_cupom}}</p>
+                <td>
+                  <router-link :to="{path: '/marketing/cupons/edit/' + getCripto(id, status)}">
+                    <p class="col-md-12 mb-0 numeroPedido">{{code}}</p>
                   </router-link>
-                  
+                </td>
+                <td class="col- padding1010">
+                  <p class="col-md-12 mb-0 numeroPedido">{{descricao}}</p>
                 </td>
                 <td class="col- padding1010 hiddenMobile">
-                  <img :src="getTipoCupom(tipo)" class="avatar imagemServico">
+                  <p class="col-md-12 mb-0 numeroPedido text-center">{{numero_utilizacao}}</p>
                 </td>
                 <td class="pl-0 hiddenMobile paddingStatus">
                   <div
-                    class="col- spanStatus alert  padding1010 "
+                    class="col- spanStatus alert padding1010"
+                    v-bind="getSituacao(data_fim, data_inicio)"
+                  >
+                  <span class="col- alert padding1010 alert" :class="spanSituacao">{{textSituacao}}</span>
+                  </div>
+                </td>
+                <td class="pl-0 hiddenMobile paddingStatus">
+                  <div
+                    class="col- spanStatus alert padding1010"
                     v-bind:class="getClassStatus(status)"
                   ></div>
                 </td>
-              </tr>            
+              </tr>
             </tbody>
           </table>
         </div>
@@ -294,6 +307,7 @@ import dateFormat from "dateformat";
 import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
+import API_CUPOM from "../../api/cuponsAPI";
 
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
@@ -312,7 +326,7 @@ export default {
     //data: Array
     // columns: Array
   },
- 
+
   created() {
     this.timeAgo = new TimeAgo("pt-BR");
 
@@ -331,6 +345,8 @@ export default {
       timeAgo: "",
       searchQuery: "",
       sortKey: "",
+      spanSituacao: '-',
+      textSituacao: '',
       sortOrders: {},
       login: {
         email: "",
@@ -338,21 +354,20 @@ export default {
         rememberme: false
       },
       selectedCupom: 0,
-      nomeselectedCupom: '',
+      nomeselectedCupom: "",
       gridData: [],
       startRow: 0,
       rowsPerPage: 10,
       pageSizeMenu: [10, 20, 50, 100],
       data: Array,
       pedidosList: {},
-      columns: [        
+      columns: [
         "id",
-        "nome",
+        "descricao",
+        "code",
         "status",
-        "produto_from",
-        "produto_to",
-        "tipo_checkout"
-      ],
+        "utilizados"       
+      ]
     };
   },
   computed: {
@@ -406,17 +421,20 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
-              API_PIXEL.GetPixels()
-                .then(retornoPixel => {
-                  retornoPixel.data.forEach((obj, i) => {
+              API_CUPOM.GetCupons()
+                .then(retornoCupom => {
+                  retornoCupom.data.forEach((obj, i) => {
                     this.gridData.push({
-                              id: obj.id,
-                              nome_cupom: obj.nome_cupom,
-                              status: obj.status,
-                              tipo: obj.tipo
-                            });
+                      id: obj.id,
+                      descricao: obj.descricao,
+                      data_inicio: obj.data_inicio,
+                      data_inicio: obj.data_inicio,
+                      numero_utilizacao: obj.numero_utilizacao || 0,
+                      code: obj.code,
+                      status: obj.status,
+                      tipo: obj.tipo
+                    });
                     //API_PRODUTOS.GetProdutoIDThuor(obj.id_produto_from);
-                      
                   });
                   API_NOTIFICATION.HideLoading();
                 })
@@ -515,26 +533,46 @@ export default {
       this.selectedCupom = id;
       this.nomeselectedCupom = nome;
     },
-    excluirCupomSelecionado(){
-      API_NOTIFICATION.showConfirmDialog('EXCLUSÃO', 'Deseja realmente excluir ' + this.nomeselectedCupom + '?', 'warning', this.Excluir);
+    excluirCupomSelecionado() {
+      API_NOTIFICATION.showConfirmDialog(
+        "EXCLUSÃO",
+        "Deseja realmente excluir " + this.nomeselectedCupom + "?",
+        "warning",
+        this.Excluir
+      );
     },
-    Excluir(){
-      API_PIXEL.DeletePixelByID(this.selectedCupom)
-      .then((resExclude)=>{
-        API_NOTIFICATION.showNotification('Excluído com Sucesso!', 'success');
-        setTimeout(() => {
-          this.checkIfLogged();
-        }, 1000);
-      })
-      .catch((error)=>{
-        console.log("Erro ao excluir o UpSell " + this.nomeselectedCupom, error);
-      })
+    Excluir() {
+      API_CUPOM.DeleteCupomByID(this.selectedCupom)
+        .then(resExclude => {
+          API_NOTIFICATION.showNotification("Excluído com Sucesso!", "success");
+          setTimeout(() => {
+            this.checkIfLogged();
+          }, 1000);
+        })
+        .catch(error => {
+          console.log(
+            "Erro ao excluir o UpSell " + this.nomeselectedCupom,
+            error
+          );
+        });
     },
-    getTipoCupom(id){
-      if(id == 1) return "https://github.bubbstore.com/svg/facebook.svg";
-      if(id == 2) return "https://github.bubbstore.com/svg/google_ads.svg";
+    getSituacao(data_fim, data_inicio) {
+      const LHoje = moment().format();
+      const LData = moment(data_fim).format();
+      const LInicio = moment(data_inicio).format();
+      if (LInicio > LHoje) {
+        this.spanSituacao = 'alert-info';
+        this.textSituacao = "A INICIAR";        
+      }
+      if (LData < LHoje) {
+        this.spanSituacao = 'alert-warning';
+        this.textSituacao = "EXPIRADO";
+      }
+      if (LData >= LHoje) {
+        this.spanSituacao = 'alert-success';
+        this.textSituacao = "VIGENTE";
+      }
     }
   }
-
 };
 </script>

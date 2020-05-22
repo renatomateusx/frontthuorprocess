@@ -41,12 +41,17 @@
 </style>
 <template>
   <ContentWrapper>
-    <div class="content-heading">
+    <div class="content-heading" v-show="mensageria.nome.length < 2">
       <span class="fa fa-plus">
         <span class="ml-2"></span>
       </span>Nova Mensagem
     </div>
-    <small>Preencha os campos abaixo para criar suas mensagens.</small>
+     <div class="content-heading" v-show="mensageria.nome.length > 2">
+      <span class="fa fa-edit">
+        <span class="ml-2"></span>
+      </span>Mensagem: {{mensageria.nome}}
+    </div>
+    <small  v-show="mensageria.nome.length < 2">Preencha os campos abaixo para criar suas mensagens.</small>
     <!-- START row-->
     <div class="row">
       <div class="col-xl-12">
@@ -81,7 +86,7 @@
                     id="buttonCheckout"
                     :class="{'opcaoSelecionada': mensageria.tipo_mensagem == 1, 'opcaoDeselecionada': mensageria.tipo_mensagem !==1} "
                     v-on:click="selecionaTipoMensagem(1)"
-                    class="btn btn-secondary btn-lg col-md-4 p-0 pl-0 pd-0 pt-0 pb-0 ml-3"
+                    class="btn btn-secondary btn-lg col-md-3 p-0 pl-0 pd-0 pt-0 pb-0 ml-3"
                   >
                     <span class="fa fa-envelope">
                       <span class="ml-1"></span> E-mail
@@ -110,7 +115,7 @@
                     id="buttonCheckout"
                     :class="{'opcaoSelecionada': mensageria.tipo_mensagem == 3, 'opcaoDeselecionada': mensageria.tipo_mensagem !==3} "
                     v-on:click="selecionaTipoMensagem(3)"
-                    class="btn btn-secondary btn-lg col-md-4 p-0 pl-0 pd-0 pt-0 pb-0 ml-4"
+                    class="btn btn-secondary btn-lg col-md-3 p-0 pl-0 pd-0 pt-0 pb-0 ml-4"
                   >
                     <span class="fab fa-whatsapp">
                       <span class="ml-1"></span> WhatsApp

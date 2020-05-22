@@ -56,6 +56,7 @@ export default Object.freeze({
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
   PATH_GET_UPSELL: 'upsells/GetUpSells',
+  PATH_GET_UPSELL_BY_ID: 'upsells/GetUpSellsByID',
   PATH_SAVE_UPSELL: 'upsells/SaveUpSells',
   PATH_DELETE_UPSELL: 'upsells/DeleteUpSellByID',
   PATH_GET_UPSELL_BY_PRODUCT_ID: 'upsells/GetUpSellByProductID',
@@ -76,6 +77,12 @@ export default Object.freeze({
   PATH_SAVE_LEAD: 'clientes/SaveLead',
   
   PATH_PAY_CHECKOUT_PAY_U: 'checkouts/DoPayCardPayU',
+
+  PATH_GET_CUPOM: 'cupons/GetCupons',
+  PATH_GET_CUPOM_BY_ID: 'cupons/GetCupomByID',
+  PATH_SAVE_CUPOM: 'cupons/SaveCupom',
+  PATH_DELETE_CUPOM: 'cupons/DeleteCupomByID',
+  PATH_GET_CUPOM_BY_PRODUCT_ID: 'cupons/GetCupomByProductID',
   
   
 

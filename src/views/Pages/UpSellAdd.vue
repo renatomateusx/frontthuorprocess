@@ -34,12 +34,17 @@
 </style>
 <template>
   <ContentWrapper>
-    <div class="content-heading">
+    <div class="content-heading" v-show="this.novoupsell.nome.length < 2">
       <span class="fa fa-plus">
         <span class="ml-2"></span>
       </span>Novo UpSell
     </div>
-    <small>Preencha os campos abaixo para criar o UpSell.</small>
+    <div class="content-heading" v-show="this.novoupsell.nome.length > 1">
+      <span class="fa fa-edit">
+        <span class="ml-2"></span>
+      </span>UpSell: {{this.novoupsell.nome}}
+    </div>
+    <small v-show="this.novoupsell.nome.length > 1">Preencha os campos abaixo para criar o UpSell.</small>
     <!-- START row-->
     <div class="row">
       <div class="col-xl-12">
@@ -74,9 +79,9 @@
                   class="btn btn-secondary btn-lg col-md-12 p-0 pl-0 pd-0 pt-0 pb-0"
                 >{{lhtml}}</button>
 
-                <div class="collapse" id="collapseExample">
+                <div class="collapse" id="collapseExample" :class="{'show': novoupsell.id_produto_selecionado_um.length > 0}">  
                   <div class="card">
-                    <prods :functionClick="SelectedValueProdutoUm"></prods>
+                    <prods :functionClick="SelectedValueProdutoUm" :arrayAux="arrayAuxUm"></prods>
                   </div>
                 </div>
                 <input
@@ -101,9 +106,9 @@
                   class="btn btn-secondary btn-lg col-md-12 p-0 pl-0 pd-0 pt-0 pb-0"
                 >{{lhtml}}</button>
 
-                <div class="collapse" id="collapseExampleDois">
+                <div class="collapse" id="collapseExampleDois" :class="{'show': novoupsell.id_produto_selecionado_dois.length > 0}">
                   <div class="card">
-                    <prods :functionClick="SelectedValueProdutoDois"></prods>
+                    <prods :functionClick="SelectedValueProdutoDois" :arrayAux="arrayAuxDois"></prods>
                   </div>
                 </div>
                 <input
@@ -255,14 +260,22 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import Prods from "../../components/Tables/TableProdutos";
 import API_MKT from "../../api/marketingAPI";
+import Hashids from "hashids";
+
 // Tag inputs
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
 
 export default {
-  created() {
-    this.getProdutos();
+  async created() {
+    if (this.$route.params.id != undefined) {
+      this.upSellID = this.$route.params.id;
+      this.upSellIDString = await this.getDeCripto(this.upSellID);
+      this.getUpSellByID(this.upSellIDString[0]);
+    } else {
+      this.checkIfLogged();
+    }
   },
   mounted() {
     this.$validator.localize("pt", {
@@ -278,6 +291,10 @@ export default {
   },
   data() {
     return {
+      arrayAuxUm: [],
+      arrayAuxDois: [],
+      upSellIDString: "",
+      upSellID: "",
       novoupsell: {
         nome: "",
         status: 1,
@@ -327,7 +344,7 @@ export default {
               });
               return;
             }
-            console.log("Form Submitted!");
+            
             self.salvarUpSell();
             return;
           }
@@ -358,7 +375,7 @@ export default {
     addTag(newTag) {
       this.vueSelectMultipleValue = newTag;
     },
-    getProdutos() {
+    checkIfLogged() {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
@@ -379,6 +396,43 @@ export default {
           if (error.response.status === 401) {
             this.$router.go("login");
           }
+        });
+    },
+    getDeCripto(crypted) {
+      return new Promise((resolve, reject) => {
+        try {
+          const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+          var LHash = hashids.decode(crypted);
+          resolve(LHash);
+        } catch (error) {
+          API_NOTIFICATION.showNotificationW(
+            "Oops!",
+            "Parâmetros Inválidos na URL",
+            "error"
+          );
+          reject(error);
+        }
+      });
+    },
+    getUpSellByID(id) {
+      API_NOTIFICATION.ShowLoading();
+      API_MKT.GetUpSellsByID(id)
+        .then(res => {
+          this.novoupsell = res.data;
+          
+          this.novoupsell.id_produto_selecionado_um = this.novoupsell.id_produto_from;
+          this.novoupsell.id_produto_selecionado_dois = this.novoupsell.id_produto_to;
+          this.arrayAuxUm.push({
+            id_thuor: this.novoupsell.id_produto_selecionado_um
+          });
+          this.arrayAuxDois.push({
+            id_thuor: this.novoupsell.id_produto_selecionado_dois
+          });
+
+          API_NOTIFICATION.HideLoading();
+        })
+        .catch(error => {
+          console.log("Erro ao pegar o pixel", error);
         });
     },
     collapse(id, idComando, btn) {
