@@ -16,7 +16,7 @@
         <div class="row">
           <div class="col-xl-8">
             <h4>Compra realizada com sucesso!</h4>
-
+            <small>Você vai receber um e-mail com os detalhes do seu pedido.</small>
             <div class>
               <div class>
                 <h4 class="mt-4 mb-0">
@@ -31,6 +31,7 @@
               </div>
               <small>Clique no número do pedido para ver detalhes da compra.</small>
             </div>
+            <up-sell-card @update="getDadosCompra()" :noCheckout="2"></up-sell-card>
             <h4 class="mt-4">Informação Importante:</h4>
             <p
               class="mt-2 text-justify"
@@ -57,16 +58,21 @@ import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 // Import stylesheet
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
-
+import UpSellCard from "../../components/Cart/UpSellCard";
 export default {
   template: `#templateObrigado`,
   created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
+  },
+  components: {
+    UpSellCard
   },
   data() {
     return {
@@ -83,13 +89,12 @@ export default {
       if (sessionStorage.getItem("dadosCliente") != null) {
         this.dadosCliente = JSON.parse(sessionStorage.getItem("dadosCliente"));
         this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-        //console.log(this.dadosCliente);
-        //console.log(this.dadosStore.order.order_number);
       }
       if (sessionStorage.getItem("DadosLoja") != null) {
         this.DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
-        //console.log(this.DadosLoja);
       }
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase");
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase");
       API_NOTIFICATION.HideLoading();
     },
     copyToClip(comp) {
@@ -110,12 +115,6 @@ export default {
       }
       textToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
-    },
-    downloadBoleto() {
-      const url = this.dadosCliente.dadosCompra.transaction_details
-        .external_resource_url;
-      //console.log("Download Boleto", url);
-      this.openInNewTab(url);
     },
     toCamelCase(str) {
       var LStr = str.split("");
@@ -159,7 +158,7 @@ export default {
 }
 @media only screen and (max-width: 767px) {
   .btnDownload {
-    width: 100%!important;
+    width: 100% !important;
   }
 }
 </style>

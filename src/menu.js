@@ -5,10 +5,10 @@ const Menu = [
     },
     {
         name: 'Página Inicial',
-        path: 'home',
+        path: '/home',
         icon: 'icon-grid',
         translate: 'sidebar.nav.SINGLEVIEW'
-    },    
+    },
     {
         name: 'Produtos',
         path: 'produtos',
@@ -16,7 +16,7 @@ const Menu = [
         submenu: [{
             name: 'Ver Todos',
             translate: 'sidebar.nav.SUBMENU',
-            path: 'todos'
+            path: '/produtos/todos'
         }]
     },
     {
@@ -24,7 +24,7 @@ const Menu = [
         icon: 'fa fa-donate',
         translate: 'sidebar.nav.MENU',
         label: { value: 1, color: 'info' },
-        path: 'pedidos'
+        path: '/pedidos'
         // submenu: [{
         //     name: 'Submenu',
         //     translate: 'sidebar.nav.SUBMENU',
@@ -56,8 +56,31 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-donate',
             path: '/marketing/upsell'
+        }, {
+            name: 'Mensagens',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-chat',
+            path: '/marketing/mensageria'
+        }, {
+            name: 'Pixel',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-donate',
+            path: '/marketing/pixels'
+        }, {
+            name: 'Cupons',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-tag',
+            path: '/marketing/cupons'
         }]
     },
+    {
+        name: 'Rastrear Encomenda',
+        path: '/track',
+        icon: 'fa fa-thumbtack',
+        translate: 'sidebar.nav.MENU'
+    },
+
+
 ];
 
 export default Menu;

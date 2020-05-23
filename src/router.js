@@ -26,11 +26,18 @@ const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
 const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
 const MercadoPago = () => import('@/components/Checkouts/MercadoPago.vue');
 const PagSeguro = () => import('@/components/Checkouts/PagSeguro.vue');
+const PayU = () => import('@/components/Checkouts/PayU.vue');
 const IntegracaoPlataforma = () => import('@/views/Pages/IntegracaoPlataforma.vue');
 const IntegracaoShopify = () => import('@/views/Pages/IntegracaoShopify.vue');
 const UpSell = () => import('@/views/Pages/UpSell.vue')
 const UpSellAdd = () => import('@/views/Pages/UpSellAdd.vue');
-
+const Pixels = () => import('@/views/Pages/Pixels.vue');
+const PixelAdd = () => import('@/views/Pages/PixelAdd.vue');
+const Mensagens = () => import('@/views/Pages/Mensagens.vue');
+const MensagensAdd = () => import('@/views/Pages/MensagensAdd.vue');
+const Rastreio = () => import('@/views/Pages/Rastreio.vue');
+const Cupons = () => import('@/views/Pages/Cupons.vue');
+const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
 
 
 Vue.use(Router)
@@ -47,11 +54,11 @@ export default new Router({
         component: Login
     },
     {
-        path: 'produtos',
+        path: '/',
         component: Layout,
         children: [
             {
-                path: '/todos',
+                path: '/produtos/todos',
                 component: Produtos
             },
             {
@@ -98,7 +105,48 @@ export default new Router({
             {
                 path: '/marketing/upsell/add',
                 component: UpSellAdd
-            }
+            },
+            {
+                path: '/marketing/upsell/edit/:id',
+                component: UpSellAdd
+            },
+            {
+                path: '/marketing/mensageria',
+                component: Mensagens
+            },
+            {
+                path: '/marketing/mensageria/add',
+                component: MensagensAdd
+            },
+            {
+                path: '/marketing/mensageria/edit/:id',
+                component: MensagensAdd
+            },
+            {
+                path: '/marketing/pixels',
+                component: Pixels
+            },
+            {
+                path: '/marketing/pixels/add',
+                component: PixelAdd
+            },
+            {
+                path: '/marketing/pixels/edit/:id',
+                component: PixelAdd
+            },
+            {
+                path: '/marketing/cupons',
+                component: Cupons
+            },
+            {
+                path: '/marketing/cupons/add',
+                component: CupomAdd
+            },
+            {
+                path: '/marketing/cupons/edit/:id',
+                component: CupomAdd
+            },
+
         ]
     },
     {
@@ -125,13 +173,16 @@ export default new Router({
         path: '/obrigado-boleto',
         component: ObrigadoBoleto
     },
-
-    // Not found route
     {
-        path: '*',
-        redirect: '/'
+        path: '/track',
+        component: Rastreio
     },
     {
+        path: '/track/:id',
+        component: Rastreio
+    },
+    {
+
         path: '/',
         component: Layout,
         children: [
@@ -141,18 +192,27 @@ export default new Router({
             }, {
                 path: '/configs/checkouts/mercadopago',
                 component: MercadoPago
-            },{
+            }, {
                 path: '/configs/checkouts/pagseguro',
                 component: PagSeguro
             }, {
+                path: '/configs/checkouts/payu',
+                component: PayU
+            }, {
                 path: '/configs/integracoes',
                 component: IntegracaoPlataforma
-            },{
+            }, {
                 path: '/configs/integracoes/shopify',
                 component: IntegracaoShopify
             },
 
         ]
+    },
+
+    // Not found route
+    {
+        path: '*',
+        redirect: '/'
     },
     ]
 })

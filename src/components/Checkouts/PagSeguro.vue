@@ -126,12 +126,12 @@
                   <option value="0">Não</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="form-group" style="display:none;">
                 <label class="col-form-label">Chave Pública *</label>
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.chave_publica')}"
                   v-model="checkout_form.chave_publica"
-                  v-validate="'required'"
+                  v-validate="{'required': false}"
                   type="text"
                   name="chave_publica"
                 />
@@ -213,7 +213,7 @@ export default {
         processa_automaticamente: 1,
         status: 1,
         ativa_boleto: 1,
-        gateway: 0,
+        gateway: 2,
         id_usuario: 0
       }
     };
@@ -223,7 +223,7 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_CHECKOUT.GetIntegracaoCheckoutByID(1)
+          API_CHECKOUT.GetIntegracaoCheckoutByID(2)
             .then(resCheckout => {
               this.checkout = resCheckout.data;
               this.checkout_form.status = this.checkout.status;
@@ -260,11 +260,7 @@ export default {
       return "";
     },
     getNomeGateway() {
-      if (this.checkout.gateway == 1) {
-        return " Mercado Pago ";
-      }
-
-      return " Checkout ";
+      return 'Pag Seguro';
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
@@ -272,11 +268,10 @@ export default {
           this.salvarCheckout();
           return;
         }
-        
       });
     },
     salvarCheckout() {
-      API_NOTIFICATION.ShowLoading();      
+      API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.InsertCheckoutMP(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();
@@ -291,7 +286,7 @@ export default {
     },
     updateStatusMP() {
       API_NOTIFICATION.ShowLoading();
-      
+
       API_CHECKOUT.UpdateStatusMP(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();
@@ -306,7 +301,7 @@ export default {
     },
     UpdateAtivaBoletoMP() {
       API_NOTIFICATION.ShowLoading();
-      
+
       API_CHECKOUT.UpdateAtivaBoletoMP(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();
@@ -322,7 +317,7 @@ export default {
     },
     UpdateAtivaAutoProcessamentoMP() {
       API_NOTIFICATION.ShowLoading();
-      
+
       API_CHECKOUT.UpdateAutoProcessamentoMP(this.checkout_form)
         .then(res => {
           //this.checkIfLogged();

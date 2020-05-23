@@ -34,7 +34,7 @@
     <strong>
       Todos os checkouts que fazemos integração estão aqui.
       <br />
-      Caso queira integrar com outro gateway de pagamento, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.
+      <small>Caso queira integrar com outro gateway de pagamento, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.</small>
     </strong>
 
     <div class="row mt-3" v-for="{id, nome} in checkoutList" :key="id">
@@ -141,10 +141,14 @@ export default {
       if (id == 2) {
         this.$router.push("/configs/checkouts/pagseguro");
       }
+      if (id == 3) {
+        this.$router.push("/configs/checkouts/payu");
+      }
     },
     getImageIntegracaoCheckout(id) {
       if (id == 1) return "/img/mercadopago.png";
       else if (id == 2) return "/img/pagseguro.png";
+      else if (id == 3) return "/img/payu.png";
       return "";
     },
     getApelidoByID(id) {

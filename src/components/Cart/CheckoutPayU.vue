@@ -197,8 +197,8 @@
   margin: 5px;
   cursor: pointer !important;
   border-radius: 10px;
-  margin: 0 auto !important;
-  margin-bottom: 10px !important;
+  margin: 0 auto!important;
+  margin-bottom: 10px!important;
 }
 .smallInforFormaPagamentoBoleto {
   padding: 5px;
@@ -247,7 +247,7 @@
   white-space: pre-wrap;
 }
 .imageCard {
-  width: 25px !important;
+  /*width: 25px !important;*/
   height: 25px !important;
 }
 .valorTotalCollapse {
@@ -414,8 +414,6 @@
                       </div>
                     </div>
                   </div>
-                  <!-- CUPOM CARD -->
-                  <cupom-card @recalcula="getTotal()"></cupom-card>
                 </div>
               </div>
             </div>
@@ -753,7 +751,7 @@
                   <small class="textInformation col-md-10">Escolha abaixo uma forma de pagamento.</small>
                 </p>
                 <p class="mt-5 col-md-12">
-                  <small class>
+                  <small>
                     Processado por:
                     <img
                       v-bind:src="getImageProcessor()"
@@ -768,7 +766,7 @@
                   <button
                     type="button"
                     v-on:click="formaPagamentoSelecionada('creditCard')"
-                    class="btn btn-secondary col-md-11 pull-left float-left btnFormaPagamentoSelecionada mb-2"
+                    class="btn btn-secondary col-md-11 pull-left float-left btnFormaPagamentoSelecionada"
                     :class="getClassSelected('creditCard')"
                   >
                     <p>
@@ -803,7 +801,7 @@
                       </label>
                       <div class="col-md-7">
                         <input
-                          @input="verificaDigitosCartao()"
+                          @input="maskCardNumber()"
                           class="form-control required"
                           autocomplete="cc-number"
                           type="text"
@@ -885,7 +883,7 @@
                     </div>
 
                     <div class="form-group row mt-3">
-                      <div class="col-xl-12">
+                      <div class="col-md-11">
                         <button
                           class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
                           v-on:click="validarStep(currentStep)"
@@ -922,7 +920,7 @@
                   <div class="card-body minusmargintop" v-show="formaPagamento =='bolbradesco'">
                     <div class="form-group row mt-2">
                       <small
-                        class="text-justify col-md-12 smallInforFormaPagamentoBoleto"
+                        class="text-justify col-md-11 smallInforFormaPagamentoBoleto"
                       >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</small>
                     </div>
                     <div class="form-group row mt-2">
@@ -952,85 +950,6 @@
         <!-- END STEP 3-->
       </div>
     </div>
-    <div id="formPayMP">
-      <form action="/processar_pagamento" method="post" id="pay" name="pay" class="hidden">
-        <fieldset>
-          <input type="text" name="description" id="description" v-bind:value="getNomeFatura()" />
-          <input
-            name="transaction_amount"
-            id="transaction_amount"
-            v-bind:value="formatPrice(granTotal)"
-          />
-          <input
-            :value="card_number.replace(/ /g,'')"
-            type="text"
-            id="cardNumber"
-            data-checkout="cardNumber"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="cardholderName"
-            :value="nome_titular"
-            data-checkout="cardholderName"
-          />
-          <input
-            type="text"
-            id="cardExpirationMonth"
-            data-checkout="cardExpirationMonth"
-            :value="getValidadeCartao().mes"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="cardExpirationYear"
-            :value="getValidadeCartao().ano"
-            data-checkout="cardExpirationYear"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="securityCode"
-            v-model="codigo_seguranca"
-            data-checkout="securityCode"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <select id="installments" v-model="parcelas" class="form-control" name="installments">
-            <option v-bind:value="parcelas" selected="selected"></option>
-          </select>
-          <select id="docType" data-checkout="docType">
-            <option value="CPF" selected="selected">CPF</option>
-          </select>
-          <input type="text" id="docNumber" v-model="cpf_titular" data-checkout="docNumber" />
-          <input type="email" id="email" name="email" v-model="email" />
-          <input type="hidden" name="payment_method_id" v-model="payment_id" id="payment_method_id" />
-        </fieldset>
-      </form>
-    </div>
   </div>
 </template>
 <script>
@@ -1043,19 +962,22 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
-// Import stylesheet
+import API_CHECKOUT_PAYU from "../../api/checkoutPayUAPI";
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import router from "../../router.js";
+import Hashids from "hashids";
+import dateFormat from "dateformat";
+import constantes from "../../api/constantes";
 import UpSellCard from "../../components/Cart/UpSellCard";
-import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
-import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 import API_CLIENTES from "../../api/clientesAPI";
-import CupomCard from "../../components/Cart/CupomCard";
-
+import md5 from "md5";
+import creditCardType from "credit-card-type";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1072,8 +994,9 @@ Vue.mixin({
 });
 
 export default {
-  name: "CheckoutMP",
+  name: "CheckoutPayU",
   created() {
+    console.log("Checkout PayU ");
     if (sessionStorage.getItem("fretes") != null) {
       this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
       //console.log(fretes);
@@ -1082,8 +1005,7 @@ export default {
     this.checkURL();
   },
   components: {
-    UpSellCard,
-    CupomCard
+    UpSellCard
   },
   computed: {},
   data() {
@@ -1136,7 +1058,10 @@ export default {
       granDesconto: 0,
       granQuantity: 0,
       granSubTotal: 0,
-      descontoCupom: 0
+      public_key: "",
+      reference_id: "",
+      signature: "",
+      descontoCupom: 0,
     };
   },
   mounted() {},
@@ -1280,6 +1205,7 @@ export default {
     },
     consultaCEP() {
       if (this.CEP.length >= 8) {
+        API_NOTIFICATION.ShowLoading();
         this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
         UTILIS_API.VIA_CEP(this.CEP)
           .then(retornoCEP => {
@@ -1289,6 +1215,7 @@ export default {
             this.estado = retornoCEP.uf;
             this.complemento = retornoCEP.complemento;
             this.destinatario = this.nome_completo;
+            API_NOTIFICATION.HideLoading();
           })
           .catch(error => {
             this.endereco = "";
@@ -1301,6 +1228,7 @@ export default {
               "Erro ao tentar pegar dados do endereço do usuário",
               error
             );
+            API_NOTIFICATION.HideLoading();
           });
       } else {
         this.endereco = "";
@@ -1357,7 +1285,7 @@ export default {
         }
       } else if (this.currentStep == 3) {
         ///Verifica se o gateway é o MERCADO PAGO
-        if (this.DadosCheckout.gateway == 1) {
+        if (this.DadosCheckout.gateway == 3) {
           this.pay();
         }
       }
@@ -1464,9 +1392,10 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
-          if (this.DadosCheckout.gateway == 1) {
+          if (this.DadosCheckout.gateway == 3) {
             //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
             this.iniciaCheckout();
+            this.getParcelas();
           }
         })
         .catch(error => {
@@ -1483,40 +1412,55 @@ export default {
       return LVal;
     },
     getImageCard() {
-      if (this.payment_id !== undefined && this.payment_id.length > 1) {
-        let bandeira = this.payment_id;
-        if (bandeira == "master") bandeira = "mastercard";
-        if (bandeira == "creditCard") bandeira = "visa";
-        return (
-          "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
-        );
-      }
-    },
-    verificaDigitosCartao() {
-      if (this.DadosCheckout.gateway == 1) {
-        const binCard = this.card_number.replace(/ /g, "");
-        if (binCard.length >= 6) {
-          let bin = binCard.substring(0, 6);
-          window.Mercadopago.getPaymentMethod(
-            {
-              bin: bin
-            },
-            (status, response) => {
-              if (status == 200) {
-                this.payment_id = response[0].id;
-                if (document.getElementById("dropParcelas").length < 2) {
-                  this.getParcelas();
-                }
-                this.setParcelas();
-              } else {
-                alert(`payment method info error: ${response}`);
-              }
-            }
+      if (this.card_number.replace(/ /g, "").length > 0) {
+        var bandeira =
+          creditCardType(this.card_number.replace(/ /g, ""))[0].type || "";
+        if (
+          bandeira == "maestro" ||
+          bandeira == "unionpay" ||
+          bandeira == "mir"
+        )
+          return "/img/credit-card.png";
+        if (bandeira == "diners-club") bandeira = "diners";
+        if (bandeira == "american-express") bandeira = "amex-american-express";
+        if (bandeira != "") {
+          return (
+            "http://github.bubbstore.com/formas-de-pagamento/" +
+              bandeira +
+              ".svg" || "/img/credit-card.png"
           );
+        } else {
+          return "img/credit-card.png";
         }
+      } else {
+        return "img/credit-card.png";
       }
-      this.maskCardNumber();
     },
+    // verificaDigitosCartao() {
+    //   if (this.DadosCheckout.gateway == 1) {
+    //     const binCard = this.card_number.replace(/ /g, "");
+    //     if (binCard.length >= 6) {
+    //       let bin = binCard.substring(0, 6);
+    //       window.Mercadopago.getPaymentMethod(
+    //         {
+    //           bin: bin
+    //         },
+    //         (status, response) => {
+    //           if (status == 200) {
+    //             this.payment_id = response[0].id;
+    //             if (document.getElementById("dropParcelas").length < 2) {
+    //               this.getParcelas();
+    //             }
+    //             this.setParcelas();
+    //           } else {
+    //             alert(`payment method info error: ${response}`);
+    //           }
+    //         }
+    //       );
+    //     }
+    //   }
+    //   this.maskCardNumber();
+    // },
     setPaymentMethod(status, response) {
       //console.log("Response", response);
       if (status == 200) {
@@ -1559,7 +1503,7 @@ export default {
       if (sessionStorage.getItem("cart") != null) {
         this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
       }
-      if (sessionStorage.getItem("descontoCupom") != null) {
+      if(sessionStorage.getItem("descontoCupom") != null){
         this.descontoCupom = parseFloat(sessionStorage.getItem("desc"));
       }
       if (this.produtosCart != null) {
@@ -1606,50 +1550,62 @@ export default {
       return this.fretes;
     },
     iniciaCheckout() {
-      if (this.DadosCheckout.gateway == 1) {
-        this.ImageProcessor =
-          "http://github.bubbstore.com/gateways-e-adquirentes/mercado-pago-icon.svg";
-        window.Mercadopago.setPublishableKey(this.DadosCheckout.chave_publica);
-        //console.log(Mercadopago.getIdentificationTypes());
+      if (this.DadosCheckout.gateway == 3) {
+        this.ImageProcessor = "https://github.bubbstore.com/svg/payu.svg";
       }
     },
     getParcelas() {
       var self = this;
-      window.Mercadopago.getInstallments(
-        {
-          payment_method_id: this.payment_id,
-          amount: this.granTotal
-        },
-        function(status, response) {
-          if (status == 200) {
-            document.getElementById("dropParcelas").options.length = 0;
-            response[0].payer_costs.forEach(installment => {
-              let opt = document.createElement("option");
-              opt.text = installment.recommended_message;
-              opt.value = installment.installments;
-              opt.id = "parcel_" + installment.installments;
-              document.getElementById("dropParcelas").appendChild(opt);
-              setTimeout(() => {
-                document.getElementById("dropParcelas").selectedIndex = 0;
-                document.getElementById("dropParcelas").value = 1;
-                self.parcelas = 1;
-              }, 1000);
-            });
-          } else {
-            console.log(`installments method info error: ${response}`);
-          }
-        }
-      );
-    },
-    setParcelas() {
+      var arParcel = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+      document.getElementById("dropParcelas").options.length = 0;
+      arParcel.forEach((obj, i) => {
+        const LParcel = obj;
+        let opt = document.createElement("option");
+        opt.text = "Desejo dividir em " + LParcel + " Parcela(s)";
+        opt.value = LParcel;
+        opt.id = "parcel_" + LParcel;
+        document.getElementById("dropParcelas").appendChild(opt);
+      });
       setTimeout(() => {
         document.getElementById("dropParcelas").selectedIndex = 0;
         document.getElementById("dropParcelas").value = 1;
-        this.parcelas = 1;
+        self.parcelas = 1;
       }, 1000);
     },
+    setParcelas() {
+      var self = this;
+      setTimeout(() => {
+        document.getElementById("dropParcelas").selectedIndex = 0;
+        document.getElementById("dropParcelas").value = 1;
+        self.parcelas = 1;
+      }, 1000);
+    },
+    randomString(length, chars) {
+      var result = "";
+      for (var i = length; i > 0; --i)
+        result += chars[Math.floor(Math.random() * chars.length)];
+      return result;
+    },
+    getSignature() {
+      this.reference_id = this.randomString(
+        10,
+        "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      );
+      this.signature = md5(
+        this.DadosCheckout.api_key +
+          "~" +
+          this.DadosCheckout.merchan_id +
+          "~" +
+          this.reference_id +
+          "~" +
+          this.granTotal +
+          "~BRL"
+      );
+    },
     getDadosPagamentoTransacao() {
+      this.getSignature();
       var transacao = {
+        token: this.DadosCheckout.token_acesso,
         dadosComprador: {
           nome_completo: this.removeAcento(this.nome_completo),
           email: this.email,
@@ -1681,90 +1637,185 @@ export default {
         dadosLoja: this.dadosLoja,
         dadosCheckout: this.DadosCheckout,
         paymentData: {
-          transaction_amount: this.formatPrice(this.granTotal),
-          token: this.cardToken,
-          description: this.getNomeFatura(),
-          installments: this.parcelas,
-          payment_method_id: this.payment_id,
-          payer: {
-            email: this.email
-          }
+          language: "pt",
+          command: "SUBMIT_TRANSACTION",
+          merchant: {
+            apiLogin: this.DadosCheckout.api_login,
+            apiKey: this.DadosCheckout.api_key
+          },
+          transaction: {
+            order: {
+              accountId: this.DadosCheckout.account_id,
+              referenceCode: this.reference_id,
+              description: this.getNomeFatura(),
+              language: "pt",
+              notifyUrl: "https://api.thuor.com/webhooks/webhookpayu",
+              signature: this.signature,
+              shippingAddress: {
+                country: "BR"
+              },
+              buyer: {
+                fullName: this.nome_completo,
+                emailAddress: this.email,
+                dniNumber: this.cpf.replace(/[-.]/g, ""),
+                shippingAddress: {
+                  street1: this.removeAcento(this.endereco),
+                  city: this.cidade,
+                  state: this.estado,
+                  country: "BR",
+                  postalCode: this.CEP.replace(/[-.]/g, ""),
+                  phone: this.telefone.replace(/[()-]/g, "").replace(/ /g, "")
+                }
+              },
+              additionalValues: {
+                TX_VALUE: {
+                  value: this.granTotal,
+                  currency: "BRL"
+                }
+              }
+            },
+            creditCard: {
+              number: this.card_number.replace(/ /g, ""),
+              securityCode: this.codigo_seguranca,
+              expirationDate:
+                this.getAnoValidadeCartao() +
+                "/" +
+                this.getValidadeCartao().mes,
+              name: this.nome_titular
+            },
+            type: "AUTHORIZATION_AND_CAPTURE",
+            paymentMethod: UTILIS_API.GetCardType(
+              this.card_number.replace(/ /g, "")
+            ),
+            paymentCountry: "BR",
+            payer: {
+              fullName: this.nome_titular,
+              emailAddress: this.email
+            },
+            ipAddress: UTILIS_API.getIPRequest().ip,
+            cookie: this.randomString(
+              255,
+              "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            ),
+            userAgent: navigator.userAgent.split("/")[0],
+            extraParameters: {
+              INSTALLMENTS_NUMBER: this.parcelas,
+              RESPONSE_URL: this.dadosLoja.url_loja
+            }
+          },
+          test: false
         }
       };
+      //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
       const LCripto = btoa(JSONString);
-
       return LCripto;
     },
-    async iniciaPagamentoBackEnd(status, response) {
-      var LRouter = router;
-      if (status != 200 && status != 201) {
-        //console.log("Não foi possível gerar o token", response.message);
-        window.Mercadopago.clearSession();
-        API_NOTIFICATION.showNotificationW(
-          "Oops!",
-          "Não foi possível completar a ação. Tente novamente!",
-          "warning"
-        );
-      } else {
-        this.cardToken = response.id;
-        //while (this.try == false) {
-        ///console.log(this.cardToken);
-        const LCripto = await this.getDadosPagamentoTransacao();
-        sessionStorage.setItem("LCrypto", LCripto);
-        API_NOTIFICATION.ShowLoading();
-        API_CHECKOUT.DoPayBackEnd(LCripto)
-          .then(retornoPay => {
-            if (
-              retornoPay.data.status != undefined &&
-              (retornoPay.data.status.toUpperCase() == "REJECTED" ||
-                retornoPay.data.status.toUpperCase() == "CANCELED" ||
-                retornoPay.data.status.toUpperCase() == "VACATED")
-            ) {
-              API_NOTIFICATION.showNotificationW(
-                "Oops!",
-                "Pagamento Rejeitado. Por favor, tente novamente.",
-                "error"
-              );
-              return;
-            }
-            var DadosCliente = {
-              nome: this.nome_completo,
-              dadosCompra: retornoPay.data
-            };
-            sessionStorage.setItem("TipoCheck", "ca");
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
-            window.Mercadopago.clearSession();
-            API_NOTIFICATION.HideLoading();
-            LRouter.push("/obrigado-cartao");
-          })
-          .catch(error => {
-            console.log("Erro ao tentar efetuar o pagamento", error);
-            API_NOTIFICATION.showNotification(
-              "Por favor, tente novamente ",
-              "error"
-            );
-          });
+    getDadosPagamentoTransacaoBoleto() {
+      this.getSignature();
+      const LDaysVenceBoleto =
+        this.DadosCheckout.vencimento_boleto ||
+        constantes.CONSTANTE_VENCIMENTO_BOLETO;
+      var LData = new Date();
+      LData.setDate(LData.getDate() + LDaysVenceBoleto);
+      const LDataVencimento = dateFormat(LData, "yyyy-mm-dd");
 
-        //break;
-      }
+      this.DadosCheckout.chave_publica = this.public_key;
+      var transacao = {
+        token: this.DadosCheckout.token_acesso,
+        dadosComprador: {
+          nome_completo: this.removeAcento(this.nome_completo),
+          email: this.email,
+          cpf: this.cpf,
+          telefone: this.telefone,
+          cep: this.CEP,
+          endereco: this.removeAcento(this.endereco),
+          numero_porta: this.numero_porta,
+          bairro: this.bairro,
+          cidade: this.cidade,
+          estado: this.estado,
+          complemento: this.removeAcento(this.complemento),
+          destinatario: this.removeAcento(this.destinatario),
+          numero_cartao: this.card_number,
+          validade: this.validade,
+          nome_titular: this.nome_titular,
+          codigo_seguranca: this.codigo_seguranca,
+          cpf_titular: this.cpf_titular,
+          frete: this.getFreteSelecionadoNome(),
+          valor: this.formatPrice(this.granTotal),
+          forma: this.formaPagamento,
+          barcode: "",
+          urlBoleto: ""
+        },
+        produtos: this.produtosCart,
+        dadosLoja: this.dadosLoja,
+        dadosCheckout: this.DadosCheckout,
+        paymentData: {
+          language: "pt",
+          command: "SUBMIT_TRANSACTION",
+          merchant: {
+            apiKey: this.DadosCheckout.api_key,
+            apiLogin: this.DadosCheckout.api_login
+          },
+          transaction: {
+            order: {
+              accountId: this.DadosCheckout.account_id,
+              referenceCode: this.reference_id,
+              description: this.getNomeFatura(),
+              language: "es",
+              signature: this.signature,
+              notifyUrl: "https://api.thuor.com/webhooks/webhookpayu",
+              additionalValues: {
+                TX_VALUE: {
+                  value: this.granTotal,
+                  currency: "BRL"
+                }
+              },
+              buyer: {
+                fullName: this.nome_completo,
+                emailAddress: this.email,
+                dniNumber: this.cpf,
+                shippingAddress: {
+                  street1: this.removeAcento(this.endereco),
+                  street2: this.complemento,
+                  city: this.cidade,
+                  state: this.estado,
+                  country: "BR",
+                  postalCode: this.CEP
+                }
+              }
+            },
+            type: "AUTHORIZATION_AND_CAPTURE",
+            paymentMethod: "BOLETO_BANCARIO",
+            paymentCountry: "BR",
+            expirationDate: LDataVencimento,
+            ipAddress: UTILIS_API.getIPRequest().ip
+          },
+          test: true
+        }
+      };
+      //console.log("Transacao", transacao);
+      const JSONString = JSON.stringify(transacao);
+      const LCripto = btoa(JSONString);
+      return LCripto;
     },
     async iniciaPagamentoBackEndBoleto() {
-      var LRouter = router;
-      window.Mercadopago.clearSession();
-      const LCripto = await this.getDadosPagamentoTransacao();
-      sessionStorage.setItem("LCrypto", LCripto);
       API_NOTIFICATION.ShowLoading();
-      API_CHECKOUT.DoPayBackEndTicket(LCripto)
-        .then(retornoPay => {
+      var LRouter = router;
+
+      const ParamUm = this.cpf.replace(/[.-]/g, "");
+      const ParamDois = this.nome_completo.replace(/ /g, "");
+      const LRefID = await this.getCripto(ParamUm, ParamUm);
+      this.reference_id = LRefID;
+      //console.log("Reference ID", this.reference_id);
+      const LCripto = await this.getDadosPagamentoTransacaoBoleto();
+      sessionStorage.setItem("LCrypto", LCripto);
+      API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
+        .then(retornoPayment => {
           if (
-            retornoPay.data.status != undefined &&
-            (retornoPay.data.status.toUpperCase() == "REJECTED" ||
-              retornoPay.data.status.toUpperCase() == "CANCELED" ||
-              retornoPay.data.status.toUpperCase() == "VACATED")
+            retornoPayment.data.transactionResponse != undefined &&
+            retornoPayment.data.transactionResponse.state.toUpperCase() ==
+              "DECLINED"
           ) {
             API_NOTIFICATION.showNotificationW(
               "Oops!",
@@ -1775,30 +1826,63 @@ export default {
           }
           var DadosCliente = {
             nome: this.nome_completo,
-            dadosCompra: retornoPay.data
+            dadosCompra: retornoPayment.data
           };
           sessionStorage.setItem("TipoCheck", "bo");
           sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
-          window.Mercadopago.clearSession();
-          API_NOTIFICATION.HideLoading();
           LRouter.push("/obrigado-boleto");
+          API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
-          console.log("Erro ao tentar efetuar o pagamento", error);
-          API_NOTIFICATION.showNotification(
-            "Por favor, tente novamente ",
-            "error"
-          );
+          console.log("Erro ao efetuar o pagamento no PagSeguro", error);
         });
     },
-    pay() {
+    async iniciaPagamentoBackEndCard() {
+      var LRouter = router;
+      const LCripto = await this.getDadosPagamentoTransacao();
+      sessionStorage.setItem("LCrypto", LCripto);
+      API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
+        .then(retornoPayment => {
+          if (
+            retornoPayment.data.transactionResponse != undefined &&
+            retornoPayment.data.transactionResponse.state.toUpperCase() ==
+              "DECLINED"
+          ) {
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Rejeitado. Por favor, tente novamente.",
+              "error"
+            );
+            return;
+          }
+          var DadosCliente = {
+            nome: this.nome_completo,
+            dadosCompra: retornoPayment.data
+          };
+          sessionStorage.setItem("TipoCheck", "ca");
+          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          LRouter.push("/obrigado-cartao");
+          API_NOTIFICATION.HideLoading();
+        })
+        .catch(error => {
+          console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+        });
+      //}
+    },
+    getAnoValidadeCartao() {
+      const LAno = "20" + this.getValidadeCartao().ano;
+      console.log("ANO Validad3e", LAno);
+      return LAno;
+    },
+    async pay() {
       API_NOTIFICATION.ShowLoading();
-      const form = document.querySelector("#pay");
-      //console.log("Form", form);
-      if (this.formaPagamento == "creditCard") {
-        window.Mercadopago.createToken(form, this.iniciaPagamentoBackEnd);
-      } else if (this.formaPagamento == "bolbradesco") {
-        this.iniciaPagamentoBackEndBoleto();
+      if (this.public_key !== null) {
+        if (this.formaPagamento == "creditCard") {
+          this.iniciaPagamentoBackEndCard();
+        } else if (this.formaPagamento == "bolbradesco") {
+          this.iniciaPagamentoBackEndBoleto();
+        }
+      } else {
       }
     },
     removeAcento(text) {
@@ -1810,6 +1894,17 @@ export default {
       text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
       text = text.replace(new RegExp("[Ç]", "gi"), "c");
       return text;
+    },
+    getCripto(parametro_um, parametro_dois) {
+      const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+      const produtHashed = hashids.encode(
+        parametro_um.toString(),
+        parametro_dois.toString()
+      );
+      // const numbers = hashids.decode(produtHashed);
+      //console.log("ID Hashedid", produtHashed);
+      // console.log("ID Deshashed", numbers);
+      return produtHashed;
     },
     saveLead() {
       API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)

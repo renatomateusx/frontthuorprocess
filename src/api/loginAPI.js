@@ -22,6 +22,8 @@ var API_LOGIN = {
   },
   VerificaToken() {
     return new Promise((resolve, reject) => {
+      const LActualPath = window.location.pathname;
+      if(LActualPath) sessionStorage.setItem('actualPage', LActualPath);
       if (sessionStorage.getItem("user") == undefined || sessionStorage.getItem("user") == null) {
         router.push('/login');
       }            

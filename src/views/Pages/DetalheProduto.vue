@@ -262,7 +262,7 @@
               </div>
             </div>
           </b-tab>
-          <b-tab title="Estoque">
+          <b-tab title="ESTOQUE">
             <div v-for="optionsValues in this.produtoByID.options">
               <div class="card card-default" v-for="(title, index) in optionsValues.values">
                 <div class="popover-body">
@@ -673,11 +673,11 @@ export default {
                 console.log("Ret Prod", retProd.data.length);
                 if (retProd.data != undefined) {
                   console.log("Ret Prod", retProd);
-                  var LImages = JSON.parse(retProd.data.json_dados_produto);
+                  var LImages = retProd.data.json_dados_produto;
                   //console.log(JSON.parse(retProd.data.json_dados_produto));
-                  this.produtoByID = JSON.parse(
+                  this.produtoByID = 
                     retProd.data.json_dados_produto
-                  );
+                  ;
                   this.produtoTable = retProd.data;
                   this.statusProd = this.produtoTable.status;
                   this.customFrete = this.produtoTable.custom_frete;
