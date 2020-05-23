@@ -1,9 +1,9 @@
 const axios = require("axios");
 import constantes from "./constantes";
-import API_HEADERS from "../api/configAxios";
+import API_HEADERS from "./configAxios";
 import router from '../router';
-var API_MKT = {
-    GetUpSells() {
+var API_CUPOM = {
+    GetCupons() {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
@@ -12,7 +12,7 @@ var API_MKT = {
                     id_usuario: LDadosLoja.id_usuario
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_UPSELL, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CUPOM, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -24,7 +24,7 @@ var API_MKT = {
             }
         });
     },
-    GetUpSellsByID(id) {
+    GetCupomByID(id) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
@@ -34,7 +34,7 @@ var API_MKT = {
                     id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_UPSELL_BY_ID, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CUPOM_BY_ID, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -46,14 +46,14 @@ var API_MKT = {
             }
         });
     },
-    SalvarUpSell(pNovoUpSell) {
+    SalvarCupom(pNovoCupom) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
-                pNovoUpSell.id_usuario = LDadosLoja.id_usuario;
+                pNovoCupom.id_usuario = LDadosLoja.id_usuario;
                 
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_UPSELL, pNovoUpSell)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_CUPOM, pNovoCupom)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -66,7 +66,7 @@ var API_MKT = {
         });
     },
 
-    DeleteUpSellByID(id) {
+    DeleteCupomByID(id) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
@@ -76,7 +76,7 @@ var API_MKT = {
                     id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_DELETE_UPSELL, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_DELETE_CUPOM, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -88,7 +88,7 @@ var API_MKT = {
             }
         });
     },
-    GetUpSellsByProductID(id) {
+    GetCupomByProductID(id) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
@@ -97,7 +97,50 @@ var API_MKT = {
                     id_produto: id,
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_UPSELL_BY_PRODUCT_ID, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CUPOM_BY_PRODUCT_ID, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    GetCupomByCODE(code) {
+        return new Promise((resolve, reject) => {
+            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
+                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario,
+                    code: code,
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CUPOM_BY_CODE, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    UpdateNumeroUtilizacao(id, numero_utilizacao) {
+        return new Promise((resolve, reject) => {
+            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
+                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario,
+                    id: id,
+                    numero_utilizacao: numero_utilizacao
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_NUMERO_UTILIZACAO_CUPOM, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -110,4 +153,4 @@ var API_MKT = {
         });
     },
 }
-export default API_MKT 
+export default API_CUPOM 

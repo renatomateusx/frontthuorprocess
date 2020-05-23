@@ -135,7 +135,8 @@ th.active .arrow {
   margin-left: 0px !important;
 }
 .spanStatus {
-  border-radius: 4px !important;
+  border-radius: 50% !important;
+  width: 20px;
   height: 20px;
   padding: 3px !important;
   font-size: 12px !important;
@@ -225,7 +226,10 @@ th.active .arrow {
                 v-for="{id, status, tipo_checkout, nome, produto_from, produto_to} in dataPerPage" class="cursorP" v-on:click="SelectUpSell(id, nome)"
               >
                 <td style="width: 200px!important;" class="data padding1010">
-                  <p class="col-md-12 mb-0 dataPedido">{{nome}}</p>
+                   <router-link :to="{path: '/marketing/upsell/edit/' + getCripto(id, status)}">
+                    <p class="col-md-12 mb-0 dataPedido">{{nome}}</p>
+                  </router-link>
+                  
                 </td>
                 <td style="width: 200px!important;" class="data padding1010">
                   <p class="col-md-12 mb-0 dataPedido">{{produto_from}}</p>
@@ -237,10 +241,10 @@ th.active .arrow {
                   <p class="col-md-12 mb-0 dataPedido">{{tipo_checkout}}</p>
                 </td>
                 <td class="pl-0" style="min-width: 100px!important; width: 100px!important;">
-                  <span
+                  <div
                     class="spanStatus alert float-left pull-left"
                     v-bind:class="getClassStatus(status)"
-                  ></span>
+                  ></div>
                 </td>
               </tr>
               <!-- <tr v-for="entry in dataPerPage">
@@ -258,6 +262,7 @@ th.active .arrow {
         <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>
+    
   </ContentWrapper>
 </template>
 
@@ -298,7 +303,7 @@ export default {
     //data: Array
     // columns: Array
   },
-
+ 
   created() {
     this.timeAgo = new TimeAgo("pt-BR");
 

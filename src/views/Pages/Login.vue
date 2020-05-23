@@ -2,8 +2,8 @@
 .card-flat {
   margin-top: 80px !important;
 }
-.bg-dark{
-  background-color: #23b7e5!important;
+.bg-dark {
+  background-color: #23b7e5 !important;
 }
 </style>
 <template>
@@ -114,8 +114,6 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 
-
-
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
@@ -134,7 +132,7 @@ export default {
       }
     };
   },
-  methods: {    
+  methods: {
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
@@ -144,7 +142,12 @@ export default {
             .then(retorno => {
               if (retorno !== undefined) {
                 sessionStorage.setItem("user", JSON.stringify(retorno.data));
-                this.$router.push("/home");
+                if (sessionStorage.getItem("actualPage") != undefined) {
+                  const LActualPath = sessionStorage.getItem("actualPage");
+                  if (LActualPath) this.$router.push(LActualPath);
+                } else {
+                  this.$router.push("/home");
+                }
               }
               API_NOTIFICATION.HideLoading();
             })
@@ -153,7 +156,6 @@ export default {
                 API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
               }
               console.log("Erro ao efetuar login", error);
-              
             });
 
           return;
@@ -161,8 +163,8 @@ export default {
         console.log("Correct them errors!");
       });
     },
-    checkIfLogged() {      
-      sessionStorage.removeItem("user");      
+    checkIfLogged() {
+      //sessionStorage.removeItem("user");
     }
   }
 };

@@ -1,5 +1,6 @@
 export default Object.freeze({
   WEBSITEAPI: 'http://localhost:3000/',
+  URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
   API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
   PATH_PS_SESSION: 'checkouts/SessionPagSeguro',
@@ -36,6 +37,7 @@ export default Object.freeze({
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_GET_FRETE: 'logisticas/GetFretes',
+  PATH_GET_TRACKING_CODE: 'logisticas/TrackingCode',
   PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',
   PATH_GET_CHECKOUTS_BY_ID: 'checkouts/GetCheckoutByID',
   PATH_PAY_CHECKOUT: 'checkouts/DoPay',
@@ -50,10 +52,40 @@ export default Object.freeze({
   PATH_PAY_GET_PEDIDOS_POR_ID: 'transacoes/GetPedidosByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_POR_ID: 'transacoes/ReembolsarPedidoByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PS_POR_ID: 'transacoes/ReembolsarPedidoPSByID',
+  PATH_PAY_REEMDBOLSAR_PEDIDOS_PAYU_POR_ID: 'transacoes/ReembolsarPedidoPayUID',
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
   PATH_GET_UPSELL: 'upsells/GetUpSells',
+  PATH_GET_UPSELL_BY_ID: 'upsells/GetUpSellsByID',
   PATH_SAVE_UPSELL: 'upsells/SaveUpSells',
   PATH_DELETE_UPSELL: 'upsells/DeleteUpSellByID',
+  PATH_GET_UPSELL_BY_PRODUCT_ID: 'upsells/GetUpSellByProductID',
+  PATH_GET_MENSAGERIA: 'mensageria/GetMensagens',
+  PATH_SAVE_MENSAGERIA: 'mensageria/SaveMensagem',
+  PATH_DELETE_MENSAGERIA: 'mensageria/DeleteMensagensByID',
+  PATH_GET_MENSAGERIA_BY_ID: 'mensageria/GetMensagemByID',
+  PATH_GET_MENSAGERIA_WHATS_APP: 'mensageria/GetMensagensWhatsApp',
+  PATH_GET_PIXEL: 'pixels/GetPixels',
+  PATH_SAVE_PIXEL: 'pixels/SavePixels',
+  PATH_DELETE_PIXEL: 'pixels/DeletePixelByID',
+  PATH_GET_PIXEL_BY_ID: 'pixels/GetPixelByID',
+
+  PATH_GET_CLIENTES: 'clientes/GetClientes',
+  PATH_SAVE_CLIENTES: 'clientes/SaveClientes',
+  PATH_DELETE_CLIENTES: 'clientes/DeleteClienteByID',
+  PATH_GET_CLIENTE_BY_ID: 'clientes/GetClienteByID',
+  PATH_SAVE_LEAD: 'clientes/SaveLead',
+  
+  PATH_PAY_CHECKOUT_PAY_U: 'checkouts/DoPayCardPayU',
+
+  PATH_GET_CUPOM: 'cupons/GetCupons',
+  PATH_GET_CUPOM_BY_ID: 'cupons/GetCupomByID',
+  PATH_SAVE_CUPOM: 'cupons/SaveCupom',
+  PATH_DELETE_CUPOM: 'cupons/DeleteCupomByID',
+  PATH_GET_CUPOM_BY_PRODUCT_ID: 'cupons/GetCupomByProductID',
+  PATH_GET_CUPOM_BY_CODE: 'cupons/GetCupomByCODE',
+  PATH_UPDATE_NUMERO_UTILIZACAO_CUPOM: 'cupons/UpdateNumeroUtilizacao',
+  
+  
 
 });

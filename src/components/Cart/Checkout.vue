@@ -20,6 +20,12 @@ import UTILIS from "../../utilis/utilis.js";
 import LoadScript from "vue-plugin-load-script";
 import CheckoutMP from "./CheckoutMP.vue";
 import CheckoutPS from "./CheckoutPS.vue";
+import CheckoutPayU from "./CheckoutPayU.vue";
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
+import API_PIXEL from "../../api/pixelsAPI";
+var md5 = require('md5');
+
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -105,6 +111,7 @@ export default {
       if (sessionStorage.getItem("DadosLoja") != null) {
         this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
         this.getCheckouts();
+        this.getPixels();
         //console.log("loja", dadosLoja);
       }
 
@@ -168,6 +175,7 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
+          sessionStorage.setItem("DadosCheckout", JSON.stringify(this.DadosCheckout));
           this.iniciaCheckout();
         })
         .catch(error => {
@@ -229,16 +237,53 @@ export default {
         this.FCheckoutPS();
       }
     },
+    async FCheckoutPayU(PDadosCheckout) {
+      var self = this;
+      const SessionID = Date.now();
+      const pluginPayU = document.createElement("script");
+      pluginPayU.onload = async function() {
+        console.log("Carregado Script PayU");
+        await self.sleep(1000);      
+        var ComponentClassCheckoutPayU = Vue.extend(CheckoutPayU);
+        var instanceCheckoutPayU = new ComponentClassCheckoutPayU();
+        instanceCheckoutPayU.$mount(); // pass nothing
+        self.$refs.container.appendChild(instanceCheckoutPayU.$el);
+        API_NOTIFICATION.HideLoading();
+        return true;      
+      };
+      pluginPayU.setAttribute(
+        "src",
+        "https://maf.pagosonline.net/ws/fp/tags.js?id="+SessionID+"80200"
+      );
+      pluginPayU.async = true;
+      document.head.appendChild(pluginPayU);      
+    },
     async iniciaCheckout() {
       console.log("Gateway", this.DadosCheckout.gateway);
+      this.LUp = sessionStorage.setItem('up', '0');
       if (this.DadosCheckout.gateway == 1) {
         const LCheckMP = await this.FCheckoutMP();
       } else if (this.DadosCheckout.gateway == 2) {
         const LCheckPS = await this.FCheckoutPS(this.DadosCheckout);
+      } else if(this.DadosCheckout.gateway == 3){
+        const LCheckPayU = await this.FCheckoutPayU(this.DadosCheckout);
       }
     },
     sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
+    },
+    getPixels(){
+      API_PIXEL.GetPixels()
+      .then((resPixels)=>{
+        sessionStorage.setItem("pixels", JSON.stringify(resPixels.data));
+        API_FACEBOOK_PIXEL.InsertScript();
+        API_GOOGLE_PIXEL.InsertScript();
+        API_FACEBOOK_PIXEL.TriggerFacebookEvent('InitiateCheckout');
+        API_GOOGLE_PIXEL.TriggerGoogleEvent('begin_checkout');
+      })
+      .catch((error)=>{
+        console.log("Erro ao pegar dados do Pixels", error);
+      })
     }
   }
 };

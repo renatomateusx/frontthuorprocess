@@ -1,9 +1,9 @@
 const axios = require("axios");
 import constantes from "./constantes";
-import API_HEADERS from "../api/configAxios";
+import API_HEADERS from "./configAxios";
 import router from '../router';
-var API_MKT = {
-    GetUpSells() {
+var API_CLIENTES = {
+    GetClientes() {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
@@ -12,7 +12,7 @@ var API_MKT = {
                     id_usuario: LDadosLoja.id_usuario
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_UPSELL, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CLIENTES, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -24,36 +24,14 @@ var API_MKT = {
             }
         });
     },
-    GetUpSellsByID(id) {
+    SaveCliente(pNovoClient) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
-
-                let LBody = {
-                    id_usuario: LDadosLoja.id_usuario,
-                    id: id
-                }
-                axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_UPSELL_BY_ID, LBody)
-                    .then((response) => {
-                        //console.log("Response", response);
-                        resolve(response);
-                    })
-                    .catch((error) => {
-                        console.log("Reject", error);
-                        reject(error);
-                    });
-            }
-        });
-    },
-    SalvarUpSell(pNovoUpSell) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
-                pNovoUpSell.id_usuario = LDadosLoja.id_usuario;
+                pNovoClient.id_usuario = LDadosLoja.id_usuario;
                 
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_UPSELL, pNovoUpSell)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_CLIENTES, pNovoClient)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -66,7 +44,7 @@ var API_MKT = {
         });
     },
 
-    DeleteUpSellByID(id) {
+    DeleteClienteByID(id) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
@@ -76,7 +54,7 @@ var API_MKT = {
                     id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_DELETE_UPSELL, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_DELETE_CLIENTES, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -88,16 +66,39 @@ var API_MKT = {
             }
         });
     },
-    GetUpSellsByProductID(id) {
+    GetClienteByID(id) {
         return new Promise((resolve, reject) => {
             if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
-                    id_produto: id,
+                    id: id,
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_UPSELL_BY_PRODUCT_ID, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CLIENTE_BY_ID, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    SaveLead(email, nome, telefone) {
+        return new Promise((resolve, reject) => {
+            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
+                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario,
+                    email: email,
+                    nome: nome,
+                    telefone: telefone
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_LEAD, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -110,4 +111,4 @@ var API_MKT = {
         });
     },
 }
-export default API_MKT 
+export default API_CLIENTES 

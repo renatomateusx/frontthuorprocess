@@ -135,38 +135,56 @@ th.active .arrow {
   margin-left: 0px !important;
 }
 .spanStatus {
-  border-radius: 4px !important;
+  border-radius: 50% !important;
+  width: 20px!important;
   height: 20px;
   padding: 3px !important;
   font-size: 12px !important;
 }
-.avatar {
-  vertical-align: middle;
-  width: 80px;
-  height: auto;
-  border-radius: 50%;
+.ID{
+  width: 2em!important;
 }
-.cursorP {
-  cursor: pointer !important;
+.NOME{
+  width: 7em!important;
 }
-.cursorP:hover {
-  background-color: #5d9cec;
-  color: white;
+.DATA{
+  width: 2em!important;
 }
-.selected{
-  background-color: #5d9cec;
-  color: white;
-  border-color: white;
-}
-.deselected{
-  color: gray;
-  background-color: white;
+.STATUS{
+  width: 2em!important;
 }
 </style>
 <template>
-  <ContentWrapper class="pl-0 pb-0 pr-0">
-    <div class="col-xl-12">
-      <label class="float-left mr-2 col-form-label labelForm" for="inlineFormInputGroup">Pág.</label>
+  <ContentWrapper>
+    <div class="content-heading">
+      <span class="fa fa-envelope">
+        <span class="ml-2"></span>
+      </span>Mensagens
+    </div>
+    <small>
+      As mensagens abaixo são as que você envia em massa ou individualmente para cada cliente.
+      <br />Sinta-se a vontade para criar quantas desejar. Para cadastrar uma mensagem, clique no botão de 'Adicionar Mensagem'
+    </small>
+    <p></p>
+    <div class="float-left pull-left mb-3">
+      <button
+        class="btn btn-danger btn-lg"
+        v-on:click="excluirUpSellSelecionado()"
+        v-show="selectedMensagem > 0"
+      >
+        <span class="fa fa-trash"></span> Excluir Selecionado
+      </button>
+    </div>
+    <div class="float-right pull-right mb-3">
+      <button class="btn btn-primary btn-lg" v-on:click="adicionarNovaMensagem()">
+        <span class="fa fa-plus"></span> Nova Mensagem
+      </button>
+    </div>
+    <div class="wrapper col-xl-12">
+      <label
+        class="float-left mr-2 col-form-label labelForm"
+        for="inlineFormInputGroup"
+      >Reg. p/ Pág.</label>
       <select
         v-model="rowsPerPage"
         id="select"
@@ -178,40 +196,74 @@ th.active .arrow {
         <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
       </form>
       <div id="grid-template">
-        <div class="table-header-wrapper">
+        <div class="table-header-wrapper table-responsive">
           <table class="table-header">
-            <thead>
-              <th style="width: 100%!important;">
+            <thead>              
+              <th class="">
                 <strong class="col-md-4 pedido">
-                  <b>Produto</b>
+                  <b>ID</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
+              <th class=" pl-0 ">
+                <strong class>
+                  <b>NOME</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class=" pl-0 " >
+                <strong class>
+                  <b>DATA</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class=" pl-2 ">
+                <strong class="col-md-2">
+                  <b>STATUS</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              
+              
             </thead>
           </table>
         </div>
         <div class="table-body-wrapper">
           <table class="table-body">
             <tbody>
-              <tr v-for="{id, titulo_produto, image} in dataPerPage">
-                <td
-                  class="data padding1010 cursorP" :class="getSelected(id)"
-                  v-on:click="functionClick(id, titulo_produto, image)"
-                >
-                  <img class="col-md-2 mb-0 avatar float-left pull-left" v-bind:src="image" />
-                  <p class="col-md-10 mb-0 dataPedido mt-2">{{titulo_produto}}</p>
+              <tr
+                v-for="{id, nome, data, status,time_ago} in dataPerPage"
+                v-on:click="SelectMensagem(id, nome)"
+              >
+                <td class="">{{id}}</td>
+                <td class=" pl-0 pr-0 mr-0 ml-0 ">
+                  <router-link :to="{path: '/marketing/mensageria/edit/' + getCripto(id, status)}">
+                    <p class="col-md-12 numeroPedido mb-0">{{nome}}</p>
+                  </router-link>
                 </td>
+                <td class=" padding1010 ">
+                  <p class="col-md-12 mb-0 dataPedido">{{data | formatDate}}</p>
+                  <p class="col-md-12 mb-0 tempoPedido">{{time_ago}}</p>
+                </td>
+                <td class="pl-0" >
+                  <div
+                    class="spanStatus"
+                    v-bind:class="getClassStatus(status)"
+                  ></div>
+                </td>  
+                
+                          
               </tr>
             </tbody>
           </table>
         </div>
       </div>
       <div id="page-navigation" class="col-xl-12 mt-3">
+        <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
         <p
-          class="float-left text-center auto col-xl-12 mt-1 mb-2"
+          class="float-left text-center auto col-md-8 mt-1"
         >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
-        <button class="float-left btn btn-primary" @click="movePages(-1)">Voltar</button>
-        <button class="float-right btn btn-primary" @click="movePages(1)">Próxima</button>
+        <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>
   </ContentWrapper>
@@ -226,15 +278,22 @@ import API_NOTIFICATION from "../../api/notification";
 import "vue-loading-overlay/dist/vue-loading.css";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
-import API_TRANSACOES from "../../api/transacoesAPI";
-import API_PRODUTOS from "../../api/produtosAPI";
+
 import API_LOJA from "../../api/lojaAPI";
+import API_MENSAGERIA from "../../api/mensageriaAPI";
 import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
 import dateFormat from "dateformat";
 import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
+import API_CHECKOUT from "../../api/checkoutAPI";
+
+Vue.filter("formatDate", function(value) {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY hh:mm");
+  }
+});
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
 
@@ -248,10 +307,9 @@ Vue.filter("formatDate", function(value) {
 });
 
 export default {
-  name: "prods",
   props: {
-    functionClick: Function,
-    arrayAux: Array
+    //data: Array
+    // columns: Array
   },
 
   created() {
@@ -269,26 +327,22 @@ export default {
   },
   data() {
     return {
-      idProduto: 0,
-      tituloProduto: "",
-      imageProduto: "",
       timeAgo: "",
       searchQuery: "",
       sortKey: "",
       sortOrders: {},
-      columns: [
-        "metodo",
-        "id",
-        "order_id",
-        "status",
-        "data",
-        "total",
-        "nome_comprador"
-      ],
+      selectedMensagem: 0,
+      nomeSelectedMensagem: "",
+      login: {
+        email: "",
+        password: "",
+        rememberme: false
+      },
+      columns: ["id", "nome", "data", "status"],
       gridData: [],
       startRow: 0,
-      rowsPerPage: 5,
-      pageSizeMenu: [5, 10, 20, 50, 100],
+      rowsPerPage: 10,
+      pageSizeMenu: [10, 20, 50, 100],
       data: Array,
       pedidosList: {}
     };
@@ -337,41 +391,33 @@ export default {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
-    getImageSRC(obj) {
-      return new Promise((resolve, reject) => {
-        var LImageSRC = "";
-        const LImages = obj.json_dados_produto.images;
-        const LImag = obj.json_dados_produto.image;
-        if (LImag != undefined) {
-          LImageSRC = LImag.src;
-        } else if (LImages != undefined) {
-          LImageSRC = LImages[0].src;
-        }
-        resolve(LImageSRC);
-      });
-    },
     checkIfLogged() {
-      var self = this;
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
-              API_PRODUTOS.GetProdutos()
+
+              API_MENSAGERIA.GetMensagens()
                 .then(retProd => {
                   this.gridData = [];
-                  retProd.data.forEach(async (obj, i) => {
-                    const LImageSRC = await self.getImageSRC(obj);
-
-                    const LID = obj.id_thuor;
-                    const LTitulo = obj.titulo_produto;
+                  //console.log("Retorno", retProd.data);
+                  // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
+                  //this.pedidosList = retProd.data;
+                  retProd.data.forEach((obj, i) => {
+                    console.log(obj);
                     this.gridData.push({
-                      id: LID,
-                      titulo_produto: LTitulo,
-                      image: LImageSRC
+                      id: obj.id,
+                      nome: obj.nome,
+                      data: obj.data,
+                      status: obj.status,
+                      time_ago: this.timeAgo.format(
+                        Date.parse(obj.data),
+                        Date.now(),
+                        "time"
+                      )
                     });
-
                     //console.log(Date.now(), Date.parse(LData));
                   });
 
@@ -434,17 +480,17 @@ export default {
       return str.toUpperCase();
     },
     getImagePaymentID(paymentID) {
-      if (paymentID == "bolbradesco") return "img/barcode.png";
-      else if (paymentID == "master") return "img/master.png";
-      else if (paymentID == "visa") return "img/visa.png";
-      else return "img/visa.png";
+      if (paymentID !== undefined) {
+        if (paymentID == "BOLETO" || paymentID == "bolbradesco")
+          return "img/barcode.png";
+        else if (paymentID.toUpperCase() == "MASTER") return "img/master.png";
+        else if (paymentID.toUpperCase() == "VISA") return "img/visa.png";
+        else return "img/visa.png";
+      }
     },
     getClassStatus(status) {
-      if (status == "pendente") return "alert-info";
-      if (status == "cancelada") return "alert-danger";
-      if (status == "aprovada") return "alert-success";
-      if (status == "entregue") return "alert-success";
-      return "alert-warning";
+      if (status == "1") return "alert-success";
+      return "alert-danger";
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
@@ -458,12 +504,63 @@ export default {
       // console.log("ID Deshashed", numbers);
       return produtHashed;
     },
-    getSelected(id) {
-      if (this.arrayAux != undefined && this.arrayAux.length > 0) {       
-          const LFinded=this.arrayAux.find(x => x.id_thuor == id);
-          if(LFinded != undefined) return 'selected';
-          if(LFinded == undefined) return 'deselected';
-      }
+    getPaymentMethodID(obj) {
+      const LJSON = JSON.parse(obj.json_gw_response);
+      //console.log(LJSON.payment_method);
+      if (LJSON.hasOwnProperty("payment_method_id"))
+        return LJSON.payment_method_id;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "CREDIT_CARD"
+      )
+        return LJSON.payment_method.card.brand;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "BOLETO"
+      )
+        return LJSON.payment_method.type;
+    },
+    getDataCreated(obj) {
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("date_created"))
+        return JSON.parse(obj.json_gw_response).date_created;
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("created_at"))
+        return JSON.parse(obj.json_gw_response).created_at;
+    },
+    getValue(obj) {
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("transaction_amount"))
+        return JSON.parse(obj.json_gw_response).transaction_amount;
+      if (JSON.parse(obj.json_gw_response).hasOwnProperty("amount"))
+        return JSON.parse(obj.json_gw_response).amount.summary.total;
+    },
+    SelectMensagem(id, nome) {
+      this.selectedMensagem = id;
+      this.nomeSelectedMensagem = nome;
+    },
+    excluirMensagemSellSelecionado() {
+      API_NOTIFICATION.showConfirmDialog(
+        "EXCLUSÃO",
+        "Deseja realmente excluir " + this.nomeSelectedMensagem + "?",
+        "warning",
+        this.ExcluirMensagem
+      );
+    },
+    ExcluirMensagem() {
+      API_MENSAGERIA.DeleteMensagensByID(this.selectedMensagem)
+        .then(resExclude => {
+          API_NOTIFICATION.showNotification("Excluído com Sucesso!", "success");
+          setTimeout(() => {
+            this.checkIfLogged();
+          }, 1000);
+        })
+        .catch(error => {
+          console.log(
+            "Erro ao excluir o UpSell " + this.nomeSelectedMensagem,
+            error
+          );
+        });
+    },
+    adicionarNovaMensagem() {
+      this.$router.push("/marketing/mensageria/add");
     }
   }
 };

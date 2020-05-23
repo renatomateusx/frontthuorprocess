@@ -1,4 +1,21 @@
 <style scoped>
+@media only screen and (max-width: 992px) {
+  .hiddenMobile {
+    display: inline;
+  }
+}
+@media only screen and (max-width: 1000px) {
+  .hiddenMobile {
+    display: none;
+  }
+  .expandInMobile {
+    width: 100% !important;
+    margin-top: 5px;
+  }
+  .paddingInMobile {
+    padding: 10px 20px !important;
+  }
+}
 .card-flat {
   margin-top: 80px !important;
 }
@@ -98,6 +115,9 @@ th.active .arrow {
 .padding1010 {
   padding: 10px 10px !important;
 }
+.paddingStatus {
+  padding-left: 25px !important;
+}
 .nomeComprador {
   font-size: 11px !important;
 }
@@ -135,38 +155,53 @@ th.active .arrow {
   margin-left: 0px !important;
 }
 .spanStatus {
-  border-radius: 4px !important;
+  border-radius: 50% !important;
+  width: 20px !important;
   height: 20px;
   padding: 3px !important;
   font-size: 12px !important;
 }
-.avatar {
-  vertical-align: middle;
-  width: 80px;
-  height: auto;
-  border-radius: 50%;
-}
 .cursorP {
   cursor: pointer !important;
 }
-.cursorP:hover {
-  background-color: #5d9cec;
-  color: white;
+.imagemServico {
+  height: 20px !important;
+  width: 80px !important;
 }
-.selected{
-  background-color: #5d9cec;
-  color: white;
-  border-color: white;
-}
-.deselected{
-  color: gray;
-  background-color: white;
+.expirado {
 }
 </style>
 <template>
-  <ContentWrapper class="pl-0 pb-0 pr-0">
-    <div class="col-xl-12">
-      <label class="float-left mr-2 col-form-label labelForm" for="inlineFormInputGroup">Pág.</label>
+  <ContentWrapper>
+    <div class="content-heading">
+      <span class="fa fa-tag">
+        <span class="ml-2"></span>
+      </span>Cupons
+    </div>
+    <small>
+      Todos os Cupons criados por você estão aqui.
+      <br />Para criar um novo Cupom, basta clicar no botão de 'Adicionar Cupom'.
+    </small>
+    <p></p>
+    <div class="float-left pull-left mb-3">
+      <button
+        class="btn btn-danger btn-lg"
+        v-on:click="excluirCupomSelecionado()"
+        v-show="selectedCupom > 0"
+      >
+        <span class="fa fa-trash"></span> Excluir Selecionado
+      </button>
+    </div>
+    <div class="float-right pull-right mb-3">
+      <button class="btn btn-primary btn-lg" v-on:click="adicionarCupom()">
+        <span class="fa fa-plus"></span> Novo Cupom
+      </button>
+    </div>
+    <div class="wrapper col-xl-12">
+      <label
+        class="float-left mr-2 col-form-label labelForm"
+        for="inlineFormInputGroup"
+      >Reg. p/ Pág.</label>
       <select
         v-model="rowsPerPage"
         id="select"
@@ -181,25 +216,61 @@ th.active .arrow {
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th style="width: 100%!important;">
-                <strong class="col-md-4 pedido">
-                  <b>Produto</b>
+              <th>
+                <strong class="col- pedido" style="top: 2px">
+                  <b>CÓDIGO</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
+              <th class="hiddenMobile padding1010">
+                <strong class="col pedido">
+                  <b>DESCRIÇÃO</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="hiddenMobile padding1010">
+                <strong class="col- pedido">
+                  <b>UTILIZADOS</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th></th>
+              <th></th>
             </thead>
           </table>
         </div>
         <div class="table-body-wrapper">
           <table class="table-body">
             <tbody>
-              <tr v-for="{id, titulo_produto, image} in dataPerPage">
-                <td
-                  class="data padding1010 cursorP" :class="getSelected(id)"
-                  v-on:click="functionClick(id, titulo_produto, image)"
-                >
-                  <img class="col-md-2 mb-0 avatar float-left pull-left" v-bind:src="image" />
-                  <p class="col-md-10 mb-0 dataPedido mt-2">{{titulo_produto}}</p>
+              <tr
+                v-for="{id, code, descricao, numero_utilizacao, status, data_fim, data_inicio} in dataPerPage"
+                class="cursorP"
+                v-on:click="SelectCupom(id, descricao)"
+              >
+                <td>
+                  <router-link :to="{path: '/marketing/cupons/edit/' + getCripto(id, status)}">
+                    <p class="col-md-12 mb-0 numeroPedido">{{code}}</p>
+                  </router-link>
+                </td>
+                <td class="col- padding1010">
+                  <p class="col-md-12 mb-0 numeroPedido">{{descricao}}</p>
+                </td>
+                <td class="col- padding1010 hiddenMobile">
+                  <p class="col-md-12 mb-0 numeroPedido text-center">{{numero_utilizacao}}</p>
+                </td>
+                <td class="pl-0 hiddenMobile paddingStatus">
+                  <div
+                    class="col- spanStatus alert padding1010"
+                    v-bind="getSituacao(data_fim, data_inicio)"
+                  >
+                  <span class="col- alert padding1010 alert" :class="spanSituacao">{{textSituacao}}</span>
+                  </div>
+                </td>
+                <td class="pl-0 hiddenMobile paddingStatus">
+                  <div
+                    class="col- spanStatus alert padding1010"
+                    v-bind:class="getClassStatus(status)"
+                  ></div>
                 </td>
               </tr>
             </tbody>
@@ -207,11 +278,11 @@ th.active .arrow {
         </div>
       </div>
       <div id="page-navigation" class="col-xl-12 mt-3">
+        <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
         <p
-          class="float-left text-center auto col-xl-12 mt-1 mb-2"
+          class="float-left text-center auto col-md-8 mt-1"
         >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
-        <button class="float-left btn btn-primary" @click="movePages(-1)">Voltar</button>
-        <button class="float-right btn btn-primary" @click="movePages(1)">Próxima</button>
+        <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>
   </ContentWrapper>
@@ -227,14 +298,17 @@ import "vue-loading-overlay/dist/vue-loading.css";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_TRANSACOES from "../../api/transacoesAPI";
-import API_PRODUTOS from "../../api/produtosAPI";
 import API_LOJA from "../../api/lojaAPI";
+import API_PRODUTOS from "../../api/produtosAPI";
+import API_PIXEL from "../../api/pixelsAPI";
 import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
 import dateFormat from "dateformat";
 import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
+import API_CUPOM from "../../api/cuponsAPI";
+
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
 
@@ -248,10 +322,9 @@ Vue.filter("formatDate", function(value) {
 });
 
 export default {
-  name: "prods",
   props: {
-    functionClick: Function,
-    arrayAux: Array
+    //data: Array
+    // columns: Array
   },
 
   created() {
@@ -269,28 +342,27 @@ export default {
   },
   data() {
     return {
-      idProduto: 0,
-      tituloProduto: "",
-      imageProduto: "",
       timeAgo: "",
       searchQuery: "",
       sortKey: "",
-      sortOrders: {},
-      columns: [
-        "metodo",
-        "id",
-        "order_id",
-        "status",
-        "data",
-        "total",
-        "nome_comprador"
-      ],
+      spanSituacao: '-',
+      textSituacao: '',
+      sortOrders: {},      
+      selectedCupom: 0,
+      nomeselectedCupom: "",
       gridData: [],
       startRow: 0,
-      rowsPerPage: 5,
-      pageSizeMenu: [5, 10, 20, 50, 100],
+      rowsPerPage: 10,
+      pageSizeMenu: [10, 20, 50, 100],
       data: Array,
-      pedidosList: {}
+      pedidosList: {},
+      columns: [
+        "id",
+        "descricao",
+        "code",
+        "status",
+        "utilizados"       
+      ]
     };
   },
   computed: {
@@ -337,48 +409,32 @@ export default {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
-    getImageSRC(obj) {
-      return new Promise((resolve, reject) => {
-        var LImageSRC = "";
-        const LImages = obj.json_dados_produto.images;
-        const LImag = obj.json_dados_produto.image;
-        if (LImag != undefined) {
-          LImageSRC = LImag.src;
-        } else if (LImages != undefined) {
-          LImageSRC = LImages[0].src;
-        }
-        resolve(LImageSRC);
-      });
-    },
     checkIfLogged() {
-      var self = this;
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
-              API_PRODUTOS.GetProdutos()
-                .then(retProd => {
-                  this.gridData = [];
-                  retProd.data.forEach(async (obj, i) => {
-                    const LImageSRC = await self.getImageSRC(obj);
-
-                    const LID = obj.id_thuor;
-                    const LTitulo = obj.titulo_produto;
+              API_CUPOM.GetCupons()
+                .then(retornoCupom => {
+                  retornoCupom.data.forEach((obj, i) => {
                     this.gridData.push({
-                      id: LID,
-                      titulo_produto: LTitulo,
-                      image: LImageSRC
+                      id: obj.id,
+                      descricao: obj.descricao,
+                      data_inicio: obj.data_inicio,
+                      data_inicio: obj.data_inicio,
+                      numero_utilizacao: obj.numero_utilizacao || 0,
+                      code: obj.code,
+                      status: obj.status,
+                      tipo: obj.tipo
                     });
-
-                    //console.log(Date.now(), Date.parse(LData));
+                    //API_PRODUTOS.GetProdutoIDThuor(obj.id_produto_from);
                   });
-
                   API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
-                  console.log("Erro ao pegar produtos", error);
+                  console.log("Erro ao pegar os UpSells", error);
                 });
             })
             .catch(error => {
@@ -398,6 +454,15 @@ export default {
     sortBy: function(key) {
       this.sortKey = key;
       this.sortOrders[key] = this.sortOrders[key] * -1;
+    },
+    getTipoCheckout(id) {
+      return new Promise((resolve, reject) => {
+        var LReturn = "";
+        if (id == 1) LReturn = "No Checkout";
+        if (id == 2) LReturn = "Na Finalização";
+        if (id == 3) LReturn = "E-mail e WhatsApp";
+        resolve(LReturn);
+      });
     },
     movePages: function(amount) {
       let newStartRow = this.startRow + amount * this.rowsPerPage;
@@ -440,11 +505,9 @@ export default {
       else return "img/visa.png";
     },
     getClassStatus(status) {
-      if (status == "pendente") return "alert-info";
-      if (status == "cancelada") return "alert-danger";
-      if (status == "aprovada") return "alert-success";
-      if (status == "entregue") return "alert-success";
-      return "alert-warning";
+      if (status == "1") return "alert-success";
+      if (status == "0") return "alert-danger";
+      return "alert-danger";
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
@@ -458,11 +521,51 @@ export default {
       // console.log("ID Deshashed", numbers);
       return produtHashed;
     },
-    getSelected(id) {
-      if (this.arrayAux != undefined && this.arrayAux.length > 0) {       
-          const LFinded=this.arrayAux.find(x => x.id_thuor == id);
-          if(LFinded != undefined) return 'selected';
-          if(LFinded == undefined) return 'deselected';
+    adicionarCupom() {
+      this.$router.push("/marketing/cupons/add");
+    },
+    SelectCupom(id, nome) {
+      this.selectedCupom = id;
+      this.nomeselectedCupom = nome;
+    },
+    excluirCupomSelecionado() {
+      API_NOTIFICATION.showConfirmDialog(
+        "EXCLUSÃO",
+        "Deseja realmente excluir " + this.nomeselectedCupom + "?",
+        "warning",
+        this.Excluir
+      );
+    },
+    Excluir() {
+      API_CUPOM.DeleteCupomByID(this.selectedCupom)
+        .then(resExclude => {
+          API_NOTIFICATION.showNotification("Excluído com Sucesso!", "success");
+          setTimeout(() => {
+            this.checkIfLogged();
+          }, 1000);
+        })
+        .catch(error => {
+          console.log(
+            "Erro ao excluir o UpSell " + this.nomeselectedCupom,
+            error
+          );
+        });
+    },
+    getSituacao(data_fim, data_inicio) {
+      const LHoje = moment().format();
+      const LData = moment(data_fim).format();
+      const LInicio = moment(data_inicio).format();
+      if (LInicio > LHoje) {
+        this.spanSituacao = 'alert-info';
+        this.textSituacao = "A INICIAR";        
+      }
+      if (LData < LHoje) {
+        this.spanSituacao = 'alert-warning';
+        this.textSituacao = "EXPIRADO";
+      }
+      if (LData >= LHoje) {
+        this.spanSituacao = 'alert-success';
+        this.textSituacao = "VIGENTE";
       }
     }
   }

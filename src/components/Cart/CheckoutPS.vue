@@ -197,6 +197,8 @@
   margin: 5px;
   cursor: pointer !important;
   border-radius: 10px;
+  margin: 0 auto!important;
+  margin-bottom: 10px!important;
 }
 .smallInforFormaPagamentoBoleto {
   padding: 5px;
@@ -339,6 +341,7 @@
         <div class="badge badge-blue iconStep" style="display:none;">1</div>
       </div>
       <div class="row col-lg-4 col-lg-offset-2" style=" margin: 0 auto; display:block">
+        <up-sell-card @recalcula="getTotal()" :noCheckout="1"></up-sell-card>
         <!-- START STEP 4-->
         <div class="col-md-4 mt-0 mb-0 cardSide">
           <!-- START card-->
@@ -355,7 +358,7 @@
                   id="collapseParent"
                   class="resumoCompra pull-left float-left ml-0"
                   role="button"
-                >Resumo da Compra</span>
+                >Resumo</span>
                 <small
                   style="cursor:pointer!important;"
                   class="ml-2 text-left textItems"
@@ -492,6 +495,7 @@
                   <div class="col-md-7">
                     <input
                       @input="maskCPF()"
+                      @focus="saveLead()"
                       minlength="14"
                       maxlength="14"
                       class="form-control required"
@@ -601,7 +605,7 @@
               <div class="card-body minusmargintop" v-show="getStepDadosEnderecoFinalizado() == 0">
                 <div class="form-group row formGroup">
                   <label class="col-xl-12 col-form-label labelForm">CEP</label>
-                  <div class="col-md-6">
+                  <div class="col-md-7">
                     <input
                       @input="consultaCEP()"
                       class="form-control required"
@@ -879,7 +883,7 @@
                     </div>
 
                     <div class="form-group row mt-3">
-                      <div class="col-xl-12">
+                      <div class="col-md-11">
                         <button
                           class="btn btn-sm btn-primary btn-lg btn-block float-right mb-0 btnContinue"
                           v-on:click="validarStep(currentStep)"
@@ -916,7 +920,7 @@
                   <div class="card-body minusmargintop" v-show="formaPagamento =='bolbradesco'">
                     <div class="form-group row mt-2">
                       <small
-                        class="text-justify col-md-12 smallInforFormaPagamentoBoleto"
+                        class="text-justify col-md-11 smallInforFormaPagamentoBoleto"
                       >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</small>
                     </div>
                     <div class="form-group row mt-2">
@@ -946,85 +950,6 @@
         <!-- END STEP 3-->
       </div>
     </div>
-    <!-- <div id="formPayMP">
-      <form action="/processar_pagamento" method="post" id="pay" name="pay" class="hidden">
-        <fieldset>
-          <input type="text" name="description" id="description" v-bind:value="getNomeLoja()" />
-          <input
-            name="transaction_amount"
-            id="transaction_amount"
-            v-bind:value="formatPrice(granTotal)"
-          />
-          <input
-            :value="card_number.replace(/ /g,'')"
-            type="text"
-            id="cardNumber"
-            data-checkout="cardNumber"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="cardholderName"
-            :value="nome_titular"
-            data-checkout="cardholderName"
-          />
-          <input
-            type="text"
-            id="cardExpirationMonth"
-            data-checkout="cardExpirationMonth"
-            :value="getValidadeCartao().mes"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="cardExpirationYear"
-            :value="getValidadeCartao().ano"
-            data-checkout="cardExpirationYear"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <input
-            type="text"
-            id="securityCode"
-            v-model="codigo_seguranca"
-            data-checkout="securityCode"
-            onselectstart="return false"
-            onpaste="return false"
-            oncopy="return false"
-            oncut="return false"
-            ondrag="return false"
-            ondrop="return false"
-            autocomplete="off"
-          />
-          <select id="installments" v-model="parcelas" class="form-control" name="installments">
-            <option v-bind:value="parcelas" selected="selected"></option>
-          </select>
-          <select id="docType" data-checkout="docType">
-            <option value="CPF" selected="selected">CPF</option>
-          </select>
-          <input type="text" id="docNumber" v-model="cpf_titular" data-checkout="docNumber" />
-          <input type="email" id="email" name="email" v-model="email" />
-          <input type="hidden" name="payment_method_id" v-model="payment_id" id="payment_method_id" />
-        </fieldset>
-      </form>
-    </div>-->
   </div>
 </template>
 <script>
@@ -1038,7 +963,8 @@ import API_LOJA from "../../api/lojaAPI";
 import UTILIS_API from "../../api/utilisAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
-// Import stylesheet
+import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
+import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
@@ -1048,6 +974,8 @@ import router from "../../router.js";
 import Hashids from "hashids";
 import dateFormat from "dateformat";
 import constantes from "../../api/constantes";
+import UpSellCard from "../../components/Cart/UpSellCard";
+import API_CLIENTES from "../../api/clientesAPI";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1073,6 +1001,9 @@ export default {
     }
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
+  },
+  components: {
+    UpSellCard
   },
   computed: {},
   data() {
@@ -1126,7 +1057,8 @@ export default {
       granQuantity: 0,
       granSubTotal: 0,
       public_key: "",
-      reference_id: ""
+      reference_id: "",
+      descontoCupom: 0,
     };
   },
   mounted() {},
@@ -1238,7 +1170,9 @@ export default {
     getNomeLoja() {
       return this.dadosLoja.nome_loja;
     },
-
+    getNomeFatura() {
+      return this.DadosCheckout.nome_fatura || this.getNomeLoja();
+    },
     async changeQuantity(idThuor) {
       var Comp = document.getElementById("qtd_" + idThuor);
       for (const [i, item] of this.produtosCart.entries()) {
@@ -1314,6 +1248,7 @@ export default {
           this.nome_completo = this.nome_completo.toUpperCase();
           this.stepDadosPessoaisFinalizados = 1;
           this.currentStep = 2;
+          this.saveLead();
           API_NOTIFICATION.HideLoading();
         }
       } else if (this.currentStep == 2) {
@@ -1426,6 +1361,8 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -1472,13 +1409,28 @@ export default {
       return LVal;
     },
     getImageCard() {
-      if (this.payment_id !== undefined && this.payment_id.length > 1) {
-        let bandeira = this.payment_id;
-        if (bandeira == "master") bandeira = "mastercard";
-        if (bandeira == "creditCard") bandeira = "visa";
-        return (
-          "http://github.bubbstore.com/formas-de-pagamento/" + bandeira + ".svg"
-        );
+      if (this.card_number.replace(/ /g, "").length > 0) {
+        var bandeira =
+          creditCardType(this.card_number.replace(/ /g, ""))[0].type || "";
+        if (
+          bandeira == "maestro" ||
+          bandeira == "unionpay" ||
+          bandeira == "mir"
+        )
+          return "/img/credit-card.png";
+        if (bandeira == "diners-club") bandeira = "diners";
+        if (bandeira == "american-express") bandeira = "amex-american-express";
+        if (bandeira != "") {
+          return (
+            "http://github.bubbstore.com/formas-de-pagamento/" +
+              bandeira +
+              ".svg" || "/img/credit-card.png"
+          );
+        } else {
+          return "img/credit-card.png";
+        }
+      } else {
+        return "img/credit-card.png";
       }
     },
     // verificaDigitosCartao() {
@@ -1536,6 +1488,7 @@ export default {
     },
     async getTotal() {
       this.totalQuantity = 0;
+      this.descontoCupom = 0;
       var subTotal = 0,
         total = 0,
         discount = 0;
@@ -1547,6 +1500,9 @@ export default {
       if (sessionStorage.getItem("cart") != null) {
         this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
       }
+      if(sessionStorage.getItem("descontoCupom") != null){
+        this.descontoCupom = parseFloat(sessionStorage.getItem("desc"));
+      }
       if (this.produtosCart != null) {
         this.produtosCart.forEach((item, i) => {
           subTotal =
@@ -1557,12 +1513,19 @@ export default {
             parseFloat(item.variant_price) * parseFloat(item.quantity);
           this.totalQuantity =
             parseInt(this.totalQuantity) + parseInt(item.quantity);
-          discount = parseFloat(subTotal) - parseFloat(total);
+          if (parseFloat(subTotal) > parseFloat(total)) {
+            discount = parseFloat(subTotal) - parseFloat(total);
+          }
+          if (parseFloat(total) > parseFloat(subTotal)) {
+            discount = parseFloat(total) - parseFloat(subTotal);
+          }
         });
+        total = parseFloat(total) - parseFloat(this.descontoCupom);
         total = parseFloat(total) + parseFloat(this.valorFrete);
-        this.granTotal = total;
+
         this.granSubTotal = subTotal;
         this.granDesconto = discount;
+        this.granTotal = total;
         var LTotal = {
           subTotal: subTotal,
           total: total,
@@ -1641,12 +1604,19 @@ export default {
           estado: this.estado,
           complemento: this.removeAcento(this.complemento),
           destinatario: this.removeAcento(this.destinatario),
-          numero_cartao: this.numero_cartao,
+          numero_cartao: this.card_number,
           validade: this.validade,
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
           cpf_titular: this.cpf_titular,
-          frete: this.getFreteSelecionadoNome()
+          frete: this.getFreteSelecionadoNome(),
+          valor: this.formatPrice(this.granTotal),
+          forma: this.formaPagamento,
+          barcode: "",
+          urlBoleto: "",
+          parcela: this.parcelas,
+          valorParcela: "",
+          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""))
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
@@ -1655,7 +1625,7 @@ export default {
           reference_id: this.reference_id.substring(0, 64),
           sync: true,
           reference: this.reference_id.substring(0, 64),
-          description: this.getNomeLoja(),
+          description: this.getNomeFatura(),
           amount: {
             value: this.formatPrice(this.granTotal),
             currency: "BRL"
@@ -1670,7 +1640,7 @@ export default {
           }
         }
       };
-      console.log("Transacao", transacao);
+      //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
       const LCripto = btoa(JSONString);
       return LCripto;
@@ -1681,7 +1651,7 @@ export default {
         constantes.CONSTANTE_VENCIMENTO_BOLETO;
       var LData = new Date();
       LData.setDate(LData.getDate() + LDaysVenceBoleto);
-      const LDataVencimento = dateFormat(LData, "dd/mm/yyyy");
+      const LDataVencimento = dateFormat(LData, "yyyy-mm-dd");
 
       this.DadosCheckout.chave_publica = this.public_key;
       var transacao = {
@@ -1699,12 +1669,16 @@ export default {
           estado: this.estado,
           complemento: this.removeAcento(this.complemento),
           destinatario: this.removeAcento(this.destinatario),
-          numero_cartao: this.numero_cartao,
+          numero_cartao: this.card_number,
           validade: this.validade,
           nome_titular: this.nome_titular,
           codigo_seguranca: this.codigo_seguranca,
           cpf_titular: this.cpf_titular,
-          frete: this.getFreteSelecionadoNome()
+          frete: this.getFreteSelecionadoNome(),
+          valor: this.formatPrice(this.granTotal),
+          forma: this.formaPagamento,
+          barcode: "",
+          urlBoleto: ""
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
@@ -1713,9 +1687,9 @@ export default {
           reference_id: this.reference_id.substring(0, 64),
           sync: true,
           reference: this.reference_id.substring(0, 64),
-          description: this.getNomeLoja(),
+          description: this.getNomeFatura(),
           amount: {
-            value: this.formatPrice(this.granTotal),
+            value: parseFloat(this.granTotal),
             currency: "BRL"
           },
           payment_method: {
@@ -1725,10 +1699,10 @@ export default {
               instruction_lines: {
                 line_1:
                   this.DadosCheckout.linha_um_boleto ||
-                  "Pagável em qualquer lotérica",
+                  this.removeAcento("Pagável em qualquer lotérica"),
                 line_2:
                   this.DadosCheckout.linha_dois_boleto ||
-                  "Não aceitar após o vencimento"
+                  this.removeAcento("Não aceitar após o vencimento")
               },
               holder: {
                 name: this.nome_completo,
@@ -1737,7 +1711,7 @@ export default {
                 address: {
                   country: "Brasil",
                   region: this.estado,
-                  region_code: "--",
+                  region_code: this.estado,
                   city: this.cidade,
                   postal_code: this.CEP.replace(/[-,.]/g, ""),
                   street: this.endereco,
@@ -1752,7 +1726,7 @@ export default {
           ]
         }
       };
-      console.log("Transacao", transacao);
+      //console.log("Transacao", transacao);
       const JSONString = JSON.stringify(transacao);
       const LCripto = btoa(JSONString);
       return LCripto;
@@ -1760,16 +1734,35 @@ export default {
     async iniciaPagamentoBackEndBoleto() {
       API_NOTIFICATION.ShowLoading();
       var LRouter = router;
-     
+
       const ParamUm = this.cpf.replace(/[.-]/g, "");
       const ParamDois = this.nome_completo.replace(/ /g, "");
       const LRefID = await this.getCripto(ParamUm, ParamUm);
       this.reference_id = LRefID;
-      console.log("Reference ID", this.reference_id);
-       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
+      //console.log("Reference ID", this.reference_id);
+      const LCripto = await this.getDadosPagamentoTransacaoBoleto();
+      sessionStorage.setItem("LCrypto", LCripto);
       API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
         .then(retornoPaymentPagSeguro => {
-          console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+          if (
+            retornoPaymentPagSeguro.data.status != undefined &&
+            (retornoPaymentPagSeguro.data.status.toUpperCase() == "DECLINED" ||
+              retornoPaymentPagSeguro.data.status.toUpperCase() == "CANCELED")
+          ) {
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Rejeitado. Por favor, tente novamente.",
+              "error"
+            );
+            return;
+          }
+          var DadosCliente = {
+            nome: this.nome_completo,
+            dadosCompra: retornoPaymentPagSeguro.data
+          };
+          sessionStorage.setItem("TipoCheck", "bo");
+          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          LRouter.push("/obrigado-boleto");
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
@@ -1777,6 +1770,7 @@ export default {
         });
     },
     async iniciaPagamentoBackEndCard() {
+      var LRouter = router;
       var card = await PagSeguro.encryptCard({
         publicKey: this.public_key,
         holder: this.nome_titular,
@@ -1802,11 +1796,34 @@ export default {
         const ParamDois = this.nome_completo.replace(/ /g, "");
         const LRefID = await this.getCripto(ParamUm, ParamUm);
         this.reference_id = LRefID;
-        console.log("Reference ID", this.reference_id);
+        //console.log("Reference ID", this.reference_id);
         const LCripto = await this.getDadosPagamentoTransacao();
+        sessionStorage.setItem("LCrypto", LCripto);
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
-            console.log("Retorno Pagamento", retornoPaymentPagSeguro);
+            if (
+              retornoPaymentPagSeguro.data.status != undefined &&
+              (retornoPaymentPagSeguro.data.status.toUpperCase() ==
+                "DECLINED" ||
+                retornoPaymentPagSeguro.data.status.toUpperCase() == "CANCELED")
+            ) {
+              API_NOTIFICATION.showNotificationW(
+                "Oops!",
+                "Pagamento Rejeitado. Por favor, tente novamente.",
+                "error"
+              );
+              return;
+            }
+            var DadosCliente = {
+              nome: this.nome_completo,
+              dadosCompra: retornoPaymentPagSeguro.data
+            };
+            sessionStorage.setItem("TipoCheck", "ca");
+            sessionStorage.setItem(
+              "dadosCliente",
+              JSON.stringify(DadosCliente)
+            );
+            LRouter.push("/obrigado-cartao");
             API_NOTIFICATION.HideLoading();
           })
           .catch(error => {
@@ -1847,9 +1864,18 @@ export default {
         parametro_dois.toString()
       );
       // const numbers = hashids.decode(produtHashed);
-      console.log("ID Hashedid", produtHashed);
+      //console.log("ID Hashedid", produtHashed);
       // console.log("ID Deshashed", numbers);
       return produtHashed;
+    },
+    saveLead() {
+      API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)
+        .then(resLead => {
+          console.log("Lead Salva com Suceso");
+        })
+        .catch(error => {
+          console.log("Erro ao salvar lead", error);
+        });
     }
   }
 };
