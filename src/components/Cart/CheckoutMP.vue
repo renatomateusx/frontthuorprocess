@@ -1559,8 +1559,8 @@ export default {
       if (sessionStorage.getItem("cart") != null) {
         this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
       }
-      if (sessionStorage.getItem("descontoCupom") != null) {
-        this.descontoCupom = parseFloat(sessionStorage.getItem("desc"));
+      if (sessionStorage.getItem("vld") != null) {
+        this.descontoCupom = parseFloat(sessionStorage.getItem("vld"));
       }
       if (this.produtosCart != null) {
         this.produtosCart.forEach((item, i) => {
