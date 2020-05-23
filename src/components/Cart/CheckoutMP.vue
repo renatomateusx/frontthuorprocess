@@ -197,6 +197,8 @@
   margin: 5px;
   cursor: pointer !important;
   border-radius: 10px;
+  margin: 0 auto !important;
+  margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
   padding: 5px;
@@ -356,7 +358,7 @@
                   id="collapseParent"
                   class="resumoCompra pull-left float-left ml-0"
                   role="button"
-                >Resumo da Compra</span>
+                >Resumo</span>
                 <small
                   style="cursor:pointer!important;"
                   class="ml-2 text-left textItems"
@@ -412,6 +414,8 @@
                       </div>
                     </div>
                   </div>
+                  <!-- CUPOM CARD -->
+                  <cupom-card @recalcula="getTotal()"></cupom-card>
                 </div>
               </div>
             </div>
@@ -603,7 +607,7 @@
               <div class="card-body minusmargintop" v-show="getStepDadosEnderecoFinalizado() == 0">
                 <div class="form-group row formGroup">
                   <label class="col-xl-12 col-form-label labelForm">CEP</label>
-                  <div class="col-md-6">
+                  <div class="col-md-7">
                     <input
                       @input="consultaCEP()"
                       class="form-control required"
@@ -764,7 +768,7 @@
                   <button
                     type="button"
                     v-on:click="formaPagamentoSelecionada('creditCard')"
-                    class="btn btn-secondary col-md-11 pull-left float-left btnFormaPagamentoSelecionada"
+                    class="btn btn-secondary col-md-11 pull-left float-left btnFormaPagamentoSelecionada mb-2"
                     :class="getClassSelected('creditCard')"
                   >
                     <p>
@@ -1050,6 +1054,8 @@ import UpSellCard from "../../components/Cart/UpSellCard";
 import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
 import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 import API_CLIENTES from "../../api/clientesAPI";
+import CupomCard from "../../components/Cart/CupomCard";
+
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1076,7 +1082,8 @@ export default {
     this.checkURL();
   },
   components: {
-    UpSellCard
+    UpSellCard,
+    CupomCard
   },
   computed: {},
   data() {
@@ -1128,7 +1135,8 @@ export default {
       granTotal: 0,
       granDesconto: 0,
       granQuantity: 0,
-      granSubTotal: 0
+      granSubTotal: 0,
+      descontoCupom: 0
     };
   },
   mounted() {},
@@ -1539,6 +1547,7 @@ export default {
     },
     async getTotal() {
       this.totalQuantity = 0;
+      this.descontoCupom = 0;
       var subTotal = 0,
         total = 0,
         discount = 0;
@@ -1550,6 +1559,9 @@ export default {
       if (sessionStorage.getItem("cart") != null) {
         this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
       }
+      if (sessionStorage.getItem("descontoCupom") != null) {
+        this.descontoCupom = parseFloat(sessionStorage.getItem("desc"));
+      }
       if (this.produtosCart != null) {
         this.produtosCart.forEach((item, i) => {
           subTotal =
@@ -1560,12 +1572,19 @@ export default {
             parseFloat(item.variant_price) * parseFloat(item.quantity);
           this.totalQuantity =
             parseInt(this.totalQuantity) + parseInt(item.quantity);
-          discount = parseFloat(subTotal) - parseFloat(total);
+          if (parseFloat(subTotal) > parseFloat(total)) {
+            discount = parseFloat(subTotal) - parseFloat(total);
+          }
+          if (parseFloat(total) > parseFloat(subTotal)) {
+            discount = parseFloat(total) - parseFloat(subTotal);
+          }
         });
+        total = parseFloat(total) - parseFloat(this.descontoCupom);
         total = parseFloat(total) + parseFloat(this.valorFrete);
-        this.granTotal = total;
+
         this.granSubTotal = subTotal;
         this.granDesconto = discount;
+        this.granTotal = total;
         var LTotal = {
           subTotal: subTotal,
           total: total,
@@ -1652,8 +1671,8 @@ export default {
           frete: this.getFreteSelecionadoNome(),
           valor: this.formatPrice(this.granTotal),
           forma: this.formaPagamento,
-          barcode: '',
-          urlBoleto: '',
+          barcode: "",
+          urlBoleto: "",
           parcela: this.parcelas,
           valorParcela: "",
           bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""))

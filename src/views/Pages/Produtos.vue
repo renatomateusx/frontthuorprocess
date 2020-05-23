@@ -275,7 +275,7 @@ th.active .arrow {
                   <div class="media ml-0 mr-0">
                     <img
                       class="img-fluid circle ml-0 mr-0"
-                      v-bind:src="JSON.parse(json_dados_produto).image.src"
+                      v-bind:src="json_dados_produto.image.src"
                       alt="Image"
                     />
                     <span class="titulo_produto ml-2">
@@ -287,12 +287,12 @@ th.active .arrow {
                 </td>
                 <td
                   style="width: 3em!important;min-width: 3em!important;" class=" hiddenMobile"
-                >{{JSON.parse(json_dados_produto).variants.length}}</td>
+                >{{json_dados_produto.variants.length}}</td>
                 <td class="text-center hiddenMobile" style="width: 15em!important;min-width: 15em!important;">
                   <span class="badge badge-success">Ativo</span>
                 </td>
 
-                <td class="padding1010 hiddenMobile">{{JSON.parse(json_dados_produto).updated_at | formatDate}}</td>
+                <td class="padding1010 hiddenMobile">{{json_dados_produto.updated_at | formatDate}}</td>
               </tr>
             </tbody>
           </table>
@@ -438,7 +438,7 @@ export default {
           API_PRODUTOS.GetProdutos()
             .then(retProd => {
               retProd.data.forEach((obj, i) => {
-                var LImages = JSON.parse(obj.json_dados_produto);
+                var LImages = obj.json_dados_produto;
                 //this.produtosList = retProd.data;
                 console.log(obj);
                 this.gridData.push({
@@ -467,7 +467,7 @@ export default {
         .then(retorno => {
           API_PRODUTOS.GetProdutos()
             .then(retProd => {
-              var LImages = JSON.parse(retProd.data[0].json_dados_produto);
+              var LImages = retProd.data[0].json_dados_produto;
               console.log("Retorno Produtos", LImages.image.src);
               this.produtosList = retProd.data;
 

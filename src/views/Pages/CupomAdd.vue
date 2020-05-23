@@ -784,7 +784,6 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_CUPOM.GetCupomByID(id)
         .then(res => {
-          console.log(res.data);
           this.cupom = res.data;
           this.arrayAux = this.cupom.aplicar_regra_produtos_especificos;
           this.arrayAuxExcluir = this.cupom.exceptuar_regra_produtos_especificos;
@@ -801,7 +800,6 @@ export default {
       const L2 = Math.floor(Math.random() * 100);
       const L3 = Math.floor(Math.random() * 100);
       const LCodeHash = hashids.encode(L1, L2, L3);
-      console.log(LCodeHash);
       this.cupom.code = LCodeHash;
     },
     customFormatter(date) {

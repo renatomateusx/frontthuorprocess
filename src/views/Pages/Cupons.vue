@@ -347,12 +347,7 @@ export default {
       sortKey: "",
       spanSituacao: '-',
       textSituacao: '',
-      sortOrders: {},
-      login: {
-        email: "",
-        password: "",
-        rememberme: false
-      },
+      sortOrders: {},      
       selectedCupom: 0,
       nomeselectedCupom: "",
       gridData: [],

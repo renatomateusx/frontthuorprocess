@@ -254,7 +254,6 @@ import VeeValidate from "vee-validate";
 import { min, max, numeric } from "vee-validate/dist/rules.esm";
 import { Validator } from "vee-validate";
 import pt from "vee-validate/dist/locale/pt_BR";
-import Multiselect from "vue-multiselect";
 import API_PRODUTOS from "../../api/produtosAPI";
 import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
@@ -286,7 +285,6 @@ export default {
     });
   },
   components: {
-    Multiselect,
     Prods
   },
   data() {
