@@ -368,6 +368,7 @@ import router from "../../router.js";
 import API_MKT from "../../api/marketingAPI";
 import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
 import API_CUPOM from "../../api/cuponsAPI";
+import moment from "moment";
 
 Vue.use(LoadScript);
 
@@ -430,8 +431,16 @@ export default {
         if (this.produtosCart != null) {
           this.produtosCart.forEach((item, i) => {
             API_CUPOM.GetCupomByProductID(item.id_thuor).then(
-              resProductUpSell => {
-                console.log(resProductUpSell.data);
+              async resCupom => {
+                const LCupom = resCupom.data;
+                const LPodeDesconto = await this.PodeDesconto(LCupom, item, this.produtosCart.length);
+                if(LPodeDesconto == 1 && LCupom.aplicar_regra_automatica_carrinho == 1){
+                  console.log("Aplicar Regra automática no carrinho");
+                }
+                if(LPodeDesconto == 1 && LCupom.aplicar_regra_automatica_carrinho == 0){
+                  console.log("Esperar o cliente digitar o cupom");
+                }
+                console.log(resCupom.data);
                 // this.MostraCupom = resProductUpSell.data.tipo_checkout || 0;
                 // console.log(this.MostraCupom);
                 // const ProdUS = resProductUpSell.data.id_produto_to;
@@ -566,59 +575,79 @@ export default {
       text = text.replace(new RegExp("[Ç]", "gi"), "c");
       return text;
     },
-    toggleSelect(componente) {
-      const ID = componente.id;
-      var Selected = componente.options[componente.selectedIndex].value;
-      if (Selected == 0) {
-        this.VarianteIDUpSellSelected = 0;
-        return;
-      }
-      const LImageID = this.LVariantes.find(x => x.id == Selected).image_id;
-      this.variant_img = this.LImages.find(x => x.id == LImageID).src;
-      this.LVariantes.find(x => x.id == Selected).selected = Selected;
-      const LSKU = this.LVariantes.find(x => x.id == Selected).sku;
-      this.LVariantes.find(x => x.id == Selected).SkuSelected = LSKU;
-      this.variant_title = this.LVariantes.find(x => x.id == Selected).title;
-      const LPrice = this.LVariantes.find(x => x.id == Selected).price;
-      //const LVarianteIDSelected = this.LVariantes.find(x = x.id ==)
-      this.VarianteIDUpSellSelected = Selected;
-      this.VarianteImageUpSellSelected = this.variant_img;
-      this.VarianteSKUUpSellSelected = LSKU;
-      this.VariantePriceUpSellSelected = parseFloat(LPrice);
-      this.VarianteTitleUPSellSelected = this.variant_title;
-    },
-    async pushProducts(product, quantity, variante_id) {
-      return new Promise((resolve, reject) => {
-        try {
-          API_PRODUTOS.GetProdutoByIDImported(product, quantity, variante_id)
-            .then(retorno => {
-              this.getDadosLoja(retorno.data.id_usuario);
-              resolve(retorno.data);
-            })
-            .catch(error => {
-              console.log("Error ao pegar o Produto no Thuor.com", error);
-            });
-        } catch (error) {
-          console.log("Erro ao pegar os dados do produto na API", error);
-        }
-      });
-    },
-    clearSessionStorage() {
-      sessionStorage.clear();
-    },
     sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
-    },
-    randomString(length, chars) {
-      var result = "";
-      for (var i = length; i > 0; --i)
-        result += chars[Math.floor(Math.random() * chars.length)];
-      return result;
     },
     aplicarCupom() {
       var self = this;
 
       //this.codigo_cupom
+    },
+    PodeDesconto(JSONCupom, item, quantidade_itens_carrinho) {
+      return new Promise((resolve, reject) => {
+        /* total_disponivel, valor_minimo_compra, data_inicio, data_fim, exige_quantidade_minima, quantidade_minima, 
+      tipo_desconto, valor_desconto, aplicar_regra_automatica_carrinho, permite_acumular, uso_unico, 
+      envia_automaticamente_carrinho_abandonado, cupom_primeira_compra, aplicar_regra_produtos_especificos, aplicar_regra_colecao, 
+      aplicar_regra_marca, aplicar_regra_categoria, aplicar_regra_forma_pagamento, exceptuar_regra_produtos_especificos, 
+      exceptuar_regra_colecao, exceptuar_regra_marca, exceptuar_regra_categoria, exceptuar_regra_forma_pagamento, frete_gratis */
+
+        /* id_thuor: "156"
+          id_usuario: "1"
+          quantity: 1         
+          variant_id: 33311522848827         
+          variant_price: "142.00"
+          variant_price_ancora: "189.00"         
+          */
+        try {
+          const LFindProd = JSONCupom.aplicar_regra_produtos_especificos.find(
+            x => x.id_thuor == item.id_thuor
+          );
+          if (moment(JSONCupom.data_inicio).format() < moment().format()) {
+            resolve(false);
+          }
+          if (moment(JSONCupom.data_fim).format() < moment().format()) {
+            resolve(false);
+          }
+          if (
+            JSONCupom.numero_utilizacao != undefined &&
+            JSONCupom.numero_utilizacao != null &&
+            parseInt(JSONCupom.numero_utilizacao) > -1 &&
+            parseInt(JSONCupom.total_disponivel) ==
+              parseInt(JSONCupom.numero_utilizacao)
+          ) {
+            resolve(false);
+          }
+          if (
+            parseFloat(JSONCupom.valor_minimo_compra) <
+            parseFloat(item.variant_price)
+          ) {
+            resolve(false);
+          }
+          if (
+            JSONCupom.exige_quantidade_minima &&
+            parseInt(JSONCupom.quantidade_minima) <
+              parseInt(quantidade_itens_carrinho)
+          ) {
+            resolve(false);
+          }
+          if (!PermiteAcumular && arrayDescontos.length > 0) {
+            resolve(false);
+          }
+          if (
+            JSONCupom.aplicar_regra_produtos_especificos != undefined &&
+            JSONCupom.aplicar_regra_produtos_especificos != null &&
+            LFindProd == undefined
+          ) {
+            resolve(false);
+          }
+          if (PermiteAcumular) {
+            resolve(true);
+          }
+        } catch (error) {
+          console.log("Erro ao tratar o podoe desconto", error);
+          reject(error);
+        }
+      });
     }
   }
 };

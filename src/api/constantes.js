@@ -83,6 +83,8 @@ export default Object.freeze({
   PATH_SAVE_CUPOM: 'cupons/SaveCupom',
   PATH_DELETE_CUPOM: 'cupons/DeleteCupomByID',
   PATH_GET_CUPOM_BY_PRODUCT_ID: 'cupons/GetCupomByProductID',
+  PATH_GET_CUPOM_BY_CODE: 'cupons/GetCupomByCODE',
+  PATH_UPDATE_NUMERO_UTILIZACAO_CUPOM: 'cupons/UpdateNumeroUtilizacao',
   
   
 
