@@ -39,6 +39,7 @@ const Rastreio = () => import('@/views/Pages/Rastreio.vue');
 const Cupons = () => import('@/views/Pages/Cupons.vue');
 const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
 const IntegracaoCampanhas = () => import('@/views/Pages/IntegracaoCampanhas.vue');
+const AbandonoCarrinho = () => import('@/views/Pages/AbandonoCarrinho.vue');
 
 Vue.use(Router)
 
@@ -208,6 +209,10 @@ export default new Router({
             {
                 path: '/configs/campanhas',
                 component: IntegracaoCampanhas
+            },
+            {
+                path: '/configs/campanhas/abandcart',
+                component: AbandonoCarrinho
             }
 
         ]

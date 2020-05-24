@@ -2,6 +2,7 @@ const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 import router from '../router';
+import UTILIS_API from "../api/utilisAPI";
 var API_LOGIN = {
   EfetuarLogin(login, senha) {
     return new Promise(async (resolve, reject) => {

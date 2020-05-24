@@ -139,7 +139,7 @@ export default {
     },
     acaoVerEditarIntegracaoCampanha(id) {
       if (id == 1) {
-        this.$router.push("/configs/campanhas/abandono");
+        this.$router.push("/configs/campanhas/abandcart");
       }
     },
     getImageIntegracaoCampanha(id) {

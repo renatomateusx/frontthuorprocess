@@ -308,7 +308,7 @@ import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import API_CUPOM from "../../api/cuponsAPI";
-
+import UTILIS_API from "../../api/utilisAPI";
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
 

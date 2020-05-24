@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
+import UTILIS_API from "../api/utilisAPI";
 var API_PRODUTOS = {
     GetProdutos() {
         return new Promise(async (resolve, reject) => {

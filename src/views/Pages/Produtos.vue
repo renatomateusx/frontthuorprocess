@@ -321,6 +321,7 @@ import API_HEADERS from "../../api/configAxios";
 import API_PRODUTOS from "../../api/produtosAPI";
 import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
+import UTILIS_API from "../../api/utilisAPI";
 Vue.use(Loading);
 
 Vue.use(VeeValidate, {

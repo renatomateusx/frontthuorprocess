@@ -217,6 +217,7 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { quillEditor } from "vue-quill-editor";
 import Hashids from "hashids";
+import UTILIS_API from "../../api/utilisAPI";
 // Tag inputs
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table

@@ -288,7 +288,7 @@ import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import API_CHECKOUT from "../../api/checkoutAPI";
-
+import UTILIS_API from "../../api/utilisAPI";
 Vue.filter("formatDate", function(value) {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY hh:mm");

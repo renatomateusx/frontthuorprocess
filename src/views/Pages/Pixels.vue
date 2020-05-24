@@ -294,7 +294,7 @@ import dateFormat from "dateformat";
 import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
-
+import UTILIS_API from "../../api/utilisAPI";
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
 

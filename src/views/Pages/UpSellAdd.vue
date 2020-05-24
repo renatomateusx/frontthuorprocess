@@ -260,7 +260,7 @@ import API_LOGIN from "../../api/loginAPI";
 import Prods from "../../components/Tables/TableProdutos";
 import API_MKT from "../../api/marketingAPI";
 import Hashids from "hashids";
-
+import UTILIS_API from "../../api/utilisAPI";
 // Tag inputs
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table

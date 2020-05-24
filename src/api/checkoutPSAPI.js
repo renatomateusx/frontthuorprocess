@@ -2,6 +2,7 @@ import axios from 'axios';
 
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
+import UTILIS_API from "../api/utilisAPI";
 var API_CHECKOUT = {
     GetPublicKey(type, token) {
         return new Promise(async (resolve, reject) => {

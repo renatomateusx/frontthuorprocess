@@ -315,7 +315,7 @@ import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_MENSAGERIA from "../../api/mensageriaAPI";
-
+import UTILIS_API from "../../api/utilisAPI";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import constantes_mensagens from "../../api/constantes_mensagens";
