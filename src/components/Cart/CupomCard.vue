@@ -349,12 +349,13 @@
           </button>
         </div>
 
-        <div class="row">
+        <div class="row">         
           <p
             v-show="CupomAplicadoAuto == 1"
-            class="alert alert-success p-1 mt-2 col-md-12"
+            class="alert alert-success p-1 w-75 text-center ml-3  mb-2  mt-2  "
           >Cupom Aplicado Automaticamente</p>
-          <p v-for="cup in CupomCode" class="alert alert-info p-1">{{cup.code}}</p>
+           <strong class="mt-1 ml-3">Cupom(ns) aplicado(s):</strong>
+          <p v-for="cup in CupomCode" class="alert alert-info p-1 ml-2">{{cup.code}}</p>
         </div>
       </div>
 
@@ -427,7 +428,7 @@ export default {
         .then(result => {
           if (result) {
             this.aplicarCupom();
-            console.log("Cupom Submit");
+            
             return;
           }
           this.errors.add({
@@ -435,7 +436,7 @@ export default {
             field: "codigo_cupom",
             msg: "Escolha um produto"
           });
-          console.log("Correct them errors!");
+          
         })
         .catch(error => {
           console.log("Erro ao tentar validar", error);
@@ -503,7 +504,7 @@ export default {
     },
 
     async getDadosLoja() {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         //API_NOTIFICATION.ShowLoading();
         if (sessionStorage.getItem("DadosLoja") == undefined) {
           var store = JSON.parse(sessionStorage.getItem("DadosLoja")).url_loja;
@@ -614,7 +615,7 @@ export default {
         });
     },
     PodeDesconto(JSONCupom, item, quantidade_itens_carrinho) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         var LRetorno = true;
         /* total_disponivel, valor_minimo_compra, data_inicio, data_fim, exige_quantidade_minima, quantidade_minima, 
       tipo_desconto, valor_desconto, aplicar_regra_automatica_carrinho, permite_acumular, uso_unico, 
@@ -698,7 +699,7 @@ export default {
       });
     },
     CalculaDescontoCupom(JSONCupom, item) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         var LRetornoDesconto = 0;
         try {
           if (JSONCupom.tipo_desconto == 1) {
@@ -721,7 +722,7 @@ export default {
       });
     },
     PushDesconto(JSONCupom, item, valorDesconto) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           var LRetorno = 0;
           var LUL = [];
@@ -729,7 +730,7 @@ export default {
           if (sessionStorage.getItem("ul") != null) {
             LUL = JSON.parse(atob(sessionStorage.getItem("ul")));
           }
-          console.log(LUL);
+          
           const LFindCode = LUL.find(x => x.code == JSONCupom.code);
           if (LFindCode == undefined) {
             LUL.push({
@@ -764,7 +765,7 @@ export default {
           this.CupomAplicadoAuto = 1;
         }
       }
-      console.log(this.CupomCode);
+      
       return this.CupomCode;
     }
   }

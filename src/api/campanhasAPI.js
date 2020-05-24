@@ -2,17 +2,17 @@ const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 import router from '../router';
-var API_MENSAGERIA = {
-    GetMensagens() {
+import UTILIS_API from "./utilisAPI";
+var API_CAMPANHA = {
+    GetCampanhas() {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
-
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_MENSAGERIA, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CAMPANHAS, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -24,14 +24,36 @@ var API_MENSAGERIA = {
             }
         });
     },
-    SaveMensagem(novaMensagem) {
+    GetCampanhaByID(id) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
-                novaMensagem.id_usuario = LDadosLoja.id_usuario;
-                
+
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario,
+                    id: id
+                }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_MENSAGERIA, novaMensagem)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_CAMPANHA_BY_ID, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    SalvarCampanha(pNovoCupom) {
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+                pNovoCupom.id_usuario = LDadosLoja.id_usuario;
+
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_CUPOM, pNovoCupom)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -44,17 +66,17 @@ var API_MENSAGERIA = {
         });
     },
 
-    DeleteMensagensByID(id) {
+    DeleteCampanhaByID(id) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
                 pNovoUpSell.id_usuario = LDadosLoja.id_usuario;
                 var LBody = {
-                    id_usuario : LDadosLoja.id_usuario,
+                    id_usuario: LDadosLoja.id_usuario,
                     id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_DELETE_MENSAGERIA, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_DELETE_CUPOM, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -66,16 +88,16 @@ var API_MENSAGERIA = {
             }
         });
     },
-    GetMensagemByID(id) {
+    GetCampanhaByProductID(id) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
-                    id: id,
+                    id_produto: id,
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_MENSAGERIA_BY_ID, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CUPOM_BY_PRODUCT_ID, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -87,25 +109,5 @@ var API_MENSAGERIA = {
             }
         });
     },
-    GetMensagensWhatsApp(){
-        return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
-                let LBody = {
-                    id_usuario: LDadosLoja.id_usuario                   
-                }
-                axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_MENSAGERIA_WHATS_APP, LBody)
-                    .then((response) => {
-                        //console.log("Response", response);
-                        resolve(response);
-                    })
-                    .catch((error) => {
-                        console.log("Reject", error);
-                        reject(error);
-                    });
-            }
-        });
-    }
 }
-export default API_MENSAGERIA 
+export default API_CAMPANHA 

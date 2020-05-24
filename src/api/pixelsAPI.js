@@ -4,9 +4,9 @@ import API_HEADERS from "./configAxios";
 import router from '../router';
 var API_PIXEL = {
     GetPixels() {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
 
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario
@@ -25,9 +25,9 @@ var API_PIXEL = {
         });
     },
     SalvarPixel(pNovoPixel) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 pNovoPixel.id_usuario = LDadosLoja.id_usuario;
                 
                 axios
@@ -45,9 +45,9 @@ var API_PIXEL = {
     },
 
     DeletePixelByID(id) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 pNovoUpSell.id_usuario = LDadosLoja.id_usuario;
                 var LBody = {
                     id_usuario : LDadosLoja.id_usuario,
@@ -67,9 +67,9 @@ var API_PIXEL = {
         });
     },
     GetPixelByID(id) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
                     id: id,

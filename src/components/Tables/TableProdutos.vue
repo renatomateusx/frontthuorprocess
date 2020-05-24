@@ -338,7 +338,7 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     getImageSRC(obj) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         var LImageSRC = "";
         const LImages = obj.json_dados_produto.images;
         const LImag = obj.json_dados_produto.image;
@@ -356,8 +356,8 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+            .then(LojaData => {
+              UTILIS_API.SetDadosLojaSession(LojaData.data);
               API_PRODUTOS.GetProdutos()
                 .then(retProd => {
                   this.gridData = [];

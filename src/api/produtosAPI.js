@@ -4,7 +4,7 @@ import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 var API_PRODUTOS = {
     GetProdutos() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -24,7 +24,7 @@ var API_PRODUTOS = {
         });
     },
     GetProdutoByID(id) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -44,7 +44,7 @@ var API_PRODUTOS = {
         });
     },
     GetProdutoByIDThuor(id, quant, variant) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 id_produto: id,
                 quantity: quant,
@@ -64,7 +64,7 @@ var API_PRODUTOS = {
         });
     },
     GetProdutoIDThuor(id) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 id_produto: id
             }
@@ -82,7 +82,7 @@ var API_PRODUTOS = {
         });
     },
     GetProdutoByIDImported(id, quant, variant) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 id_produto: id,
                 quantity: quant,
@@ -102,7 +102,7 @@ var API_PRODUTOS = {
         });
     },
     ImportFromShopify() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -122,7 +122,7 @@ var API_PRODUTOS = {
         });
     },
     UpdateTipoProduto(tipo_produto, id_produto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -143,7 +143,7 @@ var API_PRODUTOS = {
         });
     },
     UpdateStatusProduto(status_produto, id_produto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -164,7 +164,7 @@ var API_PRODUTOS = {
         });
     },
     UpdateCustomFrete(custom_frete, id_produto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -185,7 +185,7 @@ var API_PRODUTOS = {
         });
     },
     UpdateTipoFrete(tipo_frete, preco_frete, id_produto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -207,7 +207,7 @@ var API_PRODUTOS = {
         });
     },
     UpdateURLDirProduto(url_dir_cartao, url_dir_boleto, id_produto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -229,7 +229,7 @@ var API_PRODUTOS = {
         });
     },
     GetPrazoEnvioVarianteByID(id_variante, campo) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -251,7 +251,7 @@ var API_PRODUTOS = {
         });
     },
     SalvarPrazoEnvioByID(id_variante, prazo_envio) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -273,7 +273,7 @@ var API_PRODUTOS = {
         });
     },
     SalvarQuantidadeEstoqueGerenciamentoPorVarianteID(id_variante, quantidade, quantidade_minima) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -296,7 +296,7 @@ var API_PRODUTOS = {
         });
     },
     DesativaGerenciamentoPorVarianteID(id_variante) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
@@ -317,7 +317,7 @@ var API_PRODUTOS = {
         });
     },
     GetDadosEstoquePorVarianteID(id_variante) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {

@@ -28,6 +28,8 @@ import Loading from "vue-loading-overlay";
 import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
+import API_LOJA from "../../api/lojaAPI";
+import UTILIS_API from '../../api/utilisAPI';
 
 export default {
   created() {
@@ -41,8 +43,11 @@ export default {
             return "Spanish";
             break;
           case "en":
-          default:
             return "English";
+            break;
+          case "ptBR":
+          default:
+            return "Português";
         }
       },
       selectUserName() {
@@ -58,6 +63,13 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
+          var LUser = JSON.parse(sessionStorage.getItem("user"));
+          if (LUser !== undefined && LUser !== null) {
+            API_LOJA.GetDadosLojaByIdUsuario(LUser.user.id)
+            .then((resLoja)=>{
+              UTILIS_API.SetDadosLojaSession(resLoja.data);
+            })
+          }
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {

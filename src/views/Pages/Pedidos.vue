@@ -434,7 +434,7 @@ export default {
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+              UTILIS_API.SetDadosLojaSession(resLoja.data);
               API_MENSAGERIA.GetMensagensWhatsApp()
                 .then(resMensagensWhats => {
                   //console.log(resMensagensWhats.data);
@@ -683,7 +683,7 @@ export default {
       return "";
     },
     getProdutoName(arrayProdutos) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         var LprodutoTitle = "";
         arrayProdutos.forEach((obj, i) => {
           LprodutoTitle = LprodutoTitle + obj.title + ", ";

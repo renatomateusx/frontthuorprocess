@@ -397,7 +397,7 @@ export default {
         });
     },
     getDeCripto(crypted) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
           var LHash = hashids.decode(crypted);

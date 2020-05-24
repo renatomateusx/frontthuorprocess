@@ -136,14 +136,14 @@
 
               <div class="form-group col-md-3">
                 <label class="col-form-label">Total Disponíveis *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('cupom.total_disponivel')}"
-                  v-model="cupom.total_disponivel"
-                  v-validate="'required'"
-                  class
-                  type="text"
-                  name="total_disponivel"
-                />
+                <el-input-number
+                 :class="{'is-invalid': errors.has('cupom.total_disponivel')}"
+                    v-model="cupom.total_disponivel"
+                    :min="1"
+                    :max="10000"
+                    name="total_disponivel"
+                    v-validate="'required'"
+                  ></el-input-number>                
                 <span
                   v-show="errors.has('cupom.total_disponivel')"
                   class="invalid-feedback"
@@ -230,8 +230,9 @@
                   <el-input-number
                     v-model="cupom.quantidade_minima"
                     :min="1"
-                    :max="1000"
+                    :max="10000"
                     v-validate="{'required':cupom.exige_quantidade_minima}"
+                    :class="{'is-invalid': errors.has('cupom.exige_quantidade_minima')}"
                   ></el-input-number>
                   <span
                     v-show="errors.has('cupom.quantidade_minima')"
@@ -245,7 +246,7 @@
               <span class="el-icon-s-ticket sizeIconDiscount mt-2 ml-3 mb-3"></span>
               <span class="ml-2 sizeDiscountLabel">Desconto</span>
               <div class="row">
-                <div class="form-group col-md-2 ml-3">
+                <div class="form-group col-md-2 ml-3">                  
                   <input
                     :class="{'form-control':true, 'is-invalid': errors.has('cupom.total_disponivel')}"
                     v-model="cupom.valor_desconto"

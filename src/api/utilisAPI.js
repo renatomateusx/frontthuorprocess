@@ -4,7 +4,7 @@ import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 var UTILIS_API = {
     VIA_CEP(cep) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var URL = constantes.PATH_VIACEP.replace("@", cep);
             axios
                 .get(URL)
@@ -20,7 +20,7 @@ var UTILIS_API = {
         });
     },
     CREATE_FORM_MP(pdescription, pamount, pcardNumber, pcardholderName, pcardExpirationMonth, pcardExpirationYear, psecurityCode, parcela, pdocNumber, pemail, ppayment_method_id) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var f = document.createElement("form");
             f.setAttribute('method', "post");
             f.setAttribute('action', "/processar_pagamento");
@@ -131,7 +131,7 @@ var UTILIS_API = {
         });
     },
     getIPRequest() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             axios
                 .get(constantes.URL_GET_IP)
                 .then((response) => {
@@ -209,7 +209,7 @@ var UTILIS_API = {
         }
     },
     GetTrackCode(code) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 code: code
             }
@@ -225,6 +225,130 @@ var UTILIS_API = {
                 });
         });
     },
+    SetCartSession(cart) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem("cart", btoa(JSON.stringify(cart)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o cart session", error);
+                resolve(error);
+            }
+        })
+    },
+    GetCartSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                const L = JSON.parse(atob(sessionStorage.getItem("cart")));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o cart session", error);
+                resolve(error);
+            }
+        })
+    },
+    SetUserSession(user) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem("user", btoa(JSON.stringify(user)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o user session", error);
+                resolve(error);
+            }
+        })
+    },
+    GetUserSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                const L = JSON.parse(atob(sessionStorage.getItem("user")));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o user session", error);
+                resolve(error);
+            }
+        })
+    },
+    SetPixelSession(pixel) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem("pixels", btoa(JSON.stringify(pixel)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o pixel session", error);
+                resolve(error);
+            }
+        })
+    },
+    GetPixelSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                const L = JSON.parse(atob(sessionStorage.getItem("pixels")));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o pixels session", error);
+                resolve(error);
+            }
+        })
+    },
+    SetDadosLojaSession(dadosLoja) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem("DadosLoja", btoa(JSON.stringify(dadosLoja)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o DadosLoja session", error);
+                resolve(error);
+            }
+        })
+    },
+    GetDadosLojaSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem("DadosLoja") != null) {
+                    const L = JSON.parse(atob(sessionStorage.getItem("DadosLoja")));
+                    resolve(L);
+                }else{
+                    resolve(1);
+                }
+            }
+            catch (error) {
+                console.log("Erro ao pegar o DadosLoja session", error);
+                resolve(error);
+            }
+        })
+    },
+    SetDadosCheckoutSession(dadosCheckout) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem("DadosCheckout", btoa(JSON.stringify(dadosCheckout)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o DadosCheckout session", error);
+                resolve(error);
+            }
+        })
+    },
+    GetDadosCheckoutSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                const L = JSON.parse(atob(sessionStorage.getItem("DadosCheckout")));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o DadosCheckout session", error);
+                resolve(error);
+            }
+        })
+    }
 
 };
 

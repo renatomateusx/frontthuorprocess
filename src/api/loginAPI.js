@@ -4,7 +4,7 @@ import API_HEADERS from "../api/configAxios";
 import router from '../router';
 var API_LOGIN = {
   EfetuarLogin(login, senha) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       axios
         .post(constantes.WEBSITEAPI + constantes.PATH_LOGIN, {
           email: login,
@@ -21,7 +21,7 @@ var API_LOGIN = {
     });
   },
   VerificaToken() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const LActualPath = window.location.pathname;
       if(LActualPath) sessionStorage.setItem('actualPage', LActualPath);
       if (sessionStorage.getItem("user") == undefined || sessionStorage.getItem("user") == null) {

@@ -85,6 +85,12 @@ export default Object.freeze({
   PATH_GET_CUPOM_BY_PRODUCT_ID: 'cupons/GetCupomByProductID',
   PATH_GET_CUPOM_BY_CODE: 'cupons/GetCupomByCODE',
   PATH_UPDATE_NUMERO_UTILIZACAO_CUPOM: 'cupons/UpdateNumeroUtilizacao',
+
+  PATH_GET_CAMPANHAS: 'campanhas/GetCampanhas',
+  PATH_INTEGRACAO_CAMPANHA: 'campanhas/GetIntegracaoCampanha',
+  PATH_INTEGRACAO_CAMPANHA_BY_ID: 'campanhas/GetIntegracaoCampanhaByID',
+  PATH_INSERT_INTEGRACAO_CAMPANHA: 'campanhas/InsertIntegracaoCampanha',
+  PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',
   
   
 

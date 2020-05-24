@@ -396,7 +396,7 @@ export default {
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+              UTILIS_API.SetDadosLojaSession(resLoja.data);
               API_MKT.GetUpSells()
                 .then(retornoUpSell => {
                   retornoUpSell.data.forEach((obj, i) => {
@@ -448,7 +448,7 @@ export default {
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
     getTipoCheckout(id) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         var LReturn = "";
         if (id == 1) LReturn = "No Checkout";
         if (id == 2) LReturn = "Na Finalização";

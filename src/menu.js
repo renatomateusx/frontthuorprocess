@@ -45,6 +45,11 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-donate',
             path: '/configs/integracoes'
+        },{
+            name: 'Campanhas',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-campaign',
+            path: '/configs/campanhas'
         },]
     },
     {

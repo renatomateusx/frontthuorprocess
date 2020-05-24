@@ -414,8 +414,8 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+            .then(LojaData => {
+              UTILIS_API.SetDadosLojaSession(LojaData.data);
               API_CUPOM.GetCupons()
                 .then(retornoCupom => {
                   retornoCupom.data.forEach((obj, i) => {
@@ -456,7 +456,7 @@ export default {
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
     getTipoCheckout(id) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         var LReturn = "";
         if (id == 1) LReturn = "No Checkout";
         if (id == 2) LReturn = "Na Finalização";

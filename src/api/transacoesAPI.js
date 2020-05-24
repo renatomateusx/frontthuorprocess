@@ -4,7 +4,7 @@ import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 var API_TRANSACOES = {
     GetTransacoes() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
@@ -28,7 +28,7 @@ var API_TRANSACOES = {
         });
     },
     DoPayBackEndTicket(cripto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 pay: cripto
             }
@@ -46,7 +46,7 @@ var API_TRANSACOES = {
         });
     },
     GetTransacaoByID(id) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
@@ -71,7 +71,7 @@ var API_TRANSACOES = {
         });
     },
     ReembolsarCliente(id){
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
@@ -96,7 +96,7 @@ var API_TRANSACOES = {
         });
     },
     ReembolsarClienteCheckoutPS(id){
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
@@ -121,7 +121,7 @@ var API_TRANSACOES = {
         });
     },
     ReembolsarClienteCheckoutPayU(id){
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));

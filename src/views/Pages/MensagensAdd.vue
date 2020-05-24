@@ -341,7 +341,7 @@ export default {
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+              UTILIS_API.SetDadosLojaSession(resLoja.data);
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {

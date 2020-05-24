@@ -609,7 +609,7 @@ export default {
           .then(res => {
             const LojaData = res.data;
             this.dadosLoja = LojaData;
-            sessionStorage.setItem("DadosLoja", JSON.stringify(this.dadosLoja));
+            UTILIS_API.SetDadosLojaSession(this.dadosLoja);
           })
           .catch(error => {
             console.log("Erro ao pegar dados da Loja", error);
@@ -699,7 +699,7 @@ export default {
       //this.UpSellNoCheckout = 0;
     },
     async pushProducts(product, quantity, variante_id) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           API_PRODUTOS.GetProdutoByIDImported(product, quantity, variante_id)
             .then(retorno => {

@@ -165,7 +165,7 @@ export default {
         .then(res => {
           const LojaData = res.data;
           this.dadosLoja = LojaData;
-          sessionStorage.setItem("DadosLoja", JSON.stringify(this.dadosLoja));
+          UTILIS_API.SetDadosLojaSession(LojaData);
         })
         .catch(error => {
           console.log("Erro ao pegar dados da Loja", error);

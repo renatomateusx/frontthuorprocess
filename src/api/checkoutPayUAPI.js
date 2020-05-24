@@ -4,7 +4,7 @@ import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 var API_CHECKOUT_PU = {
     DoPayBackEnd(cripto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 LCrypto: cripto
             }
@@ -22,7 +22,7 @@ var API_CHECKOUT_PU = {
         });
     },
     DoPayBackEndTicket(cripto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 pay: cripto
             }
@@ -40,9 +40,9 @@ var API_CHECKOUT_PU = {
         });
     },
     GetCheckouts() {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
 
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario
@@ -61,9 +61,9 @@ var API_CHECKOUT_PU = {
         });
     },
     GetCheckoutsByID(id) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
 
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
@@ -83,9 +83,9 @@ var API_CHECKOUT_PU = {
         });
     },
     GetIntegracaoCheckout() {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 axios
                     .get(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_CHECKOUT)
                     .then((response) => {
@@ -100,7 +100,7 @@ var API_CHECKOUT_PU = {
         });
     },
     GetIntegracaoCheckoutByID(id) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
                 const LUser = JSON.parse(sessionStorage.getItem('user'));
@@ -125,7 +125,7 @@ var API_CHECKOUT_PU = {
         });
     },
     InsertCheckout(checkout_form) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
                 const LUser = JSON.parse(sessionStorage.getItem('user'));
@@ -147,7 +147,7 @@ var API_CHECKOUT_PU = {
     },
 
     UpdateStatus(checkout_form) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
                 const LUser = JSON.parse(sessionStorage.getItem('user'));
@@ -167,7 +167,7 @@ var API_CHECKOUT_PU = {
         });
     },
     UpdateAtivaBoleto(checkout_form) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
                 const LUser = JSON.parse(sessionStorage.getItem('user'));
@@ -187,7 +187,7 @@ var API_CHECKOUT_PU = {
         });
     },
     UpdateAutoProcessamento(checkout_form) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
 
             if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
                 const LUser = JSON.parse(sessionStorage.getItem('user'));

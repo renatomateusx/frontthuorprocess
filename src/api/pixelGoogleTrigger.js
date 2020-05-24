@@ -1,6 +1,6 @@
 var API_GOOGLE_PIXEL = {
     InsertScript() {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             if (sessionStorage.getItem("pixels") != null) {
                 const dadosPixel = JSON.parse(sessionStorage.getItem("pixels"));
                 dadosPixel.forEach(async (obj, i) => {
@@ -68,7 +68,7 @@ var API_GOOGLE_PIXEL = {
 
     },
     InsertScriptById(id) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const pluginGG = document.createElement("script");
             pluginGG.onload = function () {
                 resolve(true);
@@ -82,7 +82,7 @@ var API_GOOGLE_PIXEL = {
         });
     },
     InsertTagScript(id, id_aly) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const pluginGG2 = document.createElement("script");
             var inlineScript = document.createTextNode("window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-" + id + "', {'send_page_view': false}); gtag('config', 'AW-" + id_aly + "');");
             pluginGG2.appendChild(inlineScript);

@@ -38,7 +38,7 @@ const MensagensAdd = () => import('@/views/Pages/MensagensAdd.vue');
 const Rastreio = () => import('@/views/Pages/Rastreio.vue');
 const Cupons = () => import('@/views/Pages/Cupons.vue');
 const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
-
+const IntegracaoCampanhas = () => import('@/views/Pages/IntegracaoCampanhas.vue');
 
 Vue.use(Router)
 
@@ -205,6 +205,10 @@ export default new Router({
                 path: '/configs/integracoes/shopify',
                 component: IntegracaoShopify
             },
+            {
+                path: '/configs/campanhas',
+                component: IntegracaoCampanhas
+            }
 
         ]
     },
