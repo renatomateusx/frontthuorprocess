@@ -113,7 +113,7 @@ export default {
         //console.log(this.dadosStore.order.order_number);
       }
       if (sessionStorage.getItem("DadosLoja") != null) {
-        this.DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.DadosLoja = UTILIS_API.GetDadosLojaSession();
         //console.log(this.DadosLoja);
       }      
       API_FACEBOOK_PIXEL.TriggerFacebookEvent('Purchase', 'boleto');

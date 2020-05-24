@@ -255,6 +255,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import VueCryptojs from "vue-cryptojs";
 import Hashids from "hashids";
+import UTILIS_API from "../../api/utilisAPI";
 Vue.use(VueCryptojs);
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -295,7 +296,7 @@ export default {
     async checkURL() {
       var url = window.location.href;
       if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
         console.log("loja", this.dadosLoja);
       }
       if (url.includes("pay")) {
@@ -324,7 +325,7 @@ export default {
       } else {
         console.log("1");
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
         this.produtosCart = JSON.parse(LCart);
         API_NOTIFICATION.HideLoading();
       }

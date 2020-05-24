@@ -7,7 +7,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -49,7 +49,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -74,7 +74,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -99,7 +99,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -124,7 +124,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,

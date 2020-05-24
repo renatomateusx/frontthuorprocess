@@ -91,7 +91,7 @@ export default {
         this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
       }
       if (sessionStorage.getItem("DadosLoja") != null) {
-        this.DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.DadosLoja = UTILIS_API.GetDadosLojaSession();
       }
       API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase");
       API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase");
