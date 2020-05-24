@@ -2,6 +2,7 @@ const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 import router from '../router';
+import UTILIS_API from "../api/utilisAPI";
 var API_CLIENTES = {
     GetClientes() {
         return new Promise(async (resolve, reject) => {
@@ -87,7 +88,7 @@ var API_CLIENTES = {
             }
         });
     },
-    SaveLead(email, nome, telefone) {
+    SaveLead(email, nome, telefone, lead) {
         return new Promise(async (resolve, reject) => {
            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
@@ -95,7 +96,8 @@ var API_CLIENTES = {
                     id_usuario: LDadosLoja.id_usuario,
                     email: email,
                     nome: nome,
-                    telefone: telefone
+                    telefone: telefone,
+                    lead:lead
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_LEAD, LBody)

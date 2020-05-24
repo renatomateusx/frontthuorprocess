@@ -225,6 +225,23 @@ var UTILIS_API = {
                 });
         });
     },
+    GetDadosCompradorLead(email){
+        return new Promise(async (resolve, reject) => {
+            let LBody = {
+                email: email
+            }
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_LEAD_GET_DADOS_COMPRADOR, LBody)
+                .then((response) => {
+                    console.log("Response Cliente", response);
+                    resolve(response);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+        });
+    },
     SetCartSession(cart) {
         return new Promise((resolve, reject) => {
             try {
@@ -345,6 +362,35 @@ var UTILIS_API = {
             }
             catch (error) {
                 console.log("Erro ao pegar o DadosCheckout session", error);
+                resolve(error);
+            }
+        })
+    },
+    SetFretesSession(frete) {
+        return new Promise((resolve, reject) => {
+            try {
+                
+                sessionStorage.setItem("fretes", btoa(JSON.stringify(frete)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o fretes session", error);
+                resolve(error);
+            }
+        })
+    },
+    GetFretesSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if(sessionStorage.getItem("fretes") == null){
+                    resolve([]);
+                    return;
+                } 
+                const L = JSON.parse(atob(sessionStorage.getItem("fretes")));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o fretes session", error);
                 resolve(error);
             }
         })

@@ -197,8 +197,8 @@
   margin: 5px;
   cursor: pointer !important;
   border-radius: 10px;
-  margin: 0 auto!important;
-  margin-bottom: 10px!important;
+  margin: 0 auto !important;
+  margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
   padding: 5px;
@@ -463,21 +463,7 @@
                 class="card-body minusmargintop"
                 v-show="!this.getStepDadosPessoaisFinalizados()"
               >
-                <div class="form-group row formGroup">
-                  <label class="col-xl-12 col-form-label labelForm">Nome Completo</label>
-                  <div class="col-xl-12">
-                    <input
-                      class="form-control required"
-                      autocomplete="name"
-                      type="text"
-                      minlength="5"
-                      v-model.lazy="nome_completo"
-                      id="nome_completo"
-                      placeholder="Digite seu nome aqui"
-                      required
-                    />
-                  </div>
-                </div>
+                
                 <div class="form-group row formGroup">
                   <label class="col-md-10 col-form-label labelForm">E-mail</label>
                   <div class="col-xl-12">
@@ -488,6 +474,22 @@
                       v-model.lazy="email"
                       id="email_user"
                       placeholder="Digite seu E-mail"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="form-group row formGroup">
+                  <label class="col-xl-12 col-form-label labelForm">Nome Completo</label>
+                  <div class="col-xl-12">
+                    <input
+                      class="form-control required"
+                      autocomplete="name"
+                      type="text"
+                      minlength="5"
+                      @focus="populaDadosComprador()"
+                      v-model.lazy="nome_completo"
+                      id="nome_completo"
+                      placeholder="Digite seu nome aqui"
                       required
                     />
                   </div>
@@ -995,12 +997,11 @@ Vue.mixin({
 
 export default {
   name: "CheckoutPS",
-  created() {
+  async created() {
     console.log("Checkout PS ");
-    if (sessionStorage.getItem("fretes") != null) {
-      this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
-      //console.log(fretes);
-    }
+    this.fretes = await UTILIS_API.GetFretesSession();
+    //console.log(fretes);
+
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
   },
@@ -1060,7 +1061,7 @@ export default {
       granSubTotal: 0,
       public_key: "",
       reference_id: "",
-      descontoCupom: 0,
+      descontoCupom: 0
     };
   },
   mounted() {},
@@ -1262,17 +1263,15 @@ export default {
           UTILIS.isValidString(this.destinatario, 5, "destinatário")
         ) {
           API_LOJA.GetFretes()
-            .then(retornoFretes => {
-              sessionStorage.setItem(
-                "fretes",
-                JSON.stringify(retornoFretes.data)
-              );
+            .then(async retornoFretes => {
+              await UTILIS_API.SetFretesSession(retornoFretes.data);
               this.fretes = retornoFretes.data;
               retornoFretes.data.forEach((obj, i) => {
                 this.selecionaPadrao(obj.id, obj.preco, obj.nome);
               });
               this.stepDadosEnderecoFinalizados = 1;
               this.currentStep = 3;
+              this.saveLead();
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -1353,7 +1352,10 @@ export default {
       return true;
     },
     getFreteSelecionadoNome() {
-      var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+      var lnome = "";
+      if (this.fretes.length > 0) {
+        lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+      }
       //console.log("Nome Selecionado", lnome);
       return lnome;
     },
@@ -1502,7 +1504,7 @@ export default {
       if (sessionStorage.getItem("cart") != null) {
         this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
       }
-      if(sessionStorage.getItem("vld") != null){
+      if (sessionStorage.getItem("vld") != null) {
         this.descontoCupom = parseFloat(sessionStorage.getItem("vld"));
       }
       if (this.produtosCart != null) {
@@ -1870,14 +1872,57 @@ export default {
       // console.log("ID Deshashed", numbers);
       return produtHashed;
     },
-    saveLead() {
-      API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)
+    async saveLead() {
+      var LLead = await this.getDadosPagamentoTransacao();     
+      API_CLIENTES.SaveLead(
+        this.email,
+        this.nome_completo,
+        this.telefone,
+        LLead
+      )
         .then(resLead => {
           console.log("Lead Salva com Suceso");
         })
         .catch(error => {
           console.log("Erro ao salvar lead", error);
         });
+    },
+    async populaDadosComprador() {
+      API_NOTIFICATION.ShowLoadingT("Um momento...");
+      if (UTILIS.isValidEmail(this.email)) {
+        UTILIS_API.GetDadosCompradorLead(this.email)
+          .then(resComprador => {
+            const LComprador = resComprador.data;
+            if (LComprador.dadosComprador != undefined) {
+              if (LComprador.dadosComprador.cpf != undefined) {
+                this.cpf = LComprador.dadosComprador.cpf;
+              }
+              if (LComprador.nome != undefined) {
+                this.nome_completo = LComprador.nome;
+              }
+              if (LComprador.telefone != undefined) {
+                this.telefone = LComprador.telefone;
+              }
+              if (
+                LComprador.dadosComprador.cep != undefined &&
+                LComprador.dadosComprador.cep.length > 0
+              ) {
+                this.CEP = LComprador.dadosComprador.cep;
+                this.consultaCEP();
+                this.numero_porta = LComprador.dadosComprador.numero_porta;
+              } else {
+                API_NOTIFICATION.HideLoading();
+              }
+            } else {
+              API_NOTIFICATION.HideLoading();
+            }
+          })
+          .catch(error => {
+            console.log("Erro ao pegar dados do comprador", error);
+          });
+      } else {
+        console.log("Email Inválido");
+      }
     }
   }
 };

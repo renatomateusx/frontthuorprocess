@@ -354,8 +354,8 @@
             v-show="CupomAplicadoAuto == 1"
             class="alert alert-success p-1 w-75 text-center ml-3  mb-2  mt-2  "
           >Cupom Aplicado Automaticamente</p>
-           <strong class="mt-1 ml-3">Cupom(ns) aplicado(s):</strong>
-          <p v-for="cup in CupomCode" class="alert alert-info p-1 ml-2">{{cup.code}}</p>
+           <strong class="mt-3 ml-3">Cupom(ns) aplicado(s):</strong>
+          <p v-for="cup in CupomCode" class="alert alert-info p-1 ml-2 mt-2">{{cup.code}}</p>
         </div>
       </div>
 

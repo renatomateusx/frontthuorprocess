@@ -92,6 +92,7 @@ export default Object.freeze({
   PATH_INSERT_INTEGRACAO_CAMPANHA: 'campanhas/InsertIntegracaoCampanha',
   PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',
   
+  PATH_LEAD_GET_DADOS_COMPRADOR: 'clientes/GetDadosCompradorLead',
   
 
 });

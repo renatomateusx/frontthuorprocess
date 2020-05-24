@@ -464,21 +464,6 @@
                 v-show="!this.getStepDadosPessoaisFinalizados()"
               >
                 <div class="form-group row formGroup">
-                  <label class="col-xl-12 col-form-label labelForm">Nome Completo</label>
-                  <div class="col-xl-12">
-                    <input
-                      class="form-control required"
-                      autocomplete="name"
-                      type="text"
-                      minlength="5"
-                      v-model.lazy="nome_completo"
-                      id="nome_completo"
-                      placeholder="Digite seu nome aqui"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="form-group row formGroup">
                   <label class="col-md-10 col-form-label labelForm">E-mail</label>
                   <div class="col-xl-12">
                     <input
@@ -492,6 +477,23 @@
                     />
                   </div>
                 </div>
+                <div class="form-group row formGroup">
+                  <label class="col-xl-12 col-form-label labelForm">Nome Completo</label>
+                  <div class="col-xl-12">
+                    <input
+                      class="form-control required"
+                      autocomplete="name"
+                      @focus="populaDadosComprador()"
+                      type="text"
+                      minlength="5"
+                      v-model.lazy="nome_completo"
+                      id="nome_completo"
+                      placeholder="Digite seu nome aqui"
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div class="form-group row formGroup">
                   <label class="col-xl-12 col-form-label labelForm">CPF</label>
                   <div class="col-md-7">
@@ -557,7 +559,7 @@
           <!-- START STEP 2-->
           <div
             class="col-md-4 mt-0 mb-0 cardSide"
-            v-bind:class="currentStep == 2 || getStepDadosEnderecoFinalizado() == 1 ? '': 'disabledBox'"
+            
           >
             <!-- START card-->
             <div class="card card-default mb-0">
@@ -742,7 +744,7 @@
           <!-- START STEP 3-->
           <div
             class="col-md-4 mt-0 mb-0 cardSide"
-            v-bind:class="currentStep == 3 ? '': 'disabledBoxX'"
+            
           >
             <!-- START card-->
             <div class="card card-default mb-0">
@@ -1073,13 +1075,15 @@ Vue.mixin({
 
 export default {
   name: "CheckoutMP",
-  created() {
-    if (sessionStorage.getItem("fretes") != null) {
-      this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
-      //console.log(fretes);
-    }
+  async created() {
+    this.fretes = await UTILIS_API.GetFretesSession();
+    //console.log(fretes);
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
+    // setTimeout(() => {
+    //     this.CEP = '42.722-020';
+    //     this.consultaCEP();
+    // }, 2000);
   },
   components: {
     UpSellCard,
@@ -1281,7 +1285,7 @@ export default {
     consultaCEP() {
       if (this.CEP.length >= 8) {
         this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
-        UTILIS_API.VIA_CEP(this.CEP)
+        UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
           .then(retornoCEP => {
             this.endereco = retornoCEP.logradouro;
             this.bairro = retornoCEP.bairro;
@@ -1335,17 +1339,15 @@ export default {
           UTILIS.isValidString(this.destinatario, 5, "destinatário")
         ) {
           API_LOJA.GetFretes()
-            .then(retornoFretes => {
-              sessionStorage.setItem(
-                "fretes",
-                JSON.stringify(retornoFretes.data)
-              );
+            .then(async retornoFretes => {
+              await UTILIS_API.SetFretesSession(retornoFretes.data);
               this.fretes = retornoFretes.data;
               retornoFretes.data.forEach((obj, i) => {
                 this.selecionaPadrao(obj.id, obj.preco, obj.nome);
               });
               this.stepDadosEnderecoFinalizados = 1;
               this.currentStep = 3;
+              this.saveLead();
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -1426,7 +1428,10 @@ export default {
       return true;
     },
     getFreteSelecionadoNome() {
-      var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+      var lnome = "";
+      if (this.fretes.length > 0) {
+        lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+      }
       //console.log("Nome Selecionado", lnome);
       return lnome;
     },
@@ -1811,14 +1816,57 @@ export default {
       text = text.replace(new RegExp("[Ç]", "gi"), "c");
       return text;
     },
-    saveLead() {
-      API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)
+    async saveLead() {
+      var LLead = await this.getDadosPagamentoTransacao();
+      API_CLIENTES.SaveLead(
+        this.email,
+        this.nome_completo,
+        this.telefone,
+        LLead
+      )
         .then(resLead => {
           console.log("Lead Salva com Suceso");
         })
         .catch(error => {
           console.log("Erro ao salvar lead", error);
         });
+    },
+    async populaDadosComprador() {
+      API_NOTIFICATION.ShowLoadingT("Um momento...");
+      if (UTILIS.isValidEmail(this.email)) {
+        UTILIS_API.GetDadosCompradorLead(this.email)
+          .then(resComprador => {
+            const LComprador = resComprador.data;
+            if (LComprador.dadosComprador != undefined) {
+              if (LComprador.dadosComprador.cpf != undefined) {
+                this.cpf = LComprador.dadosComprador.cpf;
+              }
+              if (LComprador.nome != undefined) {
+                this.nome_completo = LComprador.nome;
+              }
+              if (LComprador.telefone != undefined) {
+                this.telefone = LComprador.telefone;
+              }
+              if (
+                LComprador.dadosComprador.cep != undefined &&
+                LComprador.dadosComprador.cep.length > 0
+              ) {
+                this.CEP = LComprador.dadosComprador.cep;
+                this.consultaCEP();
+                this.numero_porta = LComprador.dadosComprador.numero_porta;
+              } else {
+                API_NOTIFICATION.HideLoading();
+              }
+            } else {
+              API_NOTIFICATION.HideLoading();
+            }
+          })
+          .catch(error => {
+            console.log("Erro ao pegar dados do comprador", error);
+          });
+      } else {
+        console.log("Email Inválido");
+      }
     }
   }
 };
