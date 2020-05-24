@@ -348,11 +348,16 @@
             <span class="fa fa-arrow-right"></span>
           </button>
         </div>
+
+        <div class="row">
+          <p
+            v-show="CupomAplicadoAuto == 1"
+            class="alert alert-success p-1 mt-2 col-md-12"
+          >Cupom Aplicado Automaticamente</p>
+          <p v-for="cup in CupomCode" class="alert alert-info p-1">{{cup.code}}</p>
+        </div>
       </div>
-      <strong
-        v-show="CupomAplicadoAuto == 1"
-        class="alert alert-success"
-      >Cupom Aplicado Automaticamente</strong>
+
       <strong
         v-show="errors.has('cupom.codigo_cupom')"
         class="alert alert-danger p-1"
@@ -399,6 +404,8 @@ export default {
       produtosCart: [],
       MostraCupom: 1,
       CupomAplicadoAuto: 0,
+      CupomAplicado: 0,
+      CupomCode: [],
       ArrayDescontos: [],
       cupom: {
         codigo_cupom: ""
@@ -419,6 +426,7 @@ export default {
         .validateAll(scope)
         .then(result => {
           if (result) {
+            this.aplicarCupom();
             console.log("Cupom Submit");
             return;
           }
@@ -458,32 +466,35 @@ export default {
                       objCupom,
                       item
                     );
-                    var LValueStored = 0;
-                    if (sessionStorage.getItem("vld") != null)
-                      LValueStored = parseFloat(sessionStorage.getItem("vld"));
-                    LValueStored = LValueStored + parseFloat(LValueDiscount);
-                    sessionStorage.setItem("vld", LValueStored);
-                    console.log("Aplicar Regra automática no carrinho");
-                    var LNumeroUtilizados = objCupom.numero_utilizacao;
-                    if (LNumeroUtilizados == null) LNumeroUtilizados = 0;
-                    LNumeroUtilizados = parseInt(LNumeroUtilizados) + 1;
-                    this.$emit("recalcula");
-                    // API_CUPOM.UpdateNumeroUtilizacao(
-                    //   objCupom.id,
-                    //   LNumeroUtilizados
-                    // )
-                    //   .then(resUtilizados => {
-                    //     this.$emit("recalcula");
-                    //     this.CupomAplicadoAuto == 1;
-                    //   })
-                    //   .catch(error => {
-                    //     console.log("Erro ao aplicar o coupom", error);
-                    //   });
+                    const LRetorno = await this.PushDesconto(
+                      objCupom,
+                      item,
+                      LValueDiscount
+                    );
+                    if (LRetorno == 1) {
+                      console.log("Aplicar Regra automática no carrinho");
+                      var LNumeroUtilizados = objCupom.numero_utilizacao;
+                      if (LNumeroUtilizados == null) LNumeroUtilizados = 0;
+                      LNumeroUtilizados = parseInt(LNumeroUtilizados) + 1;
+                      API_CUPOM.UpdateNumeroUtilizacao(
+                        objCupom.id,
+                        LNumeroUtilizados
+                      )
+                        .then(resUtilizados => {
+                          this.$emit("recalcula");
+                          this.CupomAplicadoAuto = 1;
+                          this.CupomAplicado = 1;
+                        })
+                        .catch(error => {
+                          console.log("Erro ao aplicar o coupom", error);
+                        });
+                    }
                   }
                 });
               }
             );
           });
+          this.arrayCupomCode();
         }
       } else {
         const LGetStore = await this.getDadosLoja();
@@ -553,34 +564,49 @@ export default {
       API_NOTIFICATION.ShowLoading();
       var self = this;
       API_CUPOM.GetCupomByCODE(this.cupom)
-        .then(async resCupon => {
+        .then(async resCupom => {
+          const LCupom = resCupom.data;
           if (sessionStorage.getItem("cart") != null) {
             self.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
           }
-          const LCupom = resCupom.data;
-          const LPodeDesconto = await this.PodeDesconto(
-            LCupom,
-            item,
-            self.produtosCart.length
-          );
-          const LValueDiscount = await this.CalculaDescontoCupom(LCupom, item);
-          var LValueStored = 0;
-          if (sessionStorage.getItem("vld") != null)
-            LValueStored = parseFloat(sessionStorage.getItem("vld"));
-          LValueStored = LValueStored + parseFloat(LValueDiscount);
-          sessionStorage.setItem("vld", LValueStored);
-          const LNumeroUtilizados = LCupom.numero_utilizacao;
-          LNumeroUtilizados = parseInt(LNumeroUtilizados) + 1;
-          API_CUPOM.UpdateNumeroUtilizacao(LCupom.id, LNumeroUtilizados)
-            .then(resUtilizados => {
-              this.$emit("recalcula");
-              this.CupomAplicadoAuto == 1;
-              API_NOTIFICATION.HideLoading();
-            })
-            .catch(error => {
-              console.log("Erro ao aplicar o coupom", error);
-              API_NOTIFICATION.HideLoading();
+
+          if (this.produtosCart != null) {
+            this.produtosCart.forEach(async (item, i) => {
+              const LPodeDesconto = await this.PodeDesconto(
+                LCupom,
+                item,
+                self.produtosCart.length
+              );
+              if (LPodeDesconto) {
+                const LValueDiscount = await this.CalculaDescontoCupom(
+                  LCupom,
+                  item
+                );
+                const LRetorno = await this.PushDesconto(
+                  LCupom,
+                  item,
+                  LValueDiscount
+                );
+                if (LRetorno == 1) {
+                  var LNumeroUtilizados = LCupom.numero_utilizacao;
+                  LNumeroUtilizados = parseInt(LNumeroUtilizados) + 1;
+                  API_CUPOM.UpdateNumeroUtilizacao(LCupom.id, LNumeroUtilizados)
+                    .then(resUtilizados => {
+                      this.$emit("recalcula");
+                      this.CupomAplicado = 1;
+                      API_NOTIFICATION.HideLoading();
+                    })
+                    .catch(error => {
+                      console.log("Erro ao aplicar o coupom", error);
+                      API_NOTIFICATION.HideLoading();
+                    });
+                }
+              }else{
+                API_NOTIFICATION.HideLoading();
+              }
             });
+          }
+          this.arrayCupomCode();
         })
         .catch(error => {
           console.log("Erro ao pegar o cupom", error);
@@ -613,14 +639,14 @@ export default {
             LFindProd = JSONCupom.aplicar_regra_produtos_especificos.find(
               x => x.id_thuor == item.id_thuor
             );
-          } 
+          }
 
-          if (
-            moment(JSONCupom.data_inicio).format() < moment().format()
-          ) {
+          if (moment().format() < moment(JSONCupom.data_inicio).format()) {
             LRetorno = false;
+            console.log(1);
           } else if (moment().format() > moment(JSONCupom.data_fim).format()) {
             LRetorno = false;
+            console.log(2);
           } else if (
             JSONCupom.numero_utilizacao != null &&
             parseInt(JSONCupom.numero_utilizacao) > 0 &&
@@ -628,33 +654,42 @@ export default {
               parseInt(JSONCupom.numero_utilizacao)
           ) {
             LRetorno = false;
+            console.log(3);
           } else if (
-            parseFloat(JSONCupom.valor_minimo_compra) <
-            parseFloat(item.variant_price)
+            parseFloat(item.variant_price) <
+            parseFloat(JSONCupom.valor_minimo_compra)
           ) {
             LRetorno = false;
+            console.log(
+              parseFloat(JSONCupom.valor_minimo_compra),
+              parseFloat(item.variant_price)
+            );
+            console.log(4);
           } else if (
             JSONCupom.exige_quantidade_minima == 1 &&
             parseInt(JSONCupom.quantidade_minima) <
               parseInt(quantidade_itens_carrinho)
           ) {
             LRetorno = false;
+            console.log(5);
           } else if (
             JSONCupom.permite_acumular == 0 &&
             this.ArrayDescontos.length > 0
           ) {
             LRetorno = false;
+            console.log(6);
           } else if (
             JSONCupom.aplicar_regra_produtos_especificos != undefined &&
             JSONCupom.aplicar_regra_produtos_especificos != null &&
             LFindProd == undefined
           ) {
             LRetorno = false;
+            console.log(7);
           }
           if (LRetorno) {
             this.ArrayDescontos.push({ cupom: JSONCupom.code });
           }
-          console.log("ArrayDesc", this.ArrayDescontos, LRetorno);
+          //console.log("ArrayDesc", this.ArrayDescontos, LRetorno);
           resolve(LRetorno);
         } catch (error) {
           console.log("Erro ao tratar o pode desconto", error);
@@ -684,6 +719,53 @@ export default {
           reject(error);
         }
       });
+    },
+    PushDesconto(JSONCupom, item, valorDesconto) {
+      return new Promise((resolve, reject) => {
+        try {
+          var LRetorno = 0;
+          var LUL = [];
+          var LValor = 0;
+          if (sessionStorage.getItem("ul") != null) {
+            LUL = JSON.parse(atob(sessionStorage.getItem("ul")));
+          }
+          console.log(LUL);
+          const LFindCode = LUL.find(x => x.code == JSONCupom.code);
+          if (LFindCode == undefined) {
+            LUL.push({
+              code: JSONCupom.code,
+              valor: valorDesconto,
+              auto: JSONCupom.aplicar_regra_automatica_carrinho
+            });
+            LUL.forEach((objLUL, i) => {
+              LValor = LValor + parseFloat(objLUL.valor);
+            });
+            LUL = JSON.stringify(LUL);
+            LUL = btoa(LUL);
+            sessionStorage.setItem("ul", LUL);
+            sessionStorage.setItem("vld", parseFloat(LValor));
+            LRetorno = 1;
+          } else {
+            LRetorno = 0;
+          }
+          this.arrayCupomCode();
+          resolve(LRetorno);
+        } catch (error) {
+          console.log("Erro ao fazer o push desconto", error);
+          reject(error);
+        }
+      });
+    },
+    arrayCupomCode() {
+      if (sessionStorage.getItem("ul") != null) {
+        this.CupomCode = JSON.parse(atob(sessionStorage.getItem("ul")));
+        var LAuto = this.CupomCode.find(x => x.auto == 1);
+        if (this.CupomCode.length > 0 && LAuto != undefined) {
+          this.CupomAplicadoAuto = 1;
+        }
+      }
+      console.log(this.CupomCode);
+      return this.CupomCode;
     }
   }
 };

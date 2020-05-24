@@ -115,12 +115,12 @@ var API_CUPOM = {
                 const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
-                    code: code,
+                    code: code.codigo_cupom,
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_GET_CUPOM_BY_CODE, LBody)
                     .then((response) => {
-                        //console.log("Response", response);
+                        console.log("ResponseC", response);
                         resolve(response);
                     })
                     .catch((error) => {
