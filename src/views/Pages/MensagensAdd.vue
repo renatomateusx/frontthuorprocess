@@ -31,12 +31,19 @@
 .marginZeroAuto {
   margin: 0 auto !important;
 }
-.ql-container .ql-editor {
+.ql-container .ql-editor p {
   min-height: 200px !important;
   height: 200px !important;
 }
-.qlEditor {
+.qlEditor p {
   min-height: 200px !important;
+}
+div > p{
+  min-height: 200px!important;
+  height: 200px!important;
+}
+.ql-editor{
+  height: 200px!important;
 }
 </style>
 <template>
@@ -153,6 +160,17 @@
                 >{{ errors.first('mensageria.titulo') }}</span>
               </div>
               <div class="form-group">
+                
+                <strong>Variáveis disponíveis para Carrinho abandonado:</strong>
+                <br><br>
+                <small><strong>{first_name}</strong> - primeiro nome do cliente</small><br>
+                <small><strong>{merchant}</strong> - nome de sua loja</small><br>
+                <small><strong>{products_list}</strong> - lista de produtos</small><br>
+                <small><strong>{link}</strong> - link do carrinho</small><br>
+                <small><strong>{barcode}</strong> - código de barras</small><br>
+                <small><strong>{tracking_code}</strong> - código de rastreio</small><br>
+              </div>
+              <div class="form-group">
                 <label class="col-form-label">Mensagem *</label>
                 <quill-editor
                   v-model="mensageria.mensagem"
@@ -164,6 +182,7 @@
                   class="invalid-feedback"
                 >{{ errors.first('mensageria.mensagem') }}</span>
               </div>
+              
               <div class="required">* Campos Obrigatórios</div>
             </div>
 

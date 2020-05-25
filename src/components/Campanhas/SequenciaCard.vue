@@ -424,13 +424,13 @@ export default {
     //document.addEventListener('beforeunload', this.clearSessionStorage);
   },
   props: {
-    noCheckout: { type: Number, required: false }
+    noCheckout: { type: Number, required: false },
+     id: {type:Number, required: true}
   },
   computed: {},
   data() {
     return {
-      sequencia: {
-        id_sequencia: 1,
+      sequencia: {       
         id_mensagem: 2,
         tipo_tempo: 1,
         tempo: 1
@@ -479,7 +479,7 @@ export default {
       });
     },
     salvarSequencia() {
-      var LSequencia = {id_mensagem: this.sequencia.id_mensagem, tempo: this.sequencia.tempo, tipo_tempo: this.sequencia.tipo_tempo};
+      var LSequencia = {id_sequencia: this.id, id_mensagem: this.sequencia.id_mensagem, tempo: this.sequencia.tempo, tipo_tempo: this.sequencia.tipo_tempo};
       this.$emit("AddSequencia", LSequencia);
     }
   }
