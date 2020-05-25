@@ -2,6 +2,7 @@
 .card-flat {
   margin-top: 80px !important;
 }
+
 .bg-dark {
   background-color: #23b7e5 !important;
 }
@@ -32,22 +33,22 @@
       <span class="fa fa-italic"><span class="ml-2"></span></span>Integração Shopify
     </div>
     <strong>
-      Preencha o checkout do {{getNomePlataforma()}} corretamente. Lembre-se: nós te avisaremos se houver erros. Mas a responsabilidade de informar os dados é sua!
+      Crie sequência de mensagens para recuperar e aumentar suas vendas.
       <br />
       Conte conosco através do suporte {suporte@thuor.com}
       <br />
     </strong>
 
     <div class="row mt-3">
-      <div class="col-xl-4">
+      <div class="col-xl-4 mt-4">
         <!-- Aside card-->
-        <div class="card b">
-          <div class="card-body bb">
+        <div class="card b ">
+          <div class="card-body bb ">
             <div class="clearfix">
               <div class="float-left p-1">
-                <span class="spanNome">{{getNomePlataforma()}}</span>
+                <span class="spanNome"></span>
               </div>
-              <button class="btn btn-block btn btn-primary btn-lg" v-if="plataforma.url_loja" v-on:click="reInstalarTema()">Reinstalar integração</button>
+              <button class="btn btn-block btn btn-primary btn-lg" v-on:click="adicionarSequencia()">Adicionar Sequência</button>
             </div>
           </div>
         </div>
@@ -56,159 +57,12 @@
       <div class="col-xl-8">
         <!-- Main card-->
         <form
-          data-vv-scope="plataforma_form"
-          @submit.prevent="validateBeforeSubmit('plataforma_form')"
+          data-vv-scope="carrinho_abandonado"
+          @submit.prevent="validateBeforeSubmit('carrinho_abandonado')"
         >
           <!-- START card-->
-          <div class="card card-default">
-            <div class="card-body">
-              <div class="form-group">
-                <label class="control-label" for="status">Ativo</label>
-                <select
-                  @change="updateStatus()"
-                  id="status"
-                  name="status"
-                  class="form-control"
-                  v-model="plataforma_form.status"
-                >
-                  <option selected value="1">Sim</option>
-                  <option value="0">Não</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Nome da Loja *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.nome_loja')}"
-                  v-model="plataforma_form.nome_loja"
-                  v-validate="'required'"
-                  type="text"
-                  name="nome_loja"
-                />
-                <span
-                  v-show="errors.has('plataforma_form.nome_loja')"
-                  class="invalid-feedback"
-                >{{ errors.first('plataforma_form.nome_loja') }}</span>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">URL Loja *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.url_loja')}"
-                  v-model="plataforma_form.url_loja"
-                  v-validate="'required'"
-                  type="text"
-                  name="url_loja"
-                />
-                <span
-                  v-show="errors.has('plataforma_form.url_loja')"
-                  class="invalid-feedback"
-                >{{ errors.first('plataforma_form.url_loja') }}</span>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Chave API Key *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.chave_api_key')}"
-                  v-model="plataforma_form.chave_api_key"
-                  v-validate="'required'"
-                  type="text"
-                  name="chave_api_key"
-                />
-                <span
-                  v-show="errors.has('plataforma_form.chave_api_key')"
-                  class="invalid-feedback"
-                >{{ errors.first('plataforma_form.chave_api_key') }}</span>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Senha *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.senha')}"
-                  v-model="plataforma_form.senha"
-                  v-validate="'required'"
-                  type="text"
-                  name="senha"
-                />
-                <span
-                  v-show="errors.has('plataforma_form.senha')"
-                  class="invalid-feedback"
-                >{{ errors.first('plataforma_form.senha') }}</span>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Segredo Compartilhado *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.segredo_compartilhado')}"
-                  v-model="plataforma_form.segredo_compartilhado"
-                  v-validate="'required'"
-                  type="text"
-                  name="segredo_compartilhado"
-                />
-                <span
-                  v-show="errors.has('plataforma_form.segredo_compartilhado')"
-                  class="invalid-feedback"
-                >{{ errors.first('plataforma_form.segredo_compartilhado') }}</span>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Sincroniza Automaticamente? *</label>
-                <select
-                  @change="AutoSinc()"
-                  id="auto_sincroniza"
-                  name="auto_sincroniza"
-                  class="form-control"
-                  v-model="plataforma_form.auto_sincroniza"
-                >
-                  <option selected value="1">Sim</option>
-                  <option value="0">Não</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Pula Carrinho? *</label>
-                <select
-                  @change="PulaCarrinho()"
-                  id="pula_carrinho"
-                  name="pula_carrinho"
-                  class="form-control"
-                  v-model="plataforma_form.pula_carrinho"
-                >
-                  <option selected value="1">Sim</option>
-                  <option value="0">Não</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Tipo de Integração *</label>
-                <select
-                  id="tipo_integracao"
-                  name="tipo_integracao"
-                  class="form-control"
-                  v-model="plataforma_form.tipo_integracao"
-                >
-                  <option selected value="App privado">App Privado</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Quais Pedidos Enviar*</label>
-                <select
-                  id="quais_pedidos_enviar"
-                  name="quais_pedidos_enviar"
-                  class="form-control"
-                  v-model="plataforma_form.quais_pedidos_enviar"
-                >
-                  <option selected value="Todos">Todos</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Limpa Carrinho? *</label>
-                <select
-                  @change="LimpaCarrinho()"
-                  id="limpa_carrinho"
-                  name="limpa_carrinho"
-                  class="form-control"
-                  v-model="plataforma_form.limpa_carrinho"
-                >
-                  <option selected value="1">Sim</option>
-                  <option value="0">Não</option>
-                </select>
-              </div>
-
-              <div class="required">* Campos requeridos</div>
-            </div>
+          <sequencia-card @AddSequencia="AdicionarSequencia($event)"></sequencia-card>
+          <div class="card card-default">            
             <div class="card-footer">
               <div class="clearfix col-md-12">
                 <div class="float-right btn-block">
@@ -238,10 +92,12 @@ import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_LOJA from "../../api/lojaAPI";
-
+import SequenciaCard from "../../components/Campanhas/SequenciaCard";
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
+
+
 
 export default {
   created() {
@@ -256,8 +112,13 @@ export default {
       attributes: {}
     });
   },
+  components:{
+    SequenciaCard
+  },
   data() {
     return {
+      idSequencia: 1,
+      sequenciasArray: [],
       plataforma: {
         nome: ""
       },
@@ -281,32 +142,10 @@ export default {
   },
   methods: {
     checkIfLogged() {
-      API_NOTIFICATION.ShowLoading();
+      //API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_LOJA.GetIntegracaoPlataformaByID(1)
-            .then(resCheckout => {
-              this.plataforma = resCheckout.data;
-              console.log(this.plataforma);
-              this.plataforma_form.id = this.plataforma.id;
-              this.plataforma_form.status = this.plataforma.status;
-              this.plataforma_form.auto_sincroniza = this.plataforma.auto_sincroniza;
-              this.plataforma_form.pula_carrinho = this.plataforma.pula_carrinho;
-              this.plataforma_form.tipo_integracao = this.plataforma.tipo_integracao;
-              this.plataforma_form.url_loja = this.plataforma.url_loja;
-              this.plataforma_form.chave_api_key = this.plataforma.chave_api_key;
-              this.plataforma_form.senha = this.plataforma.senha;
-              this.plataforma_form.segredo_compartilhado = this.plataforma.segredo_compartilhado;
-              this.plataforma_form.quais_pedidos_enviar = this.plataforma.quais_pedidos_enviar;
-              this.plataforma_form.id_usuario = this.plataforma.id_usuario;
-              this.plataforma_form.limpa_carrinho = this.plataforma.limpa_carrinho;
-              this.plataforma_form.nome_loja = this.plataforma.nome_loja;
-              this.plataforma_form.plataforma = this.plataforma.plataforma;
-              API_NOTIFICATION.HideLoading();
-            })
-            .catch(error => {
-              console.log("Erro ao pegar dados da loja", error);
-            });
+          
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -315,124 +154,28 @@ export default {
           }
         });
     },
-
-    getImageIntegracaoCheckout(id) {
-      if (id == 1) {
-        return "/img/shopify.png";
-      }
-      return "";
-    },
-    getNomePlataforma() {
-      if (this.plataforma.plataforma == 1) {
-        return " Shopify ";
-      }
-
-      return " Plataform ";
-    },
+    
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
-          this.salvarPlataforma();
+          this.salvarSequencia();
           return;
         }
       });
     },
-    reInstalarTema() {
-      API_NOTIFICATION.ShowLoading();
-      API_LOJA.InstalarReinstalarShopify().then(resInstalarShopify => {
-        API_NOTIFICATION.showNotificationW(
-          "Pronto!",
-          "Aguarde alguns instantes para que a integração esteja completa.",
-          "success"
-        );
-      });
+    adicionarSequencia() {
+      this.idSequencia = this.idSequencia + 1;
+      this.sequenciasArray.push({id: this.idSequencia, comp: CompositionEvent});   
+      console.log(this.sequenciasArray);   
     },
-    salvarPlataforma() {
-      API_NOTIFICATION.ShowLoading();
-      API_LOJA.InsertPlataformShopify(this.plataforma_form)
-        .then(res => {
-          //this.checkIfLogged();
-          API_LOJA.InstalarReinstalarShopify().then(resInstalarShopify => {
-            API_NOTIFICATION.showNotificationW(
-              "Aê!",
-              "Integração salvao com sucesso! Aguarde alguns instantes para que a integração esteja completa.",
-              "success"
-            );
-          });
-        })
-        .catch(error => {
-          console.log("Erro ao salvar o checkout MP", error);
-        });
+    AdicionarSequencia(event){
+      console.log(event);
     },
-    updateStatus() {
+    salvarSequencia() {
       API_NOTIFICATION.ShowLoading();
-
-      API_LOJA.UpdateStatus(this.plataforma_form)
-        .then(res => {
-          //this.checkIfLogged();
-          API_NOTIFICATION.showNotification(
-            "Status atualizado com Sucesso",
-            "success"
-          );
-        })
-        .catch(error => {
-          console.log("Erro ao salvar o checkout MP", error);
-        });
+      API_NOTIFICATION.HideLoading();
     },
-    PulaCarrinho() {
-      API_NOTIFICATION.ShowLoading();
-
-      API_LOJA.PulaCarrinho(this.plataforma_form)
-        .then(res => {
-          //this.checkIfLogged();
-          var stat = this.plataforma_form.pula_carrinho
-            ? "ativado"
-            : "desativado";
-          API_NOTIFICATION.showNotification(
-            "Pular Carrinho " + stat + " com Sucesso",
-            "success"
-          );
-        })
-        .catch(error => {
-          console.log("Erro ao salvar o checkout MP", error);
-        });
-    },
-    LimpaCarrinho() {
-      API_NOTIFICATION.ShowLoading();
-
-      API_LOJA.LimpaCarrinho(this.plataforma_form)
-        .then(res => {
-          //this.checkIfLogged();
-          var stat = this.plataforma_form.limpa_carrinho
-            ? "ativado"
-            : "desativado";
-          API_NOTIFICATION.showNotification(
-            "Limpa Carrinho " + stat + " com Sucesso",
-            "success"
-          );
-        })
-        .catch(error => {
-          console.log("Erro ao salvar o checkout MP", error);
-        });
-    },
-    AutoSinc() {
-      API_NOTIFICATION.ShowLoading();
-
-      API_LOJA.AutoSinc(this.plataforma_form)
-        .then(res => {
-          //this.checkIfLogged();
-          var stat = this.plataforma_form.auto_sincroniza
-            ? "ativado"
-            : "desativado";
-          API_NOTIFICATION.showNotification(
-            "Auto Sincronização " + stat + " com Sucesso",
-            "success"
-          );
-        })
-        .catch(error => {
-          console.log("Erro ao salvar o checkout MP", error);
-        });
-    }
+    
   }
 };
 </script>
