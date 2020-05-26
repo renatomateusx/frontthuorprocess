@@ -34,6 +34,12 @@
 #buttonProdutoUm {
   height: 60px !important;
 }
+.switch input:checked + span {
+  background-color: green;
+}
+.switch input + span {
+  background-color: red;
+}
 </style>
 <template>
   <ContentWrapper>

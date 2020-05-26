@@ -88,6 +88,8 @@ export default Object.freeze({
 
   PATH_GET_CAMPANHAS: 'campanhas/GetCampanhas',
   PATH_INTEGRACAO_CAMPANHA: 'campanhas/GetIntegracaoCampanha',
+  PATH_SAVE_CAMPANHA_CARRINHO_ABANDONADO: 'campanhas/SaveCampanhaCartAbandon',
+  PATH_GET_CAMPANHA_CARRINHO_ABANDONADO: 'campanhas/GetCampanhaCarrinhoAbandonado',
   PATH_INTEGRACAO_CAMPANHA_BY_ID: 'campanhas/GetIntegracaoCampanhaByID',
   PATH_INSERT_INTEGRACAO_CAMPANHA: 'campanhas/InsertIntegracaoCampanha',
   PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',

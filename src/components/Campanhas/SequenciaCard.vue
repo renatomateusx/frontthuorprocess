@@ -324,8 +324,8 @@
             <div class="form-group col-md-4">
               <label class="col-form-label">Mensagem *</label>
               <select
-                id="limpa_carrinho"
-                name="limpa_carrinho"
+                id="mensagem"
+                name="id_mensagem"
                 class="form-control text-center"
                 v-validate="'required'"
                 v-model="sequencia.id_mensagem"
@@ -421,14 +421,16 @@ export default {
   created() {
     API_NOTIFICATION.ShowLoading();
     this.checkIfLogged();
+   
     //document.addEventListener('beforeunload', this.clearSessionStorage);
   },
   props: {
     noCheckout: { type: Number, required: false },
-     id: {type:Number, required: true}
+     id: {type:Number, required: true},
+     seq: {}
   },
   computed: {},
-  data() {
+  data: function() {
     return {
       sequencia: {       
         id_mensagem: 2,
@@ -460,6 +462,9 @@ export default {
                 nome_mensagem: obj.nome
               });
             });
+            if(this.seq != undefined){
+              this.sequencia = this.seq;
+            }
             API_NOTIFICATION.HideLoading();
           });
         })

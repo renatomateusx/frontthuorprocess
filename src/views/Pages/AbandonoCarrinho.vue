@@ -26,6 +26,12 @@
   width: 120px;
   height: auto;
 }
+.switch input:checked + span {
+  background-color: green;
+}
+.switch input + span {
+  background-color: red;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -47,9 +53,6 @@
         <div class="card b">
           <div class="card-body bb">
             <div class="clearfix">
-              <div class="float-left p-1">
-                <span class="spanNome"></span>
-              </div>
               <button
                 class="btn btn-block btn btn-primary btn-lg"
                 v-on:click="adicionarSequencia()"
@@ -59,30 +62,66 @@
         </div>
         <!-- end Aside card-->
       </div>
+
       <div class="col-xl-8">
-        <!-- Main card-->
-        <form
-          data-vv-scope="carrinho_abandonado"
-          @submit.prevent="validateBeforeSubmit('carrinho_abandonado')"
-        >
-          <!-- START card-->
-          <div v-for="{id} in sequenciasArray" :key="id">
-            <span class="alert alert-info p-1 col-md-12 mb-1">Sequência {{id}}</span>
-            <br />
-            <sequencia-card @AddSequencia="AdicionarSequencia($event)" :id="id"></sequencia-card>
+        <form @submit.prevent="validateBeforeSubmit('campanha')" data-vv-scope="campanha">
+          <!-- Main card-->
+          <div class="row">
+            <div class="form-group ml-3">
+              <label class="s col-form-label">Status</label>
+              <div class>
+                <label class="switch switch-lg">
+                  <input
+                    type="checkbox"
+                    :checked="campanha.status == 1"
+                    v-model="campanha.status"
+                    :class="{'form-control':true, 'is-invalid': errors.has('campanha.status')}"
+                  />
+                  <span class></span>
+                </label>
+              </div>
+              <span
+                v-show="errors.has('campanha.status')"
+                class="invalid-feedback"
+              >{{ errors.first('campanha.status') }}</span>
+            </div>
+            <div class="form-group col-md-8 ml-3">
+              <label class="col-form-label">Nome *</label>
+              <input
+                :class="{'form-control':true, 'is-invalid': errors.has('campanha.nome')}"
+                v-model="campanha.nome"
+                placeholder="Ex: Carrinho Abandonado"
+                v-validate="'required'"
+                class
+                type="text"
+                name="nome"
+              />
+              <span
+                v-show="errors.has('campanha.nome')"
+                class="invalid-feedback"
+              >{{ errors.first('campanha.nome') }}</span>
+            </div>
           </div>
-          <div class="card card-default" v-show="campanhaSequenciaArray.length > 0">
+          <!-- START card-->
+          <div v-for="(id_sequencia, i) in sequenciasArray" :key="i">
+            <div class="mb-1">
+              <span class="alert alert-info p-1 col-md-12 mb-1">Sequência {{sequenciasArray[i].id_sequencia}}</span>
+            </div>
+            <sequencia-card @AddSequencia="AdicionarSequencia($event)" :id="sequenciasArray[i].id_sequencia" :seq="sequenciasArray[i]"></sequencia-card>
+          </div>
+          <div class="card card-default" v-show="campanha.campanhaSequenciaArray.length > 0">
             <div class="card-footer">
               <div class="clearfix col-md-12">
-                <div class="float-right btn-block" >
-                  <button class="btn btn-primary btn-block" type="submit">Salvar</button>
+                <div class="float-right btn-block">
+                  <button class="btn btn-primary float-right pull-right" type="submit">Salvar</button>
                 </div>
               </div>
             </div>
           </div>
           <!-- END card-->
+
+          <!-- End Main card-->
         </form>
-        <!-- End Main card-->
       </div>
     </div>
   </ContentWrapper>
@@ -102,6 +141,7 @@ import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_LOJA from "../../api/lojaAPI";
 import SequenciaCard from "../../components/Campanhas/SequenciaCard";
+import API_CAMPANHA from "../../api/campanhasAPI";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -111,6 +151,7 @@ export default {
   created() {
     API_NOTIFICATION.HideLoading();
     this.checkIfLogged();
+    //this.sequenciasArray.push({ id_sequencia: 1 })
   },
   mounted() {
     this.$validator.localize("pt", {
@@ -126,15 +167,37 @@ export default {
   data() {
     return {
       idSequencia: 1,
-      sequenciasArray: [{ id: 1 }],
-      campanhaSequenciaArray: []
+      sequenciasArray: [{ id_sequencia: 1 }],
+      campanha: {
+        id_ususario: 0,
+        status: 1,
+        nome: "",
+        campanhaSequenciaArray: []
+      }
     };
   },
   methods: {
     checkIfLogged() {
       //API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
-        .then(res => {})
+        .then(res => {
+          API_CAMPANHA.GetCampanhasCarrinhoAbandonado()
+          .then((resCampanhaCarrinho)=>{            
+             if(resCampanhaCarrinho.data != undefined){
+              this.campanha = resCampanhaCarrinho.data.sequencia;
+                          
+              resCampanhaCarrinho.data.sequencia.campanhaSequenciaArray.forEach((obj, i)=>{
+                this.sequenciasArray[i] = obj;
+                //console.log('Seqs', this.sequenciasArray[i].id_sequencia, this.sequenciasArray[i].tempo, this.sequenciasArray[i].tipo_tempo);
+              })
+              
+            }
+          })
+          .catch((error)=>{
+            console.log("Erro ao pegar as informações da campanha carrinho abandonado", error);
+          })
+
+        })
         .catch(error => {
           console.log("Erro ao verificar token", error);
           if (error.response.status === 401) {
@@ -146,6 +209,7 @@ export default {
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
+          console.log(result);
           this.salvarSequencia();
           return;
         }
@@ -157,12 +221,26 @@ export default {
       console.log(this.sequenciasArray);
     },
     AdicionarSequencia(event) {
-      this.campanhaSequenciaArray.push(event);
-      console.log(this.campanhaSequenciaArray);
+      const LEvent = event;
+      const Finded = this.campanha.campanhaSequenciaArray.findIndex(
+        x => x.id_sequencia == LEvent.id_sequencia
+      );
+      if (Finded > -1) {
+        this.campanha.campanhaSequenciaArray[Finded] = LEvent;
+      } else {
+        this.campanha.campanhaSequenciaArray.push(LEvent);
+      }      
+      console.log(this.campanha.campanhaSequenciaArray);
     },
     salvarSequencia() {
       API_NOTIFICATION.ShowLoading();
-      API_NOTIFICATION.HideLoading();
+      API_CAMPANHA.SalvarCampanhaCarrinhoAbandonado(this.campanha)
+        .then(resCampanha => {
+          API_NOTIFICATION.showNotification('Campanha Salva com Sucesso!', 'success');
+        })
+        .catch(error => {
+          console.log("Erro ao salvar campanha", error);
+        });
     }
   }
 };
