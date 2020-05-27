@@ -3,10 +3,10 @@
     <div class="content-heading">
       <div>
         Dashboard
-        <small>{{selectUserName()}}</small>
+        <small>{{welcome}}</small>
       </div>
       <!-- START Language list-->
-      <div class="ml-auto">
+      <div class="ml-auto" style="display:none">
         <b-dropdown id="ddown1" :text="selectedLanguage()" no-caret right>
           <b-dropdown-item @click="changeLanguage('en')">English</b-dropdown-item>
           <b-dropdown-item @click="changeLanguage('es')">Spanish</b-dropdown-item>
@@ -29,7 +29,7 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_LOJA from "../../api/lojaAPI";
-import UTILIS_API from '../../api/utilisAPI';
+import UTILIS_API from "../../api/utilisAPI";
 
 export default {
   created() {
@@ -37,23 +37,26 @@ export default {
   },
   data() {
     return {
+      welcome: "",
       selectedLanguage() {
         switch (this.$i18n.i18next.language) {
-          case "es":
-            return "Spanish";
-            break;
-          case "en":
-            return "English";
-            break;
+          // case "es":
+          //   return "Spanish";
+          //   break;
+          // case "en":
+          //   return "English";
+          //   break;
           case "ptBR":
           default:
             return "Português";
         }
       },
-      selectUserName() {
-        var LUser = JSON.parse(sessionStorage.getItem("user"));
+      async selectUserName() {
+        var LUser = await UTILIS_API.GetUserSession(); //JSON.parse(sessionStorage.getItem("user"));
         if (LUser !== undefined && LUser !== null) {
-          return `Bem vindo ao Thuor, ${LUser.user.nome}!`;
+          this.welcome = `Bem vindo ao Thuor, ${LUser.user.nome}!`;
+        } else {
+          this.welcome = "Bem vindo ao Thuor!";
         }
       }
     };
@@ -62,13 +65,13 @@ export default {
     checkIfLogged() {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
-        .then(res => {
-          var LUser = JSON.parse(sessionStorage.getItem("user"));
+        .then(async res => {
+          var LUser = await UTILIS_API.GetUserSession(); //JSON.parse(sessionStorage.getItem("user"));
           if (LUser !== undefined && LUser !== null) {
-            API_LOJA.GetDadosLojaByIdUsuario(LUser.user.id)
-            .then((resLoja)=>{
+            API_LOJA.GetDadosLojaByIdUsuario(LUser.user.id).then(resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-            })
+              this.selectUserName();
+            });
           }
           API_NOTIFICATION.HideLoading();
         })

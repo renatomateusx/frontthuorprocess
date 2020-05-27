@@ -333,6 +333,9 @@
 
     export default {
         name: 'Offsidebar',
+        created(){
+            this.changeTheme('themes/theme-e.css');
+        },
         computed: {
             isFixed: {
                 get () { return this.getSetting.isFixed },
@@ -364,7 +367,7 @@
             },
             themePath: {
                 get () { return this.getTheme },
-                set (value) { this.changeTheme(value) }
+                set (value) { this.changeTheme(value); console.log(value); }
             },
             ...mapGetters([
                 'getSetting',

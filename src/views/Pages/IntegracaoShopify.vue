@@ -104,6 +104,20 @@
                 >{{ errors.first('plataforma_form.url_loja') }}</span>
               </div>
               <div class="form-group">
+                <label class="col-form-label">E-mail Loja *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.email_loja')}"
+                  v-model="plataforma_form.email_loja"
+                  v-validate="'required'"
+                  type="text"
+                  name="email_loja"
+                />
+                <span
+                  v-show="errors.has('plataforma_form.email_loja')"
+                  class="invalid-feedback"
+                >{{ errors.first('plataforma_form.email_loja') }}</span>
+              </div>
+              <div class="form-group">
                 <label class="col-form-label">Chave API Key *</label>
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.chave_api_key')}"
@@ -267,6 +281,7 @@ export default {
         pula_carrinho: "",
         tipo_integracao: "",
         url_loja: "",
+        email_loja: "",
         chave_api_key: "",
         senha: "",
         segredo_compartilhado: "",

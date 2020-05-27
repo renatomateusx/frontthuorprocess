@@ -12,7 +12,6 @@ var API_LOGIN = {
           senha: senha
         })
         .then((response) => {
-          console.log("Response", response);
           resolve(response);
         })
         .catch((error) => {
@@ -21,11 +20,12 @@ var API_LOGIN = {
         });
     });
   },
-  VerificaToken() {
+  async VerificaToken() {
     return new Promise(async (resolve, reject) => {
       const LActualPath = window.location.pathname;
       if(LActualPath) sessionStorage.setItem('actualPage', LActualPath);
-      if (sessionStorage.getItem("user") == undefined || sessionStorage.getItem("user") == null) {
+      const LU = await UTILIS_API.GetUserSession();
+      if (LU == undefined || LU == null) {
         router.push('/login');
       }            
       axios.interceptors.response.use((response) => {
@@ -45,8 +45,9 @@ var API_LOGIN = {
       //     this.$router.push('login');
       //   }
       // });
+      const LHeaders = await API_HEADERS.getHeader();
       axios
-        .get(constantes.WEBSITEAPI + constantes.PATH_TOKEN, API_HEADERS.getHeader())
+        .get(constantes.WEBSITEAPI + constantes.PATH_TOKEN, LHeaders)
         .then((res) => {
           resolve(res);
         })

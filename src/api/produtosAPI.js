@@ -6,13 +6,14 @@ import UTILIS_API from "../api/utilisAPI";
 var API_PRODUTOS = {
     GetProdutos() {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();// JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_usuario: LUser.user.id
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -26,7 +27,7 @@ var API_PRODUTOS = {
     },
     GetProdutoByID(id) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_produto: id
@@ -104,7 +105,7 @@ var API_PRODUTOS = {
     },
     ImportFromShopify() {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_usuario: LUser.user.id
@@ -124,7 +125,7 @@ var API_PRODUTOS = {
     },
     UpdateTipoProduto(tipo_produto, id_produto) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();// JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     tipo_produto: tipo_produto,
@@ -145,7 +146,7 @@ var API_PRODUTOS = {
     },
     UpdateStatusProduto(status_produto, id_produto) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();// JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     status: status_produto,
@@ -166,7 +167,7 @@ var API_PRODUTOS = {
     },
     UpdateCustomFrete(custom_frete, id_produto) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     custom_frete: custom_frete,
@@ -187,7 +188,7 @@ var API_PRODUTOS = {
     },
     UpdateTipoFrete(tipo_frete, preco_frete, id_produto) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     tipo_frete: tipo_frete,
@@ -209,7 +210,7 @@ var API_PRODUTOS = {
     },
     UpdateURLDirProduto(url_dir_cartao, url_dir_boleto, id_produto) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     url_dir_boleto: url_dir_boleto,
@@ -231,7 +232,7 @@ var API_PRODUTOS = {
     },
     GetPrazoEnvioVarianteByID(id_variante, campo) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_usuario: LUser.user.id,
@@ -253,7 +254,7 @@ var API_PRODUTOS = {
     },
     SalvarPrazoEnvioByID(id_variante, prazo_envio) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_usuario: LUser.user.id,
@@ -275,7 +276,7 @@ var API_PRODUTOS = {
     },
     SalvarQuantidadeEstoqueGerenciamentoPorVarianteID(id_variante, quantidade, quantidade_minima) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_usuario: LUser.user.id,
@@ -298,7 +299,7 @@ var API_PRODUTOS = {
     },
     DesativaGerenciamentoPorVarianteID(id_variante) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_usuario: LUser.user.id,
@@ -319,7 +320,7 @@ var API_PRODUTOS = {
     },
     GetDadosEstoquePorVarianteID(id_variante) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 let LBody = {
                     id_usuario: LUser.user.id,

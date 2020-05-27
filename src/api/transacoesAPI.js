@@ -6,7 +6,7 @@ import UTILIS_API from "../api/utilisAPI";
 var API_TRANSACOES = {
     GetTransacoes() {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -48,7 +48,7 @@ var API_TRANSACOES = {
     },
     GetTransacaoByID(id) {
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -73,7 +73,7 @@ var API_TRANSACOES = {
     },
     ReembolsarCliente(id){
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -98,7 +98,7 @@ var API_TRANSACOES = {
     },
     ReembolsarClienteCheckoutPS(id){
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -123,7 +123,7 @@ var API_TRANSACOES = {
     },
     ReembolsarClienteCheckoutPayU(id){
         return new Promise(async (resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {

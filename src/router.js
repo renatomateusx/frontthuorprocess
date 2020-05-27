@@ -6,14 +6,16 @@ import Layout from '@/components/Layout/Layout'
 import LayoutHorizontal from '@/components/Layout/LayoutHorizontal'
 import LayoutPage from '@/components/Layout/LayoutPage'
 // SingleView
-const Home = () => import('@/views/SingleView/Home.vue')
+const Home = () => import('@/views/SingleView/Home.vue');
 // SubMenu
-const SubMenu = () => import('@/views/SubMenu/SubMenu.vue')
+const SubMenu = () => import('@/views/SubMenu/SubMenu.vue');
 
-const Login = () => import('@/views/Pages/Login.vue')
+const Login = () => import('@/views/Pages/Login.vue');
+const Register = () => import('@/views/Pages/Register.vue');
+const Recover = () => import('@/views/Pages/Recover.vue');
 
-const Produtos = () => import('@/views/Pages/Produtos.vue')
-const DetalheProduto = () => import('@/views/Pages/DetalheProduto.vue')
+const Produtos = () => import('@/views/Pages/Produtos.vue');
+const DetalheProduto = () => import('@/views/Pages/DetalheProduto.vue');
 
 const Cart = () => import('@/components/Cart/Cart.vue');
 
@@ -53,6 +55,14 @@ export default new Router({
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/cadastro',
+        component: Register
+    },
+    {
+        path: '/recuperar',
+        component: Recover
     },
     {
         path: '/',

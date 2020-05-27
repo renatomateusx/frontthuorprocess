@@ -2,6 +2,8 @@ import axios from 'axios';
 
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
+import router from '../router';
+
 var UTILIS_API = {
     VIA_CEP(cep) {
         return new Promise(async (resolve, reject) => {
@@ -225,6 +227,11 @@ var UTILIS_API = {
                 });
         });
     },
+    Sair(){
+        sessionStorage.clear();
+        localStorage.clear();
+        router.push('/login');
+    },
     GetDadosCompradorLead(email){
         return new Promise(async (resolve, reject) => {
             let LBody = {
@@ -245,7 +252,7 @@ var UTILIS_API = {
     SetCartSession(cart) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("cart", btoa(JSON.stringify(cart)));
+                sessionStorage.setItem("c", btoa(JSON.stringify(cart)));
                 resolve(1);
             }
             catch (error) {
@@ -257,7 +264,7 @@ var UTILIS_API = {
     GetCartSession() {
         return new Promise((resolve, reject) => {
             try {
-                const L = JSON.parse(atob(sessionStorage.getItem("cart")));
+                const L = JSON.parse(atob(sessionStorage.getItem("c")));
                 resolve(L);
             }
             catch (error) {
@@ -269,7 +276,7 @@ var UTILIS_API = {
     SetUserSession(user) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("user", btoa(JSON.stringify(user)));
+                sessionStorage.setItem("x", btoa(JSON.stringify(user)));
                 resolve(1);
             }
             catch (error) {
@@ -281,7 +288,7 @@ var UTILIS_API = {
     GetUserSession() {
         return new Promise((resolve, reject) => {
             try {
-                const L = JSON.parse(atob(sessionStorage.getItem("user")));
+                const L = JSON.parse(atob(sessionStorage.getItem("x")));
                 resolve(L);
             }
             catch (error) {

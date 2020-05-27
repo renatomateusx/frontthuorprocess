@@ -5,6 +5,9 @@
 .bg-dark {
   background-color: #23b7e5 !important;
 }
+.footerText{
+  font-size: 12px!important;
+}
 </style>
 <template>
   <div class="block-center mt-4 wd-xl">
@@ -18,7 +21,7 @@
             src="img/logoThuor.png"
             width="85"
             height="34"
-            alt="Image"
+            alt="Thuor"
           />
         </a>
       </div>
@@ -81,23 +84,23 @@
               </div>
             </div>
             <div class="float-right">
-              <router-link class="text-muted" to="/recover">
+              <router-link class="text-muted" to="/recuperar">
                 <small>Esqueceu sua senha?</small>
               </router-link>
             </div>
           </div>
           <button class="btn btn-block btn-primary mt-3" type="submit">Login</button>
         </form>
-        <p class="pt-3 text-center">Quer se registrar?</p>
-        <router-link class="btn btn-block btn-secondary" to="/register">Clique aqui</router-link>
+        <p class="pt-0 pb-0 text-center mb-0">Quer se registrar?</p>
+        <router-link class="btn btn-block btn-link" to="/cadastro">Clique aqui</router-link>
       </div>
     </div>
     <!-- END card-->
-    <div class="p-3 text-center">
+    <div class="p-3 text-center footerText">
       <br />
       <span>
         Thuor
-        <span class="mr-2">&copy;</span>- Processando Pagamentos Desde 2009
+        <span class="mr-2">&copy;</span>- Integrando Ideias e Negócios Desde 2009
       </span>
     </div>
   </div>
@@ -113,6 +116,7 @@ import API_NOTIFICATION from "../../api/notification";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
+import UTILIS_API from '../../api/utilisAPI';
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -141,7 +145,8 @@ export default {
           API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
             .then(retorno => {
               if (retorno !== undefined) {
-                sessionStorage.setItem("user", JSON.stringify(retorno.data));
+                UTILIS_API.SetUserSession(retorno.data);
+                //sessionStorage.setItem("user", JSON.stringify(retorno.data));
                 if (sessionStorage.getItem("actualPage") != undefined) {
                   const LActualPath = sessionStorage.getItem("actualPage");
                   if (LActualPath) this.$router.push(LActualPath);
