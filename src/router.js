@@ -43,6 +43,7 @@ const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
 const IntegracaoCampanhas = () => import('@/views/Pages/IntegracaoCampanhas.vue');
 const AbandonoCarrinho = () => import('@/views/Pages/AbandonoCarrinho.vue');
 const Activate = () => import('@/views/Pages/Activate.vue');
+const Redefinir = () => import('@/views/Pages/Redefinir.vue');
 
 Vue.use(Router)
 
@@ -68,6 +69,10 @@ export default new Router({
     {
         path: '/recuperar',
         component: Recover
+    },
+    {
+        path: '/redefinir/:id',
+        component: Redefinir
     },
     {
         path: '/',

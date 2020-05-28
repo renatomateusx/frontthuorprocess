@@ -5,8 +5,8 @@
 .bg-dark {
   background-color: #23b7e5 !important;
 }
-.footerText{
-  font-size: 12px!important;
+.footerText {
+  font-size: 12px !important;
 }
 </style>
 <template>
@@ -52,7 +52,10 @@
               >{{ errors.first('recover.email') }}</span>
             </div>
           </div>
-          <button class="btn btn-danger btn-block" type="submit">Enviar<span class="ml-2 fa fa-paper-plane"></span></button>
+          <button class="btn btn-danger btn-block" type="submit">
+            Enviar
+            <span class="ml-2 fa fa-paper-plane"></span>
+          </button>
         </form>
       </div>
     </div>
@@ -69,6 +72,10 @@
 <script>
 import Vue from "vue";
 import VeeValidate from "vee-validate";
+import { Validator } from "vee-validate";
+import pt from "vee-validate/dist/locale/pt_BR";
+import API_LOGIN from "../../api/loginAPI";
+import API_NOTIFICATION from "../../api/notification";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -82,16 +89,41 @@ export default {
       }
     };
   },
+  mounted() {
+    this.$validator.localize("pt", {
+      messages: {
+        required: field => "* Este campo é obrigatório."
+      },
+      attributes: {}
+    });
+  },
   methods: {
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
+          this.solicitaRedefinicao();
           console.log("Form Submitted!");
           console.log(`Email: ${this.recover.email}`);
           return;
         }
         console.log("Correct them errors!");
       });
+    },
+    solicitaRedefinicao() {
+      API_LOGIN.RedefineSenha(this.recover.email)
+        .then(resRedefine => {
+          API_NOTIFICATION.showNotificationW(
+            "Pronto!",
+            "Um e-mail já foi enviado para você. Verifique sua caixa de e-mail",
+            "success"
+          );
+        })
+        .catch(error => {
+          console.log(
+            "Erro ao tentar enviar e-mail de redefinição de senha",
+            error
+          );
+        });
     }
   }
 };

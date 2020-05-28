@@ -5,8 +5,8 @@
 .bg-dark {
   background-color: #23b7e5 !important;
 }
-.footerText{
-  font-size: 12px!important;
+.footerText {
+  font-size: 12px !important;
 }
 </style>
 <template>
@@ -32,6 +32,28 @@
           data-vv-scope="register"
         >
           <div class="form-group">
+            <label class="text-muted" for="signupInputEmail1">Nome</label>
+            <div class="input-group with-focus">
+              <input
+                :class="{'form-control border-right-0':true, 'is-invalid': errors.has('register.nome')}"
+                placeholder="Seu nome "
+                v-model="register.nome"
+                v-validate="'required'"
+                type="text"
+                name="nome"
+              />
+              <div class="input-group-append">
+                <span class="input-group-text text-muted bg-transparent border-left-0">
+                  <em class="fa fa-user"></em>
+                </span>
+              </div>
+              <span
+                v-show="errors.has('register.email')"
+                class="invalid-feedback"
+              >{{ errors.first('register.email') }}</span>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="text-muted" for="signupInputEmail1">E-mail</label>
             <div class="input-group with-focus">
               <input
@@ -39,6 +61,7 @@
                 placeholder="Seu e-mail "
                 v-model="register.email"
                 v-validate="'required|email'"
+                @blur="verificaEmailCadastro()"
                 type="text"
                 name="email"
               />
@@ -57,12 +80,12 @@
             <label class="text-muted" for="signupInputPassword1">Senha</label>
             <div class="input-group with-focus">
               <input
-                ref="password1"
-                :class="{'form-control border-right-0':true, 'is-invalid': errors.has('register.password1')}"
-                v-model="register.password1"
+                ref="password"
+                :class="{'form-control border-right-0':true, 'is-invalid': errors.has('register.senha')}"
+                v-model="register.senha"
                 v-validate="'required'"
                 type="password"
-                name="password1"
+                name="senha"
                 placeholder="Senha"
               />
               <div class="input-group-append">
@@ -71,20 +94,20 @@
                 </span>
               </div>
               <span
-                v-show="errors.has('register.password1')"
+                v-show="errors.has('register.senha')"
                 class="invalid-feedback"
-              >{{ errors.first('register.password1') }}</span>
+              >{{ errors.first('register.senha') }}</span>
             </div>
           </div>
           <div class="form-group">
             <label class="text-muted" for="signupInputRePassword1">Confirmar Senha</label>
             <div class="input-group with-focus">
               <input
-                :class="{'form-control border-right-0':true, 'is-invalid': errors.has('register.password2')}"
-                v-model="register.password2"
-                v-validate="'required|confirmed:password1'"
+                :class="{'form-control border-right-0':true, 'is-invalid': errors.has('register.confirma_senha')}"
+                v-model="register.confirma_senha"
+                v-validate="'required'"
                 type="password"
-                name="password2"
+                name="confirma_senha"
                 placeholder="Confirmar Senha"
               />
               <div class="input-group-append">
@@ -93,9 +116,9 @@
                 </span>
               </div>
               <span
-                v-show="errors.has('register.password2')"
+                v-show="errors.has('register.confirma_senha')"
                 class="invalid-feedback"
-              >{{ errors.first('register.password2') }}</span>
+              >{{ errors.first('register.confirma_senha') }}</span>
             </div>
           </div>
           <div class="custom-control custom-checkbox">
@@ -135,6 +158,11 @@
 <script>
 import Vue from "vue";
 import VeeValidate from "vee-validate";
+import { Validator } from "vee-validate";
+import pt from "vee-validate/dist/locale/pt_BR";
+import { extend } from "vee-validate";
+import API_NOTIFICATION from "../../api/notification";
+import API_LOGIN from "../../api/loginAPI";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -144,25 +172,76 @@ export default {
   data() {
     return {
       register: {
+        nome: "",
         email: "",
-        password1: "",
-        password2: "",
+        senha: "",
+        confirma_senha: "",
         agreements: false
       }
     };
+  },
+  mounted() {
+    this.$validator.localize("pt", {
+      messages: {
+        required: field => "* Este campo é obrigatório."
+      },
+      attributes: {}
+    });
   },
   methods: {
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
-          console.log("Form Submitted!");
-          console.log(`Email: ${this.register.email}`);
-          console.log(`Password: ${this.register.password1}`);
-          console.log(`Agreed: ${this.register.agreements}`);
+          if (this.register.senha !== this.register.confirma_senha) {
+            this.errors.add({
+              scope: scope,
+              field: "confirma_senha",
+              msg: "Senha e Confirma Senha devem ter valores iguais."
+            });
+            return;
+          }
+          API_NOTIFICATION.ShowLoading();
+          API_LOGIN.AddUser(
+            this.register.nome,
+            this.register.email,
+            this.register.senha
+          )
+            .then(resAdd => {
+              API_NOTIFICATION.showNotificationW(
+                "Aew!",
+                "Cadastro realizado com sucesso! <br/> Verifique seu e-mail. Enviamos um link de ativação para você.",
+                "success"
+              );
+              setTimeout(() => {
+                 this.$router.push("/login");
+              }, 3500);
+            })
+            .catch(error => {
+              console.log("Erro ao cadastrar usuário", error);
+            });
+          /*console.log(`Email: ${this.register.email}`);
+          console.log(`Password: ${this.register.senha}`);
+          console.log(`Agreed: ${this.register.agreements}`);*/
           return;
         }
         console.log("Correct them errors!");
       });
+    },
+    verificaEmailCadastro() {
+      API_LOGIN.VerificaEmailCadastro(this.register.email)
+        .then(retorno => {
+          if (retorno.data == true) {
+            this.errors.add({
+              scope: "register",
+              field: "email",
+              msg: "Já existe um e-mail cadastrado."
+            });
+          } else {
+          }
+        })
+        .catch(error => {
+          console.log("Erro ao verificar se há e-mail cadastrado", error);
+        });
     }
   }
 };

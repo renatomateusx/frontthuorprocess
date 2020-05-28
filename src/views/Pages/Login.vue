@@ -117,7 +117,8 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS_API from "../../api/utilisAPI";
-
+import { Validator } from "vee-validate";
+import pt from "vee-validate/dist/locale/pt_BR";
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
@@ -135,6 +136,14 @@ export default {
         rememberme: false
       }
     };
+  },
+  mounted() {
+    this.$validator.localize("pt", {
+      messages: {
+        required: field => "* Este campo é obrigatório."
+      },
+      attributes: {}
+    });
   },
   methods: {
     validateBeforeSubmit(scope) {
@@ -154,11 +163,14 @@ export default {
                   } else {
                     this.$router.push("/home");
                   }
+                } else {
+                  API_NOTIFICATION.showNotificationW(
+                    "Oops!",
+                    "Parece que você ainda não ativou sua conta. Clique no botão de ativar conta, no e-mail que foi enviado para você. <br/> Dúvidas? suporte@thuor.com",
+                    "error"
+                  );
                 }
-                else{
-                  API_NOTIFICATION.showNotificationW('Oops!', 'Parece que você ainda não ativou sua conta. Clique no botão de ativar conta, no e-mail que foi enviado para você. <br/> Dúvidas? suporte@thuor.com','error');
-                }
-              }             
+              }
             })
             .catch(error => {
               if (error.response.status === 401) {

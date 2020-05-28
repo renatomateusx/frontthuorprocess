@@ -20,21 +20,85 @@ var API_LOGIN = {
         });
     });
   },
+  AddUser(nome, email, senha) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_ADD_USER, {
+          nome: nome,
+          email: email,
+          senha: senha
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  RedefineSenha(email) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_REDEFINE_SENHA, {
+          email: email
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  
+  AlteraSenha(token, senha) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_ALTERA_SENHA, {
+          token: token,
+          senha: senha
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  VerificaEmailCadastro(email) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_VERIFICA_EMAIL_CADASTRADO, {
+          email: email,
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
   async VerificaToken() {
     return new Promise(async (resolve, reject) => {
       const LActualPath = window.location.pathname;
-      if(LActualPath) sessionStorage.setItem('actualPage', LActualPath);
+      if (LActualPath) sessionStorage.setItem('actualPage', LActualPath);
       const LU = await UTILIS_API.GetUserSession();
       if (LU == undefined || LU == null) {
         router.push('/login');
-      }            
+      }
       axios.interceptors.response.use((response) => {
         // Do something with response data
         return response;
       }, (error) => {
         if (error.response.status === 401) {
           sessionStorage.removeItem("user");
-          router.push('/login');          
+          router.push('/login');
         }
         return Promise.reject(error);
       });
