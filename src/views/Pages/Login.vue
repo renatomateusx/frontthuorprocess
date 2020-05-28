@@ -5,8 +5,8 @@
 .bg-dark {
   background-color: #23b7e5 !important;
 }
-.footerText{
-  font-size: 12px!important;
+.footerText {
+  font-size: 12px !important;
 }
 </style>
 <template>
@@ -116,7 +116,7 @@ import API_NOTIFICATION from "../../api/notification";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
-import UTILIS_API from '../../api/utilisAPI';
+import UTILIS_API from "../../api/utilisAPI";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -145,16 +145,20 @@ export default {
           API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
             .then(retorno => {
               if (retorno !== undefined) {
-                UTILIS_API.SetUserSession(retorno.data);
-                //sessionStorage.setItem("user", JSON.stringify(retorno.data));
-                if (sessionStorage.getItem("actualPage") != undefined) {
-                  const LActualPath = sessionStorage.getItem("actualPage");
-                  if (LActualPath) this.$router.push(LActualPath);
-                } else {
-                  this.$router.push("/home");
+                if (retorno.data.user.status == 1) {
+                  UTILIS_API.SetUserSession(retorno.data);
+                  //sessionStorage.setItem("user", JSON.stringify(retorno.data));
+                  if (sessionStorage.getItem("actualPage") != undefined) {
+                    const LActualPath = sessionStorage.getItem("actualPage");
+                    if (LActualPath) this.$router.push(LActualPath);
+                  } else {
+                    this.$router.push("/home");
+                  }
                 }
-              }
-              API_NOTIFICATION.HideLoading();
+                else{
+                  API_NOTIFICATION.showNotificationW('Oops!', 'Parece que você ainda não ativou sua conta. Clique no botão de ativar conta, no e-mail que foi enviado para você. <br/> Dúvidas? suporte@thuor.com','error');
+                }
+              }             
             })
             .catch(error => {
               if (error.response.status === 401) {

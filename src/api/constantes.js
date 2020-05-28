@@ -8,6 +8,7 @@ export default Object.freeze({
   MSG_BOLETO_ENVIO: 'Aqui está o boleto do produto *PRODUTO_NAME*, no valor de R$ VALOR_VALOR Vencimento: *VENCIMENTO* Código de barras: *CODIGO_BARRAS* Link: LINK_LINK',
   PATH_GET: 'index',
   PATH_LOGIN: 'users/EfetuaLogin',
+  PATH_LOGIN_ATIVAR_EMAIL: 'users/AtivarEmail',
   PATH_TOKEN: 'users/VerificaToken',
   PATH_PRODUTOS: 'produtos/GetProdutos',
   PATH_PRODUTO_BY_ID: 'produtos/GetProdutoByID',

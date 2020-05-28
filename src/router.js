@@ -42,6 +42,7 @@ const Cupons = () => import('@/views/Pages/Cupons.vue');
 const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
 const IntegracaoCampanhas = () => import('@/views/Pages/IntegracaoCampanhas.vue');
 const AbandonoCarrinho = () => import('@/views/Pages/AbandonoCarrinho.vue');
+const Activate = () => import('@/views/Pages/Activate.vue');
 
 Vue.use(Router)
 
@@ -55,6 +56,10 @@ export default new Router({
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/ativacao/:id',
+        component: Activate
     },
     {
         path: '/cadastro',

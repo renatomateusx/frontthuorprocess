@@ -56,6 +56,22 @@ var API_LOGIN = {
           console.log("Retorno Erros", error);
         })
     });
-  }
+  },
+  AtivarEmail(token) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_LOGIN_ATIVAR_EMAIL, {
+          token: token
+        })
+        .then((response) => {
+          console.log(response.data);
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
 }
 export default API_LOGIN 
