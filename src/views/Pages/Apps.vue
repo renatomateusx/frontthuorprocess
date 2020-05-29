@@ -9,8 +9,8 @@
   font-size: 20px;
   font-weight: 700;
 }
-.spanDemo{
-  font-size: 12px!important;
+.spanDemo {
+  font-size: 12px !important;
   font-weight: 900;
 }
 .CheckoutStatusInativo {
@@ -55,8 +55,12 @@
               <div class="float-left p-1">
                 <span class="spanNome">{{nome}}</span>
               </div>
-              <div class="float-left p-1">
-                <span class="spanDemo" v-show="demo != ''"><a :href="demo" target="_blank">Clique aqui para ver uma demonstração.</a></span>
+            </div>
+            <div class="clearfix">
+              <div class="float-left pull-left p-1 mt-2">
+                <span class="spanDemo" v-show="demo != ''">
+                  <a :href="demo" target="_blank">Clique aqui para ver uma demonstração.</a>
+                </span>
               </div>
             </div>
           </div>
@@ -73,14 +77,14 @@
                 v-bind:src="imagem"
                 alt="App"
               />
-              <span class="col-md-5 mt-2">{{getAppsIntegracaoByID(id)}}</span>
+              <span class="col-md-5 mt-2"></span>
               <button class="btn btn-info col-md-3" v-on:click="acaoAppIntegrar(id)">
                 <span class="fa fa-edit f-20">
                   <span class="ml-2"></span>Instalar
                 </span>
               </button>
-              <div class="float-right mt-2 col-md-1">
-                <span class="pull-right float-right" v-bind:class="getStatusClassByID(id)"></span>
+              <div class="float-right mt-3 col-md-1">
+                <span class="pull-right float-right" title="Status" v-bind:class="getStatusClass(id)"></span>
               </div>
             </div>
           </div>
@@ -185,15 +189,31 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_SHOPIFY.InstalaReviewApp()
         .then(resInstalacao => {
-          API_NOTIFICATION.showNotificationW(
-            "Pronto!",
-            "Instalação do App Concluída com Sucesso!",
-            "success"
-          );
+          var app = {
+            status: 1,
+            app: 1
+          };
+          API_APPS.SaveIntegracaoApps(app)
+            .then(resIntegra => {
+              API_NOTIFICATION.showNotificationW(
+                "Pronto!",
+                "Instalação do App Concluída com Sucesso!",
+                "success"
+              );
+            })
+            .catch(error => {
+              console.log("Erro ao salvar integração", error);
+            });
         })
         .catch(error => {
           console.log("Erro ao instalar Thuor Review no Shopify", error);
         });
+    },
+    async getStatusClass(id) {
+      const d = await API_APPS.GetStatusApp(id);
+      return d.data.status == 1
+        ? "CheckoutStatusAtivo"
+        : "CheckoutStatusInativo";
     }
   }
 };

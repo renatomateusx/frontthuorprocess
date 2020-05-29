@@ -66,6 +66,46 @@ var API_APPS = {
             }
         });
     },
+    SaveIntegracaoApps(app) {
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+                app.id_usuario = LDadosLoja.id_usuario;
+                app.url_loja = LDadosLoja.url_loja;
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_INTEGRACAO_APPS, app)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    GetStatusApp(appID){
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+                var LBody ={
+                    app: appID,
+                    id_usuario: LDadosLoja.id_usuario
+                }                
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_STATUS_APP, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
     GetIntegracaoApps(id) {
         return new Promise(async (resolve, reject) => {
             const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
