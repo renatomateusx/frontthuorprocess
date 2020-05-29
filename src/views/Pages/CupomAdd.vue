@@ -442,7 +442,7 @@
               
             </div>
             <div class="card-footer">
-              <div class="required">* Required fields</div>
+              <div class="required">* Campos Obrigatórios</div>
               <div class="clearfix">
                 <div class="float-right">
                   <button class="btn btn-primary" type="submit">Salvar</button>

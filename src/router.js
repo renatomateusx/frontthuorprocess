@@ -44,6 +44,7 @@ const IntegracaoCampanhas = () => import('@/views/Pages/IntegracaoCampanhas.vue'
 const AbandonoCarrinho = () => import('@/views/Pages/AbandonoCarrinho.vue');
 const Activate = () => import('@/views/Pages/Activate.vue');
 const Redefinir = () => import('@/views/Pages/Redefinir.vue');
+const Review = () => import('@/views/Pages/Review.vue');
 
 Vue.use(Router)
 
@@ -73,6 +74,10 @@ export default new Router({
     {
         path: '/redefinir/:id',
         component: Redefinir
+    },
+    {
+        path: '/review',
+        component: Review
     },
     {
         path: '/',

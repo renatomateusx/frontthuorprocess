@@ -211,7 +211,7 @@
                   class="invalid-feedback"
                 >{{ errors.first('novoupsell.mensagem_sms') }}</span>
               </div>
-              <div class="required">* Required fields</div>
+              <div class="required">* Campos Obrigatórios</div>
             </div>
 
             <div class="card-footer">

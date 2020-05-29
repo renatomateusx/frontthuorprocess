@@ -226,7 +226,7 @@
                   class="invalid-feedback"
                 >{{ errors.first('pixel.id_produto_selecionado_um') }}</span>
               </div>
-              <div class="required">* Required fields</div>
+              <div class="required">* Campos Obrigatórios</div>
             </div>
 
             <div class="card-footer">
