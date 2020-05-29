@@ -21,7 +21,7 @@ export default Object.freeze({
   PATH_PRODUTO_BY_ID_IMPORTED: 'produtos/GetProdutoByIDImported',
   PATH_UPDATE_STATUS_PRODUTO: 'produtos/UpdateStatusProduto',
   PATH_UPDATE_TIPO_PRODUTO: 'produtos/UpdateTipoProduto',
-  PATH_PRODUTOS_IMPORT: 'importarProdutosShopify/ImportarProdutosShopify',
+  PATH_PRODUTOS_IMPORT: 'integraFuncionalidadeShopify/ImportarProdutosShopify',
   PATH_UPDATE_CUSTOM_FRETE_PRODUTO: 'produtos/UpdateCustomFreteProduto',
   PATH_UPDATE_TIPO_FRETE_PRODUTO: 'produtos/UpdateTipoFreteProduto',
   PATH_UPDATE_URL_DIR_PRODUTO: 'produtos/UpdateURLDirProduto',
