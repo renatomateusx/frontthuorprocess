@@ -22,6 +22,7 @@ export default Object.freeze({
   PATH_UPDATE_STATUS_PRODUTO: 'produtos/UpdateStatusProduto',
   PATH_UPDATE_TIPO_PRODUTO: 'produtos/UpdateTipoProduto',
   PATH_PRODUTOS_IMPORT: 'integraFuncionalidadeShopify/ImportarProdutosShopify',
+  PATH_INSTALTL_APP_REVIEW: 'integraFuncionalidadeShopify/InstalarAppReview',
   PATH_UPDATE_CUSTOM_FRETE_PRODUTO: 'produtos/UpdateCustomFreteProduto',
   PATH_UPDATE_TIPO_FRETE_PRODUTO: 'produtos/UpdateTipoFreteProduto',
   PATH_UPDATE_URL_DIR_PRODUTO: 'produtos/UpdateURLDirProduto',
@@ -100,6 +101,12 @@ export default Object.freeze({
   PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',
   
   PATH_LEAD_GET_DADOS_COMPRADOR: 'clientes/GetDadosCompradorLead',
+
+
+  PATH_GET_APPS: 'apps/GetApps',
+  PATH_INTEGRACAO_APPS: 'apps/GetIntegracaoApps',
+  PATH_SAVE_INTEGRACAO_APPS: 'apps/SaveApps',
+  PATH_GET_CAMPANHA_CARRINHO_ABANDONADO: 'apps/GetCampanhaCarrinhoAbandonado',
   
 
 });

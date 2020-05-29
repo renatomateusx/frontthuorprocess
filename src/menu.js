@@ -84,7 +84,12 @@ const Menu = [
         icon: 'fa fa-thumbtack',
         translate: 'sidebar.nav.MENU'
     },
-
+    {
+        name: 'Apps',
+        path: '/apps',
+        icon: 'fab fa-medapps',
+        translate: 'sidebar.nav.MENU'
+    },
 
 ];
 

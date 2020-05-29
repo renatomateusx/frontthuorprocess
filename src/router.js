@@ -45,6 +45,7 @@ const AbandonoCarrinho = () => import('@/views/Pages/AbandonoCarrinho.vue');
 const Activate = () => import('@/views/Pages/Activate.vue');
 const Redefinir = () => import('@/views/Pages/Redefinir.vue');
 const Review = () => import('@/views/Pages/Review.vue');
+const Apps = () => import('@/views/Pages/Apps.vue');
 
 Vue.use(Router)
 
@@ -230,6 +231,10 @@ export default new Router({
             }, {
                 path: '/configs/integracoes/shopify',
                 component: IntegracaoShopify
+            },
+            {
+                path: '/apps',
+                component: Apps
             },
             {
                 path: '/configs/campanhas',
