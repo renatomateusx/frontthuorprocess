@@ -201,6 +201,7 @@
   margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
+  margin: 0 auto!important;
   padding: 5px;
   margin: 5px;
   cursor: pointer !important;
@@ -1356,7 +1357,10 @@ export default {
     getFreteSelecionadoNome() {
       var lnome = "";
       if (this.fretes.length > 0) {
-        lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+        const LF = this.fretes.find(x => x.id == this.freteSelecionado);
+        if (LF) {
+          lnome = LF.nome;
+        }
       }
       //console.log("Nome Selecionado", lnome);
       return lnome;
@@ -1605,7 +1609,8 @@ export default {
           "~BRL"
       );
     },
-    getDadosPagamentoTransacao() {
+    async getDadosPagamentoTransacao() {
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       this.getSignature();
       var transacao = {
         token: this.DadosCheckout.token_acesso,

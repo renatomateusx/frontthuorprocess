@@ -515,7 +515,7 @@ export default {
         }
         if (this.produtosCart != null) {
           this.LUp = sessionStorage.getItem("up", "1");
-          console.log(this.LUp);
+          //console.log(this.LUp);
           if (this.LUp == 1) {
             this.UpSellNoCheckout = -1;
             return;
@@ -526,7 +526,7 @@ export default {
                 //console.log(resProductUpSell.data);
                 this.UpSellNoCheckout =
                   resProductUpSell.data.tipo_checkout || 0;
-                console.log(this.UpSellNoCheckout);
+                //console.log(this.UpSellNoCheckout);
                 const ProdUS = resProductUpSell.data.id_produto_to;
                 API_PRODUTOS.GetProdutoIDThuor(ProdUS)
                   .then(resProdTo => {

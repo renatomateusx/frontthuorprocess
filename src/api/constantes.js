@@ -42,6 +42,7 @@ export default Object.freeze({
   PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY: 'importarProdutosShopify/ReInstalarIntegracao',
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
+  PATH_VIACEP_SERVER: 'extras/ViaCEP',
   PATH_GET_FRETE: 'logisticas/GetFretes',
   PATH_GET_TRACKING_CODE: 'logisticas/TrackingCode',
   PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',

@@ -42,12 +42,10 @@ Vue.mixin({
 });
 
 export default {
-  created() {
+  async created() {
     API_NOTIFICATION.ShowLoading();
-    if (sessionStorage.getItem("fretes") != null) {
-      this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
-      //console.log(fretes);
-    }
+    this.fretes = await UTILIS_API.GetFretesSession();
+    //console.log(this.fretes);
     this.checkURL();
   },
   computed: {},
@@ -260,7 +258,6 @@ export default {
       document.head.appendChild(pluginPayU);
     },
     async iniciaCheckout() {
-      console.log("Gateway", this.DadosCheckout.gateway);
       this.LUp = sessionStorage.setItem("up", "0");
       if (this.DadosCheckout.gateway == 1) {
         const LCheckMP = await this.FCheckoutMP();

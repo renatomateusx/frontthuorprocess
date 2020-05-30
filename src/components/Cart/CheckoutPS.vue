@@ -201,6 +201,7 @@
   margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
+  margin: 0 auto!important;
   padding: 5px;
   margin: 5px;
   cursor: pointer !important;
@@ -463,7 +464,6 @@
                 class="card-body minusmargintop"
                 v-show="!this.getStepDadosPessoaisFinalizados()"
               >
-                
                 <div class="form-group row formGroup">
                   <label class="col-md-10 col-form-label labelForm">E-mail</label>
                   <div class="col-xl-12">
@@ -1354,7 +1354,10 @@ export default {
     getFreteSelecionadoNome() {
       var lnome = "";
       if (this.fretes.length > 0) {
-        lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+        const LF = this.fretes.find(x => x.id == this.freteSelecionado);
+        if (LF) {
+          lnome = LF.nome;
+        }
       }
       //console.log("Nome Selecionado", lnome);
       return lnome;
@@ -1591,7 +1594,8 @@ export default {
         self.parcelas = 1;
       }, 1000);
     },
-    getDadosPagamentoTransacao() {
+    async getDadosPagamentoTransacao() {
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       this.DadosCheckout.chave_publica = this.public_key;
       var transacao = {
         token: this.DadosCheckout.token_acesso,
@@ -1873,7 +1877,7 @@ export default {
       return produtHashed;
     },
     async saveLead() {
-      var LLead = await this.getDadosPagamentoTransacao();     
+      var LLead = await this.getDadosPagamentoTransacao();
       API_CLIENTES.SaveLead(
         this.email,
         this.nome_completo,

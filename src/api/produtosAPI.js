@@ -15,7 +15,7 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS, LBody, LHeaders)
                     .then((response) => {
-                        //console.log("Response", response);
+                        ////console.log("Response", response);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -32,8 +32,9 @@ var API_PRODUTOS = {
                 let LBody = {
                     id_produto: id
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID, LBody, LHeaders)
                     .then((response) => {
                         // console.log("Response", response);
                         resolve(response);
@@ -110,8 +111,9 @@ var API_PRODUTOS = {
                 let LBody = {
                     id_usuario: LUser.user.id
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS_IMPORT, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS_IMPORT, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -131,8 +133,9 @@ var API_PRODUTOS = {
                     tipo_produto: tipo_produto,
                     id_produto_json: id_produto
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_TIPO_PRODUTO, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_TIPO_PRODUTO, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -152,8 +155,9 @@ var API_PRODUTOS = {
                     status: status_produto,
                     id_produto_json: id_produto
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_PRODUTO, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_PRODUTO, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -173,8 +177,9 @@ var API_PRODUTOS = {
                     custom_frete: custom_frete,
                     id_produto_json: id_produto
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_CUSTOM_FRETE_PRODUTO, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_CUSTOM_FRETE_PRODUTO, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -195,8 +200,9 @@ var API_PRODUTOS = {
                     preco_frete: preco_frete,
                     id_produto_json: id_produto
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_TIPO_FRETE_PRODUTO, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_TIPO_FRETE_PRODUTO, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -217,8 +223,9 @@ var API_PRODUTOS = {
                     url_dir_cartao: url_dir_cartao,
                     id_produto_json: id_produto
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_URL_DIR_PRODUTO, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_URL_DIR_PRODUTO, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -239,8 +246,9 @@ var API_PRODUTOS = {
                     id_variante: id_variante,
                     campo: campo
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_PRAZO_ENVIO_VARIANTE_BY_ID, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_PRAZO_ENVIO_VARIANTE_BY_ID, LBody, LHeaders)
                     .then((response) => {
 
                         resolve(response);
@@ -261,8 +269,9 @@ var API_PRODUTOS = {
                     id_variante: id_variante,
                     prazo_envio: prazo_envio
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_SALVA_PRAZO_ENVIO_VARIANTE_BY_ID, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SALVA_PRAZO_ENVIO_VARIANTE_BY_ID, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -284,8 +293,9 @@ var API_PRODUTOS = {
                     quantidade: quantidade,
                     quantidade_minima: quantidade_minima
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_SALVA_GERENCIAMENTO_ESTOQUE_VARIANTE_BY_ID, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SALVA_GERENCIAMENTO_ESTOQUE_VARIANTE_BY_ID, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -305,8 +315,9 @@ var API_PRODUTOS = {
                     id_usuario: LUser.user.id,
                     id_variante: id_variante
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_DESATIVA_GERENCIAMENTO_ESTOQUE_VARIANTE_BY_ID, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_DESATIVA_GERENCIAMENTO_ESTOQUE_VARIANTE_BY_ID, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -326,8 +337,9 @@ var API_PRODUTOS = {
                     id_usuario: LUser.user.id,
                     id_variante: id_variante
                 }
+                const LHeaders = await API_HEADERS.getHeader();
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_DADOS_ESTOQUE_VARIANTE_BY_ID, LBody, API_HEADERS.getHeader())
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_DADOS_ESTOQUE_VARIANTE_BY_ID, LBody, LHeaders)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);

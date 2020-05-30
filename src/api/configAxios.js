@@ -1,7 +1,7 @@
 import UTILIS_API from "./utilisAPI";
 
 var API_HEADERS = {
-  async getHeader() {
+  getHeader() {
     return new Promise(async(resolve, reject) => {
       try {
         var user = await UTILIS_API.GetUserSession(); // JSON.parse(sessionStorage.getItem("user"));

@@ -201,6 +201,7 @@
   margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
+  margin: 0 auto!important;
   padding: 5px;
   margin: 5px;
   cursor: pointer !important;
@@ -557,10 +558,7 @@
           </div>
           <!-- END STEP 1-->
           <!-- START STEP 2-->
-          <div
-            class="col-md-4 mt-0 mb-0 cardSide"
-            
-          >
+          <div class="col-md-4 mt-0 mb-0 cardSide">
             <!-- START card-->
             <div class="card card-default mb-0">
               <div class="card-header rounded">
@@ -742,10 +740,7 @@
           </div>
           <!-- END STEP 2-->
           <!-- START STEP 3-->
-          <div
-            class="col-md-4 mt-0 mb-0 cardSide"
-            
-          >
+          <div class="col-md-4 mt-0 mb-0 cardSide">
             <!-- START card-->
             <div class="card card-default mb-0">
               <div class="card-header rounded">
@@ -924,7 +919,7 @@
                   <div class="card-body minusmargintop" v-show="formaPagamento =='bolbradesco'">
                     <div class="form-group row mt-2">
                       <small
-                        class="text-justify col-md-12 smallInforFormaPagamentoBoleto"
+                        class="text-justify col-md-11 smallInforFormaPagamentoBoleto"
                       >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</small>
                     </div>
                     <div class="form-group row mt-2">
@@ -1282,9 +1277,10 @@ export default {
     goToCheckout() {
       router.push("/checkout");
     },
-    consultaCEP() {
+    consultaCEP() {      
       if (this.CEP.length >= 8) {
         this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
+        API_NOTIFICATION.ShowLoading();
         UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
           .then(retornoCEP => {
             this.endereco = retornoCEP.logradouro;
@@ -1293,6 +1289,7 @@ export default {
             this.estado = retornoCEP.uf;
             this.complemento = retornoCEP.complemento;
             this.destinatario = this.nome_completo;
+            API_NOTIFICATION.HideLoading();
           })
           .catch(error => {
             this.endereco = "";
@@ -1430,7 +1427,10 @@ export default {
     getFreteSelecionadoNome() {
       var lnome = "";
       if (this.fretes.length > 0) {
-        lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+        const LF = this.fretes.find(x => x.id == this.freteSelecionado);
+        if (LF) {
+          lnome = LF.nome;
+        }
       }
       //console.log("Nome Selecionado", lnome);
       return lnome;
@@ -1653,7 +1653,8 @@ export default {
         this.parcelas = 1;
       }, 1000);
     },
-    getDadosPagamentoTransacao() {
+    async getDadosPagamentoTransacao() {
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       var transacao = {
         dadosComprador: {
           nome_completo: this.removeAcento(this.nome_completo),

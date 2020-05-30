@@ -7,11 +7,13 @@ import router from '../router';
 var UTILIS_API = {
     VIA_CEP(cep) {
         return new Promise(async (resolve, reject) => {
-            var URL = constantes.PATH_VIACEP.replace("@", cep);
+            let LBody = {
+                cep: cep
+            }
             axios
-                .get(URL)
+                .post(constantes.WEBSITEAPI + constantes.PATH_VIACEP_SERVER, LBody)
                 .then((response) => {
-                    //console.log("Response", response.data);
+                    console.log("Response", response);
                     resolve(response.data);
                 })
                 .catch((error) => {
@@ -227,12 +229,12 @@ var UTILIS_API = {
                 });
         });
     },
-    Sair(){
+    Sair() {
         sessionStorage.clear();
         localStorage.clear();
         router.push('/login');
     },
-    GetDadosCompradorLead(email){
+    GetDadosCompradorLead(email) {
         return new Promise(async (resolve, reject) => {
             let LBody = {
                 email: email
@@ -339,7 +341,7 @@ var UTILIS_API = {
                 if (sessionStorage.getItem("DadosLoja") != null) {
                     const L = JSON.parse(atob(sessionStorage.getItem("DadosLoja")));
                     resolve(L);
-                }else{
+                } else {
                     resolve(1);
                 }
             }
@@ -376,7 +378,6 @@ var UTILIS_API = {
     SetFretesSession(frete) {
         return new Promise((resolve, reject) => {
             try {
-                
                 sessionStorage.setItem("fretes", btoa(JSON.stringify(frete)));
                 resolve(1);
             }
@@ -389,10 +390,10 @@ var UTILIS_API = {
     GetFretesSession() {
         return new Promise((resolve, reject) => {
             try {
-                if(sessionStorage.getItem("fretes") == null){
+                if (sessionStorage.getItem("fretes") == null) {
                     resolve([]);
                     return;
-                } 
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem("fretes")));
                 resolve(L);
             }

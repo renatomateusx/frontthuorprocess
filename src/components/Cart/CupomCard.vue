@@ -473,7 +473,7 @@ export default {
                       LValueDiscount
                     );
                     if (LRetorno == 1) {
-                      console.log("Aplicar Regra automática no carrinho");
+                      //console.log("Aplicar Regra automática no carrinho");
                       var LNumeroUtilizados = objCupom.numero_utilizacao;
                       if (LNumeroUtilizados == null) LNumeroUtilizados = 0;
                       LNumeroUtilizados = parseInt(LNumeroUtilizados) + 1;
@@ -644,10 +644,10 @@ export default {
 
           if (moment().format() < moment(JSONCupom.data_inicio).format()) {
             LRetorno = false;
-            console.log(1);
+            //console.log(1);
           } else if (moment().format() > moment(JSONCupom.data_fim).format()) {
             LRetorno = false;
-            console.log(2);
+            //console.log(2);
           } else if (
             JSONCupom.numero_utilizacao != null &&
             parseInt(JSONCupom.numero_utilizacao) > 0 &&
@@ -655,37 +655,37 @@ export default {
               parseInt(JSONCupom.numero_utilizacao)
           ) {
             LRetorno = false;
-            console.log(3);
+            //console.log(3);
           } else if (
             parseFloat(item.variant_price) <
             parseFloat(JSONCupom.valor_minimo_compra)
           ) {
             LRetorno = false;
-            console.log(
-              parseFloat(JSONCupom.valor_minimo_compra),
-              parseFloat(item.variant_price)
-            );
-            console.log(4);
+            // console.log(
+            //   parseFloat(JSONCupom.valor_minimo_compra),
+            //   parseFloat(item.variant_price)
+            // );
+            //console.log(4);
           } else if (
             JSONCupom.exige_quantidade_minima == 1 &&
             parseInt(JSONCupom.quantidade_minima) <
               parseInt(quantidade_itens_carrinho)
           ) {
             LRetorno = false;
-            console.log(5);
+            //console.log(5);
           } else if (
             JSONCupom.permite_acumular == 0 &&
             this.ArrayDescontos.length > 0
           ) {
             LRetorno = false;
-            console.log(6);
+            //console.log(6);
           } else if (
             JSONCupom.aplicar_regra_produtos_especificos != undefined &&
             JSONCupom.aplicar_regra_produtos_especificos != null &&
             LFindProd == undefined
           ) {
             LRetorno = false;
-            console.log(7);
+            //console.log(7);
           }
           if (LRetorno) {
             this.ArrayDescontos.push({ cupom: JSONCupom.code });
