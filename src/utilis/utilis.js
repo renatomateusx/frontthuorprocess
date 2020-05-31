@@ -33,7 +33,7 @@ var UTILIS = {
 
     if ((Resto == 10) || (Resto == 11)) Resto = 0;
     if (Resto != parseInt(strCPF.substring(10, 11))) { API_NOTIFICATION.showNotificationW('Oops', 'CPF Inválido', 'error'); return false; }
-    console.log("Retornando true");
+    //console.log("Retornando true");
     return true;
   },
   removeCPFCaractere(cpf) {

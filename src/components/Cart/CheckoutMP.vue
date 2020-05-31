@@ -1739,18 +1739,15 @@ export default {
               dadosCompra: retornoPay.data
             };
             sessionStorage.setItem("TipoCheck", "ca");
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
+            UTILIS_API.SetDadosClientesSession(DadosCliente);            
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
             LRouter.push("/obrigado-cartao");
           })
           .catch(error => {
             console.log("Erro ao tentar efetuar o pagamento", error);
-            API_NOTIFICATION.showNotification(
-              "Por favor, tente novamente ",
+            API_NOTIFICATION.showNotificationW(
+              "Pagamento Rejeitado","Por favor, tente novamente ",
               "error"
             );
           });
@@ -1784,7 +1781,7 @@ export default {
             dadosCompra: retornoPay.data
           };
           sessionStorage.setItem("TipoCheck", "bo");
-          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          UTILIS_API.SetDadosClientesSession(DadosCliente);  
           window.Mercadopago.clearSession();
           API_NOTIFICATION.HideLoading();
           LRouter.push("/obrigado-boleto");
@@ -1826,7 +1823,7 @@ export default {
         LLead
       )
         .then(resLead => {
-          console.log("Lead Salva com Suceso");
+          //console.log("Lead Salva com Suceso");
         })
         .catch(error => {
           console.log("Erro ao salvar lead", error);

@@ -85,14 +85,11 @@ export default {
     sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
     },
-    getDadosCompra() {
-      if (sessionStorage.getItem("dadosCliente") != null) {
-        this.dadosCliente = JSON.parse(sessionStorage.getItem("dadosCliente"));
-        this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-      }
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.DadosLoja = UTILIS_API.GetDadosLojaSession();
-      }
+    async getDadosCompra() {
+      this.dadosCliente = await UTILIS_API.GetDadosClientesSession();
+      this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
+
+      this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
       API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase");
       API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase");
       API_NOTIFICATION.HideLoading();

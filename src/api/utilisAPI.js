@@ -13,7 +13,7 @@ var UTILIS_API = {
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_VIACEP_SERVER, LBody)
                 .then((response) => {
-                    console.log("Response", response);
+                    //console.log("Response", response);
                     resolve(response.data);
                 })
                 .catch((error) => {
@@ -242,7 +242,7 @@ var UTILIS_API = {
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_LEAD_GET_DADOS_COMPRADOR, LBody)
                 .then((response) => {
-                    console.log("Response Cliente", response);
+                    //console.log("Response Cliente", response);
                     resolve(response);
                 })
                 .catch((error) => {
@@ -378,7 +378,7 @@ var UTILIS_API = {
     SetFretesSession(frete) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("fretes", btoa(JSON.stringify(frete)));
+                sessionStorage.setItem(constantes.SESSION_FRETES, btoa(JSON.stringify(frete)));
                 resolve(1);
             }
             catch (error) {
@@ -390,15 +390,43 @@ var UTILIS_API = {
     GetFretesSession() {
         return new Promise((resolve, reject) => {
             try {
-                if (sessionStorage.getItem("fretes") == null) {
+                if (sessionStorage.getItem(constantes.SESSION_FRETES) == null) {
                     resolve([]);
                     return;
                 }
-                const L = JSON.parse(atob(sessionStorage.getItem("fretes")));
+                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_FRETES)));
                 resolve(L);
             }
             catch (error) {
                 console.log("Erro ao pegar o fretes session", error);
+                resolve(error);
+            }
+        })
+    },
+    SetDadosClientesSession(data) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_DATA_CLIENTES, btoa(JSON.stringify(data)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o dados Clientes session", error);
+                resolve(error);
+            }
+        })
+    },
+    GetDadosClientesSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES) == null) {
+                    resolve([]);
+                    return;
+                }
+                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o dados Clientes session", error);
                 resolve(error);
             }
         })

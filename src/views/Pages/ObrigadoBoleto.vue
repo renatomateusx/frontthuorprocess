@@ -10,7 +10,7 @@
           <div class="media-body">
             <h5
               class="m-0 text-bold"
-            >Obrigada, {{toCamelCase(getDadosCliente().nome.split(" ")[0])}}!</h5>
+            >Obrigada, {{getNomeCliente()}}!</h5>
           </div>
         </div>
       </div>
@@ -26,9 +26,9 @@
                   Pedido:
                   <strong>
                     <a
-                      v-bind:href="dadosStore.order.order_status_url"
+                      v-bind:href="getURLBoleto()"
                       target="_blank"
-                    >{{this.dadosStore.order.order_number}}</a>
+                    >{{getOrderNumber()}}</a>
                   </strong>
                 </h4>
               </div>
@@ -50,7 +50,7 @@
             <h4
               class="mt-2 mb-2 text-justify textInformativo"
             >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
-            <h5 class="text-center">{{getBarCode()}}</h5>
+            <h5 class="text-center">{{barCode}}</h5>
           </div>
           <div class="col-xl-12 mt-2">
             <button class="btn btn-success btnDownload" v-on:click="voltarLoja()">Voltar para a loja</button>
@@ -89,6 +89,7 @@ export default {
   },
   data() {
     return {
+      barCode: '',
       dadosCliente: {},
       dadosStore: {},
       DadosLoja: {},
@@ -100,24 +101,16 @@ export default {
     sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
     },
-    getDadosCompra() {
-      if (sessionStorage.getItem("DadosCheckout") != null) {
-        this.DadosCheckout = JSON.parse(
-          sessionStorage.getItem("DadosCheckout")
-        );
-      }
-      if (sessionStorage.getItem("dadosCliente") != null) {
-        this.dadosCliente = JSON.parse(sessionStorage.getItem("dadosCliente"));
-        this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-        //console.log(this.dadosCliente);
-        //console.log(this.dadosStore.order.order_number);
-      }
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.DadosLoja = UTILIS_API.GetDadosLojaSession();
-        //console.log(this.DadosLoja);
-      }      
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent('Purchase', 'boleto');
-      API_GOOGLE_PIXEL.TriggerGoogleEvent('purchase', 'boleto');
+    async getDadosCompra() {
+      
+      this.dadosCliente = await UTILIS_API.GetDadosClientesSession();
+      this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
+
+      this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
+      //console.log(this.DadosLoja);
+      this.getBarCode();
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase", "boleto");
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase", "boleto");
       API_NOTIFICATION.HideLoading();
     },
     copyToClip(comp) {
@@ -139,15 +132,18 @@ export default {
       textToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
     },
-    downloadBoleto() {
-      "application/json"
+    async downloadBoleto() {
+      "application/json";
       var url = "";
+      this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
       if (this.DadosCheckout.gateway == 1) {
         url = this.dadosCliente.dadosCompra.transaction_details
           .external_resource_url;
       }
-      if(this.DadosCheckout.gateway == 2){
-        this.Links = JSON.parse(this.dadosCliente.dadosCompra.dataGateway).links;
+      if (this.DadosCheckout.gateway == 2) {
+        this.Links = JSON.parse(
+          this.dadosCliente.dadosCompra.dataGateway
+        ).links;
         url = this.Links.find(x => x.media == "application/pdf").href;
       }
       //console.log("Download Boleto", url);
@@ -170,17 +166,40 @@ export default {
     voltarLoja() {
       window.location.href = "http://" + this.DadosLoja.url_loja;
     },
-    getBarCode() {
+    async getBarCode() {
+      this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
       if (this.DadosCheckout.gateway == 1)
-        return this.dadosCliente.dadosCompra.dataGateway.barcode.content;
+        this.barCode = this.dadosCliente.dadosCompra.dataGateway.barcode.content;
       if (this.DadosCheckout.gateway == 2)
-        return  JSON.parse(this.dadosCliente.dadosCompra.dataGateway).payment_method.boleto
-          .formatted_barcode;
+        this.barCode = JSON.parse(this.dadosCliente.dadosCompra.dataGateway)
+          .payment_method.boleto.formatted_barcode;
     },
     getDadosCliente() {
       return this.dadosCliente;
     },
-    
+    getNomeCliente(){
+      const LNome = this.getDadosCliente().nome;
+      if(LNome){
+        var LN = LNome.split(" ")[0];
+        LN = this.toCamelCase(LN);
+        return LN;
+      }
+      return '';
+    },
+    getURLBoleto(){
+      const LURL = this.dadosStore.order
+      if(LURL){
+        return LURL.order_status_url;
+      }
+      return '';
+    },
+    getOrderNumber(){
+      const Order = this.dadosStore.order;
+      if(Order){
+        return Order.order_number;
+      }
+      return '';
+    }
   }
 };
 </script>

@@ -1837,7 +1837,7 @@ export default {
             dadosCompra: retornoPayment.data
           };
           sessionStorage.setItem("TipoCheck", "bo");
-          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          UTILIS_API.SetDadosClientesSession(DadosCliente);  
           LRouter.push("/obrigado-boleto");
           API_NOTIFICATION.HideLoading();
         })
@@ -1868,7 +1868,7 @@ export default {
             dadosCompra: retornoPayment.data
           };
           sessionStorage.setItem("TipoCheck", "ca");
-          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          UTILIS_API.SetDadosClientesSession(DadosCliente);  
           LRouter.push("/obrigado-cartao");
           API_NOTIFICATION.HideLoading();
         })
@@ -1923,7 +1923,7 @@ export default {
         LLead
       )
         .then(resLead => {
-          console.log("Lead Salva com Suceso");
+          //console.log("Lead Salva com Suceso");
         })
         .catch(error => {
           console.log("Erro ao salvar lead", error);

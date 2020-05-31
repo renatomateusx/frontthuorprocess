@@ -111,4 +111,7 @@ export default Object.freeze({
   PATH_GET_CAMPANHA_CARRINHO_ABANDONADO: 'apps/GetCampanhaCarrinhoAbandonado',
   
 
+  /* CONSTANTES SESSIONS */
+  SESSION_DATA_CLIENTES: 'dc',
+  SESSION_FRETES : 'f',
 });

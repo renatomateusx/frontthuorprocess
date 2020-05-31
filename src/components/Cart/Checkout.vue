@@ -171,10 +171,7 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
-          sessionStorage.setItem(
-            "DadosCheckout",
-            JSON.stringify(this.DadosCheckout)
-          );
+          UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);          
           this.iniciaCheckout();
         })
         .catch(error => {
@@ -273,7 +270,7 @@ export default {
     getPixels() {
       API_PIXEL.GetPixels()
         .then(resPixels => {
-          sessionStorage.setItem("pixels", JSON.stringify(resPixels.data));
+          UTILIS_API.SetPixelSession(resPixels.data);
           API_FACEBOOK_PIXEL.InsertScript();
           API_GOOGLE_PIXEL.InsertScript();
           API_FACEBOOK_PIXEL.TriggerFacebookEvent("InitiateCheckout");

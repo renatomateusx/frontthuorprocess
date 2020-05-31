@@ -746,11 +746,8 @@ export default {
                   nome: LocalDecrypto.dadosComprador.nome_completo,
                   dadosCompra: retornoPay.data
                 };
-                sessionStorage.setItem(
-                  "dadosCliente",
-                  JSON.stringify(DadosCliente)
-                );
-                this.dadosCli;
+                UTILIS_API.SetDadosClientesSession(DadosCliente);
+
                 window.Mercadopago.clearSession();
                 sessionStorage.setItem("up", "1");
                 this.UpSellNoCheckout = -1;
@@ -797,10 +794,7 @@ export default {
                     nome: LAuxCripto.dadosComprador.nome_completo,
                     dadosCompra: retornoPay.data
                   };
-                  sessionStorage.setItem(
-                    "dadosCliente",
-                    JSON.stringify(DadosCliente)
-                  );
+                  UTILIS_API.SetDadosClientesSession(DadosCliente);
                   sessionStorage.setItem("up", "1");
                   this.UpSellNoCheckout = -1;
                   this.$emit("update");
@@ -884,10 +878,7 @@ export default {
                     nome: this.nome_completo,
                     dadosCompra: retornoPaymentPagSeguro.data
                   };
-                  sessionStorage.setItem(
-                    "dadosCliente",
-                    JSON.stringify(DadosCliente)
-                  );
+                  UTILIS_API.SetDadosClientesSession(DadosCliente);
                   sessionStorage.setItem("up", "1");
                   this.UpSellNoCheckout = -1;
                   this.$emit("update");
@@ -920,10 +911,7 @@ export default {
                 nome: this.nome_completo,
                 dadosCompra: retornoPaymentPagSeguro.data
               };
-              sessionStorage.setItem(
-                "dadosCliente",
-                JSON.stringify(DadosCliente)
-              );
+              UTILIS_API.SetDadosClientesSession(DadosCliente);
               sessionStorage.setItem("up", "1");
               this.UpSellNoCheckout = -1;
               this.$emit("update");
@@ -994,10 +982,7 @@ export default {
               nome: this.nome_completo,
               dadosCompra: retornoPayment.data
             };
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
+            UTILIS_API.SetDadosClientesSession(DadosCliente);
             LRouter.push("/obrigado-boleto");
             API_NOTIFICATION.HideLoading();
           })
