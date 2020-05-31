@@ -349,12 +349,12 @@
           </button>
         </div>
 
-        <div class="row">         
+        <div class="row">
           <p
             v-show="CupomAplicadoAuto == 1"
-            class="alert alert-success p-1 w-75 text-center ml-3  mb-2  mt-2  "
+            class="alert alert-success p-1 w-75 text-center ml-3 mb-2 mt-2"
           >Cupom Aplicado Automaticamente</p>
-           <strong class="mt-3 ml-3">Cupom(ns) aplicado(s):</strong>
+          <strong class="mt-3 ml-3">Cupom(ns) aplicado(s):</strong>
           <p v-for="cup in CupomCode" class="alert alert-info p-1 ml-2 mt-2">{{cup.code}}</p>
         </div>
       </div>
@@ -428,7 +428,7 @@ export default {
         .then(result => {
           if (result) {
             this.aplicarCupom();
-            
+
             return;
           }
           this.errors.add({
@@ -436,15 +436,14 @@ export default {
             field: "codigo_cupom",
             msg: "Escolha um produto"
           });
-          
         })
         .catch(error => {
           console.log("Erro ao tentar validar", error);
         });
     },
     async checkCupom() {
-      if (sessionStorage.getItem("DadosLoja") != undefined) {
-        this.dadosLoja = sessionStorage.getItem("DadosLoja");
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+      if (this.dadosLoja != undefined) {       
         if (sessionStorage.getItem("cart") != null) {
           this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
         }
@@ -512,10 +511,7 @@ export default {
             .then(res => {
               const LojaData = res.data;
               this.dadosLoja = LojaData;
-              sessionStorage.setItem(
-                "DadosLoja",
-                JSON.stringify(this.dadosLoja)
-              );
+              UTILIS_API.SetDadosLojaSession(this.dadosLoja);
               resolve(1);
             })
             .catch(error => {
@@ -602,7 +598,7 @@ export default {
                       API_NOTIFICATION.HideLoading();
                     });
                 }
-              }else{
+              } else {
                 API_NOTIFICATION.HideLoading();
               }
             });
@@ -730,7 +726,7 @@ export default {
           if (sessionStorage.getItem("ul") != null) {
             LUL = JSON.parse(atob(sessionStorage.getItem("ul")));
           }
-          
+
           const LFindCode = LUL.find(x => x.code == JSONCupom.code);
           if (LFindCode == undefined) {
             LUL.push({
@@ -765,7 +761,7 @@ export default {
           this.CupomAplicadoAuto = 1;
         }
       }
-      
+
       return this.CupomCode;
     }
   }

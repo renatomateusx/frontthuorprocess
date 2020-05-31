@@ -295,12 +295,9 @@ export default {
     },
     async checkURL() {
       var url = window.location.href;
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
-        console.log("loja", this.dadosLoja);
-      }
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       if (url.includes("pay")) {
-        console.log("0");
+        
         sessionStorage.removeItem("cart");
         var newURL = url.split("/pay/");
         const PRODUTO = newURL[1];
@@ -320,12 +317,12 @@ export default {
           this.ProdutoString[1]
         );
         this.produtosCart.push(lpro);
-        sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));       
+        sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
         this.$router.push("/checkout");
       } else {
-        console.log("1");
+        
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+        this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
         this.produtosCart = JSON.parse(LCart);
         API_NOTIFICATION.HideLoading();
       }
@@ -336,7 +333,7 @@ export default {
           API_PRODUTOS.GetProdutoByIDImported(product, quantity, variante_id)
             .then(retorno => {
               console.log("Prod", retorno.data);
-               this.getDadosLoja(retorno.data.id_usuario);
+              this.getDadosLoja(retorno.data.id_usuario);
               resolve(retorno.data);
             })
             .catch(error => {
@@ -360,7 +357,7 @@ export default {
     },
     async getDadosLoja(id_usuario) {
       //API_NOTIFICATION.ShowLoading();
-      
+
       API_LOJA.GetDadosLojaByIdUsuario(id_usuario)
         .then(res => {
           const LojaData = res.data;
@@ -437,7 +434,11 @@ export default {
         // console.log("ID Deshashed", numbers);
         return hashids.decode(crypted);
       } catch (error) {
-        API_NOTIFICATION.showNotificationW("Oops!", "Parâmetros Inválidos na URL", "error");
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "Parâmetros Inválidos na URL",
+          "error"
+        );
       }
     }
   }

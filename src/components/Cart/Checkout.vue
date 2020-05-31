@@ -124,8 +124,7 @@ export default {
         const isShopify = params.searchParams.get("isShopify");
         const limpa_carrinho = params.searchParams.get("limpa_carrinho");
         const qtdItems = params.searchParams.get("qtd_items");
-        const redirectTo = params.searchParams.get("redirectTo");
-        this.getDadosLoja();
+        const redirectTo = params.searchParams.get("redirectTo");        
         for (var i = 0; i < qtdItems; i++) {
           var lpro = await this.pushProducts(
             params.searchParams.get("produto_option_id[" + i + "]"),
@@ -135,6 +134,7 @@ export default {
           //console.log("LPro", lpro);
           this.produtosCart.push(lpro);
         }
+        this.getDadosLoja();
         sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
 
         //GUARDA O [1] PARA USAR COMO QUISER.
@@ -157,6 +157,7 @@ export default {
       //API_NOTIFICATION.ShowLoading();
       var params = new URL(window.location.href);
       const store = params.searchParams.get("store");
+      if(store){
       API_LOJA.GetDadosLoja(store)
         .then(res => {
           const LojaData = res.data;
@@ -166,6 +167,7 @@ export default {
         .catch(error => {
           console.log("Erro ao pegar dados da Loja", error);
         });
+      }
     },
     getCheckouts() {
       API_CHECKOUT.GetCheckouts()

@@ -980,6 +980,10 @@ import dateFormat from "dateformat";
 import constantes from "../../api/constantes";
 import UpSellCard from "../../components/Cart/UpSellCard";
 import API_CLIENTES from "../../api/clientesAPI";
+import CupomCard from "../../components/Cart/CupomCard";
+
+
+
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1006,7 +1010,8 @@ export default {
     this.checkURL();
   },
   components: {
-    UpSellCard
+    UpSellCard,
+    CupomCard
   },
   computed: {},
   data() {
@@ -1082,12 +1087,9 @@ export default {
       });
     },
     async checkURL() {
-      var url = window.location.href;
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+      var url = window.location.href;     
         this.getCheckouts();
-        //console.log("loja", dadosLoja);
-      }
+        //console.log("loja", dadosLoja);     
 
       if (url.includes("items")) {
         //console.log("0");
@@ -1282,7 +1284,8 @@ export default {
             });
         }
       } else if (this.currentStep == 3) {
-        ///Verifica se o gateway é o MERCADO PAGO
+        ///Verifica se o gateway é o PAG SEGURO
+        console.log(this.DadosCheckout.gateway);
         if (this.DadosCheckout.gateway == 2) {
           this.pay();
         }

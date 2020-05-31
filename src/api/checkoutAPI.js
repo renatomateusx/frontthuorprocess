@@ -42,10 +42,10 @@ var API_CHECKOUT = {
     },
     GetCheckouts() {
         return new Promise(async (resolve, reject) => {
-            const LDadosUser = await UTILIS_API.GetUserSession();
-            if (LDadosUser != undefined) {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 let LBody = {
-                    id_usuario: LDadosUser.user.id
+                    id_usuario: LDadosLoja.id_usuario
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_GET_CHECKOUTS, LBody)
