@@ -114,4 +114,9 @@ export default Object.freeze({
   /* CONSTANTES SESSIONS */
   SESSION_DATA_CLIENTES: 'dc',
   SESSION_FRETES : 'f',
+  SESSION_CART: 'c',
+  SESSION_USER: 'x',
+  SESSION_PIXEL: 'p',
+  SESSION_LOJA: 'l',
+  SESSION_CHECKOUT: 'sc',
 });

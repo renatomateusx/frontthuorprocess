@@ -6,10 +6,10 @@ import UTILIS_API from "./utilisAPI";
 var API_CAMPANHA = {
     GetCampanhas() {
         return new Promise(async (resolve, reject) => {
-            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                 let LBody = {
-                    id_usuario: LDadosLoja.id_usuario
+                    id_usuario: LDadosUser.user.id
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_GET_CAMPANHAS, LBody)
@@ -26,10 +26,10 @@ var API_CAMPANHA = {
     },
     GetCampanhasCarrinhoAbandonado() {
         return new Promise(async (resolve, reject) => {
-            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                 let LBody = {
-                    id_usuario: LDadosLoja.id_usuario,
+                    id_usuario: LDadosUser.user.id,
                     campanha: 1
                 }
                 axios
@@ -47,11 +47,11 @@ var API_CAMPANHA = {
     },
     GetCampanhaByID(id) {
         return new Promise(async (resolve, reject) => {
-            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
 
                 let LBody = {
-                    id_usuario: LDadosLoja.id_usuario,
+                    id_usuario: LDadosUser.user.id,
                     id: id
                 }
                 axios
@@ -69,9 +69,9 @@ var API_CAMPANHA = {
     },
     SalvarCampanhaCarrinhoAbandonado(pCampanha) {
         return new Promise(async (resolve, reject) => {
-            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
-                pCampanha.id_usuario = LDadosLoja.id_usuario;
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
+                pCampanha.id_usuario = LDadosUser.user.id;
                 pCampanha.campanha = 1;
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_CAMPANHA_CARRINHO_ABANDONADO, pCampanha)
@@ -89,9 +89,9 @@ var API_CAMPANHA = {
 
     DeleteCampanhaByID(id) {
         return new Promise(async (resolve, reject) => {
-            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
-                pNovoUpSell.id_usuario = LDadosLoja.id_usuario;
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
+                pNovoUpSell.id_usuario = LDadosUser.user.id;
                 var LBody = {
                     id_usuario: LDadosLoja.id_usuario,
                     id: id
@@ -111,10 +111,10 @@ var API_CAMPANHA = {
     },
     GetCampanhaByProductID(id) {
         return new Promise(async (resolve, reject) => {
-            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                 let LBody = {
-                    id_usuario: LDadosLoja.id_usuario,
+                    id_usuario: LDadosUser.user.id,
                     id_produto: id,
                 }
                 axios

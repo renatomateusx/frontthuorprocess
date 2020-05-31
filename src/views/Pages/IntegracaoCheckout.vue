@@ -91,6 +91,7 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
+import API_LOJA from '../../api/lojaAPI';
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -165,7 +166,7 @@ export default {
         return this.checkoutIDList.find(x => x.gateway == id).status;
       }
     },
-    getStatusClassByID(id) {
+    getStatusClassByID(id) {      
       if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
         return this.checkoutIDList.find(x => x.gateway == id).status
           ? "CheckoutStatusAtivo"

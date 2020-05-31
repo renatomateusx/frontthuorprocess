@@ -63,14 +63,14 @@
                 v-bind:src="getImageIntegracaoCampanha(id)"
                 alt="App"
               />
-              <span class="col-md-5 mt-2">{{getApelidoByID(id)}}</span>
+              <span class="col-md-4 mt-2">{{getApelidoByID(id)}}</span>
               <button
                 class="btn btn-info col-md-3"
                 v-on:click="acaoVerEditarIntegracaoCampanha(id)"
               >
                 <h4><span class="fa fa-edit mt-2">Configurar</span></h4>
               </button>
-              <div class="float-right mt-2 col-md-1">
+              <div class="float-right mt-3 col-md-1">
                 <span class="pull-right float-right" v-bind:class="getStatusClassByID(id)"></span>
               </div>
             </div>

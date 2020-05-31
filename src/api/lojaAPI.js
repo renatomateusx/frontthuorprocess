@@ -64,8 +64,8 @@ var API_LOJA = {
 
     GetIntegracaoPlataforma() {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
 
                 axios
                     .get(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_PLATAFORMA)
@@ -82,10 +82,10 @@ var API_LOJA = {
     },
     GetIntegracaoPlataformaByID(id) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                 let LBody = {
-                    id_usuario: LDadosLoja.id_usuario,
+                    id_usuario: LDadosUser.user.id,
                     plataforma: id
                 }
                 axios
@@ -103,8 +103,8 @@ var API_LOJA = {
     },
     InsertPlataformShopify(plataforma) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_PLATAFORMA_SHOPIFY, plataforma)
@@ -121,8 +121,8 @@ var API_LOJA = {
     },
     UpdateStatus(plataforma) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_PLATAFORMA, plataforma)
@@ -139,8 +139,8 @@ var API_LOJA = {
     },
     AutoSinc(plataforma) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_AUTO_SINC_PLATAFORMA_SHOPIFY, plataforma)
@@ -157,8 +157,8 @@ var API_LOJA = {
     },
     PulaCarrinho(plataforma) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_LIMPA_CARRINHO_PLATAFORMA_SHOPIFY, plataforma)
@@ -175,8 +175,8 @@ var API_LOJA = {
     },
     LimpaCarrinho(plataforma) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PULA_CARRINHO_PLATAFORMA_SHOPIFY, plataforma)
@@ -193,10 +193,10 @@ var API_LOJA = {
     },
     InstalarReinstalarShopify() {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                 var LBody = {
-                    id_usuario : LDadosLoja.id_usuario
+                    id_usuario : LDadosUser.user.id
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY, LBody)

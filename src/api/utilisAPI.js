@@ -254,124 +254,124 @@ var UTILIS_API = {
     SetCartSession(cart) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("c", btoa(JSON.stringify(cart)));
+                sessionStorage.setItem(constantes.SESSION_CART, btoa(JSON.stringify(cart)));
                 resolve(1);
             }
             catch (error) {
                 console.log("Erro ao setar o cart session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     GetCartSession() {
         return new Promise((resolve, reject) => {
             try {
-                const L = JSON.parse(atob(sessionStorage.getItem("c")));
+                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_CART)));
                 resolve(L);
             }
             catch (error) {
                 console.log("Erro ao pegar o cart session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     SetUserSession(user) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("x", btoa(JSON.stringify(user)));
+                sessionStorage.setItem(constantes.SESSION_USER, btoa(JSON.stringify(user)));
                 resolve(1);
             }
             catch (error) {
                 console.log("Erro ao setar o user session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     GetUserSession() {
         return new Promise((resolve, reject) => {
-            try {
-                const L = JSON.parse(atob(sessionStorage.getItem("x")));
+            try {                
+                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_USER)));
                 resolve(L);
             }
             catch (error) {
                 console.log("Erro ao pegar o user session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     SetPixelSession(pixel) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("pixels", btoa(JSON.stringify(pixel)));
+                sessionStorage.setItem(constantes.SESSION_PIXEL, btoa(JSON.stringify(pixel)));
                 resolve(1);
             }
             catch (error) {
                 console.log("Erro ao setar o pixel session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     GetPixelSession() {
         return new Promise((resolve, reject) => {
             try {
-                const L = JSON.parse(atob(sessionStorage.getItem("pixels")));
+                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_PIXEL)));
                 resolve(L);
             }
             catch (error) {
                 console.log("Erro ao pegar o pixels session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     SetDadosLojaSession(dadosLoja) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("DadosLoja", btoa(JSON.stringify(dadosLoja)));
+                sessionStorage.setItem(constantes.SESSION_LOJA, btoa(JSON.stringify(dadosLoja)));
                 resolve(1);
             }
             catch (error) {
                 console.log("Erro ao setar o DadosLoja session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     GetDadosLojaSession() {
         return new Promise((resolve, reject) => {
             try {
-                if (sessionStorage.getItem("DadosLoja") != null) {
-                    const L = JSON.parse(atob(sessionStorage.getItem("DadosLoja")));
+                if (sessionStorage.getItem(constantes.SESSION_LOJA) != null) {
+                    const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_LOJA)));
                     resolve(L);
                 } else {
-                    resolve(1);
+                    resolve(0);
                 }
             }
             catch (error) {
                 console.log("Erro ao pegar o DadosLoja session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     SetDadosCheckoutSession(dadosCheckout) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem("DadosCheckout", btoa(JSON.stringify(dadosCheckout)));
+                sessionStorage.setItem(constantes.SESSION_CHECKOUT, btoa(JSON.stringify(dadosCheckout)));
                 resolve(1);
             }
             catch (error) {
                 console.log("Erro ao setar o DadosCheckout session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
     GetDadosCheckoutSession() {
         return new Promise((resolve, reject) => {
             try {
-                const L = JSON.parse(atob(sessionStorage.getItem("DadosCheckout")));
+                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_CHECKOUT)));
                 resolve(L);
             }
             catch (error) {
                 console.log("Erro ao pegar o DadosCheckout session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
@@ -383,7 +383,7 @@ var UTILIS_API = {
             }
             catch (error) {
                 console.log("Erro ao setar o fretes session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
@@ -399,7 +399,7 @@ var UTILIS_API = {
             }
             catch (error) {
                 console.log("Erro ao pegar o fretes session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
@@ -411,7 +411,7 @@ var UTILIS_API = {
             }
             catch (error) {
                 console.log("Erro ao setar o dados Clientes session", error);
-                resolve(error);
+                reject(error);
             }
         })
     },
@@ -427,7 +427,7 @@ var UTILIS_API = {
             }
             catch (error) {
                 console.log("Erro ao pegar o dados Clientes session", error);
-                resolve(error);
+                reject(error);
             }
         })
     }
