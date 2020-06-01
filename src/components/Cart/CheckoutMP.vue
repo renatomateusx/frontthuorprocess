@@ -1441,8 +1441,12 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
-      API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      API_FACEBOOK_PIXEL.InsertScript().then(res => {
+        API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
+      });
+      API_GOOGLE_PIXEL.InsertScript().then(resG => {
+        API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      });
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao

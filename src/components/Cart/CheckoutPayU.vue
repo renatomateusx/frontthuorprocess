@@ -201,7 +201,7 @@
   margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
-  margin: 0 auto!important;
+  margin: 0 auto !important;
   padding: 5px;
   margin: 5px;
   cursor: pointer !important;
@@ -983,6 +983,7 @@ import UpSellCard from "../../components/Cart/UpSellCard";
 import API_CLIENTES from "../../api/clientesAPI";
 import md5 from "md5";
 import creditCardType from "credit-card-type";
+import CupomCard from "../../components/Cart/CupomCard";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1008,7 +1009,8 @@ export default {
     this.checkURL();
   },
   components: {
-    UpSellCard
+    UpSellCard,
+    CupomCard
   },
   computed: {},
   data() {
@@ -1086,11 +1088,10 @@ export default {
     },
     async checkURL() {
       var url = window.location.href;
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
-        this.getCheckouts();
-        //console.log("loja", dadosLoja);
-      }
+
+      this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+      this.getCheckouts();
+      //console.log("loja", dadosLoja);
 
       if (url.includes("items")) {
         //console.log("0");
@@ -1286,6 +1287,7 @@ export default {
         }
       } else if (this.currentStep == 3) {
         ///Verifica se o gateway é o MERCADO PAGO
+        console.log(this.DadosCheckout.gateway);
         if (this.DadosCheckout.gateway == 3) {
           this.pay();
         }
@@ -1371,8 +1373,12 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
-      API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      API_FACEBOOK_PIXEL.InsertScript().then(res => {
+        API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
+      });
+      API_GOOGLE_PIXEL.InsertScript().then(resG => {
+        API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      });
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -1399,6 +1405,8 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
+          console.log(this.DadosCheckout);
+          UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);
           if (this.DadosCheckout.gateway == 3) {
             //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
             this.iniciaCheckout();
@@ -1815,7 +1823,7 @@ export default {
       const ParamDois = this.nome_completo.replace(/ /g, "");
       const LRefID = await this.getCripto(ParamUm, ParamUm);
       this.reference_id = LRefID;
-      //console.log("Reference ID", this.reference_id);
+      console.log("Reference ID", this.reference_id);
       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
       sessionStorage.setItem("LCrypto", LCripto);
       API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
@@ -1837,12 +1845,17 @@ export default {
             dadosCompra: retornoPayment.data
           };
           sessionStorage.setItem("TipoCheck", "bo");
-          UTILIS_API.SetDadosClientesSession(DadosCliente);  
+          UTILIS_API.SetDadosClientesSession(DadosCliente);
           LRouter.push("/obrigado-boleto");
           API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
-          console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+          console.log("Erro ao efetuar o pagamento no PayU", error);
+          API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Não Realizado. Por favor, tente novamente.",
+              "error"
+            );
         });
     },
     async iniciaPagamentoBackEndCard() {
@@ -1868,7 +1881,7 @@ export default {
             dadosCompra: retornoPayment.data
           };
           sessionStorage.setItem("TipoCheck", "ca");
-          UTILIS_API.SetDadosClientesSession(DadosCliente);  
+          UTILIS_API.SetDadosClientesSession(DadosCliente);
           LRouter.push("/obrigado-cartao");
           API_NOTIFICATION.HideLoading();
         })

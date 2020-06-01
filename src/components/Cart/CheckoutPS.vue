@@ -201,7 +201,7 @@
   margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
-  margin: 0 auto!important;
+  margin: 0 auto !important;
   padding: 5px;
   margin: 5px;
   cursor: pointer !important;
@@ -259,7 +259,7 @@
 .hidden {
   display: none !important;
 }
-@media only screen and (max-width: 992px) {
+@media only screen and (min-width: 500px) and (max-width: 992px) {
   #btnTop {
     display: block !important;
   }
@@ -981,9 +981,7 @@ import constantes from "../../api/constantes";
 import UpSellCard from "../../components/Cart/UpSellCard";
 import API_CLIENTES from "../../api/clientesAPI";
 import CupomCard from "../../components/Cart/CupomCard";
-
-
-
+import creditCardType from "credit-card-type";
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -1087,9 +1085,9 @@ export default {
       });
     },
     async checkURL() {
-      var url = window.location.href;     
-        this.getCheckouts();
-        //console.log("loja", dadosLoja);     
+      var url = window.location.href;
+      this.getCheckouts();
+      //console.log("loja", dadosLoja);
 
       if (url.includes("items")) {
         //console.log("0");
@@ -1371,8 +1369,12 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
-      API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      API_FACEBOOK_PIXEL.InsertScript().then(res => {
+        API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
+      });
+      API_GOOGLE_PIXEL.InsertScript().then(resG => {
+        API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      });
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -1772,7 +1774,7 @@ export default {
             dadosCompra: retornoPaymentPagSeguro.data
           };
           sessionStorage.setItem("TipoCheck", "bo");
-          UTILIS_API.SetDadosClientesSession(DadosCliente);  
+          UTILIS_API.SetDadosClientesSession(DadosCliente);
           LRouter.push("/obrigado-boleto");
           API_NOTIFICATION.HideLoading();
         })
@@ -1830,7 +1832,7 @@ export default {
               dadosCompra: retornoPaymentPagSeguro.data
             };
             sessionStorage.setItem("TipoCheck", "ca");
-            UTILIS_API.SetDadosClientesSession(DadosCliente);  
+            UTILIS_API.SetDadosClientesSession(DadosCliente);
             LRouter.push("/obrigado-cartao");
             API_NOTIFICATION.HideLoading();
           })

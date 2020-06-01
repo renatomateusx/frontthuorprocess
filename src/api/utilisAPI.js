@@ -139,7 +139,7 @@ var UTILIS_API = {
             axios
                 .get(constantes.URL_GET_IP)
                 .then((response) => {
-                    console.log("Response IP", response.data.ip);
+                   // console.log("Response IP", response.data.ip);
                     resolve(response.data);
                 })
                 .catch((error) => {
@@ -406,7 +406,7 @@ var UTILIS_API = {
     SetDadosClientesSession(data) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem(constantes.SESSION_DATA_CLIENTES, btoa(JSON.stringify(data)));
+                sessionStorage.setItem(constantes.SESSION_DATA_CLIENTES, btoa(unescape(encodeURIComponent(JSON.stringify(data)))));
                 resolve(1);
             }
             catch (error) {
@@ -422,7 +422,7 @@ var UTILIS_API = {
                     resolve([]);
                     return;
                 }
-                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)));
+                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)))));
                 resolve(L);
             }
             catch (error) {

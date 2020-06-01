@@ -25,6 +25,12 @@
   width: 120px;
   height: auto;
 }
+.switch input:checked + span {
+  background-color: green;
+}
+.switch input + span {
+  background-color: red;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -58,19 +64,26 @@
           <!-- START card-->
           <div class="card card-default">
             <div class="card-body">
-              <div class="form-group">
-                <label class="control-label" for="status">Ativo</label>
-                <select
-                  @change="updateStatusMP()"
-                  id="status"
-                  name="status"
-                  class="form-control"
-                  v-model="checkout_form.status"
-                >
-                  <option selected value="1">Sim</option>
-                  <option value="0">Não</option>
-                </select>
+              <div class="form-groug">
+                <label class="s col-form-label">Status</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      @change="updateStatus()"
+                      :checked="checkout_form.status == 1"
+                      v-model="checkout_form.status"
+                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.status')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('checkout_form.status')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.status') }}</span>
               </div>
+              
               <div class="form-group">
                 <label class="col-form-label">Nome *</label>
                 <input
@@ -284,7 +297,7 @@ export default {
           console.log("Erro ao salvar o checkout MP", error);
         });
     },
-    updateStatusMP() {
+    updateStatus() {
       API_NOTIFICATION.ShowLoading();
 
       API_CHECKOUT.UpdateStatusMP(this.checkout_form)

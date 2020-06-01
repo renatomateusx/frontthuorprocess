@@ -124,7 +124,7 @@ export default {
         const isShopify = params.searchParams.get("isShopify");
         const limpa_carrinho = params.searchParams.get("limpa_carrinho");
         const qtdItems = params.searchParams.get("qtd_items");
-        const redirectTo = params.searchParams.get("redirectTo");        
+        const redirectTo = params.searchParams.get("redirectTo");
         for (var i = 0; i < qtdItems; i++) {
           var lpro = await this.pushProducts(
             params.searchParams.get("produto_option_id[" + i + "]"),
@@ -157,23 +157,23 @@ export default {
       //API_NOTIFICATION.ShowLoading();
       var params = new URL(window.location.href);
       const store = params.searchParams.get("store");
-      if(store){
-      API_LOJA.GetDadosLoja(store)
-        .then(res => {
-          const LojaData = res.data;
-          this.dadosLoja = LojaData;
-          UTILIS_API.SetDadosLojaSession(LojaData);
-        })
-        .catch(error => {
-          console.log("Erro ao pegar dados da Loja", error);
-        });
+      if (store) {
+        API_LOJA.GetDadosLoja(store)
+          .then(res => {
+            const LojaData = res.data;
+            this.dadosLoja = LojaData;
+            UTILIS_API.SetDadosLojaSession(LojaData);
+          })
+          .catch(error => {
+            console.log("Erro ao pegar dados da Loja", error);
+          });
       }
     },
     getCheckouts() {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
-          UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);          
+          UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);
           this.iniciaCheckout();
         })
         .catch(error => {
@@ -273,10 +273,12 @@ export default {
       API_PIXEL.GetPixels()
         .then(resPixels => {
           UTILIS_API.SetPixelSession(resPixels.data);
-          API_FACEBOOK_PIXEL.InsertScript();
-          API_GOOGLE_PIXEL.InsertScript();
-          API_FACEBOOK_PIXEL.TriggerFacebookEvent("InitiateCheckout");
-          API_GOOGLE_PIXEL.TriggerGoogleEvent("begin_checkout");
+          API_FACEBOOK_PIXEL.InsertScript().then(res => {
+            API_FACEBOOK_PIXEL.TriggerFacebookEvent("InitiateCheckout");
+          });
+          API_GOOGLE_PIXEL.InsertScript().then(resG => {
+            API_GOOGLE_PIXEL.TriggerGoogleEvent("begin_checkout");
+          });
         })
         .catch(error => {
           console.log("Erro ao pegar dados do Pixels", error);

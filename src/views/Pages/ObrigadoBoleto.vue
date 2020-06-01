@@ -8,9 +8,7 @@
         </div>
         <div class="media mt-0 float-left pull-left">
           <div class="media-body">
-            <h5
-              class="m-0 text-bold"
-            >Obrigada, {{getNomeCliente()}}!</h5>
+            <h5 class="m-0 text-bold">Obrigada, {{getNomeCliente()}}!</h5>
           </div>
         </div>
       </div>
@@ -25,10 +23,7 @@
                 <h4 class="mt-4 mb-0">
                   Pedido:
                   <strong>
-                    <a
-                      v-bind:href="getURLBoleto()"
-                      target="_blank"
-                    >{{getOrderNumber()}}</a>
+                    <a v-bind:href="getURLLoja()" target="_blank">{{getOrderNumber()}}</a>
                   </strong>
                 </h4>
               </div>
@@ -50,7 +45,7 @@
             <h4
               class="mt-2 mb-2 text-justify textInformativo"
             >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
-            <h5 class="text-center">{{barCode}}</h5>
+            <h5 class="text-center">{{getBarCode()}}</h5>
           </div>
           <div class="col-xl-12 mt-2">
             <button class="btn btn-success btnDownload" v-on:click="voltarLoja()">Voltar para a loja</button>
@@ -83,13 +78,19 @@ export default {
   created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
+    API_FACEBOOK_PIXEL.InsertScript().then(res => {
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase", "boleto");
+    });
+    API_GOOGLE_PIXEL.InsertScript().then(resG => {
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase", "boleto");
+    });
   },
   components: {
     UpSellCard
   },
   data() {
     return {
-      barCode: '',
+      barCode: "",
       dadosCliente: {},
       dadosStore: {},
       DadosLoja: {},
@@ -102,15 +103,13 @@ export default {
       return new Promise(r => setTimeout(r, seconds));
     },
     async getDadosCompra() {
-      
       this.dadosCliente = await UTILIS_API.GetDadosClientesSession();
       this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
 
       this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
       //console.log(this.DadosLoja);
       this.getBarCode();
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase", "boleto");
-      API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase", "boleto");
+
       API_NOTIFICATION.HideLoading();
     },
     copyToClip(comp) {
@@ -135,17 +134,7 @@ export default {
     async downloadBoleto() {
       "application/json";
       var url = "";
-      this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
-      if (this.DadosCheckout.gateway == 1) {
-        url = this.dadosCliente.dadosCompra.transaction_details
-          .external_resource_url;
-      }
-      if (this.DadosCheckout.gateway == 2) {
-        this.Links = JSON.parse(
-          this.dadosCliente.dadosCompra.dataGateway
-        ).links;
-        url = this.Links.find(x => x.media == "application/pdf").href;
-      }
+      url = this.dadosCliente.dadosCompra.dadosComprador.dadosComprador.urlBoleto;
       //console.log("Download Boleto", url);
       this.openInNewTab(url);
     },
@@ -166,39 +155,34 @@ export default {
     voltarLoja() {
       window.location.href = "http://" + this.DadosLoja.url_loja;
     },
-    async getBarCode() {
-      this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
-      if (this.DadosCheckout.gateway == 1)
-        this.barCode = this.dadosCliente.dadosCompra.dataGateway.barcode.content;
-      if (this.DadosCheckout.gateway == 2)
-        this.barCode = JSON.parse(this.dadosCliente.dadosCompra.dataGateway)
-          .payment_method.boleto.formatted_barcode;
+    getBarCode() {
+      return this.dadosCliente.dadosCompra.dadosComprador.dadosComprador.barcode;     
     },
     getDadosCliente() {
       return this.dadosCliente;
     },
-    getNomeCliente(){
+    getNomeCliente() {
       const LNome = this.getDadosCliente().nome;
-      if(LNome){
+      if (LNome) {
         var LN = LNome.split(" ")[0];
         LN = this.toCamelCase(LN);
         return LN;
       }
-      return '';
+      return "";
     },
-    getURLBoleto(){
-      const LURL = this.dadosStore.order
-      if(LURL){
+    getURLLoja() {
+      const LURL = this.dadosStore.order;
+      if (LURL) {
         return LURL.order_status_url;
       }
-      return '';
+      return "";
     },
-    getOrderNumber(){
+    getOrderNumber() {
       const Order = this.dadosStore.order;
-      if(Order){
+      if (Order) {
         return Order.order_number;
       }
-      return '';
+      return "";
     }
   }
 };

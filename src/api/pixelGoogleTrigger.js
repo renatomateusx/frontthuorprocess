@@ -30,14 +30,14 @@ var API_GOOGLE_PIXEL = {
                                 const LProdutoFinded = LProdutosCart.find(x => x.id_thuor == obj.id_thuor);
                                 if (LProdutoFinded != undefined) {
                                     if (obj.marca_boleto && boleto != undefined) {
-                                        gtag('event', event);
+                                        //gtag('event', event);
                                         gtag('event', event, {
                                             'send_to': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
                                         });
                                         //console.log("Event 1");
                                     }
                                     else if (boleto == undefined) {
-                                        gtag('event', event);
+                                        //gtag('event', event);
                                         gtag('event', event, {
                                             'send': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
                                         });
@@ -48,14 +48,14 @@ var API_GOOGLE_PIXEL = {
                         }
                     }
                     else if (boleto !== undefined && obj.marca_boleto == 1) {
-                        gtag('event', event);
+                        //gtag('event', event);
                         gtag('event', event, {
                             'send_to': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
                         });
                         //console.log("Event 3", event);
                     }
                     else if (boleto == undefined) {
-                        gtag('event', event);
+                        //gtag('event', event);
                         gtag('event', event, {
                             'send_to': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
                         });
@@ -84,7 +84,7 @@ var API_GOOGLE_PIXEL = {
     InsertTagScript(id, id_aly) {
         return new Promise(async (resolve, reject) => {
             const pluginGG2 = document.createElement("script");
-            var inlineScript = document.createTextNode("window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-" + id + "', {'send_page_view': false}); gtag('config', 'AW-" + id_aly + "');");
+            var inlineScript = document.createTextNode("window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-" + id + "', {'send_page_view': false, 'optimize_id': 'GTM-"+id+"'}); gtag('config', 'GA-" + id + "', {'optimize_id': 'GTM-"+id+"'}); gtag('config', 'AW-" + id_aly + "');");
             pluginGG2.appendChild(inlineScript);
             document.head.appendChild(pluginGG2);
             resolve(1);

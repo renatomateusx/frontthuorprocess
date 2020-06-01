@@ -108,7 +108,7 @@ export default Object.freeze({
   PATH_INTEGRACAO_APPS: 'apps/GetIntegracaoApps',
   PATH_SAVE_INTEGRACAO_APPS: 'apps/SaveApps',
   PATH_GET_STATUS_APP: 'apps/GetStatusApp',
-  PATH_GET_CAMPANHA_CARRINHO_ABANDONADO: 'apps/GetCampanhaCarrinhoAbandonado',
+
   
 
   /* CONSTANTES SESSIONS */

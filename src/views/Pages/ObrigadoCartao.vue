@@ -8,7 +8,7 @@
         </div>
         <div class="media mt-0 float-left pull-left">
           <div class="media-body">
-            <h5 class="m-0 text-bold">Obrigada, {{toCamelCase(dadosCliente.nome.split(" ")[0])}}!</h5>
+            <h5 class="m-0 text-bold">Obrigada, {{getNomeCliente()}}!</h5>
           </div>
         </div>
       </div>
@@ -23,9 +23,9 @@
                   Pedido:
                   <strong>
                     <a
-                      v-bind:href="dadosStore.order.order_status_url"
+                      v-bind:href="getURLBoleto()"
                       target="_blank"
-                    >{{this.dadosStore.order.order_number}}</a>
+                    >{{getOrderNumber()}}</a>
                   </strong>
                 </h4>
               </div>
@@ -70,6 +70,12 @@ export default {
   created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
+    API_FACEBOOK_PIXEL.InsertScript().then(res => {
+      API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase", "");
+    });
+    API_GOOGLE_PIXEL.InsertScript().then(resG => {
+      API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase", "");
+    });
   },
   components: {
     UpSellCard
@@ -88,10 +94,8 @@ export default {
     async getDadosCompra() {
       this.dadosCliente = await UTILIS_API.GetDadosClientesSession();
       this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-
-      this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase");
-      API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase");
+      console.log(this.dadosCliente);
+      this.DadosLoja = await UTILIS_API.GetDadosLojaSession();     
       API_NOTIFICATION.HideLoading();
     },
     copyToClip(comp) {
@@ -129,6 +133,32 @@ export default {
     },
     voltarLoja() {
       window.location.href = "http://" + this.DadosLoja.url_loja;
+    },
+    getDadosCliente() {
+      return this.dadosCliente;
+    },
+    getNomeCliente() {
+      const LNome = this.getDadosCliente().nome;
+      if (LNome) {
+        var LN = LNome.split(" ")[0];
+        LN = this.toCamelCase(LN);
+        return LN;
+      }
+      return "";
+    },
+    getURLBoleto() {
+      const LURL = this.dadosStore.order;
+      if (LURL) {
+        return LURL.order_status_url;
+      }
+      return "";
+    },
+    getOrderNumber() {
+      const Order = this.dadosStore.order;
+      if (Order) {
+        return Order.order_number;
+      }
+      return "";
     }
   }
 };
