@@ -1697,7 +1697,7 @@ export default {
           installments: this.parcelas,
           payment_method_id: this.payment_id,
           payer: {
-            email: this.email
+            email: UTILIS.getRandomStringEmail() + this.email
           }
         }
       };

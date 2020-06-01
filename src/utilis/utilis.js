@@ -53,10 +53,10 @@ var UTILIS = {
   },
   isValidEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!email) {API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false;}
-    if (email.length == undefined)  {API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false;}
-    if (email.length == 0)  {API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false;}
-    if(!re.test(String(email).toLowerCase())){API_NOTIFICATION.showNotificationW('Oops', 'E-mail Inválido', 'error'); return false;}
+    if (!email) { API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false; }
+    if (email.length == undefined) { API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false; }
+    if (email.length == 0) { API_NOTIFICATION.showNotificationW('Oops', 'Informe seu E-mail', 'error'); return false; }
+    if (!re.test(String(email).toLowerCase())) { API_NOTIFICATION.showNotificationW('Oops', 'E-mail Inválido', 'error'); return false; }
     return re.test(String(email).toLowerCase());
   },
   maskCPF(cpf) {
@@ -71,18 +71,22 @@ var UTILIS = {
     }
   },
   isValidName(name) {
-    if (!name) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome', 'error'); return false;}
-    if (name.length == undefined)  {API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome', 'error'); return false;}
-    if (name.length < 5)  {API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome completo', 'error'); return false;}
+    if (!name) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome', 'error'); return false; }
+    if (name.length == undefined) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome', 'error'); return false; }
+    if (name.length < 5) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha seu nome completo', 'error'); return false; }
     return true;
   },
   isValidString(string, length, campo) {
-    if (!string) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo, 'error'); return false;}
-    if (!string.length == undefined) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo, 'error'); return false;}
-    if (string.length == 0) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo + ' corretamente', 'error'); return false;}
-    if (string.length < length) {API_NOTIFICATION.showNotificationW('Oops', 'Preencha '+ campo + ' corretamente', 'error'); return false;}
+    if (!string) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo, 'error'); return false; }
+    if (!string.length == undefined) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo, 'error'); return false; }
+    if (string.length == 0) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo + ' corretamente', 'error'); return false; }
+    if (string.length < length) { API_NOTIFICATION.showNotificationW('Oops', 'Preencha ' + campo + ' corretamente', 'error'); return false; }
 
     return true;
+  },
+  getRandomStringEmail() {
+    let r = Math.random().toString(36).substring(11);
+    return r;
   }
 }
 export default UTILIS 
