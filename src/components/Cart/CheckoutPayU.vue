@@ -1825,7 +1825,7 @@ export default {
       this.reference_id = LRefID;
       console.log("Reference ID", this.reference_id);
       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
-      sessionStorage.setItem("LCrypto", LCripto);
+      UTILIS_API.SetDadosCriptoSession(LCripto);
       API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
         .then(retornoPayment => {
           if (
@@ -1861,7 +1861,7 @@ export default {
     async iniciaPagamentoBackEndCard() {
       var LRouter = router;
       const LCripto = await this.getDadosPagamentoTransacao();
-      sessionStorage.setItem("LCrypto", LCripto);
+      UTILIS_API.SetDadosCriptoSession(LCripto);
       API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
         .then(retornoPayment => {
           if (

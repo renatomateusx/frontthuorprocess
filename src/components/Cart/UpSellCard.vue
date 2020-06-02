@@ -735,7 +735,7 @@ export default {
 
           let LCripto = JSON.stringify(LDecripto);
           LCripto = btoa(LCripto);
-          sessionStorage.setItem("LCrypto", LCripto);
+          UTILIS_API.SetDadosCriptoSession(LCripto);
           if (LTipoCompra == "bo") {
             API_CHECKOUT.DoPayBackEndTicket(LCripto)
               .then(async retornoPay => {
@@ -871,7 +871,7 @@ export default {
               //console.log(2, LDecripto.paymentData.payment_method.card.encrypted);
               let LCripto = JSON.stringify(LDecripto);
               LCripto = btoa(LCripto);
-              sessionStorage.setItem("LCrypto", LCripto);
+              UTILIS_API.SetDadosCriptoSession(LCripto);
               API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
                 .then(async retornoPaymentPagSeguro => {
                   var DadosCliente = {
@@ -904,7 +904,7 @@ export default {
         if (LTipoCompra == "bo") {
           let LCripto = JSON.stringify(LDecripto);
           LCripto = btoa(LCripto);
-          sessionStorage.setItem("LCrypto", LCripto);
+          UTILIS_API.SetDadosCriptoSession(LCripto);
           API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
             .then(async retornoPaymentPagSeguro => {
               var DadosCliente = {
@@ -963,7 +963,7 @@ export default {
 
         let LCripto = JSON.stringify(LDecripto);
         LCripto = btoa(LCripto);
-        sessionStorage.setItem("LCrypto", LCripto);
+        UTILIS_API.SetDadosCriptoSession(LCripto);
         API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
           .then(retornoPayment => {
             if (
@@ -1025,7 +1025,7 @@ export default {
     async comprarComUmClique() {
       API_NOTIFICATION.ShowLoading();
       var LRouter = router;
-      let LCripto = sessionStorage.getItem("LCrypto");
+      let LCripto = await UTILIS_API.GetDadosCriptoSession();
       this.DadosCheckout = JSON.parse(sessionStorage.getItem("DadosCheckout"));
       this.produtosCart = [];
       var lpro = await this.pushProducts(

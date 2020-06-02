@@ -1754,7 +1754,7 @@ export default {
       this.reference_id = LRefID;
       //console.log("Reference ID", this.reference_id);
       const LCripto = await this.getDadosPagamentoTransacaoBoleto();
-      sessionStorage.setItem("LCrypto", LCripto);
+      UTILIS_API.SetDadosCriptoSession(LCripto);
       API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
         .then(retornoPaymentPagSeguro => {
           if (
@@ -1811,7 +1811,7 @@ export default {
         this.reference_id = LRefID;
         //console.log("Reference ID", this.reference_id);
         const LCripto = await this.getDadosPagamentoTransacao();
-        sessionStorage.setItem("LCrypto", LCripto);
+        UTILIS_API.SetDadosCriptoSession(LCripto);
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
             if (

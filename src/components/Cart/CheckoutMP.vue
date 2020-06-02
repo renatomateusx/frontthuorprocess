@@ -1157,11 +1157,11 @@ export default {
     },
     async checkURL() {
       var url = window.location.href;
-      if (sessionStorage.getItem("DadosLoja") != null) {
+      
         this.dadosLoja = UTILIS_API.GetDadosLojaSession();
         this.getCheckouts();
         //console.log("loja", dadosLoja);
-      }
+      
 
       if (url.includes("items")) {
         //console.log("0");
@@ -1473,6 +1473,7 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
+          UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);
           if (this.DadosCheckout.gateway == 1) {
             //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
             this.iniciaCheckout();
@@ -1702,6 +1703,7 @@ export default {
         }
       };
       const JSONString = JSON.stringify(transacao);
+      ///console.log(JSONString);
       const LCripto = btoa(JSONString);
 
       return LCripto;
@@ -1721,7 +1723,8 @@ export default {
         //while (this.try == false) {
         ///console.log(this.cardToken);
         const LCripto = await this.getDadosPagamentoTransacao();
-        sessionStorage.setItem("LCrypto", LCripto);
+        UTILIS_API.SetDadosCriptoSession(LCripto);
+        
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT.DoPayBackEnd(LCripto)
           .then(retornoPay => {
@@ -1763,7 +1766,9 @@ export default {
       var LRouter = router;
       window.Mercadopago.clearSession();
       const LCripto = await this.getDadosPagamentoTransacao();
-      sessionStorage.setItem("LCrypto", LCripto);
+      //console.log(LCripto);
+      UTILIS_API.SetDadosCriptoSession(LCripto);
+      //console.log(1);
       API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.DoPayBackEndTicket(LCripto)
         .then(retornoPay => {

@@ -43,6 +43,7 @@ export default Object.freeze({
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_VIACEP_SERVER: 'extras/ViaCEP',
+  PATH_SEND_EMAIL_BOLETO: 'utilisEmail/SendEmailBoleto',
   PATH_GET_FRETE: 'logisticas/GetFretes',
   PATH_GET_TRACKING_CODE: 'logisticas/TrackingCode',
   PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',
@@ -113,6 +114,7 @@ export default Object.freeze({
 
   /* CONSTANTES SESSIONS */
   SESSION_DATA_CLIENTES: 'dc',
+  SESSION_DATA_CRIPTO: 'cr',
   SESSION_FRETES : 'f',
   SESSION_CART: 'c',
   SESSION_USER: 'x',

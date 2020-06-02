@@ -23,6 +23,22 @@ var UTILIS_API = {
 
         });
     },
+    SEND_EMAIL_BOLETO(JSON) {
+        return new Promise(async (resolve, reject) => {
+            let JSON_EMAIL = JSON;
+            axios
+                .post(constantes.WEBSITEAPI + constantes.PATH_SEND_EMAIL_BOLETO, JSON_EMAIL)
+                .then((response) => {
+                    //console.log("Response", response);
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    console.log("Reject", error);
+                    reject(error);
+                });
+
+        });
+    },
     CREATE_FORM_MP(pdescription, pamount, pcardNumber, pcardholderName, pcardExpirationMonth, pcardExpirationYear, psecurityCode, parcela, pdocNumber, pemail, ppayment_method_id) {
         return new Promise(async (resolve, reject) => {
             var f = document.createElement("form");
@@ -419,6 +435,34 @@ var UTILIS_API = {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES) == null) {
+                    resolve([]);
+                    return;
+                }
+                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)))));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o dados Clientes session", error);
+                reject(error);
+            }
+        })
+    },
+    SetDadosCriptoSession(data) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_DATA_CRIPTO, btoa(unescape(encodeURIComponent(JSON.stringify(data)))));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o dados Clientes session", error);
+                reject(error);
+            }
+        })
+    },
+    GetDadosCriptoSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_DATA_CRIPTO) == null) {
                     resolve([]);
                     return;
                 }

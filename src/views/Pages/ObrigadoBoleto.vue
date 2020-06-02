@@ -78,6 +78,7 @@ export default {
   created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
+
     API_FACEBOOK_PIXEL.InsertScript().then(res => {
       API_FACEBOOK_PIXEL.TriggerFacebookEvent("Purchase", "boleto");
     });
@@ -102,15 +103,20 @@ export default {
     sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
     },
-    async getDadosCompra() {
-      this.dadosCliente = await UTILIS_API.GetDadosClientesSession();
-      this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-
-      this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
-      //console.log(this.DadosLoja);
-      this.getBarCode();
-
-      API_NOTIFICATION.HideLoading();
+    getDadosCompra() {
+      try{
+      UTILIS_API.GetDadosClientesSession().then(async resCliente => {
+        this.dadosCliente = resCliente;
+        this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
+        this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
+        const LCrypto = await UTILIS_API.GetDadosCriptoSession();
+        const SendEmailBoleto = await UTILIS_API.SEND_EMAIL_BOLETO(LCrypto);
+        API_NOTIFICATION.HideLoading();
+      });
+      }
+      catch(error){
+        console.log("Erro ao recuperar dados da compra", error);
+      }
     },
     copyToClip(comp) {
       document.getElementById("copyClipBoard").value = comp;
@@ -134,7 +140,8 @@ export default {
     async downloadBoleto() {
       "application/json";
       var url = "";
-      url = this.dadosCliente.dadosCompra.dadosComprador.dadosComprador.urlBoleto;
+      url = this.dadosCliente.dadosCompra.dadosComprador.dadosComprador
+        .urlBoleto;
       //console.log("Download Boleto", url);
       this.openInNewTab(url);
     },
@@ -156,7 +163,12 @@ export default {
       window.location.href = "http://" + this.DadosLoja.url_loja;
     },
     getBarCode() {
-      return this.dadosCliente.dadosCompra.dadosComprador.dadosComprador.barcode;     
+      if(this.dadosCliente.dadosCompra){
+      console.log(this.dadosCliente.dadosCompra.dadosComprador);
+      return this.dadosCliente.dadosCompra.dadosComprador.dadosComprador
+        .barcode;
+      }
+      return "";
     },
     getDadosCliente() {
       return this.dadosCliente;
