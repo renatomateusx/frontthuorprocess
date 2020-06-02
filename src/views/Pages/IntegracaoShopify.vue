@@ -29,7 +29,7 @@
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-donate"><span class="ml-2"></span></span>Checkouts
+      <span class="fa fa-italic"><span class="ml-2"></span></span>Integração Shopify
     </div>
     <strong>
       Preencha o checkout do {{getNomePlataforma()}} corretamente. Lembre-se: nós te avisaremos se houver erros. Mas a responsabilidade de informar os dados é sua!
@@ -102,6 +102,20 @@
                   v-show="errors.has('plataforma_form.url_loja')"
                   class="invalid-feedback"
                 >{{ errors.first('plataforma_form.url_loja') }}</span>
+              </div>
+              <div class="form-group">
+                <label class="col-form-label">E-mail Loja *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.email_loja')}"
+                  v-model="plataforma_form.email_loja"
+                  v-validate="'required'"
+                  type="text"
+                  name="email_loja"
+                />
+                <span
+                  v-show="errors.has('plataforma_form.email_loja')"
+                  class="invalid-feedback"
+                >{{ errors.first('plataforma_form.email_loja') }}</span>
               </div>
               <div class="form-group">
                 <label class="col-form-label">Chave API Key *</label>
@@ -267,6 +281,7 @@ export default {
         pula_carrinho: "",
         tipo_integracao: "",
         url_loja: "",
+        email_loja: "",
         chave_api_key: "",
         senha: "",
         segredo_compartilhado: "",

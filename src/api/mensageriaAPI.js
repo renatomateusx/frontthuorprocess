@@ -2,11 +2,12 @@ const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 import router from '../router';
+import UTILIS_API from "../api/utilisAPI";
 var API_MENSAGERIA = {
     GetMensagens() {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
 
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario
@@ -25,9 +26,9 @@ var API_MENSAGERIA = {
         });
     },
     SaveMensagem(novaMensagem) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 novaMensagem.id_usuario = LDadosLoja.id_usuario;
                 
                 axios
@@ -45,9 +46,9 @@ var API_MENSAGERIA = {
     },
 
     DeleteMensagensByID(id) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 pNovoUpSell.id_usuario = LDadosLoja.id_usuario;
                 var LBody = {
                     id_usuario : LDadosLoja.id_usuario,
@@ -67,9 +68,9 @@ var API_MENSAGERIA = {
         });
     },
     GetMensagemByID(id) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
                     id: id,
@@ -88,9 +89,9 @@ var API_MENSAGERIA = {
         });
     },
     GetMensagensWhatsApp(){
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario                   
                 }

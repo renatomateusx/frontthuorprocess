@@ -670,9 +670,9 @@ export default {
           if (LID_PRODUTO !== undefined) {
             API_PRODUTOS.GetProdutoByID(LID_PRODUTO)
               .then(retProd => {
-                console.log("Ret Prod", retProd.data.length);
+                //console.log("Ret Prod", retProd.data.length);
                 if (retProd.data != undefined) {
-                  console.log("Ret Prod", retProd);
+                  //console.log("Ret Prod", retProd);
                   var LImages = retProd.data.json_dados_produto;
                   //console.log(JSON.parse(retProd.data.json_dados_produto));
                   this.produtoByID = 
@@ -683,7 +683,7 @@ export default {
                   this.customFrete = this.produtoTable.custom_frete;
                   this.preco_frete = this.produtoTable.preco_frete;
                   this.produtoByID.variants.forEach((obj, i) => {
-                    console.log("obj", obj.id);
+                    //console.log("obj", obj.id);
                     this.getDadosEstoqueByVariante(obj.id);
                   });
 
@@ -896,7 +896,7 @@ export default {
       }
     },
     AlteraGerenciarEstoque(id, id_variante) {
-      console.log(this.gerencia_estoque[id]);
+      //console.log(this.gerencia_estoque[id]);
       var LValue = this.gerencia_estoque[id];
       if (LValue == 0) {
         API_NOTIFICATION.ShowLoading();
@@ -926,7 +926,7 @@ export default {
       var LValue = this.gerencia_estoque[id_model];
       var LQtd = $("#" + qtd).val();
       var LQtdMinima = $("#" + qtd_minima).val();
-      console.log(id, LQtd, LQtdMinima, LValue);
+      //console.log(id, LQtd, LQtdMinima, LValue);
       API_PRODUTOS.SalvarQuantidadeEstoqueGerenciamentoPorVarianteID(
         id,
         LQtd,
@@ -957,10 +957,10 @@ export default {
             document.getElementById("input_" + LVariante.id_variante).checked =
               LVariante.gerencia_estoque;
             this.gerencia_estoque["check" + id] = LVariante.gerencia_estoque;
-            console.log(
-              "Gerencia Estoque",
-              this.gerencia_estoque["check" + id]
-            );
+            // console.log(
+            //   "Gerencia Estoque",
+            //   this.gerencia_estoque["check" + id]
+            // );
           }
         })
         .catch(error => {
@@ -971,13 +971,13 @@ export default {
     getCheckedInputGerenciaEstoque(id) {
       setTimeout(() => {
         var LChecked = document.getElementById("input_" + id);
-        console.log("Checked", LChecked.checked);
+        // console.log("Checked", LChecked.checked);
         return LChecked.checked;
       }, 1000);
     },
     getClass(id) {
       setTimeout(() => {
-        console.log("Resultado:" + id, this.gerencia_estoque["check" + id]);
+        // console.log("Resultado:" + id, this.gerencia_estoque["check" + id]);
         if (this.gerencia_estoque["check" + id] !== undefined) {
           var LClass =
             this.gerencia_estoque["check" + id] == 1 ? "ativo" : "inativo";

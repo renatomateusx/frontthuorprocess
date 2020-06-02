@@ -255,6 +255,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import VueCryptojs from "vue-cryptojs";
 import Hashids from "hashids";
+import UTILIS_API from "../../api/utilisAPI";
 Vue.use(VueCryptojs);
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -294,12 +295,9 @@ export default {
     },
     async checkURL() {
       var url = window.location.href;
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
-        console.log("loja", this.dadosLoja);
-      }
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       if (url.includes("pay")) {
-        console.log("0");
+        
         sessionStorage.removeItem("cart");
         var newURL = url.split("/pay/");
         const PRODUTO = newURL[1];
@@ -319,23 +317,23 @@ export default {
           this.ProdutoString[1]
         );
         this.produtosCart.push(lpro);
-        sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));       
+        sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
         this.$router.push("/checkout");
       } else {
-        console.log("1");
+        
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
         this.produtosCart = JSON.parse(LCart);
         API_NOTIFICATION.HideLoading();
       }
     },
     async pushProducts(product, quantity, variante_id) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           API_PRODUTOS.GetProdutoByIDImported(product, quantity, variante_id)
             .then(retorno => {
               console.log("Prod", retorno.data);
-               this.getDadosLoja(retorno.data.id_usuario);
+              this.getDadosLoja(retorno.data.id_usuario);
               resolve(retorno.data);
             })
             .catch(error => {
@@ -359,12 +357,12 @@ export default {
     },
     async getDadosLoja(id_usuario) {
       //API_NOTIFICATION.ShowLoading();
-      
+
       API_LOJA.GetDadosLojaByIdUsuario(id_usuario)
         .then(res => {
           const LojaData = res.data;
           this.dadosLoja = LojaData;
-          sessionStorage.setItem("DadosLoja", JSON.stringify(LojaData));
+          UTILIS_API.SetDadosLojaSession(LojaData);
           //API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
@@ -436,7 +434,11 @@ export default {
         // console.log("ID Deshashed", numbers);
         return hashids.decode(crypted);
       } catch (error) {
-        API_NOTIFICATION.showNotificationW("Oops!", "Parâmetros Inválidos na URL", "error");
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "Parâmetros Inválidos na URL",
+          "error"
+        );
       }
     }
   }

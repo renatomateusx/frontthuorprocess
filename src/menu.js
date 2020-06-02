@@ -23,7 +23,7 @@ const Menu = [
         name: 'Pedidos',
         icon: 'fa fa-donate',
         translate: 'sidebar.nav.MENU',
-        label: { value: 1, color: 'info' },
+        // label: { value: 1, color: 'info' },
         path: '/pedidos'
         // submenu: [{
         //     name: 'Submenu',
@@ -45,6 +45,11 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-donate',
             path: '/configs/integracoes'
+        },{
+            name: 'Campanhas',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-campaign',
+            path: '/configs/campanhas'
         },]
     },
     {
@@ -79,7 +84,12 @@ const Menu = [
         icon: 'fa fa-thumbtack',
         translate: 'sidebar.nav.MENU'
     },
-
+    {
+        name: 'Apps',
+        path: '/apps',
+        icon: 'fab fa-medapps',
+        translate: 'sidebar.nav.MENU'
+    },
 
 ];
 

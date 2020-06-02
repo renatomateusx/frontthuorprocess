@@ -211,7 +211,7 @@
                   class="invalid-feedback"
                 >{{ errors.first('novoupsell.mensagem_sms') }}</span>
               </div>
-              <div class="required">* Required fields</div>
+              <div class="required">* Campos Obrigatórios</div>
             </div>
 
             <div class="card-footer">
@@ -260,7 +260,7 @@ import API_LOGIN from "../../api/loginAPI";
 import Prods from "../../components/Tables/TableProdutos";
 import API_MKT from "../../api/marketingAPI";
 import Hashids from "hashids";
-
+import UTILIS_API from "../../api/utilisAPI";
 // Tag inputs
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -379,7 +379,8 @@ export default {
         .then(res => {
           API_PRODUTOS.GetProdutos()
             .then(retProd => {
-              var LImages = JSON.parse(retProd.data[0].json_dados_produto);
+              var LImages = retProd.data[0].json_dados_produto;
+              //console.log(LImages);
               this.produtosList = retProd.data;
               this.options2 = this.produtosList;
               var self = this;
@@ -397,7 +398,7 @@ export default {
         });
     },
     getDeCripto(crypted) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
           var LHash = hashids.decode(crypted);

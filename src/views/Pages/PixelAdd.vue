@@ -34,6 +34,12 @@
 #buttonProdutoUm {
   height: 60px !important;
 }
+.switch input:checked + span {
+  background-color: green;
+}
+.switch input + span {
+  background-color: red;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -220,7 +226,7 @@
                   class="invalid-feedback"
                 >{{ errors.first('pixel.id_produto_selecionado_um') }}</span>
               </div>
-              <div class="required">* Required fields</div>
+              <div class="required">* Campos Obrigatórios</div>
             </div>
 
             <div class="card-footer">
@@ -270,6 +276,7 @@ import API_LOGIN from "../../api/loginAPI";
 import Prods from "../../components/Tables/TableProdutos";
 import API_PIXEL from "../../api/pixelsAPI";
 import Hashids from "hashids";
+import UTILIS_API from "../../api/utilisAPI";
 // Tag inputs
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table

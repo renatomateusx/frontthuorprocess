@@ -8,6 +8,11 @@ export default Object.freeze({
   MSG_BOLETO_ENVIO: 'Aqui está o boleto do produto *PRODUTO_NAME*, no valor de R$ VALOR_VALOR Vencimento: *VENCIMENTO* Código de barras: *CODIGO_BARRAS* Link: LINK_LINK',
   PATH_GET: 'index',
   PATH_LOGIN: 'users/EfetuaLogin',
+  PATH_VERIFICA_EMAIL_CADASTRADO: 'users/VerificaEmailCadastro',
+  PATH_REDEFINE_SENHA: 'users/RedefinirSenha', 
+  PATH_ALTERA_SENHA: 'users/AlterarSenha',  
+  PATH_ADD_USER: 'users/AddUser',
+  PATH_LOGIN_ATIVAR_EMAIL: 'users/AtivarEmail',
   PATH_TOKEN: 'users/VerificaToken',
   PATH_PRODUTOS: 'produtos/GetProdutos',
   PATH_PRODUTO_BY_ID: 'produtos/GetProdutoByID',
@@ -16,7 +21,8 @@ export default Object.freeze({
   PATH_PRODUTO_BY_ID_IMPORTED: 'produtos/GetProdutoByIDImported',
   PATH_UPDATE_STATUS_PRODUTO: 'produtos/UpdateStatusProduto',
   PATH_UPDATE_TIPO_PRODUTO: 'produtos/UpdateTipoProduto',
-  PATH_PRODUTOS_IMPORT: 'importarProdutosShopify/ImportarProdutosShopify',
+  PATH_PRODUTOS_IMPORT: 'integraFuncionalidadeShopify/ImportarProdutosShopify',
+  PATH_INSTALTL_APP_REVIEW: 'integraFuncionalidadeShopify/InstalarAppReview',
   PATH_UPDATE_CUSTOM_FRETE_PRODUTO: 'produtos/UpdateCustomFreteProduto',
   PATH_UPDATE_TIPO_FRETE_PRODUTO: 'produtos/UpdateTipoFreteProduto',
   PATH_UPDATE_URL_DIR_PRODUTO: 'produtos/UpdateURLDirProduto',
@@ -36,6 +42,8 @@ export default Object.freeze({
   PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY: 'importarProdutosShopify/ReInstalarIntegracao',
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
+  PATH_VIACEP_SERVER: 'extras/ViaCEP',
+  PATH_SEND_EMAIL_BOLETO: 'utilisEmail/SendEmailBoleto',
   PATH_GET_FRETE: 'logisticas/GetFretes',
   PATH_GET_TRACKING_CODE: 'logisticas/TrackingCode',
   PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',
@@ -85,7 +93,33 @@ export default Object.freeze({
   PATH_GET_CUPOM_BY_PRODUCT_ID: 'cupons/GetCupomByProductID',
   PATH_GET_CUPOM_BY_CODE: 'cupons/GetCupomByCODE',
   PATH_UPDATE_NUMERO_UTILIZACAO_CUPOM: 'cupons/UpdateNumeroUtilizacao',
+
+  PATH_GET_CAMPANHAS: 'campanhas/GetCampanhas',
+  PATH_INTEGRACAO_CAMPANHA: 'campanhas/GetIntegracaoCampanha',
+  PATH_SAVE_CAMPANHA_CARRINHO_ABANDONADO: 'campanhas/SaveCampanhaCartAbandon',
+  PATH_GET_CAMPANHA_CARRINHO_ABANDONADO: 'campanhas/GetCampanhaCarrinhoAbandonado',
+  PATH_INTEGRACAO_CAMPANHA_BY_ID: 'campanhas/GetIntegracaoCampanhaByID',
+  PATH_INSERT_INTEGRACAO_CAMPANHA: 'campanhas/InsertIntegracaoCampanha',
+  PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',
   
+  PATH_LEAD_GET_DADOS_COMPRADOR: 'clientes/GetDadosCompradorLead',
+
+
+  PATH_GET_APPS: 'apps/GetApps',
+  PATH_GET_APPS_BY_ID: 'apps/GetAppByID',
+  PATH_INTEGRACAO_APPS: 'apps/GetIntegracaoApps',
+  PATH_SAVE_INTEGRACAO_APPS: 'apps/SaveApps',
+  PATH_GET_STATUS_APP: 'apps/GetStatusApp',
+
   
 
+  /* CONSTANTES SESSIONS */
+  SESSION_DATA_CLIENTES: 'dc',
+  SESSION_DATA_CRIPTO: 'cr',
+  SESSION_FRETES : 'f',
+  SESSION_CART: 'c',
+  SESSION_USER: 'x',
+  SESSION_PIXEL: 'p',
+  SESSION_LOJA: 'l',
+  SESSION_CHECKOUT: 'sc',
 });

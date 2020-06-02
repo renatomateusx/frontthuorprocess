@@ -2,9 +2,10 @@ import axios from 'axios';
 
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
+import UTILIS_API from "../api/utilisAPI";
 var API_LOJA = {
     GetDadosLoja(shop) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 shop: shop
             }
@@ -22,7 +23,7 @@ var API_LOJA = {
         });
     },
     GetDadosLojaByIdUsuario(id_usuario) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 id_usuario: id_usuario
             }
@@ -40,9 +41,9 @@ var API_LOJA = {
         });
     },
     GetFretes() {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
 
                 let LBody = {
                     shop: LDadosLoja.url_loja
@@ -62,9 +63,9 @@ var API_LOJA = {
     },
 
     GetIntegracaoPlataforma() {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
 
                 axios
                     .get(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_PLATAFORMA)
@@ -80,11 +81,11 @@ var API_LOJA = {
         });
     },
     GetIntegracaoPlataformaByID(id) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                 let LBody = {
-                    id_usuario: LDadosLoja.id_usuario,
+                    id_usuario: LDadosUser.user.id,
                     plataforma: id
                 }
                 axios
@@ -101,9 +102,9 @@ var API_LOJA = {
         });
     },
     InsertPlataformShopify(plataforma) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_PLATAFORMA_SHOPIFY, plataforma)
@@ -119,9 +120,9 @@ var API_LOJA = {
         });
     },
     UpdateStatus(plataforma) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_PLATAFORMA, plataforma)
@@ -137,9 +138,9 @@ var API_LOJA = {
         });
     },
     AutoSinc(plataforma) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_AUTO_SINC_PLATAFORMA_SHOPIFY, plataforma)
@@ -155,9 +156,9 @@ var API_LOJA = {
         });
     },
     PulaCarrinho(plataforma) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_LIMPA_CARRINHO_PLATAFORMA_SHOPIFY, plataforma)
@@ -173,9 +174,9 @@ var API_LOJA = {
         });
     },
     LimpaCarrinho(plataforma) {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PULA_CARRINHO_PLATAFORMA_SHOPIFY, plataforma)
@@ -191,11 +192,11 @@ var API_LOJA = {
         });
     },
     InstalarReinstalarShopify() {
-        return new Promise((resolve, reject) => {
-            if (sessionStorage.getItem('DadosLoja') != null || sessionStorage.getItem('DadosLoja') != undefined) {
-                const LDadosLoja = JSON.parse(sessionStorage.getItem('DadosLoja'));
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
                 var LBody = {
-                    id_usuario : LDadosLoja.id_usuario
+                    id_usuario : LDadosUser.user.id
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY, LBody)

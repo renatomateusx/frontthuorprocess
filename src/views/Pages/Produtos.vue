@@ -321,6 +321,7 @@ import API_HEADERS from "../../api/configAxios";
 import API_PRODUTOS from "../../api/produtosAPI";
 import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
+import UTILIS_API from "../../api/utilisAPI";
 Vue.use(Loading);
 
 Vue.use(VeeValidate, {
@@ -436,11 +437,10 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_PRODUTOS.GetProdutos()
-            .then(retProd => {
+            .then(retProd => {              
               retProd.data.forEach((obj, i) => {
                 var LImages = obj.json_dados_produto;
                 //this.produtosList = retProd.data;
-                console.log(obj);
                 this.gridData.push({
                   id_produto_json: obj.id_produto_json,
                   titulo_produto: obj.titulo_produto,

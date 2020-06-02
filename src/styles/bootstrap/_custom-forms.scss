@@ -272,7 +272,11 @@
     }
   }
 }
-
+.custom-file-label::after{
+  content: 'Procurar'!important;
+  height: auto!important;
+  cursor: pointer!important;
+}
 .custom-file-label {
   position: absolute;
   top: 0;
