@@ -106,6 +106,7 @@ export default Object.freeze({
 
 
   PATH_GET_APPS: 'apps/GetApps',
+  PATH_GET_APPS_BY_ID: 'apps/GetAppByID',
   PATH_INTEGRACAO_APPS: 'apps/GetIntegracaoApps',
   PATH_SAVE_INTEGRACAO_APPS: 'apps/SaveApps',
   PATH_GET_STATUS_APP: 'apps/GetStatusApp',

@@ -87,11 +87,11 @@ var API_APPS = {
     },
     GetStatusApp(appID){
         return new Promise(async (resolve, reject) => {
-            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
+            const LUser = await UTILIS_API.GetUserSession();
+            if (LUser != undefined) {
                 var LBody ={
                     app: appID,
-                    id_usuario: LDadosLoja.id_usuario
+                    id_usuario: LUser.user.id
                 }                
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_GET_STATUS_APP, LBody)

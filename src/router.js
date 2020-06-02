@@ -46,7 +46,7 @@ const Activate = () => import('@/views/Pages/Activate.vue');
 const Redefinir = () => import('@/views/Pages/Redefinir.vue');
 const Review = () => import('@/views/Pages/Review.vue');
 const Apps = () => import('@/views/Pages/Apps.vue');
-
+const PerfilUsuario = () => import('@/views/Pages/PerfilUsuario.vue');
 Vue.use(Router)
 
 export default new Router({
@@ -112,6 +112,10 @@ export default new Router({
             {
                 path: '/home',
                 component: Home
+            },
+            {
+                path: '/perfil',
+                component: PerfilUsuario
             },
             {
                 path: '/submenu',

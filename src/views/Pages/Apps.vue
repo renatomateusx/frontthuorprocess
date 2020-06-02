@@ -46,7 +46,7 @@
       E sempre adicionaremos mais. Dúvidas? {suporte@thuor.com}
     </strong>
 
-    <div class="row mt-3" v-for="{id, nome, imagem, demo} in appList" :key="id">
+    <div class="row mt-3" v-for="{id, nome, imagem, demo, status} in appList" :key="id">
       <div class="col-xl-4">
         <!-- Aside card-->
         <div class="card b">
@@ -83,8 +83,12 @@
                   <span class="ml-2"></span>Instalar
                 </span>
               </button>
-              <div class="float-right mt-3 col-md-1">
-                <span class="pull-right float-right" title="Status" v-bind:class="getStatusClass(id)"></span>
+              <div class="float-right mt-4 col-md-1">
+                <span
+                  class="pull-right float-right"
+                  title="Status"
+                  v-bind:class="status  == 1 ? 'CheckoutStatusAtivo' : 'CheckoutStatusInativo'"
+                ></span>
               </div>
             </div>
           </div>
@@ -132,7 +136,17 @@ export default {
         .then(res => {
           API_APPS.GetApps()
             .then(resApps => {
-              this.appList = resApps.data;
+              resApps.data.forEach((obj, i) => {
+                //console.log(obj);
+                API_APPS.GetStatusApp(obj.id).then(resGet => {
+                  
+                  this.appList.push({
+                    id: obj.id, nome:  obj.nome, imagem: obj.imagem, demo:  obj.demo, status: resGet.data.status
+                  });
+                  //console.log(this.appList);
+                });
+              });
+
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -211,6 +225,9 @@ export default {
     },
     async getStatusClass(id) {
       const d = await API_APPS.GetStatusApp(id);
+      console.log(
+        d.data.status == 1 ? "CheckoutStatusAtivo" : "CheckoutStatusInativo"
+      );
       return d.data.status == 1
         ? "CheckoutStatusAtivo"
         : "CheckoutStatusInativo";

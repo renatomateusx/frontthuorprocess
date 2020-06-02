@@ -827,12 +827,10 @@ export default {
     },
     async FCheckoutPS(LDecripto) {
       const pluginPS = document.createElement("script");
-      pluginPS.onload = function() {
+      pluginPS.onload = async function() {
         var LRouter = router;
 
-        this.DadosCheckout = JSON.parse(
-          sessionStorage.getItem("DadosCheckout")
-        );
+        this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
         this.componenteMPLoaded = 1;
         const LTipoCompra = sessionStorage.getItem("TipoCheck");
         LDecripto.paymentData.amount.value = this.formatPrice(
@@ -949,9 +947,7 @@ export default {
       const pluginPayU = document.createElement("script");
       pluginPayU.onload = async function() {
         var LRouter = router;
-        this.DadosCheckout = JSON.parse(
-          sessionStorage.getItem("DadosCheckout")
-        );
+        this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
         LDecripto.paymentData.transaction.order.additionalValues.TX_VALUE.value = parseFloat(
           this.VariantePriceUpSellSelected
         );
@@ -1026,7 +1022,7 @@ export default {
       API_NOTIFICATION.ShowLoading();
       var LRouter = router;
       let LCripto = await UTILIS_API.GetDadosCriptoSession();
-      this.DadosCheckout = JSON.parse(sessionStorage.getItem("DadosCheckout"));
+      this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
       this.produtosCart = [];
       var lpro = await this.pushProducts(
         this.VarianteIDProdutoJSONUpSellSelected,
