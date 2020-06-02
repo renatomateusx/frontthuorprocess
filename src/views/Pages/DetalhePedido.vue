@@ -483,8 +483,8 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+            .then(LojaData => {
+              UTILIS_API.SetDadosLojaSession(LojaData.data);
               this.getCheckouts();
               API_TRANSACOES.GetTransacaoByID(this.PedidoString[0])
                 .then(retProd => {

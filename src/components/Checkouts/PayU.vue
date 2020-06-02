@@ -25,6 +25,12 @@
   width: 120px;
   height: auto;
 }
+.switch input:checked + span {
+  background-color: green;
+}
+.switch input + span {
+  background-color: red;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -58,19 +64,26 @@
           <!-- START card-->
           <div class="card card-default">
             <div class="card-body">
-              <div class="form-group">
-                <label class="control-label" for="status">Ativo</label>
-                <select
-                  @change="updateStatus()"
-                  id="status"
-                  name="status"
-                  class="form-control"
-                  v-model="checkout_form.status"
-                >
-                  <option selected value="1">Sim</option>
-                  <option value="0">Não</option>
-                </select>
+              <div class="form-groug">
+                <label class="s col-form-label">Status</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      @change="updateStatus()"
+                      :checked="checkout_form.status == 1"
+                      v-model="checkout_form.status"
+                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.status')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('checkout_form.status')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.status') }}</span>
               </div>
+
               <div class="form-group">
                 <label class="col-form-label">Nome *</label>
                 <input
@@ -254,12 +267,15 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_CHECKOUT_PU.GetIntegracaoCheckoutByID(3)
-            .then(resCheckout => {
+            .then(resCheckout => {              
               this.checkout = resCheckout.data;
-              this.checkout_form.status = this.checkout.status || 1;
+              //this.checkout_form = this.checkout;
+              //yconsole.log(this.checkout.status);
+              this.checkout_form.status = this.checkout.status;
               this.checkout_form.ativa_boleto = this.checkout.ativa_boleto || 1;
-              this.checkout_form.processa_automaticamente = this.checkout.captura_auto || 1;
-              this.checkout_form.gateway = this.checkout.gateway ||3;
+              this.checkout_form.processa_automaticamente =
+                this.checkout.captura_auto || 1;
+              this.checkout_form.gateway = this.checkout.gateway || 3;
               this.checkout_form.id_usuario = this.checkout.id_usuario;
               this.checkout_form.api_login = this.checkout.api_login;
               this.checkout_form.api_key = this.checkout.api_key;
@@ -292,7 +308,7 @@ export default {
       return "";
     },
     getNomeGateway() {
-      return 'Pay U';
+      return "Pay U";
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {

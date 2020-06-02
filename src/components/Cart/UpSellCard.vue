@@ -515,7 +515,7 @@ export default {
         }
         if (this.produtosCart != null) {
           this.LUp = sessionStorage.getItem("up", "1");
-          console.log(this.LUp);
+          //console.log(this.LUp);
           if (this.LUp == 1) {
             this.UpSellNoCheckout = -1;
             return;
@@ -526,7 +526,7 @@ export default {
                 //console.log(resProductUpSell.data);
                 this.UpSellNoCheckout =
                   resProductUpSell.data.tipo_checkout || 0;
-                console.log(this.UpSellNoCheckout);
+                //console.log(this.UpSellNoCheckout);
                 const ProdUS = resProductUpSell.data.id_produto_to;
                 API_PRODUTOS.GetProdutoIDThuor(ProdUS)
                   .then(resProdTo => {
@@ -609,7 +609,7 @@ export default {
           .then(res => {
             const LojaData = res.data;
             this.dadosLoja = LojaData;
-            sessionStorage.setItem("DadosLoja", JSON.stringify(this.dadosLoja));
+            UTILIS_API.SetDadosLojaSession(this.dadosLoja);
           })
           .catch(error => {
             console.log("Erro ao pegar dados da Loja", error);
@@ -699,7 +699,7 @@ export default {
       //this.UpSellNoCheckout = 0;
     },
     async pushProducts(product, quantity, variante_id) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           API_PRODUTOS.GetProdutoByIDImported(product, quantity, variante_id)
             .then(retorno => {
@@ -735,7 +735,7 @@ export default {
 
           let LCripto = JSON.stringify(LDecripto);
           LCripto = btoa(LCripto);
-          sessionStorage.setItem("LCrypto", LCripto);
+          UTILIS_API.SetDadosCriptoSession(LCripto);
           if (LTipoCompra == "bo") {
             API_CHECKOUT.DoPayBackEndTicket(LCripto)
               .then(async retornoPay => {
@@ -746,11 +746,8 @@ export default {
                   nome: LocalDecrypto.dadosComprador.nome_completo,
                   dadosCompra: retornoPay.data
                 };
-                sessionStorage.setItem(
-                  "dadosCliente",
-                  JSON.stringify(DadosCliente)
-                );
-                this.dadosCli;
+                UTILIS_API.SetDadosClientesSession(DadosCliente);
+
                 window.Mercadopago.clearSession();
                 sessionStorage.setItem("up", "1");
                 this.UpSellNoCheckout = -1;
@@ -797,10 +794,7 @@ export default {
                     nome: LAuxCripto.dadosComprador.nome_completo,
                     dadosCompra: retornoPay.data
                   };
-                  sessionStorage.setItem(
-                    "dadosCliente",
-                    JSON.stringify(DadosCliente)
-                  );
+                  UTILIS_API.SetDadosClientesSession(DadosCliente);
                   sessionStorage.setItem("up", "1");
                   this.UpSellNoCheckout = -1;
                   this.$emit("update");
@@ -833,12 +827,10 @@ export default {
     },
     async FCheckoutPS(LDecripto) {
       const pluginPS = document.createElement("script");
-      pluginPS.onload = function() {
+      pluginPS.onload = async function() {
         var LRouter = router;
 
-        this.DadosCheckout = JSON.parse(
-          sessionStorage.getItem("DadosCheckout")
-        );
+        this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
         this.componenteMPLoaded = 1;
         const LTipoCompra = sessionStorage.getItem("TipoCheck");
         LDecripto.paymentData.amount.value = this.formatPrice(
@@ -877,17 +869,14 @@ export default {
               //console.log(2, LDecripto.paymentData.payment_method.card.encrypted);
               let LCripto = JSON.stringify(LDecripto);
               LCripto = btoa(LCripto);
-              sessionStorage.setItem("LCrypto", LCripto);
+              UTILIS_API.SetDadosCriptoSession(LCripto);
               API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
                 .then(async retornoPaymentPagSeguro => {
                   var DadosCliente = {
                     nome: this.nome_completo,
                     dadosCompra: retornoPaymentPagSeguro.data
                   };
-                  sessionStorage.setItem(
-                    "dadosCliente",
-                    JSON.stringify(DadosCliente)
-                  );
+                  UTILIS_API.SetDadosClientesSession(DadosCliente);
                   sessionStorage.setItem("up", "1");
                   this.UpSellNoCheckout = -1;
                   this.$emit("update");
@@ -913,17 +902,14 @@ export default {
         if (LTipoCompra == "bo") {
           let LCripto = JSON.stringify(LDecripto);
           LCripto = btoa(LCripto);
-          sessionStorage.setItem("LCrypto", LCripto);
+          UTILIS_API.SetDadosCriptoSession(LCripto);
           API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
             .then(async retornoPaymentPagSeguro => {
               var DadosCliente = {
                 nome: this.nome_completo,
                 dadosCompra: retornoPaymentPagSeguro.data
               };
-              sessionStorage.setItem(
-                "dadosCliente",
-                JSON.stringify(DadosCliente)
-              );
+              UTILIS_API.SetDadosClientesSession(DadosCliente);
               sessionStorage.setItem("up", "1");
               this.UpSellNoCheckout = -1;
               this.$emit("update");
@@ -961,9 +947,7 @@ export default {
       const pluginPayU = document.createElement("script");
       pluginPayU.onload = async function() {
         var LRouter = router;
-        this.DadosCheckout = JSON.parse(
-          sessionStorage.getItem("DadosCheckout")
-        );
+        this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
         LDecripto.paymentData.transaction.order.additionalValues.TX_VALUE.value = parseFloat(
           this.VariantePriceUpSellSelected
         );
@@ -975,7 +959,7 @@ export default {
 
         let LCripto = JSON.stringify(LDecripto);
         LCripto = btoa(LCripto);
-        sessionStorage.setItem("LCrypto", LCripto);
+        UTILIS_API.SetDadosCriptoSession(LCripto);
         API_CHECKOUT_PAYU.DoPayBackEnd(LCripto)
           .then(retornoPayment => {
             if (
@@ -994,10 +978,7 @@ export default {
               nome: this.nome_completo,
               dadosCompra: retornoPayment.data
             };
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
+            UTILIS_API.SetDadosClientesSession(DadosCliente);
             LRouter.push("/obrigado-boleto");
             API_NOTIFICATION.HideLoading();
           })
@@ -1040,8 +1021,8 @@ export default {
     async comprarComUmClique() {
       API_NOTIFICATION.ShowLoading();
       var LRouter = router;
-      let LCripto = sessionStorage.getItem("LCrypto");
-      this.DadosCheckout = JSON.parse(sessionStorage.getItem("DadosCheckout"));
+      let LCripto = await UTILIS_API.GetDadosCriptoSession();
+      this.DadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
       this.produtosCart = [];
       var lpro = await this.pushProducts(
         this.VarianteIDProdutoJSONUpSellSelected,

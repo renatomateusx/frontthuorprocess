@@ -2,18 +2,17 @@ const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 import router from '../router';
-import UTILIS_API from "../api/utilisAPI";
-var API_CLIENTES = {
-    GetClientes() {
+import UTILIS_API from "./utilisAPI";
+var API_APPS = {
+    GetApps() {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
-
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CLIENTES, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_APPS, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -25,37 +24,16 @@ var API_CLIENTES = {
             }
         });
     },
-    SaveCliente(pNovoClient) {
+    GetAppsByID(id) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
-                pNovoClient.id_usuario = LDadosLoja.id_usuario;
-                
-                axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_CLIENTES, pNovoClient)
-                    .then((response) => {
-                        //console.log("Response", response);
-                        resolve(response);
-                    })
-                    .catch((error) => {
-                        console.log("Reject", error);
-                        reject(error);
-                    });
-            }
-        });
-    },
-
-    DeleteClienteByID(id) {
-        return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-            if (LDadosLoja != undefined) {
-                pNovoUpSell.id_usuario = LDadosLoja.id_usuario;
-                var LBody = {
-                    id_usuario : LDadosLoja.id_usuario,
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario,
                     id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_DELETE_CLIENTES, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.GetIntegracaoApps, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -67,16 +45,16 @@ var API_CLIENTES = {
             }
         });
     },
-    GetClienteByID(id) {
+    GetAppsByID(id) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
-                    id: id,
+                    id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_CLIENTE_BY_ID, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.GetIntegracaoApps, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -88,19 +66,57 @@ var API_CLIENTES = {
             }
         });
     },
-    SaveLead(email, nome, telefone, lead) {
+    SaveIntegracaoApps(app) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
+                app.id_usuario = LDadosLoja.id_usuario;
+                app.url_loja = LDadosLoja.url_loja;
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_INTEGRACAO_APPS, app)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    GetStatusApp(appID){
+        return new Promise(async (resolve, reject) => {
+            const LUser = await UTILIS_API.GetUserSession();
+            if (LUser != undefined) {
+                var LBody ={
+                    app: appID,
+                    id_usuario: LUser.user.id
+                }                
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_STATUS_APP, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    GetIntegracaoApps(id) {
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
-                    email: email,
-                    nome: nome,
-                    telefone: telefone,
-                    lead:lead
+                    id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_LEAD, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_CAMPANHA_BY_ID, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -112,5 +128,6 @@ var API_CLIENTES = {
             }
         });
     },
+    
 }
-export default API_CLIENTES 
+export default API_APPS 

@@ -315,7 +315,7 @@ import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_MENSAGERIA from "../../api/mensageriaAPI";
-
+import UTILIS_API from "../../api/utilisAPI";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import constantes_mensagens from "../../api/constantes_mensagens";
@@ -434,7 +434,7 @@ export default {
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+              UTILIS_API.SetDadosLojaSession(resLoja.data);
               API_MENSAGERIA.GetMensagensWhatsApp()
                 .then(resMensagensWhats => {
                   //console.log(resMensagensWhats.data);
@@ -683,7 +683,7 @@ export default {
       return "";
     },
     getProdutoName(arrayProdutos) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         var LprodutoTitle = "";
         arrayProdutos.forEach((obj, i) => {
           LprodutoTitle = LprodutoTitle + obj.title + ", ";

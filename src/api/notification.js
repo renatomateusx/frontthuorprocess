@@ -31,6 +31,26 @@ var API_NOTIFICATION = {
             }
         })
     },
+    ShowLoadingT(text) {
+        this.isShowingLoading = true;
+        Vue.swal({
+            customClass: 'swal-wide',
+            title: '<span class="text-aguard">'+text+'</span>',
+            html: " <div class='card-body align-items-center justify-content-center'>             <div class='ball-scale-ripple-multiple widthLoadingDiv'>                <div class='loadingSwall'></div>               <div class='loadingSwall'></div>                <div class='loadingSwall'></div>            </div>        </div>",
+            showConfirmButton: false,
+            showCancelButton: false,
+            allowEnterKey: false,
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            timerProgressBar: true,
+            onBeforeOpen: () => {
+                // Swal.showLoading();          
+            },
+            onClose: () => {
+
+            }
+        })
+    },
     ShowLoadingPay() {
         if (!this.isShowingLoading) {
             this.isShowingLoading = true;

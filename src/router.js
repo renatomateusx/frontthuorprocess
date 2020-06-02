@@ -6,14 +6,16 @@ import Layout from '@/components/Layout/Layout'
 import LayoutHorizontal from '@/components/Layout/LayoutHorizontal'
 import LayoutPage from '@/components/Layout/LayoutPage'
 // SingleView
-const Home = () => import('@/views/SingleView/Home.vue')
+const Home = () => import('@/views/SingleView/Home.vue');
 // SubMenu
-const SubMenu = () => import('@/views/SubMenu/SubMenu.vue')
+const SubMenu = () => import('@/views/SubMenu/SubMenu.vue');
 
-const Login = () => import('@/views/Pages/Login.vue')
+const Login = () => import('@/views/Pages/Login.vue');
+const Register = () => import('@/views/Pages/Register.vue');
+const Recover = () => import('@/views/Pages/Recover.vue');
 
-const Produtos = () => import('@/views/Pages/Produtos.vue')
-const DetalheProduto = () => import('@/views/Pages/DetalheProduto.vue')
+const Produtos = () => import('@/views/Pages/Produtos.vue');
+const DetalheProduto = () => import('@/views/Pages/DetalheProduto.vue');
 
 const Cart = () => import('@/components/Cart/Cart.vue');
 
@@ -38,8 +40,13 @@ const MensagensAdd = () => import('@/views/Pages/MensagensAdd.vue');
 const Rastreio = () => import('@/views/Pages/Rastreio.vue');
 const Cupons = () => import('@/views/Pages/Cupons.vue');
 const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
-
-
+const IntegracaoCampanhas = () => import('@/views/Pages/IntegracaoCampanhas.vue');
+const AbandonoCarrinho = () => import('@/views/Pages/AbandonoCarrinho.vue');
+const Activate = () => import('@/views/Pages/Activate.vue');
+const Redefinir = () => import('@/views/Pages/Redefinir.vue');
+const Review = () => import('@/views/Pages/Review.vue');
+const Apps = () => import('@/views/Pages/Apps.vue');
+const PerfilUsuario = () => import('@/views/Pages/PerfilUsuario.vue');
 Vue.use(Router)
 
 export default new Router({
@@ -52,6 +59,26 @@ export default new Router({
     {
         path: '/login',
         component: Login
+    },
+    {
+        path: '/ativacao/:id',
+        component: Activate
+    },
+    {
+        path: '/cadastro',
+        component: Register
+    },
+    {
+        path: '/recuperar',
+        component: Recover
+    },
+    {
+        path: '/redefinir/:id',
+        component: Redefinir
+    },
+    {
+        path: '/review',
+        component: Review
     },
     {
         path: '/',
@@ -85,6 +112,10 @@ export default new Router({
             {
                 path: '/home',
                 component: Home
+            },
+            {
+                path: '/perfil',
+                component: PerfilUsuario
             },
             {
                 path: '/submenu',
@@ -205,6 +236,18 @@ export default new Router({
                 path: '/configs/integracoes/shopify',
                 component: IntegracaoShopify
             },
+            {
+                path: '/apps',
+                component: Apps
+            },
+            {
+                path: '/configs/campanhas',
+                component: IntegracaoCampanhas
+            },
+            {
+                path: '/configs/campanhas/abandcart',
+                component: AbandonoCarrinho
+            }
 
         ]
     },

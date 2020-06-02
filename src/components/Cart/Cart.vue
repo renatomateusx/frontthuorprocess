@@ -252,6 +252,7 @@ import API_LOJA from "../../api/lojaAPI";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
+import UTILIS_API from '../../api/utilisAPI';
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -287,36 +288,11 @@ export default {
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    validateBeforeSubmit(scope) {
-      this.$validator.validateAll(scope).then(result => {
-        if (result) {
-          API_NOTIFICATION.ShowLoading();
-          // simulate AJAX
-          API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
-            .then(retorno => {
-              if (retorno !== undefined) {
-                sessionStorage.setItem("user", JSON.stringify(retorno.data));
-                this.$router.go("home");
-              }
-              API_NOTIFICATION.HideLoading();
-            })
-            .catch(error => {
-              if (error.response.status === 401) {
-                API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
-              }
-              console.log("Erro ao efetuar login", error);
-            });
-
-          return;
-        }
-        console.log("Correct them errors!");
-      });
-    },
+    },    
     async checkURL() {
       var url = window.location.href;
       if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
         console.log("loja", this.dadosLoja);
       }
 
@@ -358,13 +334,13 @@ export default {
       } else {
         console.log("1");
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
         this.produtosCart = JSON.parse(LCart);
         API_NOTIFICATION.HideLoading();
       }
     },
     async pushProducts(product, quantity, variante_id) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           API_PRODUTOS.GetProdutoByIDThuor(product, quantity, variante_id)
             .then(retorno => {
@@ -402,7 +378,8 @@ export default {
         .then(res => {
           const LojaData = res.data;
           this.dadosLoja = LojaData;
-          sessionStorage.setItem("DadosLoja", JSON.stringify(LojaData));
+          UTILIS_API.SetDadosLojaSession(LojaData);
+          
           //API_NOTIFICATION.HideLoading();
         })
         .catch(error => {

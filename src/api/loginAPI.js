@@ -2,16 +2,16 @@ const axios = require("axios");
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 import router from '../router';
+import UTILIS_API from "../api/utilisAPI";
 var API_LOGIN = {
   EfetuarLogin(login, senha) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       axios
         .post(constantes.WEBSITEAPI + constantes.PATH_LOGIN, {
           email: login,
           senha: senha
         })
         .then((response) => {
-          console.log("Response", response);
           resolve(response);
         })
         .catch((error) => {
@@ -20,20 +20,85 @@ var API_LOGIN = {
         });
     });
   },
-  VerificaToken() {
-    return new Promise((resolve, reject) => {
+  AddUser(nome, email, senha) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_ADD_USER, {
+          nome: nome,
+          email: email,
+          senha: senha
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  RedefineSenha(email) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_REDEFINE_SENHA, {
+          email: email
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  
+  AlteraSenha(token, senha) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_ALTERA_SENHA, {
+          token: token,
+          senha: senha
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  VerificaEmailCadastro(email) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_VERIFICA_EMAIL_CADASTRADO, {
+          email: email,
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  async VerificaToken() {
+    return new Promise(async (resolve, reject) => {
       const LActualPath = window.location.pathname;
-      if(LActualPath) sessionStorage.setItem('actualPage', LActualPath);
-      if (sessionStorage.getItem("user") == undefined || sessionStorage.getItem("user") == null) {
+      if (LActualPath) sessionStorage.setItem('actualPage', LActualPath);
+      const LU = await UTILIS_API.GetUserSession();
+      if (LU == undefined || LU == null) {
         router.push('/login');
-      }            
+      }
       axios.interceptors.response.use((response) => {
         // Do something with response data
         return response;
       }, (error) => {
         if (error.response.status === 401) {
           sessionStorage.removeItem("user");
-          router.push('/login');          
+          router.push('/login');
         }
         return Promise.reject(error);
       });
@@ -44,8 +109,9 @@ var API_LOGIN = {
       //     this.$router.push('login');
       //   }
       // });
+      const LHeaders = await API_HEADERS.getHeader();
       axios
-        .get(constantes.WEBSITEAPI + constantes.PATH_TOKEN, API_HEADERS.getHeader())
+        .get(constantes.WEBSITEAPI + constantes.PATH_TOKEN, LHeaders)
         .then((res) => {
           resolve(res);
         })
@@ -54,6 +120,22 @@ var API_LOGIN = {
           console.log("Retorno Erros", error);
         })
     });
-  }
+  },
+  AtivarEmail(token) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_LOGIN_ATIVAR_EMAIL, {
+          token: token
+        })
+        .then((response) => {
+          console.log(response.data);
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
 }
 export default API_LOGIN 

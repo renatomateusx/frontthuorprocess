@@ -116,10 +116,8 @@ export default {
           API_LOJA.GetIntegracaoPlataforma()
             .then(resPlataforma => {
               this.integracaoList = resPlataforma.data;
-              console.log("this", this.integracaoList);
               this.integracaoList.forEach((obj, i) => {
                 API_LOJA.GetIntegracaoPlataformaByID(obj.id).then(resIntegraID => {
-                  console.log(resIntegraID.data);
                   this.integracaoIDList.push(resIntegraID.data);
                   API_NOTIFICATION.HideLoading();
                 });
@@ -148,7 +146,6 @@ export default {
       return "";
     },
     getApelidoByID(id) {
-        console.log(this.integracaoIDList.find(x => x.plataforma == id));
         if (this.integracaoIDList.find(x => x.plataforma == id) !== undefined) {
           return this.integracaoIDList.find(x => x.plataforma == id).nome_loja;
         }

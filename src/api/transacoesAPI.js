@@ -2,12 +2,13 @@ import axios from 'axios';
 
 import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
+import UTILIS_API from "../api/utilisAPI";
 var API_TRANSACOES = {
     GetTransacoes() {
-        return new Promise((resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -28,7 +29,7 @@ var API_TRANSACOES = {
         });
     },
     DoPayBackEndTicket(cripto) {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             let LBody = {
                 pay: cripto
             }
@@ -46,10 +47,10 @@ var API_TRANSACOES = {
         });
     },
     GetTransacaoByID(id) {
-        return new Promise((resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -71,10 +72,10 @@ var API_TRANSACOES = {
         });
     },
     ReembolsarCliente(id){
-        return new Promise((resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -96,10 +97,10 @@ var API_TRANSACOES = {
         });
     },
     ReembolsarClienteCheckoutPS(id){
-        return new Promise((resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -121,10 +122,10 @@ var API_TRANSACOES = {
         });
     },
     ReembolsarClienteCheckoutPayU(id){
-        return new Promise((resolve, reject) => {
-            var LUser = JSON.parse(sessionStorage.getItem("user"));
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,

@@ -9,35 +9,37 @@
   font-size: 20px;
   font-weight: 700;
 }
-.CheckoutStatusInativo {
+.CampanhaStatusInativo {
   border-radius: 50% !important;
   background-color: red;
   height: 20px;
   width: 20px;
 }
-.CheckoutStatusAtivo {
+.CampanhaStatusAtivo {
   border-radius: 50% !important;
   background-color: green;
   height: 20px;
   width: 20px;
 }
 .imgIntegracao {
-  width: 120px;
+  width: 40%!important;
   height: auto;
 }
 </style>
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-donate"></span>Checkouts
+      <span class="fab fa-free-code-camp">
+        <span class="ml-2"></span>
+      </span>Campanhas
     </div>
     <strong>
-      Todos os checkouts que fazemos integração estão aqui.
+      Todos as campanhas, disponíveis até agora, estão aqui.
       <br />
-      <small>Caso queira integrar com outro gateway de pagamento, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.</small>
+      <small>Caso queira adicionar mais campanhas, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.</small>
     </strong>
 
-    <div class="row mt-3" v-for="{id, nome} in checkoutList" :key="id">
+    <div class="row mt-3" v-for="{id, nome} in campanhaList" :key="id">
       <div class="col-xl-4">
         <!-- Aside card-->
         <div class="card b">
@@ -57,18 +59,18 @@
           <div class="card-header">
             <div class="my-2 row p-0">
               <img
-                class="mr-2 img-fluid thumb24 col-md-2 imgIntegracao mt-2"
-                v-bind:src="getImageIntegracaoCheckout(id)"
+                class="mr-2 img-fluid thumb48 col-md-3 imgIntegracao mt-2"
+                v-bind:src="getImageIntegracaoCampanha(id)"
                 alt="App"
               />
-              <span class="col-md-5 mt-2">{{getApelidoByID(id)}}</span>
+              <span class="col-md-4 mt-2">{{getApelidoByID(id)}}</span>
               <button
                 class="btn btn-info col-md-3"
-                v-on:click="acaoVerEditarIntegracaoCheckout(id)"
+                v-on:click="acaoVerEditarIntegracaoCampanha(id)"
               >
-                <span class="fa fa-edit">Criar / Editar</span>
+                <h4><span class="fa fa-edit mt-2">Configurar</span></h4>
               </button>
-              <div class="float-right mt-2 col-md-1">
+              <div class="float-right mt-3 col-md-1">
                 <span class="pull-right float-right" v-bind:class="getStatusClassByID(id)"></span>
               </div>
             </div>
@@ -91,7 +93,7 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
-import API_LOJA from '../../api/lojaAPI';
+import API_CAMPANHA from "../../api/campanhasAPI";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -104,8 +106,8 @@ export default {
   },
   data() {
     return {
-      checkoutList: [],
-      checkoutIDList: []
+      campanhaList: [],
+      campanhaIDLists: []
     };
   },
   methods: {
@@ -113,15 +115,16 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_CHECKOUT.GetIntegracaoCheckout()
-            .then(resCheckout => {
-              this.checkoutList = resCheckout.data;
-              this.checkoutList.forEach((obj, i) => {
-                API_CHECKOUT.GetCheckoutsByID(obj.id).then(resCheckoutByID => {
-                  this.checkoutIDList.push(resCheckoutByID.data);
-                  API_NOTIFICATION.HideLoading();
+          API_CAMPANHA.GetCampanhas()
+            .then(resCampanhas => {
+              console.log(resCampanhas.data);
+              this.campanhaList = resCampanhas.data;
+              this.campanhaList.forEach((obj, i) => {
+                API_CAMPANHA.GetCampanhaByID(obj.id).then(resCampanhaID => {
+                  this.campanhaIDLists.push(resCampanhaID.data);                 
                 });
               });
+               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
               console.log("Erro ao pegar dados da loja", error);
@@ -134,43 +137,34 @@ export default {
           }
         });
     },
-    acaoVerEditarIntegracaoCheckout(id) {
-      console.log("ID", id);
+    acaoVerEditarIntegracaoCampanha(id) {
       if (id == 1) {
-        this.$router.push("/configs/checkouts/mercadopago");
-      }
-      if (id == 2) {
-        this.$router.push("/configs/checkouts/pagseguro");
-      }
-      if (id == 3) {
-        this.$router.push("/configs/checkouts/payu");
+        this.$router.push("/configs/campanhas/abandcart");
       }
     },
-    getImageIntegracaoCheckout(id) {
-      if (id == 1) return "/img/mercadopago.png";
-      else if (id == 2) return "/img/pagseguro.png";
-      else if (id == 3) return "/img/payu.png";
+    getImageIntegracaoCampanha(id) {
+      if (id == 1) return "/img/abandoned_cart.png";
       return "";
     },
     getApelidoByID(id) {
       if (id > 0) {
-        if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
-          return this.checkoutIDList.find(x => x.gateway == id).nome;
+        if (this.campanhaIDLists.find(x => x.campanha == id) !== undefined) {
+          return this.campanhaIDLists.find(x => x.campanha == id).nome;
         }
       }
 
       return "";
     },
     getStatusByID(id) {
-      if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
-        return this.checkoutIDList.find(x => x.gateway == id).status;
+      if (this.campanhaIDLists.find(x => x.campanha == id) !== undefined) {
+        return this.campanhaIDLists.find(x => x.campanha == id).status;
       }
     },
-    getStatusClassByID(id) {      
-      if (this.checkoutIDList.find(x => x.gateway == id) !== undefined) {
-        return this.checkoutIDList.find(x => x.gateway == id).status
-          ? "CheckoutStatusAtivo"
-          : "CheckoutStatusInativo";
+    getStatusClassByID(id) {
+      if (this.campanhaIDLists.find(x => x.campanha == id) !== undefined) {
+        return this.campanhaIDLists.find(x => x.campanha == id).status
+          ? "CampanhaStatusAtivo"
+          : "CampanhaStatusInativo";
       }
     }
   }

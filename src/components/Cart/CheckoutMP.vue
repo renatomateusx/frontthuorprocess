@@ -201,6 +201,7 @@
   margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
+  margin: 0 auto!important;
   padding: 5px;
   margin: 5px;
   cursor: pointer !important;
@@ -464,21 +465,6 @@
                 v-show="!this.getStepDadosPessoaisFinalizados()"
               >
                 <div class="form-group row formGroup">
-                  <label class="col-xl-12 col-form-label labelForm">Nome Completo</label>
-                  <div class="col-xl-12">
-                    <input
-                      class="form-control required"
-                      autocomplete="name"
-                      type="text"
-                      minlength="5"
-                      v-model.lazy="nome_completo"
-                      id="nome_completo"
-                      placeholder="Digite seu nome aqui"
-                      required
-                    />
-                  </div>
-                </div>
-                <div class="form-group row formGroup">
                   <label class="col-md-10 col-form-label labelForm">E-mail</label>
                   <div class="col-xl-12">
                     <input
@@ -492,6 +478,23 @@
                     />
                   </div>
                 </div>
+                <div class="form-group row formGroup">
+                  <label class="col-xl-12 col-form-label labelForm">Nome Completo</label>
+                  <div class="col-xl-12">
+                    <input
+                      class="form-control required"
+                      autocomplete="name"
+                      @focus="populaDadosComprador()"
+                      type="text"
+                      minlength="5"
+                      v-model.lazy="nome_completo"
+                      id="nome_completo"
+                      placeholder="Digite seu nome aqui"
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div class="form-group row formGroup">
                   <label class="col-xl-12 col-form-label labelForm">CPF</label>
                   <div class="col-md-7">
@@ -555,10 +558,7 @@
           </div>
           <!-- END STEP 1-->
           <!-- START STEP 2-->
-          <div
-            class="col-md-4 mt-0 mb-0 cardSide"
-            v-bind:class="currentStep == 2 || getStepDadosEnderecoFinalizado() == 1 ? '': 'disabledBox'"
-          >
+          <div class="col-md-4 mt-0 mb-0 cardSide">
             <!-- START card-->
             <div class="card card-default mb-0">
               <div class="card-header rounded">
@@ -740,10 +740,7 @@
           </div>
           <!-- END STEP 2-->
           <!-- START STEP 3-->
-          <div
-            class="col-md-4 mt-0 mb-0 cardSide"
-            v-bind:class="currentStep == 3 ? '': 'disabledBoxX'"
-          >
+          <div class="col-md-4 mt-0 mb-0 cardSide">
             <!-- START card-->
             <div class="card card-default mb-0">
               <div class="card-header rounded">
@@ -922,7 +919,7 @@
                   <div class="card-body minusmargintop" v-show="formaPagamento =='bolbradesco'">
                     <div class="form-group row mt-2">
                       <small
-                        class="text-justify col-md-12 smallInforFormaPagamentoBoleto"
+                        class="text-justify col-md-11 smallInforFormaPagamentoBoleto"
                       >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</small>
                     </div>
                     <div class="form-group row mt-2">
@@ -1073,13 +1070,15 @@ Vue.mixin({
 
 export default {
   name: "CheckoutMP",
-  created() {
-    if (sessionStorage.getItem("fretes") != null) {
-      this.fretes = JSON.parse(sessionStorage.getItem("fretes"));
-      //console.log(fretes);
-    }
+  async created() {
+    this.fretes = await UTILIS_API.GetFretesSession();
+    //console.log(fretes);
     API_NOTIFICATION.ShowLoading();
     this.checkURL();
+    // setTimeout(() => {
+    //     this.CEP = '42.722-020';
+    //     this.consultaCEP();
+    // }, 2000);
   },
   components: {
     UpSellCard,
@@ -1158,11 +1157,11 @@ export default {
     },
     async checkURL() {
       var url = window.location.href;
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+      
+        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
         this.getCheckouts();
         //console.log("loja", dadosLoja);
-      }
+      
 
       if (url.includes("items")) {
         //console.log("0");
@@ -1201,14 +1200,14 @@ export default {
       } else {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = JSON.parse(sessionStorage.getItem("DadosLoja"));
+        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
         this.produtosCart = JSON.parse(LCart);
         this.getTotal();
         API_NOTIFICATION.HideLoading();
       }
     },
     async pushProducts(product, quantity, variante_id) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         try {
           API_PRODUTOS.GetProdutoByIDThuor(product, quantity, variante_id)
             .then(retorno => {
@@ -1239,7 +1238,7 @@ export default {
         .then(res => {
           const LojaData = res.data;
           this.dadosLoja = LojaData;
-          sessionStorage.setItem("DadosLoja", JSON.stringify(this.dadosLoja));
+          UTILIS_API.SetDadosLojaSession(LojaData);
         })
         .catch(error => {
           console.log("Erro ao pegar dados da Loja", error);
@@ -1278,10 +1277,11 @@ export default {
     goToCheckout() {
       router.push("/checkout");
     },
-    consultaCEP() {
+    consultaCEP() {      
       if (this.CEP.length >= 8) {
         this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
-        UTILIS_API.VIA_CEP(this.CEP)
+        API_NOTIFICATION.ShowLoading();
+        UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
           .then(retornoCEP => {
             this.endereco = retornoCEP.logradouro;
             this.bairro = retornoCEP.bairro;
@@ -1289,6 +1289,7 @@ export default {
             this.estado = retornoCEP.uf;
             this.complemento = retornoCEP.complemento;
             this.destinatario = this.nome_completo;
+            API_NOTIFICATION.HideLoading();
           })
           .catch(error => {
             this.endereco = "";
@@ -1335,17 +1336,15 @@ export default {
           UTILIS.isValidString(this.destinatario, 5, "destinatário")
         ) {
           API_LOJA.GetFretes()
-            .then(retornoFretes => {
-              sessionStorage.setItem(
-                "fretes",
-                JSON.stringify(retornoFretes.data)
-              );
+            .then(async retornoFretes => {
+              await UTILIS_API.SetFretesSession(retornoFretes.data);
               this.fretes = retornoFretes.data;
               retornoFretes.data.forEach((obj, i) => {
                 this.selecionaPadrao(obj.id, obj.preco, obj.nome);
               });
               this.stepDadosEnderecoFinalizados = 1;
               this.currentStep = 3;
+              this.saveLead();
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -1426,7 +1425,13 @@ export default {
       return true;
     },
     getFreteSelecionadoNome() {
-      var lnome = this.fretes.find(x => x.id == this.freteSelecionado).nome;
+      var lnome = "";
+      if (this.fretes.length > 0) {
+        const LF = this.fretes.find(x => x.id == this.freteSelecionado);
+        if (LF) {
+          lnome = LF.nome;
+        }
+      }
       //console.log("Nome Selecionado", lnome);
       return lnome;
     },
@@ -1436,8 +1441,12 @@ export default {
     formaPagamentoSelecionada(fmp) {
       this.formaPagamento = fmp;
       this.payment_id = fmp;
-      API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
-      API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      API_FACEBOOK_PIXEL.InsertScript().then(res => {
+        API_FACEBOOK_PIXEL.TriggerFacebookEvent("AddPaymentInfo");
+      });
+      API_GOOGLE_PIXEL.InsertScript().then(resG => {
+        API_GOOGLE_PIXEL.TriggerGoogleEvent("add_payment_info");
+      });
     },
     getClassSelected(opcao) {
       return this.formaPagamento == opcao
@@ -1464,6 +1473,7 @@ export default {
       API_CHECKOUT.GetCheckouts()
         .then(retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
+          UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);
           if (this.DadosCheckout.gateway == 1) {
             //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
             this.iniciaCheckout();
@@ -1559,8 +1569,8 @@ export default {
       if (sessionStorage.getItem("cart") != null) {
         this.produtosCart = JSON.parse(sessionStorage.getItem("cart"));
       }
-      if (sessionStorage.getItem("descontoCupom") != null) {
-        this.descontoCupom = parseFloat(sessionStorage.getItem("desc"));
+      if (sessionStorage.getItem("vld") != null) {
+        this.descontoCupom = parseFloat(sessionStorage.getItem("vld"));
       }
       if (this.produtosCart != null) {
         this.produtosCart.forEach((item, i) => {
@@ -1648,7 +1658,8 @@ export default {
         this.parcelas = 1;
       }, 1000);
     },
-    getDadosPagamentoTransacao() {
+    async getDadosPagamentoTransacao() {
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       var transacao = {
         dadosComprador: {
           nome_completo: this.removeAcento(this.nome_completo),
@@ -1687,11 +1698,12 @@ export default {
           installments: this.parcelas,
           payment_method_id: this.payment_id,
           payer: {
-            email: this.email
+            email: UTILIS.getRandomStringEmail() + this.email
           }
         }
       };
       const JSONString = JSON.stringify(transacao);
+      ///console.log(JSONString);
       const LCripto = btoa(JSONString);
 
       return LCripto;
@@ -1711,7 +1723,8 @@ export default {
         //while (this.try == false) {
         ///console.log(this.cardToken);
         const LCripto = await this.getDadosPagamentoTransacao();
-        sessionStorage.setItem("LCrypto", LCripto);
+        UTILIS_API.SetDadosCriptoSession(LCripto);
+        
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT.DoPayBackEnd(LCripto)
           .then(retornoPay => {
@@ -1733,18 +1746,15 @@ export default {
               dadosCompra: retornoPay.data
             };
             sessionStorage.setItem("TipoCheck", "ca");
-            sessionStorage.setItem(
-              "dadosCliente",
-              JSON.stringify(DadosCliente)
-            );
+            UTILIS_API.SetDadosClientesSession(DadosCliente);            
             window.Mercadopago.clearSession();
             API_NOTIFICATION.HideLoading();
             LRouter.push("/obrigado-cartao");
           })
           .catch(error => {
             console.log("Erro ao tentar efetuar o pagamento", error);
-            API_NOTIFICATION.showNotification(
-              "Por favor, tente novamente ",
+            API_NOTIFICATION.showNotificationW(
+              "Pagamento Rejeitado","Por favor, tente novamente ",
               "error"
             );
           });
@@ -1756,7 +1766,9 @@ export default {
       var LRouter = router;
       window.Mercadopago.clearSession();
       const LCripto = await this.getDadosPagamentoTransacao();
-      sessionStorage.setItem("LCrypto", LCripto);
+      //console.log(LCripto);
+      UTILIS_API.SetDadosCriptoSession(LCripto);
+      //console.log(1);
       API_NOTIFICATION.ShowLoading();
       API_CHECKOUT.DoPayBackEndTicket(LCripto)
         .then(retornoPay => {
@@ -1778,7 +1790,7 @@ export default {
             dadosCompra: retornoPay.data
           };
           sessionStorage.setItem("TipoCheck", "bo");
-          sessionStorage.setItem("dadosCliente", JSON.stringify(DadosCliente));
+          UTILIS_API.SetDadosClientesSession(DadosCliente);  
           window.Mercadopago.clearSession();
           API_NOTIFICATION.HideLoading();
           LRouter.push("/obrigado-boleto");
@@ -1811,14 +1823,57 @@ export default {
       text = text.replace(new RegExp("[Ç]", "gi"), "c");
       return text;
     },
-    saveLead() {
-      API_CLIENTES.SaveLead(this.email, this.nome_completo, this.telefone)
+    async saveLead() {
+      var LLead = await this.getDadosPagamentoTransacao();
+      API_CLIENTES.SaveLead(
+        this.email,
+        this.nome_completo,
+        this.telefone,
+        LLead
+      )
         .then(resLead => {
-          console.log("Lead Salva com Suceso");
+          //console.log("Lead Salva com Suceso");
         })
         .catch(error => {
           console.log("Erro ao salvar lead", error);
         });
+    },
+    async populaDadosComprador() {
+      API_NOTIFICATION.ShowLoadingT("Um momento...");
+      if (UTILIS.isValidEmail(this.email)) {
+        UTILIS_API.GetDadosCompradorLead(this.email)
+          .then(resComprador => {
+            const LComprador = resComprador.data;
+            if (LComprador.dadosComprador != undefined) {
+              if (LComprador.dadosComprador.cpf != undefined) {
+                this.cpf = LComprador.dadosComprador.cpf;
+              }
+              if (LComprador.nome != undefined) {
+                this.nome_completo = LComprador.nome;
+              }
+              if (LComprador.telefone != undefined) {
+                this.telefone = LComprador.telefone;
+              }
+              if (
+                LComprador.dadosComprador.cep != undefined &&
+                LComprador.dadosComprador.cep.length > 0
+              ) {
+                this.CEP = LComprador.dadosComprador.cep;
+                this.consultaCEP();
+                this.numero_porta = LComprador.dadosComprador.numero_porta;
+              } else {
+                API_NOTIFICATION.HideLoading();
+              }
+            } else {
+              API_NOTIFICATION.HideLoading();
+            }
+          })
+          .catch(error => {
+            console.log("Erro ao pegar dados do comprador", error);
+          });
+      } else {
+        console.log("Email Inválido");
+      }
     }
   }
 };

@@ -288,7 +288,7 @@ import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import API_CHECKOUT from "../../api/checkoutAPI";
-
+import UTILIS_API from "../../api/utilisAPI";
 Vue.filter("formatDate", function(value) {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY hh:mm");
@@ -396,8 +396,8 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
-              sessionStorage.setItem("DadosLoja", JSON.stringify(resLoja.data));
+            .then(LojaData => {
+              UTILIS_API.SetDadosLojaSession(LojaData.data);
 
               API_MENSAGERIA.GetMensagens()
                 .then(retProd => {
