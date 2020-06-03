@@ -20,6 +20,21 @@ var API_LOGIN = {
         });
     });
   },
+  GetUserByID(id) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_GET_BY_ID, {
+          id: id
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
   AddUser(nome, email, senha) {
     return new Promise(async (resolve, reject) => {
       axios
@@ -27,6 +42,23 @@ var API_LOGIN = {
           nome: nome,
           email: email,
           senha: senha
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  UpdateUser(id, plano, json_plano_pagamento) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_USER, {
+          id: id,
+          plano: plano,
+          json_plano_pagamento: json_plano_pagamento
         })
         .then((response) => {
           resolve(response);
@@ -52,7 +84,7 @@ var API_LOGIN = {
         });
     });
   },
-  
+
   AlteraSenha(token, senha) {
     return new Promise(async (resolve, reject) => {
       axios
