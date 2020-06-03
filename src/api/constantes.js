@@ -1,4 +1,9 @@
 export default Object.freeze({
+  SAND_BOX_MP_PUBLICK_KEY: 'TEST-5e8249a3-5691-4ae9-bf45-8705c09b5c0e',
+  SAND_BOX_MP_ACCESS_TOKEN: 'TEST-4338451460338304-120717-21b6daffeb2a7bd8ba4a59afb113f0fe-128404654',
+  PRODUCAO_BOX_MP_PUBLICK_KEY: 'APP_USR-c97da455-7446-4595-968b-75677fcc12d1',
+  PRODUCAO_BOX_MP_ACCESS_TOKEN: 'APP_USR-4338451460338304-120717-64a42a12fe590e1715881018b78df091-128404654',
+
   WEBSITEAPI: 'http://localhost:3000/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
@@ -10,8 +15,8 @@ export default Object.freeze({
   PATH_LOGIN: 'users/EfetuaLogin',
   PATH_GET_BY_ID: 'users/GetUserByIDExternal',
   PATH_VERIFICA_EMAIL_CADASTRADO: 'users/VerificaEmailCadastro',
-  PATH_REDEFINE_SENHA: 'users/RedefinirSenha', 
-  PATH_ALTERA_SENHA: 'users/AlterarSenha',  
+  PATH_REDEFINE_SENHA: 'users/RedefinirSenha',
+  PATH_ALTERA_SENHA: 'users/AlterarSenha',
   PATH_ADD_USER: 'users/AddUser',
   PATH_UPDATE_USER: 'users/UpdateUser',
   PATH_LOGIN_ATIVAR_EMAIL: 'users/AtivarEmail',
@@ -86,7 +91,7 @@ export default Object.freeze({
   PATH_DELETE_CLIENTES: 'clientes/DeleteClienteByID',
   PATH_GET_CLIENTE_BY_ID: 'clientes/GetClienteByID',
   PATH_SAVE_LEAD: 'clientes/SaveLead',
-  
+
   PATH_PAY_CHECKOUT_PAY_U: 'checkouts/DoPayCardPayU',
 
   PATH_GET_CUPOM: 'cupons/GetCupons',
@@ -104,7 +109,7 @@ export default Object.freeze({
   PATH_INTEGRACAO_CAMPANHA_BY_ID: 'campanhas/GetIntegracaoCampanhaByID',
   PATH_INSERT_INTEGRACAO_CAMPANHA: 'campanhas/InsertIntegracaoCampanha',
   PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',
-  
+
   PATH_LEAD_GET_DADOS_COMPRADOR: 'clientes/GetDadosCompradorLead',
 
 
@@ -114,12 +119,12 @@ export default Object.freeze({
   PATH_SAVE_INTEGRACAO_APPS: 'apps/SaveApps',
   PATH_GET_STATUS_APP: 'apps/GetStatusApp',
 
-  
+
 
   /* CONSTANTES SESSIONS */
   SESSION_DATA_CLIENTES: 'dc',
   SESSION_DATA_CRIPTO: 'cr',
-  SESSION_FRETES : 'f',
+  SESSION_FRETES: 'f',
   SESSION_CART: 'c',
   SESSION_USER: 'x',
   SESSION_PIXEL: 'p',
@@ -129,13 +134,13 @@ export default Object.freeze({
 
   CONSTANTE_THUOR: 'Thuor',
   CONSTANTE_THUOR_EMAIL: 'renatomateusx@gmail.com',
-  CONSTANTES_PLA:[
+  CONSTANTES_PLA: [
     {
       nome: 'Basic',
       id: 1,
       price: 0,
       addon: '2.5%',
-      benefits:[
+      benefits: [
         {
           title: 'Shopify e WooCommerce;'
         },
@@ -158,7 +163,7 @@ export default Object.freeze({
       id: 2,
       price: 127,
       addon: '2.0%',
-      benefits:[
+      benefits: [
         {
           title: 'Shopify e WooCommerce;'
         },
@@ -181,7 +186,7 @@ export default Object.freeze({
       id: 3,
       price: 397,
       addon: '1.5%',
-      benefits:[
+      benefits: [
         {
           title: 'Shopify e WooCommerce;'
         },

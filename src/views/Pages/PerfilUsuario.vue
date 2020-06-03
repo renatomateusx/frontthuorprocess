@@ -1,4 +1,7 @@
 <style scoped>
+html {
+  scroll-behavior: smooth;
+}
 .icon {
   background: #ffffff
     url("http://icons.iconarchive.com/icons/gakuseisean/ivista-2/16/Start-Menu-Search-icon.png")
@@ -105,10 +108,56 @@ div > p {
   font-weight: 900;
   color: #23b7e5;
 }
+.bold-sd {
+  font-family: Rubik, sans-serif;
+  font-size: 20px !important;
+  font-weight: 900;
+  color: #23b7e5;
+}
 .cobradoPor {
   font-family: Rubik, sans-serif;
   font-size: 12px !important;
   font-weight: 900;
+}
+.gray {
+  background-color: lightgrey;
+}
+.planoEscolhido {
+  color: lightgray;
+  font-size: 12px;
+  font-weight: 700;
+}
+.fontBandeiraNome {
+  font-size: 20px;
+  font-weight: 700;
+}
+.fontExpira {
+  font-size: 15px;
+}
+.hidden {
+  display: none !important;
+}
+.visible {
+  display: "" !important;
+}
+.link {
+  cursor: pointer !important;
+  color: #23b7e5 !important;
+}
+.statusInativo {
+  border-radius: 5px !important;
+  background-color: red;
+  color: white;
+  padding: 5px !important;
+}
+.statusAtivo {
+  border-radius: 5px !important;
+  background-color: green;
+  color: white;
+  padding: 5px !important;
+}
+.styleDivEmpty {
+  height: 80% !important;
 }
 </style>
 <template>
@@ -162,7 +211,7 @@ div > p {
                       <div class="clearfix">
                         <div class="float-left p-1 row">
                           <span class="spanNome col-md-12">
-                            <strong class="bold">Assinatura</strong>
+                            <strong class="bold-sd">Minha Assinatura</strong>
                           </span>
                           <small
                             class="text-justify col-md-12"
@@ -178,11 +227,72 @@ div > p {
                   <div class="card b">
                     <div class="card-header">
                       <div class="my-2 row p-0">
-                        <span class="col-md-5 mt-2">Dados da assinatura aqui</span>
-
-                        <div class="float-right mt-2 col-md-1">
-                          <span class="pull-right float-right"></span>
+                        <div class="row col-md-6 ml-1">
+                          <div class="col-md-12 row pull-right float-right text-right mb-3">
+                            <a
+                              @click="scrollMeTo('changePlan')"
+                              class="col-md-12 ml-1 pl-0 mt-2 link pull-right float-right"
+                            >
+                              <span class="fa fa-edit"></span> Alterar Plano
+                            </a>
+                          </div>
+                          <span class="col-md-12 planoEscolhido">PLANO ATUAL</span>
+                          <span class="col-md-12 bold-md">{{getPlanoEscolhido().nome}}</span>
+                          <div class="plan-price card-body">
+                            <div class="text-lg">
+                              <sup>
+                                <small class="simbolPrice">R$</small>
+                              </sup>
+                              <strong>
+                                <span class="priceFont">{{getPlanoEscolhido().price}}</span>
+                                <span class="month">/mês</span>
+                              </strong>
+                              <!-- span.plan-period /mo-->
+                            </div>
+                            <div class="text-center my-1">
+                              <div class="text-bold text-justify">
+                                <strong class="priceFontAddOn">+{{getPlanoEscolhido().addon}}</strong>
+                                <span class="porpedido ml-1">por pedido pago</span>
+                              </div>
+                            </div>
+                            <strong class="cobradoPor">* Cobrado por semana *</strong>
+                          </div>
+                          <div class="col-md-12 row">
+                            <img
+                              :src="getBandeiraImage().image"
+                              class="col-md-2 pr-0 pl-0 mr-0 ml-0"
+                            />
+                            <span
+                              class="col-md-9 pr-0 pl-0 mr-0 ml-1 mt-2 fontBandeiraNome"
+                            >{{getBandeiraImage().nome}}, final {{getFinalCard()}}</span>
+                          </div>
+                          <div class="col-md-12 row">
+                            <span class="col-md-2"></span>
+                            <span class="fontExpira col-md-9 ml-1 pl-0">Expira em {{getExpiracao()}}</span>
+                          </div>
+                          <div class="col-md-12 row">
+                            <span class="col-md-2"></span>
+                            <a
+                              @click="scrollMeTo('changeCard')"
+                              class="col-md-9 ml-1 pl-0 mt-2 link"
+                            >Alterar</a>
+                          </div>
                         </div>
+                        <div class="row col-md-6">
+                          <span class="col-md-12 planoEscolhido">CLIENTE DESDE</span>
+                          <span class="col-md-12 mt-1 mr-3 mb-3">{{getDataDesde()}}</span>
+                          <span class="col-md-12 planoEscolhido">STATUS DA ASSINATURA</span>
+                          <span
+                            class="col-md-2 ml-3 mt-1 mr-3 mb-3"
+                            :class="getStatusAssinatura().statusClass"
+                          >{{getStatusAssinatura().status}}</span>
+
+                          <div class="col-md-12 styleDivEmpty"></div>
+                        </div>
+
+                        <!-- <div class="float-right mt-2 col-md-1">
+                          <span class="pull-right float-right"></span>
+                        </div>-->
                       </div>
                     </div>
                   </div>
@@ -199,7 +309,7 @@ div > p {
                       <div class="clearfix">
                         <div class="float-left p-1 row">
                           <span class="spanNome col-md-12">
-                            <strong class="bold-md">Meus Pagamentos</strong>
+                            <strong class="bold-sd">Meus Pagamentos</strong>
                           </span>
                           <small
                             class="text-justify col-md-12"
@@ -227,15 +337,16 @@ div > p {
                 </div>
               </div>
               <!-- END HTML DE DADOS DE FATURAMENTO E PAGAMENTOS JÁ REALIZADOS -->
-              <div class="container container-lg py-4">
-                <div class="text-center mb-0 pb-0">
-                  <div class="h2 text-bold text-left">Assinatura</div>
-                  <small
-                    class="text-left pull-left float-left"
-                  >Escolha sua assinatura e Altere Quando Quiser!</small>
+
+              <div class="container container-lg hidden" ref="changePlan" id="changePlan">
+                <div class="container container-lg py-4">
+                  <div class="text-center mb-0 pb-0">
+                    <div class="h2 text-bold text-left">Assinatura</div>
+                    <small
+                      class="text-left pull-left float-left"
+                    >Escolha sua assinatura e Altere Quando Quiser!</small>
+                  </div>
                 </div>
-              </div>
-              <div class="container container-lg">
                 <div class="row">
                   <!-- PLAN-->
                   <div
@@ -247,7 +358,7 @@ div > p {
                     <div class="plan">
                       <div
                         class="plan-header card-header"
-                        :class="usuario.plano_escolhido == 1 ? 'SelecionadoH' : 'DeSelecionadoH'"
+                        :class="usuario.plano == 1 ? 'SelecionadoH' : 'DeSelecionadoH'"
                       >
                         <div class="card-title bold text-center">{{nome}}</div>
                       </div>
@@ -290,13 +401,13 @@ div > p {
               </div>
 
               <div class="card-footer">
-                <div class="clearfix">
+                <div class="clearfix hidden" ref="changeCard" id="changeCard">
                   <div class="row">
                     <div class="form-group col-lg-4">
                       <label class="col-form-label">Nº do Cartão *</label>
                       <input
                         @input="verificaDigitosCartao()"
-                        class="col-lg-9 mt-1"
+                        class="col-lg-10 mt-1"
                         :class="{'form-control':true, 'is-invalid': errors.has('dadosProcessamento.numero_cartao')}"
                         v-model="dadosProcessamento.numero_cartao"
                         placeholder="4111 1111 1111 1111"
@@ -359,20 +470,40 @@ div > p {
                       >{{ errors.first('dadosProcessamento.codigo_seguranca') }}</span>
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label class="col-form-label">Nome (impresso no cartão) *</label>
-                    <input
-                      :class="{'form-control':true, 'is-invalid': errors.has('dadosProcessamento.nome_completo')}"
-                      v-model="dadosProcessamento.nome_completo"
-                      placeholder
-                      v-validate="'required'"
-                      type="text"
-                      name="nome_completo"
-                    />
-                    <span
-                      v-show="errors.has('dadosProcessamento.nome_completo')"
-                      class="invalid-feedback"
-                    >{{ errors.first('dadosProcessamento.nome_completo') }}</span>
+                  <div class="row">
+                    <div class="form-group col-lg-7">
+                      <label class="col-form-label">Nome (impresso no cartão) *</label>
+                      <input
+                        :class="{'form-control':true, 'is-invalid': errors.has('dadosProcessamento.nome_completo')}"
+                        v-model="dadosProcessamento.nome_completo"
+                        class="col-md-12"
+                        placeholder="Fulano F F Moura"
+                        v-validate="'required'"
+                        type="text"
+                        name="nome_completo"
+                      />
+                      <span
+                        v-show="errors.has('dadosProcessamento.nome_completo')"
+                        class="invalid-feedback"
+                      >{{ errors.first('dadosProcessamento.nome_completo') }}</span>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-form-label">CPF do Titular *</label>
+                      <input
+                        @input="maskCPFTitular()"
+                        :class="{'form-control':true, 'is-invalid': errors.has('dadosProcessamento.cpf_titular')}"
+                        v-model="dadosProcessamento.cpf_titular"
+                        class="col-md-9"
+                        placeholder="028.964.656-98"
+                        v-validate="'required'"
+                        type="text"
+                        name="cpf_titular"
+                      />
+                      <span
+                        v-show="errors.has('dadosProcessamento.cpf_titular')"
+                        class="invalid-feedback"
+                      >{{ errors.first('dadosProcessamento.cpf_titular') }}</span>
+                    </div>
                   </div>
                   <div class="row col-lg-12">
                     <strong>Endereço de Faturamento (o mesmo da fatura do seu cartão)</strong>
@@ -551,6 +682,7 @@ import Hashids from "hashids";
 import UTILIS_API from "../../api/utilisAPI";
 import constantes from "../../api/constantes";
 import API_CHECKOUT_THUOR_COMISSION from "../../api/checkoutAPIThuorComission";
+import moment from "moment";
 // Tag inputs
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -569,9 +701,7 @@ export default {
       attributes: {}
     });
     const plugin = document.createElement("script");
-    plugin.onload = function() {
-      console.log("Carregado Script MP");
-    };
+    plugin.onload = function() {};
     plugin.setAttribute(
       "src",
       "https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"
@@ -588,6 +718,7 @@ export default {
       MensagemString: [],
       paymentData: "",
       dadosProcessamento: {
+        cpf_titular: "",
         metodoPag: "",
         numero_cartao: "",
         nome_completo: "",
@@ -601,10 +732,11 @@ export default {
         endereco: "",
         numero_porta: "",
         complemento: "",
-        valor: "1.50"
+        valor: "1.50",
+        token: ""
       },
       usuario: {
-        plano_escolhido: 0,
+        plano: 0,
         data: "",
         nome: "",
         status: 1,
@@ -640,6 +772,7 @@ export default {
         .then(result => {
           if (result) {
             console.log("Form Submitted!");
+            API_NOTIFICATION.ShowLoading();
             this.usuario.data = new Date();
             this.ProcessaAutorizacao();
             return;
@@ -678,11 +811,15 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              if (
-                this.usuario.plano_escolhido == 0 ||
-                this.usuario.plano_escolhido == undefined
-              ) {
+              if (this.usuario.plano == 0 || this.usuario.plano == undefined) {
                 this.escolherPlano(1, "Basic");
+              } else {
+                const LArrPlan = constantes.CONSTANTES_PLA;
+                const lp = LArrPlan.filter(x => x.id == this.usuario.plano)[0];
+                console.log(lp);
+                if (lp) {
+                  this.escolherPlano(this.usuario.plano, lp.nome);
+                }
               }
               API_NOTIFICATION.HideLoading();
             })
@@ -756,16 +893,62 @@ export default {
         }
       });
 
-      this.usuario.plano_escolhido = plano;
+      this.usuario.plano = plano;
+      if (this.usuario.json_pagamento) {
+        if (this.usuario.json_pagamento.plano != this.usuario.plano) {
+          var self = this;
+          API_NOTIFICATION.showConfirmDialog(
+            "Ei!",
+            "Tem certeza de que deseja alterar seu palno?",
+            "question",
+            () => {
+              this.usuario.json_pagamento.plano = self.usuario.plano;
+              this.usuario.json_pagamento.plano_escolhido = self.usuario.plano;
+              if (
+                this.usuario.proximo_pagamento == null ||
+                this.usuario.proximo_pagamento == undefined
+              ) {
+                var LData = moment().add({days:7}).format();                
+                this.usuario.proximo_pagamento = LData;
+                console.log( this.usuario.proximo_pagamento);
+              }
+              API_LOGIN.UpdateUser(
+                this.usuario.id,
+                this.usuario.plano,
+                this.usuario.json_pagamento,
+                this.usuario.proximo_pagamento
+              )
+                .then(resUpdated => {
+                  API_NOTIFICATION.showNotificationW(
+                    "Pronto!",
+                    "Dados Atualizados Com Sucesso",
+                    "success"
+                  );
+                })
+                .catch(error => {
+                  console.log(
+                    "Erro ao tentar atualizar os dados do usuário. ",
+                    error
+                  );
+                  API_NOTIFICATION.showNotificationW(
+                    "Oops!",
+                    "Ocorreu um Erro ao Tentar Atualizar os Dados do Usuário",
+                    "error"
+                  );
+                });
+            }
+          );
+        }
+      }
     },
     getClass(id, nome) {
-      //{'Selecionado': usuario.plano_escolhido == id, 'DeSelecionado': usuario.plano_escolhido != id}
+      //{'Selecionado': usuario.plano == id, 'DeSelecionado': usuario.plano != id}
     },
     verificaDigitosCartao() {
-      if (this.DadosCheckout.gateway == 1) {
-        const binCard = this.usuario.numero_cartao.replace(/ /g, "");
-        if (binCard.length >= 6) {
-          let bin = binCard.substring(0, 6);
+      const binCard = this.dadosProcessamento.numero_cartao.replace(/ /g, "");
+      if (binCard.length >= 6) {
+        let bin = binCard.substring(0, 6);
+        if (window.Mercadopago) {
           window.Mercadopago.getPaymentMethod(
             {
               bin: bin
@@ -774,12 +957,19 @@ export default {
               if (status == 200) {
                 this.dadosProcessamento.metodoPag = response[0].id;
               } else {
-                alert(`payment method info error: ${response}`);
+                API_NOTIFICATION.showNotificationW(
+                  "Oops!",
+                  "Cartão de Crédito Não Reconhecido. Verifique!",
+                  "error"
+                );
               }
             }
           );
+        } else {
+          console.log("error");
         }
       }
+
       this.maskCardNumber();
     },
     maskCardNumber() {
@@ -795,6 +985,12 @@ export default {
         );
       }
     },
+    maskCPFTitular() {
+      this.dadosProcessamento.cpf_titular = this.dadosProcessamento.cpf_titular.replace(
+        /(\d{3})(\d{3})(\d{3})(\d{2})/,
+        "$1.$2.$3-$4"
+      );
+    },
     consultaCEP() {
       var self = this;
       if (this.dadosProcessamento.cep.length >= 8) {
@@ -805,7 +1001,6 @@ export default {
         API_NOTIFICATION.ShowLoading();
         UTILIS_API.VIA_CEP(this.dadosProcessamento.cep.replace(/[.-]/g, ""))
           .then(retornoCEP => {
-            console.log(retornoCEP);
             self.dadosProcessamento.endereco = retornoCEP.logradouro;
             self.dadosProcessamento.bairro = retornoCEP.bairro;
             self.dadosProcessamento.cidade = retornoCEP.localidade;
@@ -837,23 +1032,33 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     async ProcessaAutorizacao() {
+      window.Mercadopago.setPublishableKey(constantes.SAND_BOX_MP_PUBLICK_KEY);
       var FormToken = await UTILIS_API.CREATE_FORM_MP(
         constantes.CONSTANTE_THUOR,
-        this.formatPrice(this.dadosProcessamento.valor),
+        parseFloat(this.dadosProcessamento.valor),
         this.dadosProcessamento.numero_cartao.trim().replace(/ /g, ""),
-        this.dadosProcessamento.nome_titular,
-        this.dadosProcessamento.validade.split("/")[0],
-        "20" + this.dadosProcessamento.validade.split("/")[1],
+        this.dadosProcessamento.nome_completo,
+        this.dadosProcessamento.mes_validade,
+        this.dadosProcessamento.ano_validade,
         this.dadosProcessamento.codigo_seguranca,
         1,
         this.dadosProcessamento.cpf_titular.replace(/[.-]/g, ""),
         constantes.CONSTANTE_THUOR_EMAIL,
         this.dadosProcessamento.metodoPag
       );
+
       window.Mercadopago.createToken(FormToken, this.iniciaPagamentoBackEnd);
     },
-    async iniciaPagamentoBackEnd(status, response) {
-      var LRouter = router;
+    getPlanoEscolhido() {
+      const ArrayPlan = constantes.CONSTANTES_PLA;
+      const LPl = ArrayPlan.filter(x => x.id == this.usuario.plano)[0];
+      if (LPl) {
+        return LPl;
+      }
+      return "";
+    },
+
+    iniciaPagamentoBackEnd(status, response) {
       if (status != 200 && status != 201) {
         //console.log("Não foi possível gerar o token", response.message);
         window.Mercadopago.clearSession();
@@ -863,11 +1068,11 @@ export default {
           "warning"
         );
       } else {
-        this.cardToken = response.id;
+        this.dadosProcessamento.token = response.id;
         //while (this.try == false) {
         ///console.log(this.cardToken);
         var paymentData = {
-          transaction_amount: this.formatPrice(this.dadosProcessamento.valor),
+          transaction_amount: parseFloat(this.dadosProcessamento.valor),
           token: this.dadosProcessamento.token,
           description: constantes.CONSTANTE_THUOR,
           installments: 1,
@@ -877,7 +1082,6 @@ export default {
           }
         };
         this.usuario.dadosProcessamento = this.dadosProcessamento;
-        this.usuario.paymentData = paymentData;
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT_THUOR_COMISSION.DoPayBackEnd(paymentData)
           .then(async retornoPay => {
@@ -887,20 +1091,33 @@ export default {
                 retornoPay.data.status.toUpperCase() == "CANCELED" ||
                 retornoPay.data.status.toUpperCase() == "VACATED")
             ) {
+              const LMensagem = await UTILIS_API.getErrorMPDetail(
+                retornoPay.data.status_detail
+              );
               API_NOTIFICATION.showNotificationW(
                 "Oops!",
-                "Pagamento Rejeitado. Por favor, tente novamente.",
+                "Pagamento Rejeitado. " + LMensagem,
                 "error"
               );
               return;
             }
+            this.usuario.paymentData = retornoPay.data;
             window.Mercadopago.clearSession();
             const LUser = await UTILIS_API.GetUserSession();
             if (LUser) {
+              if (
+                this.usuario.proximo_pagamento == null ||
+                this.usuario.proximo_pagamento == undefined
+              ) {
+                var LData = moment().add({days:7}).format();
+                this.usuario.proximo_pagamento = LData;                
+              }
+              
               API_LOGIN.UpdateUser(
                 LUser.user.id,
-                this.usuario.plano_escolhido,
-                this.usuario
+                this.usuario.plano,
+                this.usuario,
+                this.usuario.proximo_pagamento
               )
                 .then(resUpdate => {
                   API_NOTIFICATION.showNotificationW(
@@ -926,6 +1143,121 @@ export default {
 
         //break;
       }
+    },
+    getBandeiraImage() {
+      if (this.usuario.json_pagamento) {
+        var bandeira = this.usuario.json_pagamento.dadosProcessamento.metodoPag;
+        if (bandeira == "master") {
+          return {
+            image: "https://github.bubbstore.com/svg/mastercard.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "visa") {
+          return {
+            image: "https://github.bubbstore.com/svg/visa.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "amex") {
+          return {
+            image: "https://github.bubbstore.com/svg/amex-american-express.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "diners") {
+          return {
+            image:
+              "https://github.bubbstore.com/svg/diners-club-international.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "naranja") {
+          return {
+            image: "https://github.bubbstore.com/svg/visa.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "nativa") {
+          return {
+            image: "https://github.bubbstore.com/svg/visa.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "cencosud") {
+          return {
+            image: "https://github.bubbstore.com/svg/visa.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "maestro") {
+          return {
+            image: "https://github.bubbstore.com/svg/maestro.svg",
+            nome: "MasterCard"
+          };
+        }
+        if (bandeira == "rapipago") {
+          return {
+            image: "https://github.bubbstore.com/svg/visa.svg",
+            nome: "MasterCard"
+          };
+        }
+      }
+      return "";
+    },
+    getFinalCard() {
+      if (this.usuario.json_pagamento) {
+        var card = this.usuario.json_pagamento.dadosProcessamento.numero_cartao.replace(
+          / /g,
+          ""
+        );
+        var length = card.length - 4;
+        return card.substr(length, 4);
+      }
+      return "";
+    },
+    getExpiracao() {
+      if (this.usuario.json_pagamento) {
+        var validade =
+          this.usuario.json_pagamento.dadosProcessamento.mes_validade +
+          "/" +
+          this.usuario.json_pagamento.dadosProcessamento.ano_validade;
+        return validade;
+      }
+      return "";
+    },
+    scrollMeTo(refName) {
+      API_NOTIFICATION.ShowLoading();
+      const eleRef = document.getElementById(refName);
+      if (eleRef) {
+        eleRef.classList.remove("hidden");
+        eleRef.classList.add("visible");
+      }
+      setTimeout(() => {
+        var element = this.$refs[refName];
+        element.scrollIntoView({ behavior: "smooth" });
+        var top = element.offsetTop;
+        window.scrollTo(0, top);
+        API_NOTIFICATION.HideLoading();
+      }, 500);
+
+      // var element = this.$els[refName];
+      // element.scrollIntoView();
+    },
+    getDataDesde() {
+      if (this.usuario) {
+        return moment(this.usuario.data).format("DD/MM/YYYY");
+      }
+      return "";
+    },
+    getStatusAssinatura() {
+      if (this.usuario) {
+        var classStat =
+          this.usuario.status == 1 ? "statusAtivo" : "statusInativo";
+        var status = this.usuario.status == 1 ? "Ativa" : "Inativa";
+        return { statusClass: classStat, status: status };
+      }
+      return { statusClass: "", status: "" };
     }
   }
 };

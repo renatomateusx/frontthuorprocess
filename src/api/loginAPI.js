@@ -52,13 +52,14 @@ var API_LOGIN = {
         });
     });
   },
-  UpdateUser(id, plano, json_plano_pagamento) {
+  UpdateUser(id, plano, json_plano_pagamento, proximo_pagamento) {
     return new Promise(async (resolve, reject) => {
       axios
         .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_USER, {
           id: id,
           plano: plano,
-          json_plano_pagamento: json_plano_pagamento
+          json_plano_pagamento: json_plano_pagamento,
+          proximo_pagamento: proximo_pagamento,
         })
         .then((response) => {
           resolve(response);

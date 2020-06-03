@@ -155,7 +155,7 @@ var UTILIS_API = {
             axios
                 .get(constantes.URL_GET_IP)
                 .then((response) => {
-                   // console.log("Response IP", response.data.ip);
+                    // console.log("Response IP", response.data.ip);
                     resolve(response.data);
                 })
                 .catch((error) => {
@@ -305,7 +305,7 @@ var UTILIS_API = {
     },
     GetUserSession() {
         return new Promise((resolve, reject) => {
-            try {                
+            try {
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_USER)));
                 resolve(L);
             }
@@ -474,7 +474,59 @@ var UTILIS_API = {
                 reject(error);
             }
         })
+    },
+    getErrorMPDetail(detail) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (detail == "cc_rejected_insufficient_amount") {
+                    resolve('Saldo Insuficiente No Cartão de Crédito');
+                }
+                if (detail == "cc_rejected_bad_filled_card_number") {
+                    resolve('Verifique o número do cartão.');
+                }
+                if (detail == "cc_rejected_bad_filled_date") {
+                    resolve('Verifique a data de validade.');
+                }
+                if (detail == "cc_rejected_bad_filled_security_code") {
+                    resolve('Código de segurança inválido.');
+                }
+
+            }
+            catch (error) {
+                reject(error);
+            }
+        })
+    },
+    getBandeira(bandeira) {
+        if (bandeira == "master") {
+            return { image: "https://github.bubbstore.com/svg/mastercard.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "visa") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "amex") {
+            return { image: "https://github.bubbstore.com/svg/amex-american-express.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "diners") {
+            return { image: "https://github.bubbstore.com/svg/diners-club-international.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "naranja") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "nativa") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "cencosud") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "maestro") {
+            return { image: "https://github.bubbstore.com/svg/maestro.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "rapipago") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
     }
+
 
 };
 
