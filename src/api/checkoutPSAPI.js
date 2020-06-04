@@ -10,8 +10,8 @@ var API_CHECKOUT = {
             let LBody = {
                 "type": type,
                 "token": token
-            }           
-           
+            }
+
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_PS_SESSION, LBody)
                 .then((response) => {
@@ -27,8 +27,8 @@ var API_CHECKOUT = {
     },
     DoPayPagSeguro(pCrypto) {
         return new Promise(async (resolve, reject) => {
-            var LBody={
-                LCrypto : pCrypto
+            var LBody = {
+                LCrypto: pCrypto
             }
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_PS_CHARGE, LBody, {
@@ -83,7 +83,7 @@ var API_CHECKOUT = {
     },
     GetCheckouts() {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
 
                 let LBody = {
@@ -104,7 +104,7 @@ var API_CHECKOUT = {
     },
     GetCheckoutsByID(id) {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
 
                 let LBody = {
@@ -126,7 +126,7 @@ var API_CHECKOUT = {
     },
     GetIntegracaoCheckout() {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
                 axios
                     .get(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_CHECKOUT)
@@ -143,108 +143,103 @@ var API_CHECKOUT = {
     },
     GetIntegracaoCheckoutByID(id) {
         return new Promise(async (resolve, reject) => {
+            const LUser = await UTILIS_API.GetUserSession();
 
-            if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
-                const LUser = JSON.parse(sessionStorage.getItem('user'));
-                if (LUser !== null && LUser !== undefined) {
+            if (LUser !== null && LUser !== undefined) {
 
-                    let LBody = {
-                        id_usuario: LUser.user.id,
-                        id: id
-                    }
-                    axios
-                        .post(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_CHECKOUT_BY_ID, LBody)
-                        .then((response) => {
-                            //console.log("Response", response);
-                            resolve(response);
-                        })
-                        .catch((error) => {
-                            console.log("Reject", error);
-                            reject(error);
-                        });
+                let LBody = {
+                    id_usuario: LUser.user.id,
+                    id: id
                 }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_CHECKOUT_BY_ID, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
             }
+
         });
     },
     InsertCheckoutMP(checkout_form) {
         return new Promise(async (resolve, reject) => {
 
-            if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
-                const LUser = JSON.parse(sessionStorage.getItem('user'));
-                if (LUser !== null && LUser !== undefined) {
-                    axios
-                        .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_CHECKOUT_MP, checkout_form)
-                        .then((response) => {
-                            //console.log("Response", response);
-                            resolve(response);
-                        })
-                        .catch((error) => {
-                            console.log("Reject", error);
-                            reject(error);
-                        });
-                }
+            const LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_CHECKOUT_MP, checkout_form)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
             }
+
         });
     },
 
     UpdateStatusMP(checkout_form) {
         return new Promise(async (resolve, reject) => {
+            const LUser = await UTILIS_API.GetUserSession();
 
-            if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
-                const LUser = JSON.parse(sessionStorage.getItem('user'));
-                if (LUser !== null && LUser !== undefined) {
-                    axios
-                        .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_CHECKOUT_MP, checkout_form)
-                        .then((response) => {
-                            //console.log("Response", response);
-                            resolve(response);
-                        })
-                        .catch((error) => {
-                            console.log("Reject", error);
-                            reject(error);
-                        });
-                }
+            if (LUser !== null && LUser !== undefined) {
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_CHECKOUT_MP, checkout_form)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
             }
+
         });
     },
     UpdateAtivaBoletoMP(checkout_form) {
         return new Promise(async (resolve, reject) => {
 
-            if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
-                const LUser = JSON.parse(sessionStorage.getItem('user'));
-                if (LUser !== null && LUser !== undefined) {
-                    axios
-                        .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_ATIVA_BOLETO_CHECKOUT_MP, checkout_form)
-                        .then((response) => {
-                            //console.log("Response", response);
-                            resolve(response);
-                        })
-                        .catch((error) => {
-                            console.log("Reject", error);
-                            reject(error);
-                        });
-                }
+            const LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_ATIVA_BOLETO_CHECKOUT_MP, checkout_form)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
             }
+
         });
     },
     UpdateAutoProcessamentoMP(checkout_form) {
         return new Promise(async (resolve, reject) => {
 
-            if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
-                const LUser = JSON.parse(sessionStorage.getItem('user'));
-                if (LUser !== null && LUser !== undefined) {
-                    axios
-                        .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_ATIVA_AUTO_PROCESSAMENTO_CHECKOUT_MP, checkout_form)
-                        .then((response) => {
-                            //console.log("Response", response);
-                            resolve(response);
-                        })
-                        .catch((error) => {
-                            console.log("Reject", error);
-                            reject(error);
-                        });
-                }
+            const LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_ATIVA_AUTO_PROCESSAMENTO_CHECKOUT_MP, checkout_form)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
             }
+
         });
     },
 

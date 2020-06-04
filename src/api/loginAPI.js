@@ -20,6 +20,21 @@ var API_LOGIN = {
         });
     });
   },
+  GetUserByID(id) {
+    return new Promise((resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_GET_BY_ID, {
+          id: id
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
   AddUser(nome, email, senha) {
     return new Promise(async (resolve, reject) => {
       axios
@@ -27,6 +42,24 @@ var API_LOGIN = {
           nome: nome,
           email: email,
           senha: senha
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  UpdateUser(id, plano, json_plano_pagamento, proximo_pagamento) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_USER, {
+          id: id,
+          plano: plano,
+          json_plano_pagamento: json_plano_pagamento,
+          proximo_pagamento: proximo_pagamento,
         })
         .then((response) => {
           resolve(response);
@@ -52,7 +85,7 @@ var API_LOGIN = {
         });
     });
   },
-  
+
   AlteraSenha(token, senha) {
     return new Promise(async (resolve, reject) => {
       axios
@@ -87,7 +120,7 @@ var API_LOGIN = {
   async VerificaToken() {
     return new Promise(async (resolve, reject) => {
       const LActualPath = window.location.pathname;
-      if (LActualPath) sessionStorage.setItem('actualPage', LActualPath);
+      if (LActualPath) UTILIS_API.SetActualPage(LActualPath);
       const LU = await UTILIS_API.GetUserSession();
       if (LU == undefined || LU == null) {
         router.push('/login');
@@ -97,7 +130,7 @@ var API_LOGIN = {
         return response;
       }, (error) => {
         if (error.response.status === 401) {
-          sessionStorage.removeItem("user");
+          UTILIS_API.removeUserSession();
           router.push('/login');
         }
         return Promise.reject(error);

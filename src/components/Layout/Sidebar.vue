@@ -86,7 +86,7 @@
           </template>
         </ul>
         <!-- END sidebar nav-->
-      </nav>
+      </nav>      
     </div>
     <!-- END Sidebar (left)-->
   </aside>

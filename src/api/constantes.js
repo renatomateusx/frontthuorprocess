@@ -1,4 +1,9 @@
 export default Object.freeze({
+  SAND_BOX_MP_PUBLICK_KEY: 'TEST-5e8249a3-5691-4ae9-bf45-8705c09b5c0e',
+  SAND_BOX_MP_ACCESS_TOKEN: 'TEST-4338451460338304-120717-21b6daffeb2a7bd8ba4a59afb113f0fe-128404654',
+  PRODUCAO_BOX_MP_PUBLICK_KEY: 'APP_USR-c97da455-7446-4595-968b-75677fcc12d1',
+  PRODUCAO_BOX_MP_ACCESS_TOKEN: 'APP_USR-4338451460338304-120717-64a42a12fe590e1715881018b78df091-128404654',
+
   WEBSITEAPI: 'http://localhost:3000/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
@@ -8,10 +13,12 @@ export default Object.freeze({
   MSG_BOLETO_ENVIO: 'Aqui está o boleto do produto *PRODUTO_NAME*, no valor de R$ VALOR_VALOR Vencimento: *VENCIMENTO* Código de barras: *CODIGO_BARRAS* Link: LINK_LINK',
   PATH_GET: 'index',
   PATH_LOGIN: 'users/EfetuaLogin',
+  PATH_GET_BY_ID: 'users/GetUserByIDExternal',
   PATH_VERIFICA_EMAIL_CADASTRADO: 'users/VerificaEmailCadastro',
-  PATH_REDEFINE_SENHA: 'users/RedefinirSenha', 
-  PATH_ALTERA_SENHA: 'users/AlterarSenha',  
+  PATH_REDEFINE_SENHA: 'users/RedefinirSenha',
+  PATH_ALTERA_SENHA: 'users/AlterarSenha',
   PATH_ADD_USER: 'users/AddUser',
+  PATH_UPDATE_USER: 'users/UpdateUser',
   PATH_LOGIN_ATIVAR_EMAIL: 'users/AtivarEmail',
   PATH_TOKEN: 'users/VerificaToken',
   PATH_PRODUTOS: 'produtos/GetProdutos',
@@ -49,6 +56,7 @@ export default Object.freeze({
   PATH_GET_CHECKOUTS: 'checkouts/GetCheckoutAtivo',
   PATH_GET_CHECKOUTS_BY_ID: 'checkouts/GetCheckoutByID',
   PATH_PAY_CHECKOUT: 'checkouts/DoPay',
+  PATH_PAY_CHECKOUT_THUOR_COMISSION: 'checkoutThuorComission/DoPay',
   PATH_INTEGRACAO_CHECKOUT: 'checkouts/GetIntegracaoCheckout',
   PATH_INTEGRACAO_CHECKOUT_BY_ID: 'checkouts/GetIntegracaoCheckoutByID',
   PATH_INSERT_CHECKOUT_MP: 'checkouts/InsertCheckoutMP',
@@ -60,7 +68,9 @@ export default Object.freeze({
   PATH_PAY_GET_PEDIDOS_POR_ID: 'transacoes/GetPedidosByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_POR_ID: 'transacoes/ReembolsarPedidoByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PS_POR_ID: 'transacoes/ReembolsarPedidoPSByID',
+  PATH_SET_PAYMENT_COMISSION_DONE: 'transacoes/SetPaymentComissionDone',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PAYU_POR_ID: 'transacoes/ReembolsarPedidoPayUID',
+  PATH_PAY_GET_TRANSACOES_INTERNAS: 'transacoes/GetTransacoesInternas',
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
   PATH_GET_UPSELL: 'upsells/GetUpSells',
@@ -83,7 +93,7 @@ export default Object.freeze({
   PATH_DELETE_CLIENTES: 'clientes/DeleteClienteByID',
   PATH_GET_CLIENTE_BY_ID: 'clientes/GetClienteByID',
   PATH_SAVE_LEAD: 'clientes/SaveLead',
-  
+
   PATH_PAY_CHECKOUT_PAY_U: 'checkouts/DoPayCardPayU',
 
   PATH_GET_CUPOM: 'cupons/GetCupons',
@@ -101,25 +111,36 @@ export default Object.freeze({
   PATH_INTEGRACAO_CAMPANHA_BY_ID: 'campanhas/GetIntegracaoCampanhaByID',
   PATH_INSERT_INTEGRACAO_CAMPANHA: 'campanhas/InsertIntegracaoCampanha',
   PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',
-  
+
   PATH_LEAD_GET_DADOS_COMPRADOR: 'clientes/GetDadosCompradorLead',
 
-
+  /* APPS */
   PATH_GET_APPS: 'apps/GetApps',
   PATH_GET_APPS_BY_ID: 'apps/GetAppByID',
   PATH_INTEGRACAO_APPS: 'apps/GetIntegracaoApps',
   PATH_SAVE_INTEGRACAO_APPS: 'apps/SaveApps',
   PATH_GET_STATUS_APP: 'apps/GetStatusApp',
 
-  
+
+  /* PLANOS */
+
+  PATH_GET_PLANOS: 'planos/GetPlanos',
+  PATH_GET_PLANOS_BY_ID: 'planos/GetPlanosByID',
+
 
   /* CONSTANTES SESSIONS */
   SESSION_DATA_CLIENTES: 'dc',
   SESSION_DATA_CRIPTO: 'cr',
-  SESSION_FRETES : 'f',
+  SESSION_FRETES: 'f',
   SESSION_CART: 'c',
   SESSION_USER: 'x',
   SESSION_PIXEL: 'p',
   SESSION_LOJA: 'l',
   SESSION_CHECKOUT: 'sc',
+  SESSION_ATUAL_PAGE: 'atp',
+
+
+  CONSTANTE_THUOR: 'Thuor',
+  CONSTANTE_THUOR_EMAIL: 'renatomateusx@gmail.com',
+  
 });

@@ -152,13 +152,12 @@ export default {
           API_NOTIFICATION.ShowLoading();
           // simulate AJAX
           API_LOGIN.EfetuarLogin(this.login.email, this.login.password)
-            .then(retorno => {
+            .then(async retorno => {              
               if (retorno !== undefined) {
                 if (retorno.data.user.status == 1) {
-                  UTILIS_API.SetUserSession(retorno.data);
-                  //sessionStorage.setItem("user", JSON.stringify(retorno.data));
-                  if (sessionStorage.getItem("actualPage") != undefined) {
-                    const LActualPath = sessionStorage.getItem("actualPage");
+                  const LReturn = await UTILIS_API.SetUserSession(retorno.data);
+                  const LActualPath = await UTILIS_API.GetActualPage();
+                  if (LActualPath != undefined) {
                     if (LActualPath) this.$router.push(LActualPath);
                   } else {
                     this.$router.push("/home");
@@ -185,7 +184,7 @@ export default {
       });
     },
     checkIfLogged() {
-      //sessionStorage.removeItem("user");
+      
     }
   }
 };
