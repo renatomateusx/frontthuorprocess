@@ -201,7 +201,7 @@
   margin-bottom: 10px !important;
 }
 .smallInforFormaPagamentoBoleto {
-  margin: 0 auto!important;
+  margin: 0 auto !important;
   padding: 5px;
   margin: 5px;
   cursor: pointer !important;
@@ -1200,7 +1200,7 @@ export default {
       } else {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+        this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
         this.produtosCart = JSON.parse(LCart);
         this.getTotal();
         API_NOTIFICATION.HideLoading();
@@ -1519,7 +1519,7 @@ export default {
                 }
                 this.setParcelas();
               } else {
-                alert(`payment method info error: ${response}`);
+                API_NOTIFICATION.showNotificationW('Oops!', 'Cartão de Crédito Não Reconhecido. Verifique!', 'error');
               }
             }
           );
@@ -1727,16 +1727,17 @@ export default {
         
         API_NOTIFICATION.ShowLoading();
         API_CHECKOUT.DoPayBackEnd(LCripto)
-          .then(retornoPay => {
+          .then(async retornoPay => {
             if (
               retornoPay.data.status != undefined &&
               (retornoPay.data.status.toUpperCase() == "REJECTED" ||
                 retornoPay.data.status.toUpperCase() == "CANCELED" ||
                 retornoPay.data.status.toUpperCase() == "VACATED")
             ) {
+              const LMensagem = await UTILIS_API.getErrorMPDetail(retornoPay.data.status_detail);
               API_NOTIFICATION.showNotificationW(
                 "Oops!",
-                "Pagamento Rejeitado. Por favor, tente novamente.",
+                "Pagamento Rejeitado. " + LMensagem,
                 "error"
               );
               return;

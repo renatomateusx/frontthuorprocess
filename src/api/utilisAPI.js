@@ -155,7 +155,7 @@ var UTILIS_API = {
             axios
                 .get(constantes.URL_GET_IP)
                 .then((response) => {
-                   // console.log("Response IP", response.data.ip);
+                    // console.log("Response IP", response.data.ip);
                     resolve(response.data);
                 })
                 .catch((error) => {
@@ -282,6 +282,10 @@ var UTILIS_API = {
     GetCartSession() {
         return new Promise((resolve, reject) => {
             try {
+                if (sessionStorage.getItem(constantes.SESSION_CART) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_CART)));
                 resolve(L);
             }
@@ -305,7 +309,11 @@ var UTILIS_API = {
     },
     GetUserSession() {
         return new Promise((resolve, reject) => {
-            try {                
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_USER) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_USER)));
                 resolve(L);
             }
@@ -330,6 +338,10 @@ var UTILIS_API = {
     GetPixelSession() {
         return new Promise((resolve, reject) => {
             try {
+                if (sessionStorage.getItem(constantes.SESSION_PIXEL) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_PIXEL)));
                 resolve(L);
             }
@@ -358,7 +370,7 @@ var UTILIS_API = {
                     const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_LOJA)));
                     resolve(L);
                 } else {
-                    resolve(0);
+                    resolve(null);
                 }
             }
             catch (error) {
@@ -382,6 +394,10 @@ var UTILIS_API = {
     GetDadosCheckoutSession() {
         return new Promise((resolve, reject) => {
             try {
+                if (sessionStorage.getItem(constantes.SESSION_CHECKOUT) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_CHECKOUT)));
                 resolve(L);
             }
@@ -407,7 +423,7 @@ var UTILIS_API = {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_FRETES) == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_FRETES)));
@@ -435,7 +451,7 @@ var UTILIS_API = {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES) == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
                 const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)))));
@@ -463,10 +479,10 @@ var UTILIS_API = {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_DATA_CRIPTO) == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
-                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)))));
+                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CRIPTO)))));
                 resolve(L);
             }
             catch (error) {
@@ -474,7 +490,90 @@ var UTILIS_API = {
                 reject(error);
             }
         })
+    },
+    removeUserSession(){
+        sessionStorage.removeItem(constantes.SESSION_USER);
+    },
+    SetActualPage(page){
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_ATUAL_PAGE,  btoa(unescape(encodeURIComponent(JSON.stringify(page)))));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o dados Clientes session", error);
+                reject(error);
+            }
+        })        
+    },
+    GetActualPage(){
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_ATUAL_PAGE) == null) {
+                    resolve(null);
+                    return;
+                }
+                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_ATUAL_PAGE)))));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o dados Clientes session", error);
+                reject(error);
+            }
+        })             
+    },
+    getErrorMPDetail(detail) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (detail == "cc_rejected_insufficient_amount") {
+                    resolve('Saldo Insuficiente No Cartão de Crédito');
+                }
+                if (detail == "cc_rejected_bad_filled_card_number") {
+                    resolve('Verifique o número do cartão.');
+                }
+                if (detail == "cc_rejected_bad_filled_date") {
+                    resolve('Verifique a data de validade.');
+                }
+                if (detail == "cc_rejected_bad_filled_security_code") {
+                    resolve('Código de segurança inválido.');
+                }
+
+            }
+            catch (error) {
+                reject(error);
+            }
+        })
+    },
+    getBandeira(bandeira) {
+        if (bandeira == "master") {
+            return { image: "https://github.bubbstore.com/svg/mastercard.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "visa") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "amex") {
+            return { image: "https://github.bubbstore.com/svg/amex-american-express.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "diners") {
+            return { image: "https://github.bubbstore.com/svg/diners-club-international.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "naranja") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "nativa") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "cencosud") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "maestro") {
+            return { image: "https://github.bubbstore.com/svg/maestro.svg", nome: 'MasterCard' };
+        }
+        if (bandeira == "rapipago") {
+            return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
+        }
     }
+
 
 };
 

@@ -6,9 +6,9 @@ import UTILIS_API from "../api/utilisAPI";
 var API_TRANSACOES = {
     GetTransacoes() {
         return new Promise(async (resolve, reject) => {
-            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                var DadosLoja = await UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -16,6 +16,30 @@ var API_TRANSACOES = {
                     }
                     axios
                         .post(constantes.WEBSITEAPI + constantes.PATH_PAY_GET_PEDIDOS, LBody)
+                        .then((response) => {
+                            //console.log("Response", response);
+                            resolve(response);
+                        })
+                        .catch((error) => {
+                            console.log("Reject", error);
+                            reject(error);
+                        });
+                }
+            }
+        });
+    },
+    
+    GetTransacoesInternas() {
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                if (DadosLoja !== null && DadosLoja !== undefined) {      
+                    var LBody = {
+
+                    }             
+                    axios
+                        .post(constantes.WEBSITEAPI + constantes.PATH_PAY_GET_TRANSACOES_INTERNAS, LBody)
                         .then((response) => {
                             //console.log("Response", response);
                             resolve(response);
@@ -48,7 +72,7 @@ var API_TRANSACOES = {
     },
     GetTransacaoByID(id) {
         return new Promise(async (resolve, reject) => {
-            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -73,7 +97,7 @@ var API_TRANSACOES = {
     },
     ReembolsarCliente(id){
         return new Promise(async (resolve, reject) => {
-            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -98,7 +122,7 @@ var API_TRANSACOES = {
     },
     ReembolsarClienteCheckoutPS(id){
         return new Promise(async (resolve, reject) => {
-            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -123,7 +147,7 @@ var API_TRANSACOES = {
     },
     ReembolsarClienteCheckoutPayU(id){
         return new Promise(async (resolve, reject) => {
-            var LUser = await UTILIS_API.GetUserSession();//JSON.parse(sessionStorage.getItem("user"));
+            var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
                 var DadosLoja = UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
@@ -145,7 +169,34 @@ var API_TRANSACOES = {
                 }
             }
         });
+    },
+    SetPaymentComissionDone(id_usuario, data_processar, paymentData, retornoPay){
+        return new Promise(async (resolve, reject) => {
+            
+           
+                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                if (DadosLoja !== null && DadosLoja !== undefined) {
+                    let LBody = {
+                        id_usuario: id_usuario,
+                        data_processar: data_processar,
+                        json_cobranca_comissao: paymentData,
+                        json_response_comissao: retornoPay
+                    }
+                    axios
+                        .post(constantes.WEBSITEAPI + constantes.PATH_SET_PAYMENT_COMISSION_DONE, LBody)
+                        .then((response) => {
+                            //console.log("Response", response);
+                            resolve(response);
+                        })
+                        .catch((error) => {
+                            console.log("Reject", error);
+                            reject(error);
+                        });
+                }
+            
+        });
     }
+    
 
 
 

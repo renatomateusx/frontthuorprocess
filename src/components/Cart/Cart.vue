@@ -291,11 +291,7 @@ export default {
     },    
     async checkURL() {
       var url = window.location.href;
-      if (sessionStorage.getItem("DadosLoja") != null) {
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
-        console.log("loja", this.dadosLoja);
-      }
-
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();      
       if (url.includes("items")) {
         console.log("0");
         sessionStorage.removeItem("cart");

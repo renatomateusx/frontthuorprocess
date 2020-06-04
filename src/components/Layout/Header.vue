@@ -50,7 +50,18 @@
         <li class="nav-item d-none d-md-block">
           <a class="nav-link" href @click.prevent="toggleSair" title="Sair">
             <em class="icon-lock"></em>
-          </a>          
+          </a>
+        </li>
+        <li class="nav-item d-none d-md-block">
+          <a
+            class="nav-link"
+            href
+            @click.prevent="toggleAdmin"
+            title="Admin"
+            v-show="isUserAdmin === 1"
+          >
+            <em class="fas fa-receipt"></em>
+          </a>
         </li>
         <!-- END lock screen-->
       </ul>
@@ -144,10 +155,21 @@ import { mapMutations } from "vuex";
 import HeaderSearch from "@/components/Layout/HeaderSearch";
 import ToggleFullscreen from "@/components/Common/ToggleFullscreen";
 import UTILIS_API from "../../api/utilisAPI";
-import API_NOTIFICATION from '../../api/notification';
+import API_NOTIFICATION from "../../api/notification";
 export default {
   name: "Header",
+  async created(){
+    const LUser = await UTILIS_API.GetUserSession();
+    if(LUser!= null && LUser.user.is_user_admin == 1){
+      this.isUserAdmin = 1
+    }
+  },
 
+  data: function() {
+    return {
+      isUserAdmin: 0,
+    };
+  },
   components: {
     HeaderSearch,
     ToggleFullscreen
@@ -190,15 +212,21 @@ export default {
       var win = window.open(url, "_blank");
       win.focus();
     },
-    async toggleSair(){
-        API_NOTIFICATION.ShowLoading();
-        await UTILIS_API.Sair();
+    async toggleSair() {
+      API_NOTIFICATION.ShowLoading();
+      await UTILIS_API.Sair();
+    },
+    toggleAdmin() {
+      API_NOTIFICATION.ShowLoading();
+      const path = '/admin';
+      this.$router.push(path);
     }
+   
   }
 };
 </script>
 <style scoped>
-.hidden{
-    display:none!important;
+.hidden {
+  display: none !important;
 }
 </style>
