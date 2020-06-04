@@ -4,10 +4,10 @@ import constantes from "./constantes";
 import API_HEADERS from "./configAxios";
 import UTILIS_API from './utilisAPI';
 var API_CHECKOUT_THUOR_COMISSION = {
-    DoPayBackEnd(cripto) {
+    DoPayBackEnd(jsonPay) {
         return new Promise(async (resolve, reject) => {
             let LBody = {
-                pay: cripto
+                pay: jsonPay
             }
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_PAY_CHECKOUT_THUOR_COMISSION, LBody)

@@ -186,22 +186,21 @@ var API_CHECKOUT_PU = {
     },
     UpdateAutoProcessamento(checkout_form) {
         return new Promise(async (resolve, reject) => {
+            const LUser = await UTILIS_API.GetUserSession();
 
-            if (sessionStorage.getItem('user') != null || sessionStorage.getItem('user') != undefined) {
-                const LUser = JSON.parse(sessionStorage.getItem('user'));
-                if (LUser !== null && LUser !== undefined) {
-                    axios
-                        .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_ATIVA_AUTO_PROCESSAMENTO_CHECKOUT_MP, checkout_form)
-                        .then((response) => {
-                            //console.log("Response", response);
-                            resolve(response);
-                        })
-                        .catch((error) => {
-                            console.log("Reject", error);
-                            reject(error);
-                        });
-                }
+            if (LUser !== null && LUser !== undefined) {
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_ATIVA_AUTO_PROCESSAMENTO_CHECKOUT_MP, checkout_form)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
             }
+
         });
     },
 

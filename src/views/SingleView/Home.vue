@@ -52,7 +52,7 @@ export default {
         }
       },
       async selectUserName() {
-        var LUser = await UTILIS_API.GetUserSession(); //JSON.parse(sessionStorage.getItem("user"));
+        var LUser = await UTILIS_API.GetUserSession();
         if (LUser !== undefined && LUser !== null) {
           this.welcome = `Bem vindo ao Thuor, ${LUser.user.nome}!`;
         } else {
@@ -66,7 +66,7 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(async res => {
-          var LUser = await UTILIS_API.GetUserSession(); //JSON.parse(sessionStorage.getItem("user"));
+          var LUser = await UTILIS_API.GetUserSession();
           if (LUser !== undefined && LUser !== null) {
             API_LOJA.GetDadosLojaByIdUsuario(LUser.user.id).then(resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);

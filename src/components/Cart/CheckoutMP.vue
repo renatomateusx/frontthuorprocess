@@ -1200,7 +1200,7 @@ export default {
       } else {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+        this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
         this.produtosCart = JSON.parse(LCart);
         this.getTotal();
         API_NOTIFICATION.HideLoading();

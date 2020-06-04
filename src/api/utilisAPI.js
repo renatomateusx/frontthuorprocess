@@ -282,6 +282,10 @@ var UTILIS_API = {
     GetCartSession() {
         return new Promise((resolve, reject) => {
             try {
+                if (sessionStorage.getItem(constantes.SESSION_CART) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_CART)));
                 resolve(L);
             }
@@ -306,6 +310,10 @@ var UTILIS_API = {
     GetUserSession() {
         return new Promise((resolve, reject) => {
             try {
+                if (sessionStorage.getItem(constantes.SESSION_USER) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_USER)));
                 resolve(L);
             }
@@ -330,6 +338,10 @@ var UTILIS_API = {
     GetPixelSession() {
         return new Promise((resolve, reject) => {
             try {
+                if (sessionStorage.getItem(constantes.SESSION_PIXEL) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_PIXEL)));
                 resolve(L);
             }
@@ -358,7 +370,7 @@ var UTILIS_API = {
                     const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_LOJA)));
                     resolve(L);
                 } else {
-                    resolve(0);
+                    resolve(null);
                 }
             }
             catch (error) {
@@ -382,6 +394,10 @@ var UTILIS_API = {
     GetDadosCheckoutSession() {
         return new Promise((resolve, reject) => {
             try {
+                if (sessionStorage.getItem(constantes.SESSION_CHECKOUT) == null) {
+                    resolve(null);
+                    return;
+                }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_CHECKOUT)));
                 resolve(L);
             }
@@ -407,7 +423,7 @@ var UTILIS_API = {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_FRETES) == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
                 const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_FRETES)));
@@ -435,7 +451,7 @@ var UTILIS_API = {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES) == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
                 const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)))));
@@ -463,10 +479,10 @@ var UTILIS_API = {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_DATA_CRIPTO) == null) {
-                    resolve([]);
+                    resolve(null);
                     return;
                 }
-                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CLIENTES)))));
+                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_DATA_CRIPTO)))));
                 resolve(L);
             }
             catch (error) {
@@ -474,6 +490,37 @@ var UTILIS_API = {
                 reject(error);
             }
         })
+    },
+    removeUserSession(){
+        sessionStorage.removeItem(constantes.SESSION_USER);
+    },
+    SetActualPage(page){
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_ATUAL_PAGE,  btoa(unescape(encodeURIComponent(JSON.stringify(page)))));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o dados Clientes session", error);
+                reject(error);
+            }
+        })        
+    },
+    GetActualPage(){
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_ATUAL_PAGE) == null) {
+                    resolve(null);
+                    return;
+                }
+                const L = JSON.parse(decodeURIComponent(escape(atob(sessionStorage.getItem(constantes.SESSION_ATUAL_PAGE)))));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o dados Clientes session", error);
+                reject(error);
+            }
+        })             
     },
     getErrorMPDetail(detail) {
         return new Promise((resolve, reject) => {

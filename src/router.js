@@ -24,6 +24,7 @@ const Pay = () => import('@/components/Cart/Pay.vue');
 const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
 const Pedidos = () => import('@/views/Pages/Pedidos.vue');
+const Admin = () => import('@/views/Pages/Admin.vue');
 const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
 const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
 const MercadoPago = () => import('@/components/Checkouts/MercadoPago.vue');
@@ -124,6 +125,10 @@ export default new Router({
             {
                 path: '/pedidos',
                 component: Pedidos
+            },
+            {
+                path: '/admin',
+                component: Admin
             },
             {
                 path: '/pedidos/detalhe/:id',

@@ -603,8 +603,9 @@ export default {
 
     async getDadosLoja() {
       //API_NOTIFICATION.ShowLoading();
-      if (sessionStorage.getItem("DadosLoja") == undefined) {
-        var store = JSON.parse(sessionStorage.getItem("DadosLoja")).url_loja;
+      const LLoj = await UTILIS_API.GetDadosLojaSession();
+      if (LLoj == undefined) {
+        var store = LLoj.url_loja;
         API_LOJA.GetDadosLoja(store)
           .then(res => {
             const LojaData = res.data;

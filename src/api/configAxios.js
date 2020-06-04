@@ -4,7 +4,7 @@ var API_HEADERS = {
   getHeader() {
     return new Promise(async(resolve, reject) => {
       try {
-        var user = await UTILIS_API.GetUserSession(); // JSON.parse(sessionStorage.getItem("user"));
+        var user = await UTILIS_API.GetUserSession(); 
         var header = {
           headers: {
             'Access-Control-Allow-Origin': '*',

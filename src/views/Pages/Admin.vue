@@ -155,20 +155,47 @@ option {
   margin-left: 20px !important;
   text-indent: 20px;
 }
+.bold {
+  font-family: Rubik, sans-serif;
+  font-size: 35px !important;
+  font-weight: 900;
+  color: #23b7e5;
+}
+.bold-md {
+  font-family: Rubik, sans-serif;
+  font-size: 25px !important;
+  font-weight: 900;
+  color: #23b7e5;
+}
+.bold-sd {
+  font-family: Rubik, sans-serif;
+  font-size: 20px !important;
+  font-weight: 900;
+  color: #23b7e5;
+}
 </style>
 <template>
   <ContentWrapper>
     <div class="content-heading">
       <span class="fa fa-donate">
         <span class="ml-2"></span>
-      </span>Pedidos
+      </span>Comissões
     </div>
-    <small>
-      Todos os pedidos processados pelo Thuor estão aqui.
-      <br />Nós avisamos sempre para a loja, onde você poderá processar o pedido. Solicitando, se for o caso, do seu fornecedor.
-    </small>
+    <small>Todos as transações processadas pelo Thuor estão aqui.</small>
     <p></p>
-
+    <div class="row mb-2">
+      <button
+        v-on:click="processarComissoes()"
+        v-show="qtd_pendente > 0"
+        class="btn btn-danger float-left pull-left ml-4 col-md-3"
+      >
+        <span class="fa fa-donate"></span> Processar Comissões
+      </button>
+      <span class="col-md-8 float right pull-right mt-1">
+        Há
+        <strong class="bold-sd">{{qtd_pendente}}</strong> para processar.
+      </span>
+    </div>
     <div class="wrapper col-xl-12">
       <label
         class="float-left mr-2 col-form-label labelForm"
@@ -188,42 +215,36 @@ option {
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th class="metodo">
-                <strong>
-                  <b></b>
+              <th style="min-width: 5rem!important;">
+                <strong class="col- pedido">
+                  <b>Data Processar</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th style="width: 160px!important;">
-                <strong class="col-md-4 pedido">
-                  <b>Pedido</b>
+              <th class="data pl-0" style="min-width: 7rem!important;">
+                <strong class="col-">
+                  <b>Ação</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0">
+              <th class="data pl-0" style="min-width: 13rem!important;">
+                <strong class="col-">
+                  <b>Loja</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="status pl-0 ml-0 mr-0 pr-0" style="min-width: 5rem!important;">
                 <strong class>
-                  <b>Data</b>
+                  <b>Val. Com.</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0" style="min-width: 80px!important; width: 80px!important;">
-                <strong class>
-                  <b>Valor</b>
-                </strong>
-                <span class="arrow"></span>
-              </th>
-              <th class="status pl-2">
-                <strong class="col-md-2">
+              <th class="status pl-0">
+                <strong class="col-">
                   <b>Status</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="pl-2">
-                <strong class="col-md-2">
-                  <b>Ação</b>
-                </strong>
-              </th>
-              <th></th>
             </thead>
           </table>
         </div>
@@ -231,54 +252,34 @@ option {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago} in dataPerPage"
+                v-for="{id, data_processar, loja, status, valor, id_usuario} in dataPerPage"
+                :key="id"
               >
-                <td class="metodo">
-                  <img :src="getImagePaymentID(metodo)" class="imgMethodo" />
+                <td class="metodo col" style="min-width: 19rem!important;">
+                  <p class="col- mb-0 dataPedido text-left ml-3">{{data_processar}}</p>
                 </td>
-                <td class="pedido" style="width: 120px!important;">
-                  <router-link :to="{path: '/pedidos/detalhe/' + getCripto(id, order_id)}">
-                    <p class="col-md-12 numeroPedido mb-0">{{order_id}}</p>
+                <td class="pedido" style="min-width: 6rem!important;">
+                  <router-link
+                    :to="{path: '/transacoes-internas/detalhe/' + getCripto(id_usuario, 0)}"
+                  >
+                    <p class="col- numeroPedido mb-0">Detalhar</p>
                   </router-link>
-                  <p class="col-md-12 text-left nomeComprador grey mb-0">{{nome_comprador}}</p>
                 </td>
-                <td class="data padding1010">
-                  <p class="col-md-12 mb-0 dataPedido">{{data}}</p>
-                  <p class="col-md-12 mb-0 tempoPedido">{{time_ago}}</p>
+                <td style="min-width: 5rem!important;">
+                  <p class="col- text-left nomeComprador mr-0 ml-0 pr-0 pl-0">{{loja}}</p>
                 </td>
-                <td class="total pl-0">R$ {{formatPrice(total)}}</td>
-                <td class="pl-0" style="min-width: 80px!important; width: 80px!important;">
+                <td
+                  class="total text-left ml-5"
+                  style="min-width: 5rem!important;"
+                >R$ {{formatPrice(valor)}}</td>
+
+                <td class="pl-0" style="min-width: 10rem!important;">
                   <span
-                    class="spanStatus alert"
+                    class="col- spanStatus alert mr-5 ml-5"
                     v-bind:class="getClassStatus(status)"
                   >{{status.toUpperCase()}}</span>
                 </td>
-                <td>
-                  <div class="row">
-                    <select
-                      v-bind:id="getCripto(id, order_id)"
-                      @change="selecionaMensagemEnviar($event)"
-                      class="form-control col-md-8 background-whatsapp"
-                    >
-                      <option value="-1">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspEnvie uma Mensagem</option>
-                      <option
-                        value="0"
-                        v-show="metodo == 'bolbradesco' || metodo == 'BOLETO'"
-                      >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspMensagem de Boleto</option>
-                      <option
-                        v-for="{id_mensagem, nome_mensagem} in arrayWhatsAppMessage"
-                        :key="id_mensagem"
-                        :value="id_mensagem"
-                      >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{nome_mensagem}}</option>
-                    </select>
-                    <button
-                      v-on:click="enviarMensagemAcao(id, mensagemEnviarSelecionada)"
-                      class="btn btn-primary col-md-2 ml-1"
-                    >
-                      <span class="fa fa-paper-plane"></span>
-                    </button>
-                  </div>
-                </td>
+
                 <td></td>
               </tr>
             </tbody>
@@ -319,6 +320,9 @@ import UTILIS_API from "../../api/utilisAPI";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import constantes_mensagens from "../../api/constantes_mensagens";
+import constantes from "../../api/constantes";
+import API_PLANOS from "../../api/planosAPI";
+import API_CHECKOUT_THUOR_COMISSION from "../../api/checkoutAPIThuorComission";
 Vue.component("v-select", vSelect);
 
 TimeAgo.addLocale(pt);
@@ -339,25 +343,46 @@ export default {
     // columns: Array
   },
 
-  created() {
-    this.timeAgo = new TimeAgo("pt-BR");
-
-    let sortOrders = {};
-
-    this.columns.forEach(function(key) {
-      sortOrders[key] = 1;
-    });
-    this.sortOrders = sortOrders;
-    this.checkIfLogged();
-    //this.data = this.gridData;
-    ///sconsole.log("Filtered", this.dataPerPage);
+  async created() {
+    const LUser = await UTILIS_API.GetUserSession();
+    if (LUser != null && LUser.user.is_user_admin == 1) {
+      this.timeAgo = new TimeAgo("pt-BR");
+      let sortOrders = {};
+      this.columns.forEach(function(key) {
+        sortOrders[key] = 1;
+      });
+      this.sortOrders = sortOrders;
+      this.checkIfLogged();
+      //this.data = this.gridData;
+      ///sconsole.log("Filtered", this.dataPerPage);
+    } else {
+      API_NOTIFICATION.showNotificationW(
+        "Oops!",
+        "Você precisa ser Administrador para acessar essa página",
+        "error"
+      );
+    }
+  },
+  mounted() {
+    const plugin = document.createElement("script");
+    plugin.onload = function() {
+      this.canPay = true;
+    };
+    plugin.setAttribute(
+      "src",
+      "https://secure.mlstatic.com/sdk/javascript/v1/mercadopago.js"
+    );
+    plugin.async = true;
+    document.head.appendChild(plugin);
   },
   data() {
     return {
+      canPay: false,
       timeAgo: "",
       searchQuery: "",
       sortKey: "",
       sortOrders: {},
+      qtd_pendente: 0,
       login: {
         email: "",
         password: "",
@@ -377,7 +402,7 @@ export default {
       rowsPerPage: 10,
       pageSizeMenu: [10, 20, 50, 100],
       data: Array,
-      pedidosList: {},
+      comissoesList: {},
       acaoWhats: -1,
       arrayWhatsAppMessage: [],
       arrayWhatsAppMessageOriginal: [],
@@ -435,76 +460,45 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              API_MENSAGERIA.GetMensagensWhatsApp()
-                .then(resMensagensWhats => {
-                  //console.log(resMensagensWhats.data);
-                  this.arrayWhatsAppMessageOriginal = resMensagensWhats.data;
-                  resMensagensWhats.data.forEach((obj, i) => {
-                    this.arrayWhatsAppMessage.push({
-                      id_mensagem: obj.id,
-                      nome_mensagem: obj.nome
-                    });
-                  });
-                })
-                .catch(error => {
-                  console.log("Erro ao pegar produtos", error);
-                });
-              API_TRANSACOES.GetTransacoes()
+              // API_MENSAGERIA.GetMensagensWhatsApp()
+              //   .then(resMensagensWhats => {
+              //     //console.log(resMensagensWhats.data);
+              //     this.arrayWhatsAppMessageOriginal = resMensagensWhats.data;
+              //     resMensagensWhats.data.forEach((obj, i) => {
+              //       this.arrayWhatsAppMessage.push({
+              //         id_mensagem: obj.id,
+              //         nome_mensagem: obj.nome
+              //       });
+              //     });
+              //   })
+              //   .catch(error => {
+              //     console.log("Erro ao pegar produtos", error);
+              //   });
+              API_TRANSACOES.GetTransacoesInternas()
                 .then(retProd => {
                   this.gridData = [];
+                  //console.log("Retorno", retProd.data);
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
-                  //this.pedidosList = retProd.data;
-                  retProd.data.forEach((obj, i) => {
-                    if (obj != null && obj.json_shopify_response.order) {
-                      const LID = obj.id;
+                  this.comissoesList = retProd.data;
+                  this.qtd_pendente = retProd.data.length;
+                  retProd.data.forEach(async (obj, i) => {
+                    this.gridData.push({
+                      id_usuario: obj.id_usuario,
+                      data_processar: moment(obj.data_processar).format(
+                        "DD/MM/YYYY"
+                      ),
+                      loja: obj.url_loja,
+                      status: obj.status,
+                      valor: parseFloat(obj.comissao)
+                    });
 
-                      const LPaymentID = this.getPaymentMethodID(obj);
-                      //console.log(LPaymentID);
-                      let LStatus;
-                      if (obj.status == null) {
-                        if (this.LPaymentID == "BOLETO") {
-                          LStatus = "pendente";
-                        } else {
-                          LStatus = "aprovada";
-                        }
-                      } else {
-                        LStatus = this.getStatusTranslate(obj.status);
-                      }
-                      const LData = dateFormat(
-                        this.getDataCreated(obj),
-                        "dd/mm/yyyy  HH:MM:ss"
-                      );
-                      const LTimeAgo = this.getDataCreated(obj);
-                      const LTotal = this.getValue(obj);
-                      const LNomeComprador = this.toCamelCase(
-                        obj.json_front_end_user_data.dadosComprador
-                          .nome_completo
-                      );
-                      const LOrderID = obj.json_shopify_response.order.id;
-                      this.gridData.push({
-                        metodo: LPaymentID,
-                        id: LID,
-                        order_id: LOrderID,
-                        status: LStatus,
-                        data: LData,
-                        total: LTotal,
-                        nome_comprador: LNomeComprador,
-                        time_ago: this.timeAgo.format(
-                          Date.parse(LTimeAgo),
-                          Date.now(),
-                          "time"
-                        ),
-                        json_front_end_user_data: obj.json_front_end_user_data,
-                        json_gw_response: obj.json_gw_response
-                      });
-                    }
                     //console.log(Date.now(), Date.parse(LData));
                   });
 
                   API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
-                  console.log("Erro ao pegar produtos", error);
+                  console.log("Erro ao pegar transações internas", error);
                 });
             })
             .catch(error => {
@@ -569,15 +563,14 @@ export default {
       }
     },
     getClassStatus(status) {
-      if (status == "pendente" || status.toUpperCase() == "PENDING")
-        return "alert-warning";
-      if (status == "cancelada" || status.toUpperCase() == "CANCELED")
-        return "alert-danger";
-      if (status == "aprovada" || status.toUpperCase() == "APPROVED")
-        return "alert-success";
-      if (status == "entregue" || status.toUpperCase() == "DELIVERED")
-        return "alert-success";
+      if (status == "pendente") return "alert-info";
+      if (status == "cancelada") return "alert-danger";
+      if (status == "aprovada") return "alert-success";
+      if (status == "entregue") return "alert-success";
       return "alert-warning";
+    },
+     sleep(seconds) {
+      return new Promise(r => setTimeout(r, seconds));
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
@@ -592,113 +585,137 @@ export default {
       return produtHashed;
     },
     getPaymentMethodID(obj) {
-      const LJSON = obj.json_front_end_user_data;
+      const LJSON = JSON.parse(obj.json_gw_response);
       //console.log(LJSON.payment_method);
-      return LJSON.dadosComprador.forma;
-    },
-    getDataCreated(obj) {
-      const LJSON = obj.json_front_end_user_data;
-      return LJSON.dadosComprador.data;
-    },
-    getValue(obj) {
-      const LJSON = obj.json_front_end_user_data;
-      return parseFloat(LJSON.dadosComprador.valor);
+      if (LJSON.hasOwnProperty("payment_method_id"))
+        return LJSON.payment_method_id;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "CREDIT_CARD"
+      )
+        return LJSON.payment_method.card.brand;
+      if (
+        LJSON.hasOwnProperty("payment_method") &&
+        LJSON.payment_method.type == "BOLETO"
+      )
+        return LJSON.payment_method.type;
     },
     selecionaMensagemEnviar(event) {
       this.mensagemEnviarSelecionada = event.target.value;
     },
-    async enviarMensagemAcao(id, id_mensagem) {
-      if (id_mensagem > 0) {
-        const LURL =
-          "https://api.whatsapp.com/send?phone={@PHONE}&text={@MENSAGEM}";
-        var Mensagem = this.arrayWhatsAppMessageOriginal.find(
-          x => x.id == id_mensagem
-        ).mensagem;
-        const Telefone =
-          "55" +
-          this.gridData
-            .find(x => x.id == id)
-            .json_front_end_user_data.dadosComprador.telefone.replace(
-              /[^0-9\.]+/g,
-              ""
-            );
-        const Nome = this.gridData
-          .find(x => x.id == id)
-          .json_front_end_user_data.dadosComprador.nome_completo.split(" ")[0];
-        Mensagem = Mensagem.replace("{first_name}", "%0a" + Nome + "%0a");
-        const LURLFinal = LURL.replace("{@PHONE}", Telefone).replace(
-          "{@MENSAGEM}",
-          Mensagem
-        );
-        var win = window.open(LURLFinal, "_blank");
-        win.focus();
-      } else if (id_mensagem == 0) {
-        const LURL =
-          "https://api.whatsapp.com/send?phone={@PHONE}&text={@MENSAGEM}";
-        var Mensagem = constantes_mensagens.MENSAGEM_BOLETO;
-        const Telefone =
-          "55" +
-          this.gridData
-            .find(x => x.id == id)
-            .json_front_end_user_data.dadosComprador.telefone.replace(
-              /[^0-9\.]+/g,
-              ""
-            );
-        const DadosBoleto = this.gridData.find(x => x.id == id)
-          .json_gw_response;
-        const LBarCode = this.getBarCodeBoleto(DadosBoleto);
-        const LProdutos = this.gridData.find(x => x.id == id)
-          .json_front_end_user_data.produtos;
-        const Link = this.gridData.find(x => x.id == id).json_gw_response;
-        const LlinkBoleto = await this.getLinkBoleto(Link);
-        var LprodutoTitle = await this.getProdutoName(LProdutos);
-        const Nome = this.gridData
-          .find(x => x.id == id)
-          .json_front_end_user_data.dadosComprador.nome_completo.split(" ")[0];
-        Mensagem = Mensagem.replace("{first_name}", "%0a" + Nome + "%0a");
-        Mensagem = Mensagem.replace("{produto_name}", LprodutoTitle);
-        Mensagem = Mensagem.replace("{boleto_bar_code}", LBarCode);
-        Mensagem = Mensagem.replace("{link_boleto}.", LlinkBoleto);
-        const LURLFinal = LURL.replace("{@PHONE}", Telefone).replace(
-          "{@MENSAGEM}",
-          Mensagem
-        );
-        var win = window.open(LURLFinal, "_blank");
-        win.focus();
-      }
-    },
-    getBarCodeBoleto(obj) {
+    async getValorComissao(obj) {
       const LJSON = obj.json_front_end_user_data;
-      return LJSON.dadosComprador.barcode;      
-      return "";
+      const LUser = await UTILIS_API.GetUserSession();
+      var LValorComissao = 0;
+      const LArrayPlan = await API_PLANOS.GetPlanosById(LUser.user.plano);
+      //const LPlano = LArrayPlan.filter(x => x.id == LUser.user.plano)[0];
+      const LPercentComission = LArrayPlan.addon.replace("%", "");
+      const LValCom =
+        (parseFloat(LPercentComission) / 100) *
+        parseFloat(LJSON.dadosComprador.valor);
+      LValorComissao = parseFloat(LValCom);
+      return LValorComissao;
     },
-    getProdutoName(arrayProdutos) {
-      return new Promise(async (resolve, reject) => {
-        var LprodutoTitle = "";
-        arrayProdutos.forEach((obj, i) => {
-          LprodutoTitle = LprodutoTitle + obj.title + ", ";
-        });
-        LprodutoTitle = LprodutoTitle.substring(0, LprodutoTitle.length - 1);
-        LprodutoTitle = LprodutoTitle.replace(/.$/, ".", " e ");
-        resolve(LprodutoTitle);
-      });
-    },
-    getLinkBoleto(obj) {
-      const LJSON = obj.json_front_end_user_data;
-      return LJSON.dadosComprador.urlBoleto;      
-    },
-    getStatusTranslate(status) {
-      if (status) {
-        if (status.toUpperCase() == "APPROVED") {
-          return "aprovada";
+    processarComissoes() {
+      API_NOTIFICATION.showConfirmDialog(
+        "Processar Comissões",
+        "Tem certeza de que deseja processar as comissões?",
+        "question",
+        () => {
+          API_NOTIFICATION.ShowLoading();
+          window.Mercadopago.setPublishableKey(
+            constantes.SAND_BOX_MP_PUBLICK_KEY
+          );
+          window.Mercadopago.clearSession();
+          this.comissoesList.forEach(async (obj, i) => {
+            await this.sleep(2000);
+            var LDadoUsuario = await API_LOGIN.GetUserByID(obj.id_usuario);
+            LDadoUsuario = LDadoUsuario.data;
+            //console.log(LDadoUsuario.data);
+            const LValor = parseFloat(obj.comissao);
+            var FormToken = await UTILIS_API.CREATE_FORM_MP(
+              constantes.CONSTANTE_THUOR,
+              LValor,
+              LDadoUsuario.json_pagamento.dadosProcessamento.numero_cartao
+                .trim()
+                .replace(/ /g, ""),
+              LDadoUsuario.json_pagamento.dadosProcessamento.nome_completo,
+              LDadoUsuario.json_pagamento.dadosProcessamento.mes_validade,
+              LDadoUsuario.json_pagamento.dadosProcessamento.ano_validade,
+              LDadoUsuario.json_pagamento.dadosProcessamento.codigo_seguranca,
+              1,
+              LDadoUsuario.json_pagamento.dadosProcessamento.cpf_titular.replace(
+                /[.-]/g,
+                ""
+              ),
+              LDadoUsuario.email,
+              LDadoUsuario.json_pagamento.dadosProcessamento.metodoPag
+            );
+
+            window.Mercadopago.createToken(FormToken, (status, response) => {
+              var paymentData = {
+                transaction_amount: LValor,
+                token: response.id,
+                description: constantes.CONSTANTE_THUOR,
+                installments: 1,
+                payment_method_id:
+                  LDadoUsuario.json_pagamento.dadosProcessamento.metodoPag,
+                payer: {
+                  email: LDadoUsuario.email
+                }
+              };
+              API_CHECKOUT_THUOR_COMISSION.DoPayBackEnd(paymentData)
+                .then(async retornoPay => {
+                  if (
+                    retornoPay.data.status != undefined &&
+                    (retornoPay.data.status.toUpperCase() == "REJECTED" ||
+                      retornoPay.data.status.toUpperCase() == "CANCELED" ||
+                      retornoPay.data.status.toUpperCase() == "VACATED")
+                  ) {
+                    const LMensagem = await UTILIS_API.getErrorMPDetail(
+                      retornoPay.data.status_detail
+                    );
+                    console.log("Pagamento Rejeitado", LMensagem);
+                    return;
+                  }
+                  LDadoUsuario.json_pagamento.paymentData = retornoPay.data;
+                  window.Mercadopago.clearSession();
+                  const LUser = await UTILIS_API.GetUserSession();
+                  if (LUser) {
+                    var LData = moment().add({ days: 7 }).format();
+                    LDadoUsuario.proximo_pagamento = LData;
+                    API_LOGIN.UpdateUser(
+                      LDadoUsuario.id,
+                      LDadoUsuario.plano,
+                      LDadoUsuario,
+                      LDadoUsuario.proximo_pagamento
+                    )
+                      .then(resUpdate => {
+                          API_TRANSACOES.SetPaymentComissionDone(obj.id_usuario, obj.data_processar, paymentData, retornoPay.data)
+                          .then((resUpdateSetPaymentDone)=>{
+                            console.log("Payment Done");
+                          })
+                          .catch((error)=>{
+                            console.log("Erro ao setar pagamento ", error);
+                          })
+                      })
+                      .catch(error => {
+                        console.log(
+                          "Erro ao tentar atualizar o usuário",
+                          error
+                        );                       
+                      });
+                  }
+                })
+                .catch(error => {
+                  console.log("Erro ao tentar efetuar o pagamento", error);                 
+                });
+            });
+            console.log(LDadoUsuario);
+          });
+          this.checkIfLogged();
         }
-        if (status.toUpperCase() == "PAID") {
-          return "aprovada";
-        }
-        if (status.toUpperCase() == "PENDING") {
-          return "pendente";
-        }
-      }
+      );
     }
   }
 };

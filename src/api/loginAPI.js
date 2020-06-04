@@ -120,7 +120,7 @@ var API_LOGIN = {
   async VerificaToken() {
     return new Promise(async (resolve, reject) => {
       const LActualPath = window.location.pathname;
-      if (LActualPath) sessionStorage.setItem('actualPage', LActualPath);
+      if (LActualPath) UTILIS_API.SetActualPage(LActualPath);
       const LU = await UTILIS_API.GetUserSession();
       if (LU == undefined || LU == null) {
         router.push('/login');
@@ -130,7 +130,7 @@ var API_LOGIN = {
         return response;
       }, (error) => {
         if (error.response.status === 401) {
-          sessionStorage.removeItem("user");
+          UTILIS_API.removeUserSession();
           router.push('/login');
         }
         return Promise.reject(error);

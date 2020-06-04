@@ -237,21 +237,21 @@ div > p {
                             </a>
                           </div>
                           <span class="col-md-12 planoEscolhido">PLANO ATUAL</span>
-                          <span class="col-md-12 bold-md">{{getPlanoEscolhido().nome}}</span>
+                          <span class="col-md-12 bold-md">{{getPlanoEscolhidoNome}}</span>
                           <div class="plan-price card-body">
                             <div class="text-lg">
                               <sup>
                                 <small class="simbolPrice">R$</small>
                               </sup>
                               <strong>
-                                <span class="priceFont">{{getPlanoEscolhido().price}}</span>
+                                <span class="priceFont">{{getPlanoEscolhidoPrice}}</span>
                                 <span class="month">/mês</span>
                               </strong>
                               <!-- span.plan-period /mo-->
                             </div>
                             <div class="text-center my-1">
                               <div class="text-bold text-justify">
-                                <strong class="priceFontAddOn">+{{getPlanoEscolhido().addon}}</strong>
+                                <strong class="priceFontAddOn">+{{getPlanoEscolhidoAddon}}</strong>
                                 <span class="porpedido ml-1">por pedido pago</span>
                               </div>
                             </div>
@@ -351,8 +351,8 @@ div > p {
                   <!-- PLAN-->
                   <div
                     class="col-lg-4 mt-3 card card-default mr-0 selectedPlan"
-                    :id="nome"
-                    v-for="{id, nome, price, addon, benefits} in planArray"
+                    :id="json.nome"
+                    v-for="{id, json} in planArray"
                     :key="id"
                   >
                     <div class="plan">
@@ -360,7 +360,7 @@ div > p {
                         class="plan-header card-header"
                         :class="usuario.plano == 1 ? 'SelecionadoH' : 'DeSelecionadoH'"
                       >
-                        <div class="card-title bold text-center">{{nome}}</div>
+                        <div class="card-title bold text-center">{{json.nome}}</div>
                       </div>
                       <div class="plan-price card-body">
                         <div class="text-lg">
@@ -368,21 +368,21 @@ div > p {
                             <small class="simbolPrice">R$</small>
                           </sup>
                           <strong>
-                            <span class="priceFont">{{price}}</span>
+                            <span class="priceFont">{{json.price}}</span>
                             <span class="month">/mês</span>
                           </strong>
                           <!-- span.plan-period /mo-->
                         </div>
                         <div class="text-center my-1">
                           <div class="text-bold text-justify">
-                            <strong class="priceFontAddOn">+{{addon}}</strong>
+                            <strong class="priceFontAddOn">+{{json.addon}}</strong>
                             <span class="porpedido ml-1">por pedido pago</span>
                           </div>
                         </div>
                         <strong class="cobradoPor">* Cobrado por semana *</strong>
                       </div>
                       <ul class="plan-features text-justify pl-0">
-                        <li class="checkInformation" v-for="{title} in benefits" :key="title">
+                        <li class="checkInformation" v-for="{title} in json.benefits" :key="title">
                           <em class="fa fa-check mr-2 checkColor"></em>
                           {{title}}
                         </li>
@@ -392,8 +392,8 @@ div > p {
                         <button
                           type="button"
                           class="btn btn-lg btn-info"
-                          v-on:click="escolherPlano(id, nome)"
-                        >Escolher {{nome}}</button>
+                          v-on:click="escolherPlano(json.id, json.nome)"
+                        >Escolher {{json.nome}}</button>
                       </div>
                     </div>
                   </div>
@@ -683,6 +683,8 @@ import UTILIS_API from "../../api/utilisAPI";
 import constantes from "../../api/constantes";
 import API_CHECKOUT_THUOR_COMISSION from "../../api/checkoutAPIThuorComission";
 import moment from "moment";
+import API_PLANOS from "../../api/planosAPI";
+
 // Tag inputs
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -690,7 +692,7 @@ Vue.use(VeeValidate, {
 
 export default {
   async created() {
-    this.planArray = constantes.CONSTANTES_PLA;
+    this.planArray = await API_PLANOS.GetPlanos();
     this.checkIfLogged();
   },
   mounted() {
@@ -717,6 +719,9 @@ export default {
       mensagemID: 0,
       MensagemString: [],
       paymentData: "",
+      getPlanoEscolhidoNome: "",
+      getPlanoEscolhidoPrice: "",
+      getPlanoEscolhidoAddon: "",
       dadosProcessamento: {
         cpf_titular: "",
         metodoPag: "",
@@ -771,7 +776,7 @@ export default {
         .validateAll(scope)
         .then(result => {
           if (result) {
-            console.log("Form Submitted!");
+            // console.log("Form Submitted!");
             API_NOTIFICATION.ShowLoading();
             this.usuario.data = new Date();
             this.ProcessaAutorizacao();
@@ -807,20 +812,21 @@ export default {
         .then(async res => {
           this.usuario = await API_LOGIN.GetUserByID(res.data.id);
           this.usuario = this.usuario.data;
-          console.log(this.usuario);
+          // console.log(this.usuario);
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
+            .then(async resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
               if (this.usuario.plano == 0 || this.usuario.plano == undefined) {
                 this.escolherPlano(1, "Basic");
               } else {
-                const LArrPlan = constantes.CONSTANTES_PLA;
-                const lp = LArrPlan.filter(x => x.id == this.usuario.plano)[0];
-                console.log(lp);
-                if (lp) {
-                  this.escolherPlano(this.usuario.plano, lp.nome);
+                const LArrPlan = this.planArray;
+                const lp = await API_PLANOS.GetPlanosByID(this.usuario.plano);
+                if (lp.json) {
+                  // console.log("Escolhido", lp.json);
+                  this.escolherPlano(this.usuario.plano, lp.json.nome);
                 }
               }
+              this.getPlanoEscolhido();
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -878,20 +884,25 @@ export default {
       console.log("Removendo ID", id);
     },
 
-    escolherPlano(plano, nome) {
+    async escolherPlano(plano, nome) {
       this.selectedPlan = plano;
-      const ArrayP = constantes.CONSTANTES_PLA;
-      ArrayP.forEach((obj, i) => {
-        const LDiv = document.getElementById(obj.nome);
-        if (LDiv) {
-          LDiv.classList.remove("Selecionado");
-          LDiv.classList.add("DeSelecionado");
-        }
-        if (plano == obj.id) {
-          const LNovoSelecionado = document.getElementById(nome);
+      const ArrayP = this.planArray;
+      const obj = await API_PLANOS.GetPlanosByID(plano);
+      const LDiv = document.getElementById(obj.json.nome);
+      if (LDiv) {
+        LDiv.classList.remove("Selecionado");
+        LDiv.classList.add("DeSelecionado");
+      }
+      if (plano == obj.json.id) {
+        const LNovoSelecionado = document.getElementById(nome);
+        if (LNovoSelecionado) {
           LNovoSelecionado.classList.add("Selecionado");
         }
-      });
+      }
+      // ArrayP.forEach((obj, i) => {
+      //   console.log("asdf", obj.json);
+
+      // });
 
       this.usuario.plano = plano;
       if (this.usuario.json_pagamento) {
@@ -908,9 +919,11 @@ export default {
                 this.usuario.proximo_pagamento == null ||
                 this.usuario.proximo_pagamento == undefined
               ) {
-                var LData = moment().add({days:7}).format();                
+                var LData = moment()
+                  .add({ days: 7 })
+                  .format();
                 this.usuario.proximo_pagamento = LData;
-                console.log( this.usuario.proximo_pagamento);
+                // console.log(this.usuario.proximo_pagamento);
               }
               API_LOGIN.UpdateUser(
                 this.usuario.id,
@@ -1049,13 +1062,13 @@ export default {
 
       window.Mercadopago.createToken(FormToken, this.iniciaPagamentoBackEnd);
     },
-    getPlanoEscolhido() {
-      const ArrayPlan = constantes.CONSTANTES_PLA;
-      const LPl = ArrayPlan.filter(x => x.id == this.usuario.plano)[0];
-      if (LPl) {
-        return LPl;
+    async getPlanoEscolhido() {
+      const LPl = await API_PLANOS.GetPlanosByID(this.usuario.plano);
+      if (LPl.json) {
+        this.getPlanoEscolhidoNome = LPl.json.nome;
+        this.getPlanoEscolhidoPrice = LPl.json.price;
+        this.getPlanoEscolhidoAddon = LPl.json.addon;
       }
-      return "";
     },
 
     iniciaPagamentoBackEnd(status, response) {
@@ -1109,10 +1122,12 @@ export default {
                 this.usuario.proximo_pagamento == null ||
                 this.usuario.proximo_pagamento == undefined
               ) {
-                var LData = moment().add({days:7}).format();
-                this.usuario.proximo_pagamento = LData;                
+                var LData = moment()
+                  .add({ days: 7 })
+                  .format();
+                this.usuario.proximo_pagamento = LData;
               }
-              
+
               API_LOGIN.UpdateUser(
                 LUser.user.id,
                 this.usuario.plano,

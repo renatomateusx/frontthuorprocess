@@ -68,7 +68,9 @@ export default Object.freeze({
   PATH_PAY_GET_PEDIDOS_POR_ID: 'transacoes/GetPedidosByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_POR_ID: 'transacoes/ReembolsarPedidoByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PS_POR_ID: 'transacoes/ReembolsarPedidoPSByID',
+  PATH_SET_PAYMENT_COMISSION_DONE: 'transacoes/SetPaymentComissionDone',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PAYU_POR_ID: 'transacoes/ReembolsarPedidoPayUID',
+  PATH_PAY_GET_TRANSACOES_INTERNAS: 'transacoes/GetTransacoesInternas',
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
   PATH_GET_UPSELL: 'upsells/GetUpSells',
@@ -112,13 +114,18 @@ export default Object.freeze({
 
   PATH_LEAD_GET_DADOS_COMPRADOR: 'clientes/GetDadosCompradorLead',
 
-
+  /* APPS */
   PATH_GET_APPS: 'apps/GetApps',
   PATH_GET_APPS_BY_ID: 'apps/GetAppByID',
   PATH_INTEGRACAO_APPS: 'apps/GetIntegracaoApps',
   PATH_SAVE_INTEGRACAO_APPS: 'apps/SaveApps',
   PATH_GET_STATUS_APP: 'apps/GetStatusApp',
 
+
+  /* PLANOS */
+
+  PATH_GET_PLANOS: 'planos/GetPlanos',
+  PATH_GET_PLANOS_BY_ID: 'planos/GetPlanosByID',
 
 
   /* CONSTANTES SESSIONS */
@@ -130,82 +137,10 @@ export default Object.freeze({
   SESSION_PIXEL: 'p',
   SESSION_LOJA: 'l',
   SESSION_CHECKOUT: 'sc',
+  SESSION_ATUAL_PAGE: 'atp',
 
 
   CONSTANTE_THUOR: 'Thuor',
   CONSTANTE_THUOR_EMAIL: 'renatomateusx@gmail.com',
-  CONSTANTES_PLA: [
-    {
-      nome: 'Basic',
-      id: 1,
-      price: 0,
-      addon: '2.5%',
-      benefits: [
-        {
-          title: 'Shopify e WooCommerce;'
-        },
-        {
-          title: 'Checkout de alta conversão;'
-        },
-        {
-          title: 'MercadoPago e PagSeguro;'
-        },
-        {
-          title: 'Recuperação de carrinho via E-mail; e'
-        },
-        {
-          title: 'Upsell Oneclick;'
-        },
-      ]
-    },
-    {
-      nome: 'Inter',
-      id: 2,
-      price: 127,
-      addon: '2.0%',
-      benefits: [
-        {
-          title: 'Shopify e WooCommerce;'
-        },
-        {
-          title: 'Checkout de alta conversão;'
-        },
-        {
-          title: 'Diversos Gateways de Pagamento;'
-        },
-        {
-          title: 'Recuperação de carrinho via E-mail; e'
-        },
-        {
-          title: 'Upsell Oneclick;'
-        },
-      ]
-    },
-    {
-      nome: 'Pro',
-      id: 3,
-      price: 397,
-      addon: '1.5%',
-      benefits: [
-        {
-          title: 'Shopify e WooCommerce;'
-        },
-        {
-          title: 'Checkout de alta conversão;'
-        },
-        {
-          title: 'Diversos Gateways de Pagamento;'
-        },
-        {
-          title: 'Recuperação de carrinho via E-mail e SMS; e'
-        },
-        {
-          title: 'Upsell Oneclick;'
-        },
-        {
-          title: 'Suporte personalizado 24/7;'
-        },
-      ]
-    }
-  ]
+  
 });
