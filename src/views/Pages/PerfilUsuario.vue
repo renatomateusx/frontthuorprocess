@@ -128,7 +128,7 @@ div > p {
   font-weight: 700;
 }
 .fontBandeiraNome {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
 }
 .fontExpira {
@@ -255,7 +255,12 @@ div > p {
                                 <span class="porpedido ml-1">por pedido pago</span>
                               </div>
                             </div>
-                            <strong class="cobradoPor">* Cobrado por semana *</strong>
+                            <strong class="cobradoPor col-md-12">* Cobrado por semana *</strong>
+                          </div>
+                          <div class="col-md-12 row">
+                            <strong
+                              class="col-lg-12 ml-4"
+                            >Próx. Pag.: {{getProximoPagamento(getDadosUsuario().proximo_pagamento)}}</strong>
                           </div>
                           <div class="col-md-12 row">
                             <img
@@ -275,6 +280,7 @@ div > p {
                             <a
                               @click="scrollMeTo('changeCard')"
                               class="col-md-9 ml-1 pl-0 mt-2 link"
+                              title="Clique para alterar"
                             >Alterar</a>
                           </div>
                         </div>
@@ -315,6 +321,27 @@ div > p {
                             class="text-justify col-md-12"
                           >Veja todos os detalhes de seus pagamentos.</small>
                         </div>
+                        <div class="float-left p-1 ml-1 mt-1 row">
+                          <strong class="col-md-12">Dados de Faturamento:</strong>
+                          <label class="col-md-12 ml-1">{{getDadosPagador().nome_completo}}</label>
+                          <label class="col-md-12 ml-1">{{getDadosPagador().cpf_titular}}</label>
+                          <label class="col-md-12 ml-1 mt-0 mb-0">
+                            <b>{{getDadosPagador().endereco}}, {{getDadosPagador().numero_porta}}</b>
+                          </label>
+                          <label
+                            class="col-md-12 ml-1 mt-0 mb-0"
+                          >{{getDadosPagador().cidade}} / {{getDadosPagador().estado}}</label>
+                          <label class="col-md-12 ml-1 mt-0 mb-0">{{getDadosPagador().complemento}}</label>
+                          <label class="col-md-12 ml-1 mt-0 mb-0">CEP: {{getDadosPagador().cep}}</label>
+                        </div>
+                        <div class="float-left p-1 ml-1 mt-1 row">
+                          <span class="col-md-2"></span>
+                          <a
+                            @click="scrollMeTo('changeCard')"
+                            class="col-md-12 ml-3 pl-0 mt-2 link"
+                            title="Clique para alterar"
+                          >Alterar</a>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -325,10 +352,23 @@ div > p {
                   <div class="card b">
                     <div class="card-header">
                       <div class="my-2 row p-0">
-                        <span class="col-md-5 mt-2">Grid de Pagamentos Realizados</span>
-
-                        <div class="float-right mt-2 col-md-1">
-                          <span class="pull-right float-right"></span>
+                        <span class="col-md-5 mt-2 mb-2">Pagamentos Realizados</span>
+                        <div class="row col-lg-12 mt-2 text-center">
+                          <span class="col-md-4"><strong>Data</strong></span>
+                          <span class="col-md-4"><strong>Valor</strong></span>
+                          <span class="col-md-4"><strong>Status</strong></span>
+                        </div>
+                        <div
+                          class="row col-lg-12 mt-2 text-center"
+                          v-for="{id, data, valor_comissao, status } in pagamentosEfetuadosList"
+                          :key="id"
+                        >
+                          <span class="col-md-4">{{data | formatDate}}</span>
+                          <span class="col-md-4">R$ {{valor_comissao | parseFloat}}</span>
+                          <span class="col-md-4">{{status | formatStatus}}</span>
+                        </div>
+                        <div class="float-right mt-2 col-md-12 mt-5 mr-5">
+                          <span class="pull-right float-right"><strong>Total Pago:</strong> R$ {{totalPago | parseFloat}}</span>
                         </div>
                       </div>
                     </div>
@@ -684,6 +724,30 @@ import constantes from "../../api/constantes";
 import API_CHECKOUT_THUOR_COMISSION from "../../api/checkoutAPIThuorComission";
 import moment from "moment";
 import API_PLANOS from "../../api/planosAPI";
+import API_TRANSACOES from "../../api/transacoesAPI";
+
+Vue.filter("formatDate", function(value) {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+});
+
+Vue.filter("parseFloat", function(value) {
+  if (value) {
+    return Number.parseFloat(value).toPrecision(3);
+  }
+});
+
+Vue.filter("formatStatus", function(value) {
+  if (value) {
+    if (value == "PAID") {
+      return 'PAGO';
+    }
+    if (value == "PENDING") {
+      return 'PENDENTE';
+    }
+  }
+});
 
 // Tag inputs
 Vue.use(VeeValidate, {
@@ -719,9 +783,12 @@ export default {
       mensagemID: 0,
       MensagemString: [],
       paymentData: "",
+      pagamentosEfetuadosList: [],
+      totalPago: 0,
       getPlanoEscolhidoNome: "",
       getPlanoEscolhidoPrice: "",
       getPlanoEscolhidoAddon: "",
+      metodoPag: "",
       dadosProcessamento: {
         cpf_titular: "",
         metodoPag: "",
@@ -824,9 +891,11 @@ export default {
                 if (lp.json) {
                   // console.log("Escolhido", lp.json);
                   this.escolherPlano(this.usuario.plano, lp.json.nome);
+                  this.getPagamentosEfetuados();
                 }
               }
               this.getPlanoEscolhido();
+              this.getDadosPagamento();
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -838,6 +907,22 @@ export default {
           if (error.response.status === 401) {
             this.$router.go("login");
           }
+        });
+    },
+    getPagamentosEfetuados() {
+      API_TRANSACOES.GetPagamentosEfetuadosPorSeller()
+        .then(resPagamentosEfetuados => {
+          this.pagamentosEfetuadosList = resPagamentosEfetuados.data;
+          this.pagamentosEfetuadosList.forEach((obj, i)=>{
+            const LValor = parseFloat(obj.valor_comissao);
+            this.totalPago += LValor;
+          })
+        })
+        .catch(error => {
+          console.log(
+            "Erro ao tentar resgatar os pagamentos efetuados pelo vendedor",
+            error
+          );
         });
     },
     collapse(id, idComando, btn) {
@@ -1070,7 +1155,21 @@ export default {
         this.getPlanoEscolhidoAddon = LPl.json.addon;
       }
     },
-
+    async getDadosPagamento() {
+      this.metodoPag = this.usuario.json_pagamento.dadosProcessamento.metodoPag;
+    },
+    getDadosPagador() {
+      if (this.usuario.json_pagamento) {
+        return this.usuario.json_pagamento.dadosProcessamento;
+      }
+      return "";
+    },
+    getDadosUsuario() {
+      if (this.usuario.json_pagamento) {
+        return this.usuario.json_pagamento;
+      }
+      return "";
+    },
     iniciaPagamentoBackEnd(status, response) {
       if (status != 200 && status != 201) {
         //console.log("Não foi possível gerar o token", response.message);
@@ -1273,6 +1372,9 @@ export default {
         return { statusClass: classStat, status: status };
       }
       return { statusClass: "", status: "" };
+    },
+    getProximoPagamento(proximoPagamento) {
+      return moment(proximoPagamento).format("DD/MM/YYYY");
     }
   }
 };

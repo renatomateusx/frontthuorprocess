@@ -28,6 +28,30 @@ var API_TRANSACOES = {
             }
         });
     },
+    GetPagamentosEfetuadosPorSeller() {
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                var DadosLoja = await UTILIS_API.GetDadosLojaSession();
+                if (DadosLoja !== null && DadosLoja !== undefined) {
+                    let LBody = {
+                        id_usuario: LUser.user.id,
+                        shop: DadosLoja.url_loja
+                    }
+                    axios
+                        .post(constantes.WEBSITEAPI + constantes.PATH_PAY_GET_PAGAMENTOS_EFETUADOS_POR_SELLER, LBody)
+                        .then((response) => {
+                            //console.log("Response", response);
+                            resolve(response);
+                        })
+                        .catch((error) => {
+                            console.log("Reject", error);
+                            reject(error);
+                        });
+                }
+            }
+        });
+    },    
     
     GetTransacoesInternas() {
         return new Promise(async (resolve, reject) => {

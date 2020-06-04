@@ -628,6 +628,7 @@ export default {
           );
           window.Mercadopago.clearSession();
           this.comissoesList.forEach(async (obj, i) => {
+            API_NOTIFICATION.ShowLoading();
             await this.sleep(2000);
             var LDadoUsuario = await API_LOGIN.GetUserByID(obj.id_usuario);
             LDadoUsuario = LDadoUsuario.data;
@@ -687,13 +688,14 @@ export default {
                     API_LOGIN.UpdateUser(
                       LDadoUsuario.id,
                       LDadoUsuario.plano,
-                      LDadoUsuario,
+                      LDadoUsuario.json_pagamento,
                       LDadoUsuario.proximo_pagamento
                     )
                       .then(resUpdate => {
                           API_TRANSACOES.SetPaymentComissionDone(obj.id_usuario, obj.data_processar, paymentData, retornoPay.data)
                           .then((resUpdateSetPaymentDone)=>{
                             console.log("Payment Done");
+                            API_NOTIFICATION.HideLoading();
                           })
                           .catch((error)=>{
                             console.log("Erro ao setar pagamento ", error);
@@ -713,7 +715,7 @@ export default {
             });
             console.log(LDadoUsuario);
           });
-          this.checkIfLogged();
+          
         }
       );
     }

@@ -71,6 +71,7 @@ export default Object.freeze({
   PATH_SET_PAYMENT_COMISSION_DONE: 'transacoes/SetPaymentComissionDone',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PAYU_POR_ID: 'transacoes/ReembolsarPedidoPayUID',
   PATH_PAY_GET_TRANSACOES_INTERNAS: 'transacoes/GetTransacoesInternas',
+  PATH_PAY_GET_PAGAMENTOS_EFETUADOS_POR_SELLER: 'transacoes/GetPagamentosEfetuadosPorSeller',  
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
   PATH_GET_UPSELL: 'upsells/GetUpSells',
