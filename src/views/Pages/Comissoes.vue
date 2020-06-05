@@ -703,7 +703,7 @@ export default {
                   console.log("Erro ao tentar efetuar o pagamento", error);
                 });
             });
-            console.log(LDadoUsuario);
+            
           });
         }
       );

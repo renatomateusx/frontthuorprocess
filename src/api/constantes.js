@@ -19,6 +19,8 @@ export default Object.freeze({
   PATH_ALTERA_SENHA: 'users/AlterarSenha',
   PATH_ADD_USER: 'users/AddUser',
   PATH_UPDATE_USER: 'users/UpdateUser',
+  PATH_UPDATE_ULTIMO_PAGAMENTO_MENSALIDADE_USER: 'users/UpdateUltimoPagamentoUser',  
+  PATH_USER_MENSALIDADE: 'users/GetUsersMensalidades',  
   PATH_LOGIN_ATIVAR_EMAIL: 'users/AtivarEmail',
   PATH_TOKEN: 'users/VerificaToken',
   PATH_PRODUTOS: 'produtos/GetProdutos',
@@ -71,6 +73,7 @@ export default Object.freeze({
   PATH_SET_PAYMENT_COMISSION_DONE: 'transacoes/SetPaymentComissionDone',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PAYU_POR_ID: 'transacoes/ReembolsarPedidoPayUID',
   PATH_PAY_GET_TRANSACOES_INTERNAS: 'transacoes/GetTransacoesInternas',
+  
   PATH_PAY_GET_PAGAMENTOS_EFETUADOS_POR_SELLER: 'transacoes/GetPagamentosEfetuadosPorSeller',  
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
@@ -139,6 +142,12 @@ export default Object.freeze({
   SESSION_LOJA: 'l',
   SESSION_CHECKOUT: 'sc',
   SESSION_ATUAL_PAGE: 'atp',
+
+  /* MENSALIDADES*/
+  PATH_GET_MENSALIDADES_PAGAS: 'mensalidades/GetMensalidadesPagas',
+  PATH_GET_MENSALIDADES_BY_ID: 'mensalidades/GetMensalidadesByID',
+  PATH_PAY_INSERE_TRANSACOES_INTERNAS_MENSALIDADES: 'mensalidades/insereTransacaoInternaMensalidades',
+
 
 
   CONSTANTE_THUOR: 'Thuor',

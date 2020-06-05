@@ -221,26 +221,26 @@ option {
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0" style="min-width: 7rem!important;">
+              <th class="data pl-0" style="min-width: 15rem!important;">
                 <strong class="col-">
-                  <b>Ação</b>
+                  <b>Nome</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               <th class="data pl-0" style="min-width: 13rem!important;">
-                <strong class="col-">
-                  <b>Loja</b>
+                <strong class="col- ml-2">
+                  <b>Plano</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               <th class="status pl-0 ml-0 mr-0 pr-0" style="min-width: 5rem!important;">
-                <strong class>
-                  <b>Val. Com.</b>
+                <strong class="col- ml-2">
+                  <b>Valor</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               <th class="status pl-0">
-                <strong class="col-">
+                <strong class="col- ml-4">
                   <b>Status</b>
                 </strong>
                 <span class="arrow"></span>
@@ -252,30 +252,30 @@ option {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, data_processar, loja, status, valor, id_usuario} in dataPerPage"
-                :key="id"
+                v-for="{data, nome, plano, valor, id_usuario, status} in dataPerPage"
+                :key="id_usuario"
               >
-                <td class="metodo col" style="min-width: 19rem!important;">
-                  <p class="col- mb-0 dataPedido text-left ml-3">{{data_processar}}</p>
+                <td class="metodo col" style="min-width: 16rem!important;">
+                  <p class="col- mb-0 dataPedido text-left ml-3">{{data}}</p>
                 </td>
-                <td class="pedido" style="min-width: 6rem!important;">
+                <td class="pedido" style="min-width: 15rem!important;">
                   <router-link
-                    :to="{path: '/transacoes-internas/detalhe/' + getCripto(id_usuario, 0)}"
+                    :to="{path: '/transacoes-internas/detalhe/' + getCripto(parseInt(id_usuario), 0)}"
                   >
-                    <p class="col- numeroPedido mb-0">Detalhar</p>
+                    <p class="col- numeroPedido mb-0">{{nome}}</p>
                   </router-link>
                 </td>
-                <td style="min-width: 5rem!important;">
-                  <p class="col- text-left nomeComprador mr-0 ml-0 pr-0 pl-0">{{loja}}</p>
+                <td style="min-width: 13rem!important;">
+                  <p class="col- text-left numeroPedido mr-0 ml-0 pr-0 pl-0 ml-0">{{plano}}</p>
                 </td>
                 <td
-                  class="total text-left ml-5"
-                  style="min-width: 5rem!important;"
+                  class="total text-left ml-1"
+                  style="min-width: 7rem!important;"
                 >R$ {{formatPrice(valor)}}</td>
 
                 <td class="pl-0" style="min-width: 10rem!important;">
                   <span
-                    class="col- spanStatus alert mr-5 ml-5"
+                    class="col- spanStatus alert mr-3 ml-4"
                     v-bind:class="getClassStatus(status)"
                   >{{status.toUpperCase()}}</span>
                 </td>
@@ -323,6 +323,9 @@ import constantes_mensagens from "../../api/constantes_mensagens";
 import constantes from "../../api/constantes";
 import API_PLANOS from "../../api/planosAPI";
 import API_CHECKOUT_THUOR_COMISSION from "../../api/checkoutAPIThuorComission";
+import API_MENSALIDADES from '../../api/mensalidadesAPI';
+
+
 Vue.component("v-select", vSelect);
 
 TimeAgo.addLocale(pt);
@@ -353,8 +356,8 @@ export default {
       });
       this.sortOrders = sortOrders;
       this.checkIfLogged();
-      //this.data = this.gridData;
-      ///sconsole.log("Filtered", this.dataPerPage);
+      this.data = this.gridData;
+
     } else {
       API_NOTIFICATION.showNotificationW(
         "Oops!",
@@ -377,6 +380,7 @@ export default {
   },
   data() {
     return {
+      planos: [],
       canPay: false,
       timeAgo: "",
       searchQuery: "",
@@ -389,20 +393,18 @@ export default {
         rememberme: false
       },
       columns: [
-        "metodo",
-        "id",
-        "order_id",
-        "status",
+        "nome",
         "data",
-        "total",
-        "nome_comprador"
+        "status",
+        "plano",
+        "valor"
       ],
       gridData: [],
       startRow: 0,
       rowsPerPage: 10,
       pageSizeMenu: [10, 20, 50, 100],
       data: Array,
-      comissoesList: {},
+      mensalidadesList: {},
       acaoWhats: -1,
       arrayWhatsAppMessage: [],
       arrayWhatsAppMessageOriginal: [],
@@ -458,23 +460,26 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
+            .then(async resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              API_TRANSACOES.GetTransacoesInternas()
-                .then(retProd => {
+              this.planos = await API_PLANOS.GetPlanos();
+              API_LOGIN.GetUsersMensalidades()
+                .then(retMensalidades => {
                   this.gridData = [];
-                  this.comissoesList = retProd.data;
-                  this.qtd_pendente = retProd.data.length || 0;
-                  if (retProd.data.length > 0) {
-                    retProd.data.forEach(async (obj, i) => {
+                  this.mensalidadesList = retMensalidades.data;
+          
+                  this.qtd_pendente = retMensalidades.data.length || 0;
+                  if (retMensalidades.data.length > 0) {
+                    retMensalidades.data.forEach(async (obj, i) => {
                       this.gridData.push({
                         id_usuario: obj.id_usuario,
-                        data_processar: moment(obj.data_processar).format(
+                        nome: obj.nome,
+                        data: moment(obj.proximo_pagamento_mensalidade).format(
                           "DD/MM/YYYY"
                         ),
-                        loja: obj.url_loja,
-                        status: obj.status,
-                        valor: parseFloat(obj.comissao)
+                        status: 'PENDENTE',
+                        plano: this.getPlano(obj.plano).json.nome,
+                        valor: this.getPlano(obj.plano).json.price
                       });
                     });
                   }
@@ -497,6 +502,9 @@ export default {
     },
     getID(id) {
       return id;
+    },
+    getPlano(plano) {
+      return this.planos.filter(x => x.id == plano)[0];
     },
     sortBy: function(key) {
       this.sortKey = key;
@@ -585,24 +593,11 @@ export default {
     },
     selecionaMensagemEnviar(event) {
       this.mensagemEnviarSelecionada = event.target.value;
-    },
-    async getValorComissao(obj) {
-      const LJSON = obj.json_front_end_user_data;
-      const LUser = await UTILIS_API.GetUserSession();
-      var LValorComissao = 0;
-      const LArrayPlan = await API_PLANOS.GetPlanosById(LUser.user.plano);
-      //const LPlano = LArrayPlan.filter(x => x.id == LUser.user.plano)[0];
-      const LPercentComission = LArrayPlan.addon.replace("%", "");
-      const LValCom =
-        (parseFloat(LPercentComission) / 100) *
-        parseFloat(LJSON.dadosComprador.valor);
-      LValorComissao = parseFloat(LValCom);
-      return LValorComissao;
-    },
+    },    
     processarMensalidades() {
       API_NOTIFICATION.showConfirmDialog(
-        "Processar Comissões",
-        "Tem certeza de que deseja processar as comissões?",
+        "Processar Mensalidades",
+        "Tem certeza de que deseja processar as mensalidades?",
         "question",
         () => {
           API_NOTIFICATION.ShowLoading();
@@ -610,13 +605,13 @@ export default {
             constantes.SAND_BOX_MP_PUBLICK_KEY
           );
           window.Mercadopago.clearSession();
-          this.comissoesList.forEach(async (obj, i) => {
+          this.mensalidadesList.forEach(async (obj, i) => {
             API_NOTIFICATION.ShowLoading();
             await this.sleep(2000);
-            var LDadoUsuario = await API_LOGIN.GetUserByID(obj.id_usuario);
-            LDadoUsuario = LDadoUsuario.data;
-            //console.log(LDadoUsuario.data);
-            const LValor = parseFloat(obj.comissao);
+            var LDadoUsuario = await API_LOGIN.GetUserByID(obj.id);          
+            LDadoUsuario = LDadoUsuario.data;            
+            const LPlanoPagar = this.getPlano(obj.plano);
+            const LValor = parseFloat(LPlanoPagar.json.price);
             var FormToken = await UTILIS_API.CREATE_FORM_MP(
               constantes.CONSTANTE_THUOR,
               LValor,
@@ -666,30 +661,23 @@ export default {
                   window.Mercadopago.clearSession();
                   const LUser = await UTILIS_API.GetUserSession();
                   if (LUser) {
+                    const LDataUltimoPagamentoMensalidade = moment().format();
                     var LData = moment()
-                      .add({ days: 7 })
+                      .add({ days: 30 })
                       .format();
-                    LDadoUsuario.proximo_pagamento = LData;
+                    LDadoUsuario.proximo_pagamento_mensalidade = LData;
                     API_LOGIN.UpdateUser(
                       LDadoUsuario.id,
                       LDadoUsuario.plano,
                       LDadoUsuario.json_pagamento,
-                      LDadoUsuario.proximo_pagamento
+                      LDadoUsuario.proximo_pagamento,
+                      LDadoUsuario.proximo_pagamento_mensalidade
                     )
-                      .then(resUpdate => {
-                        API_TRANSACOES.SetPaymentComissionDone(
-                          obj.id_usuario,
-                          obj.data_processar,
-                          paymentData,
-                          retornoPay.data
-                        )
-                          .then(resUpdateSetPaymentDone => {
+                      .then(async resUpdate => {                        
+                            const LInsereMensalidadesPagas = await API_MENSALIDADES.InsereTransacoesInternasMensalidades(obj.id, obj.data, paymentData, retornoPay.data, 'PAID');
+                            const LUltimoPagamentoMensalidade = await API_LOGIN.UpdateUltimoPagamentoUser(obj.id, LDataUltimoPagamentoMensalidade);
                             console.log("Payment Done");
-                            API_NOTIFICATION.HideLoading();
-                          })
-                          .catch(error => {
-                            console.log("Erro ao setar pagamento ", error);
-                          });
+                            API_NOTIFICATION.HideLoading();                          
                       })
                       .catch(error => {
                         console.log(
@@ -703,7 +691,7 @@ export default {
                   console.log("Erro ao tentar efetuar o pagamento", error);
                 });
             });
-            console.log(LDadoUsuario);
+            
           });
         }
       );
