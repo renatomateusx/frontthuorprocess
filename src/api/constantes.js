@@ -148,6 +148,11 @@ export default Object.freeze({
   PATH_GET_MENSALIDADES_BY_ID: 'mensalidades/GetMensalidadesByID',
   PATH_PAY_INSERE_TRANSACOES_INTERNAS_MENSALIDADES: 'mensalidades/insereTransacaoInternaMensalidades',
 
+  /* AJUDA */
+  PATH_GET_AJUDA: 'ajuda/GetAjuda',
+  PATH_GET_AJUDA_BY_ID: 'ajuda/GetAjudaByID',
+  PATH_SAVE_AJUDA: 'ajuda/SaveAjuda',
+  PATH_DELETE_AJUDA_BY_ID: 'ajuda/DeleteAjudaByID',
 
 
   CONSTANTE_THUOR: 'Thuor',

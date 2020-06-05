@@ -256,15 +256,17 @@ option {
                 </div>
                 <div class="col-lg-4">
                     <div class="card b">
+                      <router-link to="/admin/ajuda">
                         <div class="card-body text-center">
                             <a class="link-unstyled text-purple" href="#">
-                                <em class="fa-5x fa fa-cubes mb-3"></em>
+                                <em class="fa-5x fa fa-life-ring mb-3"></em>
                                 <br/>
-                                <span class="h4">Servers</span>
+                                <span class="h4">Ajuda</span>
                                 <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
+                                <div class="text-sm text-muted">Ver &rarr;</div>
                             </a>
                         </div>
+                      </router-link>
                     </div>
                 </div>
                 <div class="col-lg-4">

@@ -206,7 +206,7 @@ option {
         id="select"
         class="selectPage form-control pull-left float-left"
       >
-        <option v-for="pageSize in pageSizeMenu" :value="pageSize">{{pageSize}}</option>
+        <option v-for="pageSize in pageSizeMenu" :value="pageSize" :key="pageSize">{{pageSize}}</option>
       </select>
       <form id="search" class="form-group pull-right float-right">
         <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
