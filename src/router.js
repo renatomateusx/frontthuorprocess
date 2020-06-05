@@ -24,6 +24,9 @@ const Pay = () => import('@/components/Cart/Pay.vue');
 const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
 const Pedidos = () => import('@/views/Pages/Pedidos.vue');
+const Comissoes = () => import('@/views/Pages/Comissoes.vue');
+const Mensalidades = () => import('@/views/Pages/Mensalidades.vue');
+
 const Admin = () => import('@/views/Pages/Admin.vue');
 const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
 const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
@@ -129,6 +132,14 @@ export default new Router({
             {
                 path: '/admin',
                 component: Admin
+            },
+            {
+                path: '/admin/comissoes',
+                component: Comissoes
+            },
+            {
+                path: '/admin/mensalidades',
+                component: Mensalidades
             },
             {
                 path: '/pedidos/detalhe/:id',

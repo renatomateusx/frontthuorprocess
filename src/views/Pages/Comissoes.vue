@@ -177,170 +177,122 @@ option {
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-user-cog">
+      <span class="fa fa-donate">
         <span class="ml-2"></span>
-      </span>Admin
+      </span>Comissões
     </div>
-    <small>Gerenciador do Thuor.</small>
+    <small>Todos as transações processadas pelo Thuor estão aqui.</small>
     <p></p>
     <div class="row mb-2">
-      
+      <button
+        v-on:click="processarComissoes()"
+        v-show="qtd_pendente > 0"
+        class="btn btn-danger float-left pull-left ml-4 col-md-3"
+      >
+        <span class="fa fa-donate"></span> Processar Comissões
+      </button>
+      <span class="col-md-8 float right pull-right mt-1">
+        Há
+        <strong class="bold-sd">{{qtd_pendente}}</strong> para processar.
+      </span>
     </div>
     <div class="wrapper col-xl-12">
-     <template>
-    <ContentWrapper>
-        <div class="unwrap">
-            <div class="bg-cover">
-                <div class="container container-md py-4">
-                    <div class="text-center mb-3 pb-3">
-                        <div class="h1 text-bold">Admin Center</div>
-                        <p>Gerenciamento do Thuor</p>
-                    </div>
-                </div>
-            </div>
+      <label
+        class="float-left mr-2 col-form-label labelForm"
+        for="inlineFormInputGroup"
+      >Reg. p/ Pág.</label>
+      <select
+        v-model="rowsPerPage"
+        id="select"
+        class="selectPage form-control pull-left float-left"
+      >
+        <option v-for="pageSize in pageSizeMenu" :value="pageSize">{{pageSize}}</option>
+      </select>
+      <form id="search" class="form-group pull-right float-right">
+        <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
+      </form>
+      <div id="grid-template">
+        <div class="table-header-wrapper">
+          <table class="table-header">
+            <thead>
+              <th style="min-width: 5rem!important;">
+                <strong class="col- pedido">
+                  <b>Data Processar</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="data pl-0" style="min-width: 7rem!important;">
+                <strong class="col-">
+                  <b>Ação</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="data pl-0" style="min-width: 13rem!important;">
+                <strong class="col-">
+                  <b>Loja</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="status pl-0 ml-0 mr-0 pr-0" style="min-width: 5rem!important;">
+                <strong class>
+                  <b>Val. Com.</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="status pl-0">
+                <strong class="col-">
+                  <b>Status</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+            </thead>
+          </table>
         </div>
-        <div class="container container-md">
-            <form action="#">
-                <div class="input-group input-group-lg">
-                    <input class="form-control form-control-lg rounded-0" type="text" name="term" placeholder="Procure" />
-                    <select class="form-control form-control-lg">
-                        <option>All Products</option>
-                        <option>Templates</option>
-                        <option>Servers</option>
-                        <option>Billing</option>
-                        <option>Buyers</option>
-                        <option>Sellers</option>
-                        <option>Plans</option>
-                        <option>Accounts</option>
-                    </select>
-                    <div class="input-group-append">
-                        <button class="btn btn-info btn-lg b0 rounded-0" type="button">
-                            <strong>Buscar</strong>
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <p class="my-3 py-4 text-muted text-center">
-                <small>Selecione qualquer uma das opções abaixo;</small>
-            </p>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="card b">
-                      <router-link to="/admin/comissoes">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-primary" href="#">
-                                <em class="fa-5x fas fa-donate mb-3"></em>
-                                <br/>
-                                <span class="h4">Comissões</span>
-                                <br/>
-                                <div class="text-sm text-muted">Ver &rarr;</div>
-                            </a>
-                        </div>
-                        </router-link>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                      <router-link to="/admin/mensalidades">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-info" href="#">
-                                <em class="fa-5x fas fa-calendar-check mb-3"></em>
-                                <br/>
-                                <span class="h4">Mensalidades</span>
-                                <br/>
-                                <div class="text-sm text-muted">Ver &rarr;</div>
-                            </a>
-                        </div>
-                      </router-link>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-purple" href="#">
-                                <em class="fa-5x fa fa-cubes mb-3"></em>
-                                <br/>
-                                <span class="h4">Servers</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-warning" href="#">
-                                <em class="fa-5x far fa-gem mb-3"></em>
-                                <br/>
-                                <span class="h4">Buyers</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-danger" href="#">
-                                <em class="fa-5x far fa-building mb-3"></em>
-                                <br/>
-                                <span class="h4">Sellers</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-success" href="#">
-                                <em class="fa-5x far fa-calendar-check mb-3"></em>
-                                <br/>
-                                <span class="h4">Billing</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-dark" href="#">
-                                <em class="fa-5x fa fa-recycle mb-3"></em>
-                                <br/>
-                                <span class="h4">Plans</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-dark" href="#">
-                                <em class="fa-5x fa fa-street-view mb-3"></em>
-                                <br/>
-                                <span class="h4">Accounts</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </ContentWrapper>
-</template>
+        <div class="table-body-wrapper">
+          <table class="table-body">
+            <tbody>
+              <tr
+                v-for="{id, data_processar, loja, status, valor, id_usuario} in dataPerPage"
+                :key="id"
+              >
+                <td class="metodo col" style="min-width: 19rem!important;">
+                  <p class="col- mb-0 dataPedido text-left ml-3">{{data_processar}}</p>
+                </td>
+                <td class="pedido" style="min-width: 6rem!important;">
+                  <router-link
+                    :to="{path: '/transacoes-internas/detalhe/' + getCripto(id_usuario, 0)}"
+                  >
+                    <p class="col- numeroPedido mb-0">Detalhar</p>
+                  </router-link>
+                </td>
+                <td style="min-width: 5rem!important;">
+                  <p class="col- text-left nomeComprador mr-0 ml-0 pr-0 pl-0">{{loja}}</p>
+                </td>
+                <td
+                  class="total text-left ml-5"
+                  style="min-width: 5rem!important;"
+                >R$ {{formatPrice(valor)}}</td>
 
-      
+                <td class="pl-0" style="min-width: 10rem!important;">
+                  <span
+                    class="col- spanStatus alert mr-5 ml-5"
+                    v-bind:class="getClassStatus(status)"
+                  >{{status.toUpperCase()}}</span>
+                </td>
+
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="page-navigation" class="col-xl-12 mt-3">
+        <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
+        <p
+          class="float-left text-center auto col-md-8 mt-1"
+        >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
+        <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
+      </div>
     </div>
   </ContentWrapper>
 </template>
@@ -392,16 +344,15 @@ export default {
   },
 
   async created() {
-    API_NOTIFICATION.HideLoading();
     const LUser = await UTILIS_API.GetUserSession();
     if (LUser != null && LUser.user.is_user_admin == 1) {
-      // this.timeAgo = new TimeAgo("pt-BR");
-      // let sortOrders = {};
-      // this.columns.forEach(function(key) {
-      //   sortOrders[key] = 1;
-      // });
-      // this.sortOrders = sortOrders;
-      // this.checkIfLogged();
+      this.timeAgo = new TimeAgo("pt-BR");
+      let sortOrders = {};
+      this.columns.forEach(function(key) {
+        sortOrders[key] = 1;
+      });
+      this.sortOrders = sortOrders;
+      this.checkIfLogged();
       //this.data = this.gridData;
       ///sconsole.log("Filtered", this.dataPerPage);
     } else {
@@ -513,7 +464,7 @@ export default {
                 .then(retProd => {
                   this.gridData = [];
                   this.comissoesList = retProd.data;
-                  this.qtd_pendente = retProd.data.length;
+                  this.qtd_pendente = retProd.data.length || 0;
                   if (retProd.data.length > 0) {
                     retProd.data.forEach(async (obj, i) => {
                       this.gridData.push({
