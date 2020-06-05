@@ -70,7 +70,6 @@
                   <label class="switch switch-lg">
                     <input
                       type="checkbox"
-                      @change="updateStatus()"
                       :checked="checkout_form.status == 1"
                       v-model="checkout_form.status"
                       :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.status')}"
@@ -83,7 +82,7 @@
                   class="invalid-feedback"
                 >{{ errors.first('checkout_form.status') }}</span>
               </div>
-              
+
               <div class="form-group">
                 <label class="col-form-label">Nome *</label>
                 <input
@@ -116,7 +115,6 @@
               <div class="form-group">
                 <label class="col-form-label">Processar transação no Market Place automaticamente? *</label>
                 <select
-                  @change="UpdateAtivaAutoProcessamentoMP()"
                   id="processa_automaticamente"
                   name="processa_automaticamente"
                   class="form-control"
@@ -129,7 +127,6 @@
               <div class="form-group">
                 <label class="col-form-label">Ativa boleto? *</label>
                 <select
-                  @change="UpdateAtivaBoletoMP()"
                   id="ativa_boleto"
                   name="ativa_boleto"
                   class="form-control"
@@ -273,7 +270,7 @@ export default {
       return "";
     },
     getNomeGateway() {
-      return 'Pag Seguro';
+      return "Pag Seguro";
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
@@ -283,19 +280,22 @@ export default {
         }
       });
     },
-    salvarCheckout() {
+    async salvarCheckout() {
       API_NOTIFICATION.ShowLoading();
-      API_CHECKOUT.InsertCheckoutMP(this.checkout_form)
-        .then(res => {
-          //this.checkIfLogged();
-          API_NOTIFICATION.showNotification(
-            "Checkout Salvo com Sucesso",
-            "success"
-          );
-        })
-        .catch(error => {
-          console.log("Erro ao salvar o checkout MP", error);
-        });
+      const LPodeSalvar = await UTILIS_API.checkUserHasPuttedPaymentInformation();
+      if (LPodeSalvar) {
+        API_CHECKOUT.InsertCheckoutMP(this.checkout_form)
+          .then(res => {
+            //this.checkIfLogged();
+            API_NOTIFICATION.showNotification(
+              "Checkout Salvo com Sucesso",
+              "success"
+            );
+          })
+          .catch(error => {
+            console.log("Erro ao salvar o checkout MP", error);
+          });
+      }
     },
     updateStatus() {
       API_NOTIFICATION.ShowLoading();

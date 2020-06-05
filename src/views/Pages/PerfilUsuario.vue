@@ -995,7 +995,7 @@ export default {
           var self = this;
           API_NOTIFICATION.showConfirmDialog(
             "Ei!",
-            "Tem certeza de que deseja alterar seu palno?",
+            "Tem certeza de que deseja alterar seu palno? O Pagamento Se Dá de Forma Pré-Paga.",
             "question",
             () => {
               this.usuario.json_pagamento.plano = self.usuario.plano;
@@ -1213,7 +1213,7 @@ export default {
               );
               return;
             }
-            this.usuario.paymentData = retornoPay.data;
+            this.usuario.paymentDataGW = retornoPay.data;
             window.Mercadopago.clearSession();
             const LUser = await UTILIS_API.GetUserSession();
             if (LUser) {

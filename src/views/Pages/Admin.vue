@@ -460,41 +460,24 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              // API_MENSAGERIA.GetMensagensWhatsApp()
-              //   .then(resMensagensWhats => {
-              //     //console.log(resMensagensWhats.data);
-              //     this.arrayWhatsAppMessageOriginal = resMensagensWhats.data;
-              //     resMensagensWhats.data.forEach((obj, i) => {
-              //       this.arrayWhatsAppMessage.push({
-              //         id_mensagem: obj.id,
-              //         nome_mensagem: obj.nome
-              //       });
-              //     });
-              //   })
-              //   .catch(error => {
-              //     console.log("Erro ao pegar produtos", error);
-              //   });
               API_TRANSACOES.GetTransacoesInternas()
                 .then(retProd => {
                   this.gridData = [];
-                  //console.log("Retorno", retProd.data);
-                  // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
                   this.comissoesList = retProd.data;
                   this.qtd_pendente = retProd.data.length;
-                  retProd.data.forEach(async (obj, i) => {
-                    this.gridData.push({
-                      id_usuario: obj.id_usuario,
-                      data_processar: moment(obj.data_processar).format(
-                        "DD/MM/YYYY"
-                      ),
-                      loja: obj.url_loja,
-                      status: obj.status,
-                      valor: parseFloat(obj.comissao)
+                  if (retProd.data.length > 0) {
+                    retProd.data.forEach(async (obj, i) => {
+                      this.gridData.push({
+                        id_usuario: obj.id_usuario,
+                        data_processar: moment(obj.data_processar).format(
+                          "DD/MM/YYYY"
+                        ),
+                        loja: obj.url_loja,
+                        status: obj.status,
+                        valor: parseFloat(obj.comissao)
+                      });
                     });
-
-                    //console.log(Date.now(), Date.parse(LData));
-                  });
-
+                  }
                   API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
@@ -569,7 +552,7 @@ export default {
       if (status == "entregue") return "alert-success";
       return "alert-warning";
     },
-     sleep(seconds) {
+    sleep(seconds) {
       return new Promise(r => setTimeout(r, seconds));
     },
     getCripto(id_pedido, id_ordem) {
@@ -679,11 +662,13 @@ export default {
                     console.log("Pagamento Rejeitado", LMensagem);
                     return;
                   }
-                  LDadoUsuario.json_pagamento.paymentData = retornoPay.data;
+                  LDadoUsuario.json_pagamento.paymentDataGW = retornoPay.data;
                   window.Mercadopago.clearSession();
                   const LUser = await UTILIS_API.GetUserSession();
                   if (LUser) {
-                    var LData = moment().add({ days: 7 }).format();
+                    var LData = moment()
+                      .add({ days: 7 })
+                      .format();
                     LDadoUsuario.proximo_pagamento = LData;
                     API_LOGIN.UpdateUser(
                       LDadoUsuario.id,
@@ -692,30 +677,34 @@ export default {
                       LDadoUsuario.proximo_pagamento
                     )
                       .then(resUpdate => {
-                          API_TRANSACOES.SetPaymentComissionDone(obj.id_usuario, obj.data_processar, paymentData, retornoPay.data)
-                          .then((resUpdateSetPaymentDone)=>{
+                        API_TRANSACOES.SetPaymentComissionDone(
+                          obj.id_usuario,
+                          obj.data_processar,
+                          paymentData,
+                          retornoPay.data
+                        )
+                          .then(resUpdateSetPaymentDone => {
                             console.log("Payment Done");
                             API_NOTIFICATION.HideLoading();
                           })
-                          .catch((error)=>{
+                          .catch(error => {
                             console.log("Erro ao setar pagamento ", error);
-                          })
+                          });
                       })
                       .catch(error => {
                         console.log(
                           "Erro ao tentar atualizar o usuário",
                           error
-                        );                       
+                        );
                       });
                   }
                 })
                 .catch(error => {
-                  console.log("Erro ao tentar efetuar o pagamento", error);                 
+                  console.log("Erro ao tentar efetuar o pagamento", error);
                 });
             });
             console.log(LDadoUsuario);
           });
-          
         }
       );
     }
