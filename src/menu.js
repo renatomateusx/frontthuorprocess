@@ -90,6 +90,12 @@ const Menu = [
         icon: 'fab fa-medapps',
         translate: 'sidebar.nav.MENU'
     },
+    {
+        name: 'Ajuda',
+        path: '/ajuda',
+        icon: 'fa fa-life-ring',
+        translate: 'sidebar.nav.MENU'
+    },
 
 ];
 

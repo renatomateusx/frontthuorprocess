@@ -50,7 +50,8 @@ var API_AJUDA = {
                 let LBody = {
                     titulo: ajuda.titulo,
                     texto: ajuda.texto,
-                    tag: ajuda.tag
+                    tag: ajuda.tag,
+                    status: ajuda.status
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_SAVE_AJUDA, LBody)

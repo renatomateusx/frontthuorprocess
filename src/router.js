@@ -51,6 +51,10 @@ const Redefinir = () => import('@/views/Pages/Redefinir.vue');
 const Review = () => import('@/views/Pages/Review.vue');
 const Apps = () => import('@/views/Pages/Apps.vue');
 const PerfilUsuario = () => import('@/views/Pages/PerfilUsuario.vue');
+const Ajuda = () => import('@/views/Pages/Ajuda.vue');
+const AdminAjuda = () => import('@/views/Pages/AdminAjuda.vue');
+const AdminAjudaEdit = () => import('@/views/Pages/AdminAjudaEdit.vue');
+
 Vue.use(Router)
 
 export default new Router({
@@ -140,6 +144,18 @@ export default new Router({
             {
                 path: '/admin/mensalidades',
                 component: Mensalidades
+            },
+            {
+                path: '/admin/ajuda',
+                component: AdminAjuda
+            },
+            {
+                path: '/admin/ajuda/edit/:id',
+                component: AdminAjudaEdit
+            },
+            {
+                path: '/admin/ajuda/nova',
+                component: AdminAjudaEdit
             },
             {
                 path: '/pedidos/detalhe/:id',
@@ -255,6 +271,10 @@ export default new Router({
             {
                 path: '/apps',
                 component: Apps
+            },
+            {
+                path: '/ajuda',
+                component: Ajuda
             },
             {
                 path: '/configs/campanhas',
