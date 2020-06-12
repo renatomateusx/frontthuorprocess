@@ -97,6 +97,9 @@
   max-height: 100px;
   overflow-y: auto;
 }
+.fontSizeSmall{
+  font-size: 12px!important;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -554,6 +557,22 @@
           <input type="hidden" id="copyClipBoard" />
           <!-- AQUI TERMINA O COMPONENTE DA VARIANTE, DOLADO DIREITO. TRANSFORME EM COMPONENTE DEPOIS -->
         </div>
+        <div class="card">
+          <div class="card-body mb-0">
+            <div class="text-center">
+              <h3 class="mt-0">Landing Pages</h3>
+            </div>
+            <hr />
+            <p>
+              <b role="button" class="ml-0 mr-0 btn btn-success" v-on:click="obterCheckout(produtoByID.id_thuor)">Checkout p/ Landing Page.</b>
+            
+            </p>
+            
+            <hr />
+          </div>
+
+          <div class="arrow"></div>
+        </div>
       </form>
     </div>
   </ContentWrapper>
@@ -652,7 +671,8 @@ export default {
       this.$emit("change", value);
     }
   },
-  methods: {
+  methods: {  
+    
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
@@ -675,13 +695,12 @@ export default {
                   //console.log("Ret Prod", retProd);
                   var LImages = retProd.data.json_dados_produto;
                   //console.log(JSON.parse(retProd.data.json_dados_produto));
-                  this.produtoByID = 
-                    retProd.data.json_dados_produto
-                  ;
+                  this.produtoByID = retProd.data.json_dados_produto;
                   this.produtoTable = retProd.data;
                   this.statusProd = this.produtoTable.status;
                   this.customFrete = this.produtoTable.custom_frete;
                   this.preco_frete = this.produtoTable.preco_frete;
+                  this.produtoByID.id_thuor = retProd.data.id_thuor;
                   this.produtoByID.variants.forEach((obj, i) => {
                     //console.log("obj", obj.id);
                     this.getDadosEstoqueByVariante(obj.id);
@@ -1007,7 +1026,15 @@ export default {
       // console.log("ID Hashedid", produtHashed);
       // console.log("ID Deshashed", numbers);
       return produtHashed;
-    }
+    },
+    obterCheckout(id_produto){
+      //https://thuor.com/templates/checkoutmp.js
+      const code = '&lt;script src="https://thuor.com/templates/checkoutmp.js"&gt;&lt;/script&gt;<br>&lt;checkout-mp id_produto="'+id_produto+'"&gt;&lt;/checkout-mp&gt;';
+      const title = "<strong>Atenção!</strong>";
+      
+      const html = "<div class='card card-default'><p>Copie o código a seguir e insira na sua página de vendas.</p><br/><br/> <small class='fontSizeSmall'>"+code+"</small> <br/><br/><strong>Se você não tem conhecimento, fale com alguém que tenha ou vá até a página de ajuda para saber como instalar.</strong> <br><small>Lembre-se: esse checkout está disponível, por enquanto, apenas para o MercadoPago. Então verifique se o seu checkout do MercadoPago está ativo para tal.</small></div>";
+      API_NOTIFICATION.showDynamicHTML(title, '', html);
+    },
   }
 };
 </script>

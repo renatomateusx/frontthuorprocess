@@ -5,8 +5,8 @@ export default Object.freeze({
   PRODUCAO_BOX_MP_ACCESS_TOKEN: 'APP_USR-4338451460338304-120717-64a42a12fe590e1715881018b78df091-128404654',
 
   WEBSITEAPI: 'http://localhost:3000/',
-  //WEBSITEAPI: 'https://hmlapi.thuor.com/',
-  //WEBSITEAPI: 'https://api.thuor.com/',
+  //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
+  //WEBSITEAPI: 'https://api.thuor.com:9443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
   API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
