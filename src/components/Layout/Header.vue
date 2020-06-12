@@ -24,7 +24,7 @@
           </a>
         </li>
         <!-- END User avatar EYE-->
-        <li class="nav-item" style="display:none!important;">
+        <li class="nav-item" >
           <!-- Button used to collapse the left sidebar. Only visible on tablet and desktops-->
           <a
             href
