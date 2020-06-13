@@ -564,10 +564,12 @@
             </div>
             <hr />
             <p>
-              <b role="button" class="ml-0 mr-0 btn btn-success" v-on:click="obterCheckout(produtoByID.id_thuor)">Checkout p/ Landing Page.</b>
-            
-            </p>
-            
+              <b role="button" class="ml-0 mr-0 btn btn-success" v-on:click="obterCheckout(produtoByID.id_thuor)">Checkout p/ Landing Page.</b>            
+            </p>            
+            <hr />
+             <p>
+              <b role="button" class="ml-0 mr-0 btn btn-warning" v-on:click="obterVariantes(produtoByID.id_thuor)">Variantes p/ Landing Page.</b>            
+            </p>            
             <hr />
           </div>
 
@@ -1033,6 +1035,14 @@ export default {
       const title = "<strong>Atenção!</strong>";
       
       const html = "<div class='card card-default'><p>Copie o código a seguir e insira na sua página de vendas.</p><br/><br/> <small class='fontSizeSmall'>"+code+"</small> <br/><br/><strong>Se você não tem conhecimento, fale com alguém que tenha ou vá até a página de ajuda para saber como instalar.</strong> <br><small>Lembre-se: esse checkout está disponível, por enquanto, apenas para o MercadoPago. Então verifique se o seu checkout do MercadoPago está ativo para tal.</small></div>";
+      API_NOTIFICATION.showDynamicHTML(title, '', html);
+    },
+    obterVariantes(id_produto){
+      //https://thuor.com/templates/checkoutmp.js
+      const code = '&lt;script src="https://thuor.com/templates/prods_opts.min.js"&gt;&lt;/script&gt;<br>&lt;thuor-opcoes id_produto="'+id_produto+'" direct_to_checkout="true"&gt;&lt;/thuor-opcoes&gt;';
+      const title = "<strong>Atenção!</strong>";
+      
+      const html = "<div class='card card-default'><p>Copie o código a seguir e insira na sua página de vendas.</p><br/><br/> <small class='fontSizeSmall'>"+code+"</small> <br/><br/><strong>Se você não tem conhecimento, fale com alguém que tenha ou vá até a página de ajuda para saber como instalar.</strong> <br><small>Lembre-se: a tag direct_to_checkout deve ser 'true' ou 'false'. Qualquer outro valor será considerado como false e o seu cliente será enviado para a tela de carrinho.</small></div>";
       API_NOTIFICATION.showDynamicHTML(title, '', html);
     },
   }

@@ -82,9 +82,9 @@
       <div class="card shopping-cart">
         <div class="card-header bg-dark text-light">
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-          {{this.dadosLoja.nome_loja || 'Thuor.com'}}
+          {{this.nome_loja || 'Thuor.com'}}
           <a
-            :href="this.dadosLoja.url_loja"
+            :href="this.url_loja"
             class="btn btn-outline-info btn-sm pull-right ml-3"
           >
             <span class="fa fa-arrow-left"></span> Continue comprando
@@ -117,7 +117,7 @@
                   type="button"
                   v-on:click="goToCheckout()"
                   class="btn btn-primary btn-lg btn-block float-right mb-3"
-                >Checkout</button>
+                >Finalizar Compra</button>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@
                               />-->
                               <div class="row QuatroCincopx">
                                 <button
-                                  class="input-group-btn btn btn-danger btnIncrementDecrement cursorP"
+                                  class="input-group-btn btn btn-danger btnIncrementDecrement cursorP col-md-1"
                                   v-on:click="decrementaQuantidade(id_thuor)"
                                 >
                                   <span class="fa fa-minus spanIncrementDecrement"></span>
@@ -167,14 +167,14 @@
                                   name="quant[2]"
                                   v-bind:id="'qtd_'+id_thuor"
                                   @change="changeQuantity(id_thuor)"
-                                  class="form-control input-number"
+                                  class="form-control input-number col-md-3"
                                   v-bind:value="quantity"
                                   readonly
                                   min="1"
-                                  max="100"
+                                  max="1000"
                                 />
                                 <button
-                                  class="input-group-btn btn btn-success btnIncrementDecrement cursorP"
+                                  class="input-group-btn btn btn-success btnIncrementDecrement cursorP col-md-1"
                                   v-on:click="incrementaQuantidade(id_thuor)"
                                 >
                                   <span class="fa fa-plus spanIncrementDecrement"></span>
@@ -224,9 +224,9 @@
                     type="button"
                     class="btn btn-primary btn-lg btn-block mt-3"
                     v-on:click="goToCheckout()"
-                  >Checkout</button>
+                  >Finalizar Compra</button>
                   <a
-                    :href="this.dadosLoja.url_loja"
+                    :href="this.url_loja"
                     class="btn btn-outline-info btn-sm pull-right mt-3 btnKeepBuyingFooter"
                   >
                     <span class="fa fa-arrow-left"></span> Continue comprando
@@ -252,7 +252,7 @@ import API_LOJA from "../../api/lojaAPI";
 
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
-import UTILIS_API from '../../api/utilisAPI';
+import UTILIS_API from "../../api/utilisAPI";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -281,17 +281,19 @@ export default {
       },
       produtosCart: [],
       dadosLoja: null,
-      nomeLoja: ""
+      nomeLoja: "",
+      nome_loja: "",
+      url_loja: ""
     };
   },
   methods: {
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },    
+    },
     async checkURL() {
       var url = window.location.href;
-      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();      
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       if (url.includes("items")) {
         console.log("0");
         sessionStorage.removeItem("cart");
@@ -304,7 +306,7 @@ export default {
         const cart_token = params.searchParams.get("cart_token");
         const isShopify = params.searchParams.get("isShopify");
         const limpa_carrinho = params.searchParams.get("limpa_carrinho");
-        const qtdItems = params.searchParams.get("qtd_items");
+        const qtdItems = parseInt(params.searchParams.get("qtd_items"));
         const redirectTo = params.searchParams.get("redirectTo");
         this.getDadosLoja();
 
@@ -331,6 +333,10 @@ export default {
         console.log("1");
         const LCart = sessionStorage.getItem("cart");
         this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+        if (this.dadosLoja) {
+          this.nome_loja = this.dadosLoja.nome_loja;
+          this.url_loja = this.dadosLoja.url_loja;
+        }
         this.produtosCart = JSON.parse(LCart);
         API_NOTIFICATION.HideLoading();
       }
@@ -374,8 +380,12 @@ export default {
         .then(res => {
           const LojaData = res.data;
           this.dadosLoja = LojaData;
+          if (this.dadosLoja) {
+            this.nome_loja = this.dadosLoja.nome_loja;
+            this.url_loja = this.dadosLoja.url_loja;
+          }
           UTILIS_API.SetDadosLojaSession(LojaData);
-          
+
           //API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
@@ -410,6 +420,7 @@ export default {
     },
     async changeQuantity(idThuor) {
       var Comp = document.getElementById("qtd_" + idThuor);
+
       //console.log("IdThuor", idThuor);
       //console.log("Comp", Comp.value);
       for (const [i, item] of this.produtosCart.entries()) {
@@ -431,9 +442,11 @@ export default {
     },
     decrementaQuantidade(idThuor) {
       var Comp = document.getElementById("qtd_" + idThuor);
-      var qtd = parseInt(Comp.value) - 1;
-      document.getElementById("qtd_" + idThuor).value = qtd;
-      this.changeQuantity(idThuor);
+      if (parseInt(Comp.value) > 1) {
+        var qtd = parseInt(Comp.value) - 1;
+        document.getElementById("qtd_" + idThuor).value = qtd;
+        this.changeQuantity(idThuor);
+      }
     },
     goToCheckout() {
       this.$router.push("/checkout");
