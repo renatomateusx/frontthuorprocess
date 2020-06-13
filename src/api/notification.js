@@ -137,6 +137,22 @@ var API_NOTIFICATION = {
               callback();
             }
           })
+    },
+    showDynamicHTML(title, icon, html){
+        Vue.swal({
+            title: title,
+            icon: icon,
+            html:html,
+            showCloseButton: true,
+            showCancelButton: false,
+            focusConfirm: false,
+            confirmButtonText:
+              '<i class="fa fa-thumbs-up"></i> Certo!',
+            confirmButtonAriaLabel: 'Thumbs up, great!',
+            cancelButtonText:
+              '',
+            cancelButtonAriaLabel: 'Thumbs down'
+          })
     }
 }
 export default API_NOTIFICATION 

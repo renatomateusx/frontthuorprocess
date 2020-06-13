@@ -3,6 +3,7 @@ import axios from 'axios';
 import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 import router from '../router';
+import API_NOTIFICATION from '../api/notification';
 
 var UTILIS_API = {
     VIA_CEP(cep) {
@@ -41,6 +42,7 @@ var UTILIS_API = {
     },
     CREATE_FORM_MP(pdescription, pamount, pcardNumber, pcardholderName, pcardExpirationMonth, pcardExpirationYear, psecurityCode, parcela, pdocNumber, pemail, ppayment_method_id) {
         return new Promise(async (resolve, reject) => {
+            if (document.contains(document.getElementById("pay"))) { document.getElementById("pay").remove(); }
             var f = document.createElement("form");
             f.setAttribute('method', "post");
             f.setAttribute('action', "/processar_pagamento");
@@ -491,22 +493,22 @@ var UTILIS_API = {
             }
         })
     },
-    removeUserSession(){
+    removeUserSession() {
         sessionStorage.removeItem(constantes.SESSION_USER);
     },
-    SetActualPage(page){
+    SetActualPage(page) {
         return new Promise((resolve, reject) => {
             try {
-                sessionStorage.setItem(constantes.SESSION_ATUAL_PAGE,  btoa(unescape(encodeURIComponent(JSON.stringify(page)))));
+                sessionStorage.setItem(constantes.SESSION_ATUAL_PAGE, btoa(unescape(encodeURIComponent(JSON.stringify(page)))));
                 resolve(1);
             }
             catch (error) {
                 console.log("Erro ao setar o dados Clientes session", error);
                 reject(error);
             }
-        })        
+        })
     },
-    GetActualPage(){
+    GetActualPage() {
         return new Promise((resolve, reject) => {
             try {
                 if (sessionStorage.getItem(constantes.SESSION_ATUAL_PAGE) == null) {
@@ -520,7 +522,7 @@ var UTILIS_API = {
                 console.log("Erro ao pegar o dados Clientes session", error);
                 reject(error);
             }
-        })             
+        })
     },
     getErrorMPDetail(detail) {
         return new Promise((resolve, reject) => {
@@ -572,6 +574,27 @@ var UTILIS_API = {
         if (bandeira == "rapipago") {
             return { image: "https://github.bubbstore.com/svg/visa.svg", nome: 'MasterCard' };
         }
+    },
+    checkUserHasPuttedPaymentInformation() {
+        return new Promise(async(resolve, reject) => {
+            var LReturn = false;
+            try {
+                const LUser = await this.GetUserSession();
+                //LUser.user.json_pagamento = null;
+                //LUser.user.proximo_pagamento = null;
+                console.log(LUser.user);
+                if (LUser != null && (LUser.user.json_pagamento != undefined || LUser.user.json_pagamento != null) && (LUser.user.proximo_pagamento != undefined || LUser.user.proximo_pagamento != null)) {
+                    LReturn = true;
+                } else {
+                    API_NOTIFICATION.showNotificationW('Oops!', 'Você precisa escolher um plano antes de fazer isso. Clique no ícone de usuário no topo dessa página e, no lado esquerdo, clique em MEU PERFIL ', 'warning');
+                }
+            }
+            catch (error) {
+                console.log("Erro ao verificar se usuário possui informações de pagamento preenchidas", error);
+                reject(error);
+            }
+            resolve(LReturn);
+        })
     }
 
 

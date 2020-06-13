@@ -5,6 +5,7 @@ var API_HEADERS = {
     return new Promise(async(resolve, reject) => {
       try {
         var user = await UTILIS_API.GetUserSession(); 
+        console.log(user);
         var header = {
           headers: {
             'Access-Control-Allow-Origin': '*',

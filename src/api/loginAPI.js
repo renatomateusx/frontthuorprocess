@@ -51,8 +51,22 @@ var API_LOGIN = {
           reject(error);
         });
     });
+  },  
+  GetUsersMensalidades() {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_USER_MENSALIDADE, {          
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
   },
-  UpdateUser(id, plano, json_plano_pagamento, proximo_pagamento) {
+  UpdateUser(id, plano, json_plano_pagamento, proximo_pagamento, proximo_pagamento_mensalidade) {
     return new Promise(async (resolve, reject) => {
       axios
         .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_USER, {
@@ -60,6 +74,23 @@ var API_LOGIN = {
           plano: plano,
           json_plano_pagamento: json_plano_pagamento,
           proximo_pagamento: proximo_pagamento,
+          proximo_pagamento_mensalidade: proximo_pagamento_mensalidade
+        })
+        .then((response) => {
+          resolve(response);
+        })
+        .catch((error) => {
+          console.log("Reject", error);
+          reject(error);
+        });
+    });
+  },
+  UpdateUltimoPagamentoUser(id,ultimo_pagamento_mensalidade) {
+    return new Promise(async (resolve, reject) => {
+      axios
+        .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_ULTIMO_PAGAMENTO_MENSALIDADE_USER, {
+          id: id,         
+          ultimo_pagamento_mensalidade: ultimo_pagamento_mensalidade
         })
         .then((response) => {
           resolve(response);

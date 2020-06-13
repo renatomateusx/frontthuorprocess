@@ -128,7 +128,7 @@ div > p {
   font-weight: 700;
 }
 .fontBandeiraNome {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 700;
 }
 .fontExpira {
@@ -255,7 +255,12 @@ div > p {
                                 <span class="porpedido ml-1">por pedido pago</span>
                               </div>
                             </div>
-                            <strong class="cobradoPor">* Cobrado por semana *</strong>
+                            <strong class="cobradoPor col-md-12">* Cobrado por semana *</strong>
+                          </div>
+                          <div class="col-md-12 row">
+                            <strong
+                              class="col-lg-12 ml-4"
+                            >Próx. Pag.: {{getProximoPagamento(getDadosUsuario().proximo_pagamento)}}</strong>
                           </div>
                           <div class="col-md-12 row">
                             <img
@@ -275,6 +280,7 @@ div > p {
                             <a
                               @click="scrollMeTo('changeCard')"
                               class="col-md-9 ml-1 pl-0 mt-2 link"
+                              title="Clique para alterar"
                             >Alterar</a>
                           </div>
                         </div>
@@ -315,6 +321,27 @@ div > p {
                             class="text-justify col-md-12"
                           >Veja todos os detalhes de seus pagamentos.</small>
                         </div>
+                        <div class="float-left p-1 ml-1 mt-1 row">
+                          <strong class="col-md-12">Dados de Faturamento:</strong>
+                          <label class="col-md-12 ml-1">{{getDadosPagador().nome_completo}}</label>
+                          <label class="col-md-12 ml-1">{{getDadosPagador().cpf_titular}}</label>
+                          <label class="col-md-12 ml-1 mt-0 mb-0">
+                            <b>{{getDadosPagador().endereco}}, {{getDadosPagador().numero_porta}}</b>
+                          </label>
+                          <label
+                            class="col-md-12 ml-1 mt-0 mb-0"
+                          >{{getDadosPagador().cidade}} / {{getDadosPagador().estado}}</label>
+                          <label class="col-md-12 ml-1 mt-0 mb-0">{{getDadosPagador().complemento}}</label>
+                          <label class="col-md-12 ml-1 mt-0 mb-0">CEP: {{getDadosPagador().cep}}</label>
+                        </div>
+                        <div class="float-left p-1 ml-1 mt-1 row">
+                          <span class="col-md-2"></span>
+                          <a
+                            @click="scrollMeTo('changeCard')"
+                            class="col-md-12 ml-3 pl-0 mt-2 link"
+                            title="Clique para alterar"
+                          >Alterar</a>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -322,18 +349,80 @@ div > p {
                 </div>
                 <div class="col-xl-8">
                   <!-- Main card-->
-                  <div class="card b">
+                  <div class="card b col-lg-12">
                     <div class="card-header">
                       <div class="my-2 row p-0">
-                        <span class="col-md-5 mt-2">Grid de Pagamentos Realizados</span>
-
-                        <div class="float-right mt-2 col-md-1">
-                          <span class="pull-right float-right"></span>
+                        <span class="col-md-12 mt-2 mb-2">
+                          <strong>Pagamentos de Comissão Realizados</strong>
+                        </span>
+                        <div class="row col-lg-12 mt-2 text-center">
+                          <span class="col-md-4">
+                            <strong>Data</strong>
+                          </span>
+                          <span class="col-md-4">
+                            <strong>Valor</strong>
+                          </span>
+                          <span class="col-md-4">
+                            <strong>Status</strong>
+                          </span>
+                        </div>
+                        <div
+                          class="row col-lg-12 mt-2 text-center"
+                          v-for="{id, data, valor_comissao, status } in pagamentosEfetuadosList"
+                          :key="id"
+                        >
+                          <span class="col-md-4">{{data | formatDate}}</span>
+                          <span class="col-md-4">R$ {{valor_comissao | formatPrice}}</span>
+                          <span class="col-md-4">{{status | formatStatus}}</span>
+                        </div>
+                        <div class="float-right mt-2 col-md-12 mt-5 mr-5">
+                          <span class="pull-right float-right">
+                            <strong>Total Pago:</strong>
+                            R$ {{totalPago | formatPrice}}
+                          </span>
                         </div>
                       </div>
                     </div>
                   </div>
+
                   <!-- End Main card-->
+                  <div class="card b col-lg-12">
+                    <div class="card-header">
+                      <div class="my-2 row p-0">
+                        <span class="col-md-12 mt-2 mb-2">
+                          <strong>Pagamentos de Mensalidades Realizados</strong>
+                        </span>
+                        <div class="row col-lg-12 mt-2 text-center">
+                          <span class="col-md-4">
+                            <strong>Data</strong>
+                          </span>
+                          <span class="col-md-4">
+                            <strong>Valor</strong>
+                          </span>
+                          <span class="col-md-4">
+                            <strong>Status</strong>
+                          </span>
+                        </div>
+                        <div
+                          class="row col-lg-12 mt-2 text-center"
+                          v-for="{id, data, json_pagamento, status } in mensalidadesPagasList"
+                          :key="id"
+                        >
+                          <span class="col-md-4">{{data | formatDate}}</span>
+                          <span
+                            class="col-md-4"
+                          >R$ {{json_pagamento.transaction_amount | formatPrice}}</span>
+                          <span class="col-md-4">{{status | formatStatus}}</span>
+                        </div>
+                        <div class="float-right mt-2 col-md-12 mt-5 mr-5">
+                          <span class="pull-right float-right">
+                            <strong>Total Pago:</strong>
+                            R$ {{totalPagoMensalidades | formatPrice}}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <!-- END HTML DE DADOS DE FATURAMENTO E PAGAMENTOS JÁ REALIZADOS -->
@@ -351,6 +440,7 @@ div > p {
                   <!-- PLAN-->
                   <div
                     class="col-lg-4 mt-3 card card-default mr-0 selectedPlan"
+                    :class="usuario.plano == id ? 'Selecionado' : 'DeSelecionado'"
                     :id="json.nome"
                     v-for="{id, json} in planArray"
                     :key="id"
@@ -358,7 +448,7 @@ div > p {
                     <div class="plan">
                       <div
                         class="plan-header card-header"
-                        :class="usuario.plano == 1 ? 'SelecionadoH' : 'DeSelecionadoH'"
+                        :class="usuario.plano == id ? 'SelecionadoH' : 'DeSelecionadoH'"
                       >
                         <div class="card-title bold text-center">{{json.nome}}</div>
                       </div>
@@ -684,6 +774,37 @@ import constantes from "../../api/constantes";
 import API_CHECKOUT_THUOR_COMISSION from "../../api/checkoutAPIThuorComission";
 import moment from "moment";
 import API_PLANOS from "../../api/planosAPI";
+import API_TRANSACOES from "../../api/transacoesAPI";
+import API_MENSALIDADES from "../../api/mensalidadesAPI";
+
+Vue.filter("formatDate", function(value) {
+  if (value) {
+    return moment(String(value)).format("DD/MM/YYYY");
+  }
+});
+
+Vue.filter("parseFloat", function(value) {
+  if (value) {
+    return Number.parseFloat(value).toPrecision(3);
+  }
+});
+
+Vue.filter("formatStatus", function(value) {
+  if (value) {
+    if (value == "PAID") {
+      return "PAGO";
+    }
+    if (value == "PENDING") {
+      return "PENDENTE";
+    }
+  }
+});
+Vue.filter("formatPrice", function(value) {
+  if (value) {
+    let val = (value / 1).toFixed(2).replace(".", ",");
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+});
 
 // Tag inputs
 Vue.use(VeeValidate, {
@@ -719,9 +840,14 @@ export default {
       mensagemID: 0,
       MensagemString: [],
       paymentData: "",
+      pagamentosEfetuadosList: [],
+      mensalidadesPagasList: [],
+      totalPago: 0,
+      totalPagoMensalidades: 0,
       getPlanoEscolhidoNome: "",
       getPlanoEscolhidoPrice: "",
       getPlanoEscolhidoAddon: "",
+      metodoPag: "",
       dadosProcessamento: {
         cpf_titular: "",
         metodoPag: "",
@@ -824,9 +950,12 @@ export default {
                 if (lp.json) {
                   // console.log("Escolhido", lp.json);
                   this.escolherPlano(this.usuario.plano, lp.json.nome);
+                  this.getPagamentosEfetuados();
+                  this.getMensalidadesPagas();
                 }
               }
               this.getPlanoEscolhido();
+              this.getDadosPagamento();
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -840,6 +969,31 @@ export default {
           }
         });
     },
+    getPagamentosEfetuados() {
+      API_TRANSACOES.GetPagamentosEfetuadosPorSeller()
+        .then(resPagamentosEfetuados => {
+          this.pagamentosEfetuadosList = resPagamentosEfetuados.data;
+          this.pagamentosEfetuadosList.forEach((obj, i) => {
+            const LValor = parseFloat(obj.valor_comissao);
+            this.totalPago += LValor;
+          });
+        })
+        .catch(error => {
+          console.log(
+            "Erro ao tentar resgatar os pagamentos efetuados pelo vendedor",
+            error
+          );
+        });
+    },
+    getMensalidadesPagas() {
+      API_MENSALIDADES.GetMensalidadesPagas().then(resMensalidades => {
+        this.mensalidadesPagasList = resMensalidades.data;
+        this.mensalidadesPagasList.forEach((obj, i) => {
+          const LValor = parseFloat(obj.json_pagamento.transaction_amount);
+          this.totalPagoMensalidades += LValor;
+        });
+      });
+    },
     collapse(id, idComando, btn) {
       const element = document.querySelector(id);
       const elementComando = document.querySelector(idComando);
@@ -852,34 +1006,6 @@ export default {
         element.classList.add("show");
       }
     },
-    SelectedValueProdutoUm(id, titulo, image) {
-      var LDiv =
-        '<div class="data padding1010 cursorP"><img style="border-radius:50%!important; padding-top: 0px!important;    height: 47px!important;    padding: 0px!important;    width: 50px!important;    margin-left: 12px;" class="col-md-2 mb-0 avatar float-left pull-left text-left mt-2" src="' +
-        image +
-        '" />  <p class="col-md-8 mb-0 dataPedido mt-2 pull-left float-left" style="top: 15px!important; text-align:left!important">' +
-        titulo +
-        "</p></div>";
-      this.novoupsell.id_produto_selecionado_um = id;
-      const el = document.getElementById("buttonProdutoUm");
-      el.innerHTML = LDiv;
-      this.collapse("#collapseExample", "#collapseExample", "#buttonProdutoUm");
-    },
-    SelectedValueProdutoDois(id, titulo, image) {
-      var LDiv =
-        '<div class="data padding1010 cursorP"><img style="border-radius:50%!important; padding-top: 0px!important;    height: 47px!important;    padding: 0px!important;    width: 50px!important;    margin-left: 12px;" class="col-md-2 mb-0 avatar float-left pull-left text-left mt-2" src="' +
-        image +
-        '" />  <p class="col-md-8 mb-0 dataPedido mt-2 pull-left float-left" style="top: 15px!important; text-align:left!important">' +
-        titulo +
-        "</p></div>";
-      this.novoupsell.id_produto_selecionado_dois = id;
-      const el = document.getElementById("buttonProdutoDois");
-      el.innerHTML = LDiv;
-      this.collapse(
-        "#collapseExampleDois",
-        "#collapseExampleDois",
-        "#buttonProdutoDois"
-      );
-    },
     removeItem(id) {
       console.log("Removendo ID", id);
     },
@@ -889,31 +1015,42 @@ export default {
       const ArrayP = this.planArray;
       const obj = await API_PLANOS.GetPlanosByID(plano);
       const LDiv = document.getElementById(obj.json.nome);
-      if (LDiv) {
-        LDiv.classList.remove("Selecionado");
-        LDiv.classList.add("DeSelecionado");
-      }
-      if (plano == obj.json.id) {
-        const LNovoSelecionado = document.getElementById(nome);
-        if (LNovoSelecionado) {
-          LNovoSelecionado.classList.add("Selecionado");
-        }
-      }
+      const LPreco = parseFloat(obj.json.price);
+      // if (LDiv) {
+      //   LDiv.classList.remove("Selecionado");
+      //   LDiv.classList.add("DeSelecionado");
+      // }
+      // if (plano == obj.json.id) {
+      //   const LNovoSelecionado = document.getElementById(nome);
+      //   if (LNovoSelecionado) {
+      //     LNovoSelecionado.classList.add("Selecionado");
+      //   }
+      // }
       // ArrayP.forEach((obj, i) => {
       //   console.log("asdf", obj.json);
 
       // });
 
       this.usuario.plano = plano;
+      var LMensagem = "";
+      var LProximoPagamentoMensal = moment().format();
+      if (LPreco > 0) {
+        LMensagem =
+          "O Pagamento Mensal Se Dá de Forma Pré-Paga e Poderá ser cobrado até o final do dia. Deseja continuar?";
+      } else {
+        LMensagem = "Tem certeza de que deseja alterar seu plano? ";
+        LProximoPagamentoMensal = null;
+      }
       if (this.usuario.json_pagamento) {
         if (this.usuario.json_pagamento.plano != this.usuario.plano) {
           var self = this;
           API_NOTIFICATION.showConfirmDialog(
             "Ei!",
-            "Tem certeza de que deseja alterar seu palno?",
+            LMensagem,
             "question",
             () => {
               this.usuario.json_pagamento.plano = self.usuario.plano;
+              this.usuario.proximo_pagamento_mensalidade = LProximoPagamentoMensal;
               this.usuario.json_pagamento.plano_escolhido = self.usuario.plano;
               if (
                 this.usuario.proximo_pagamento == null ||
@@ -929,9 +1066,10 @@ export default {
                 this.usuario.id,
                 this.usuario.plano,
                 this.usuario.json_pagamento,
-                this.usuario.proximo_pagamento
+                this.usuario.proximo_pagamento,
+                this.usuario.proximo_pagamento_mensalidade
               )
-                .then(resUpdated => {
+                .then(async resUpdated => {
                   API_NOTIFICATION.showNotificationW(
                     "Pronto!",
                     "Dados Atualizados Com Sucesso",
@@ -1070,7 +1208,21 @@ export default {
         this.getPlanoEscolhidoAddon = LPl.json.addon;
       }
     },
-
+    async getDadosPagamento() {
+      this.metodoPag = this.usuario.json_pagamento.dadosProcessamento.metodoPag;
+    },
+    getDadosPagador() {
+      if (this.usuario.json_pagamento) {
+        return this.usuario.json_pagamento.dadosProcessamento;
+      }
+      return "";
+    },
+    getDadosUsuario() {
+      if (this.usuario.json_pagamento) {
+        return this.usuario.json_pagamento;
+      }
+      return "";
+    },
     iniciaPagamentoBackEnd(status, response) {
       if (status != 200 && status != 201) {
         //console.log("Não foi possível gerar o token", response.message);
@@ -1114,7 +1266,7 @@ export default {
               );
               return;
             }
-            this.usuario.paymentData = retornoPay.data;
+            this.usuario.paymentDataGW = retornoPay.data;
             window.Mercadopago.clearSession();
             const LUser = await UTILIS_API.GetUserSession();
             if (LUser) {
@@ -1273,6 +1425,9 @@ export default {
         return { statusClass: classStat, status: status };
       }
       return { statusClass: "", status: "" };
+    },
+    getProximoPagamento(proximoPagamento) {
+      return moment(proximoPagamento).format("DD/MM/YYYY");
     }
   }
 };

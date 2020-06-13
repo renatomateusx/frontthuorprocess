@@ -161,6 +161,7 @@ export default {
       }
     },
     getStatusClassByID(id) {
+      console.log(this.campanhaIDLists);
       if (this.campanhaIDLists.find(x => x.campanha == id) !== undefined) {
         return this.campanhaIDLists.find(x => x.campanha == id).status
           ? "CampanhaStatusAtivo"

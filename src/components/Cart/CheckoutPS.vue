@@ -259,6 +259,115 @@
 .hidden {
   display: none !important;
 }
+/* REVIEW */
+
+.checkedBuy {
+  color: green;
+  font-size: 20px !important;
+}
+
+.noopen {
+  text-decoration: none !important;
+}
+
+.fontName {
+  font-size: 21px !important;
+  margin: 0 auto !important;
+  margin-left: 0px !important;
+}
+
+.imageThumb {
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+h1 {
+  font-size: 1.5em;
+  margin: 10px;
+}
+
+/****** Style Star Rating Widget *****/
+
+.rating {
+  border: none;
+  float: left;
+}
+
+.rating > input {
+  display: none;
+}
+
+.rating > label:before {
+  margin: 5px;
+  font-size: 1.25em;
+  font-family: FontAwesome;
+  display: inline-block;
+  content: "\f005";
+}
+
+.rating > .half:before {
+  content: "\f089";
+  position: absolute;
+}
+
+.rating > label {
+  color: #ddd;
+  float: right;
+}
+
+/***** CSS Magic to Highlight Stars on Hover *****/
+
+.rating>input:checked~label,
+		/* show gold star when clicked */
+		.rating:not(:checked)>label:hover,
+		/* hover current star */
+		.rating:not(:checked)>label:hover~label {
+  color: gold;
+}
+
+/* hover previous stars in list */
+
+.rating>input:checked+label:hover,
+		/* hover current star when changing rating */
+		.rating>input:checked~label:hover,
+		.rating>label:hover~input:checked~label,
+		/* lighten current selection */
+		.rating>input:checked~label:hover~label {
+  color: gold;
+}
+
+.fontf {
+  color: gold;
+}
+.imageDisplayOff {
+  display: none !important;
+}
+.imageDisplayOn {
+  display: block !important;
+}
+.starFulFill {
+  color: gold;
+  margin-left: 5px !important;
+}
+
+.starNotFulFill {
+  color: white;
+}
+
+.alertErros {
+  margin-top: 0px !important;
+  padding: 5px !important;
+}
+
+.success {
+  color: green;
+  font-size: 15px !important;
+}
+
+.danger {
+  color: red;
+  font-size: 15px !important;
+}
 @media only screen and (min-width: 500px) and (max-width: 992px) {
   #btnTop {
     display: block !important;
@@ -953,6 +1062,18 @@
         </form>
         <!-- END STEP 3-->
       </div>
+      <span clas="ml-1">
+        <span
+          class="qtd mb-1 row col-lg-4 col-lg-offset-2 float-center pull-center text-center hidden fa fa-star gold alert alert-info"
+          style="margin: 0px auto; display: block;"
+          id="qtd"
+        ></span>
+      </span>
+      <div
+        class="row col-lg-4 col-lg-offset-2 float-center pull-center text-center hidden"
+        style="margin: 0px auto; display: block;"
+        id="divResult"
+      ></div>
     </div>
   </div>
 </template>
@@ -1405,6 +1526,13 @@ export default {
             //INSERE FORM AUXILIAR PARA ENVIAR AO MP --- ELE DEVOLVE O TOKEN
             this.iniciaCheckout();
             this.getParcelas();
+            const self = this;
+            if (this.DadosCheckout.mostra_prova_social == 1) {
+              this.produtosCart.forEach(async (obj, i) => {
+                const LLoja = this.dadosLoja.url_loja;
+                this.getPVS(obj.variant_id, LLoja);
+              });
+            }
           }
         })
         .catch(error => {
@@ -1929,6 +2057,83 @@ export default {
       } else {
         console.log("Email Inválido");
       }
+    },
+    getPVS(id_produto, url_loja) {
+      const LDiv = document.getElementById("divResult");
+      const TEMPLATE_INICIAL = '<div class="col-md-1"></div>';
+      const TEMPLATE =
+        '<div class="col-xl-3 ml-1 card card-default cardG" style="border-color:gold!important;"><a href="#"><img class="img-thumbnail thumb128 rounded imageThumb {image_display}" src="{img}" alt="{titulo}"/></a><div class="card-body"><p class="d-flex  col-lg-12"><span><small class="mr-1  col-lg-12"><a class="ml-1 fontName col-lg-12" href="#">{nome}<span class="ml-2 fa fa-check-circle checkedBuy" title="Compra Verificada"></span></a></small></span></p><h4><a href="#" class="noopen"><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span></a></h4><p><b>{titulo}</b></p><p>{avaliacao}</p></div></div>';
+      API_REVIEWS.GetReviews(id_produto, url_loja)
+        .then(resData => {
+          const LData = resData.data;
+          const LQTD = LData.length;
+          //console.log(LQTD);
+
+          if (LQTD > 0) {
+            if (LQTD > 1) {
+              document.getElementById("qtd").innerHTML =
+                " " + LQTD + " - Avaliações ";
+            }
+            if (LQTD == 1) {
+              document.getElementById("qtd").innerHTML = LQTD + " - Avaliação ";
+            }
+            LDiv.insertAdjacentHTML("beforeend", TEMPLATE_INICIAL);
+            document.getElementById("qtd").classList.remove("hidden");
+            document.getElementById("divResult").classList.remove("hidden");
+          } else {
+            document.getElementById("qtd").classList.add("hidden");
+            document.getElementById("divResult").classList.add("hidden");
+          }
+          LData.forEach((obj, i) => {
+            var LTemp = TEMPLATE.replace("{img}", obj.imagem);
+            LTemp = LTemp.replace("{nome}", this.toAsterisk(obj.nome));
+            LTemp = LTemp.replace("{titulo}", obj.titulo);
+            LTemp = LTemp.replace("{titulo}", obj.titulo);
+            LTemp = LTemp.replace("{avaliacao}", obj.avaliacao);
+            if (
+              obj.imagem != undefined &&
+              obj.imagem != null &&
+              obj.imagem.length > 0
+            ) {
+              LTemp = LTemp.replace("{image_display}", "imageDisplayOn");
+            } else {
+              LTemp = LTemp.replace("{image_display}", "imageDisplayOff");
+            }
+
+            LDiv.insertAdjacentHTML("beforeend", LTemp);
+            if (i >= 3 && i % 3 == 0) {
+              LDiv.insertAdjacentHTML("beforeend", TEMPLATE_INICIAL);
+            }
+          });
+        })
+        .catch(error => {
+          console.log("Erro ao tentar pegar o Reviews");
+        });
+    },
+    toAsterisk(str) {
+      var LSTR2 = "";
+      if (str.indexOf(" ") > -1) {
+        var LSpace = str.split(" ");
+        LSpace.forEach((objS, i) => {
+          var LStr = objS.split("");
+          LStr.forEach((obj, i) => {
+            if (i == 0) LSTR2 = LSTR2 + obj.toString().toUpperCase();
+            if (i > 0) LSTR2 = LSTR2 + "*";
+          });
+          LSTR2 = LSTR2 + " ";
+        });
+      } else {
+        var LStr = str.split("");
+        LStr.forEach((obj, i) => {
+          if (i == 0) LSTR2 = LSTR2 + obj.toString().toUpperCase();
+          if (i > 0) LSTR2 = LSTR2 + "*";
+        });
+      }
+      return LSTR2;
+    },
+    setStarValue(value) {
+      rating = value;
+      console.log(value);
     }
   }
 };
