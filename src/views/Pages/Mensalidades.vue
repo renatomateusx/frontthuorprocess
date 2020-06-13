@@ -177,172 +177,122 @@ option {
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-user-cog">
+      <span class="fa fa-calendar-check">
         <span class="ml-2"></span>
-      </span>Admin
+      </span>Mensalidades
     </div>
-    <small>Gerenciador do Thuor.</small>
+    <small>Todos as transações processadas pelo Thuor estão aqui.</small>
     <p></p>
     <div class="row mb-2">
-      
+      <button
+        v-on:click="processarMensalidades()"
+        v-show="qtd_pendente > 0"
+        class="btn btn-danger float-left pull-left ml-4 col-md-3"
+      >
+        <span class="fa fa-donate"></span> Processar Mensalidades
+      </button>
+      <span class="col-md-8 float right pull-right mt-1">
+        Há
+        <strong class="bold-sd">{{qtd_pendente}}</strong> para processar.
+      </span>
     </div>
     <div class="wrapper col-xl-12">
-     <template>
-    <ContentWrapper>
-        <div class="unwrap">
-            <div class="bg-cover">
-                <div class="container container-md py-4">
-                    <div class="text-center mb-3 pb-3">
-                        <div class="h1 text-bold">Admin Center</div>
-                        <p>Gerenciamento do Thuor</p>
-                    </div>
-                </div>
-            </div>
+      <label
+        class="float-left mr-2 col-form-label labelForm"
+        for="inlineFormInputGroup"
+      >Reg. p/ Pág.</label>
+      <select
+        v-model="rowsPerPage"
+        id="select"
+        class="selectPage form-control pull-left float-left"
+      >
+        <option v-for="pageSize in pageSizeMenu" :value="pageSize" :key="pageSize">{{pageSize}}</option>
+      </select>
+      <form id="search" class="form-group pull-right float-right">
+        <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
+      </form>
+      <div id="grid-template">
+        <div class="table-header-wrapper">
+          <table class="table-header">
+            <thead>
+              <th style="min-width: 5rem!important;">
+                <strong class="col- pedido">
+                  <b>Data Processar</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="data pl-0" style="min-width: 15rem!important;">
+                <strong class="col-">
+                  <b>Nome</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="data pl-0" style="min-width: 13rem!important;">
+                <strong class="col- ml-2">
+                  <b>Plano</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="status pl-0 ml-0 mr-0 pr-0" style="min-width: 5rem!important;">
+                <strong class="col- ml-2">
+                  <b>Valor</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+              <th class="status pl-0">
+                <strong class="col- ml-4">
+                  <b>Status</b>
+                </strong>
+                <span class="arrow"></span>
+              </th>
+            </thead>
+          </table>
         </div>
-        <div class="container container-md">
-            <form action="#">
-                <div class="input-group input-group-lg">
-                    <input class="form-control form-control-lg rounded-0" type="text" name="term" placeholder="Procure" />
-                    <select class="form-control form-control-lg">
-                        <option>All Products</option>
-                        <option>Templates</option>
-                        <option>Servers</option>
-                        <option>Billing</option>
-                        <option>Buyers</option>
-                        <option>Sellers</option>
-                        <option>Plans</option>
-                        <option>Accounts</option>
-                    </select>
-                    <div class="input-group-append">
-                        <button class="btn btn-info btn-lg b0 rounded-0" type="button">
-                            <strong>Buscar</strong>
-                        </button>
-                    </div>
-                </div>
-            </form>
-            <p class="my-3 py-4 text-muted text-center">
-                <small>Selecione qualquer uma das opções abaixo;</small>
-            </p>
-            <div class="row">
-                <div class="col-lg-4">
-                    <div class="card b">
-                      <router-link to="/admin/comissoes">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-primary" href="#">
-                                <em class="fa-5x fas fa-donate mb-3"></em>
-                                <br/>
-                                <span class="h4">Comissões</span>
-                                <br/>
-                                <div class="text-sm text-muted">Ver &rarr;</div>
-                            </a>
-                        </div>
-                        </router-link>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                      <router-link to="/admin/mensalidades">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-info" href="#">
-                                <em class="fa-5x fas fa-calendar-check mb-3"></em>
-                                <br/>
-                                <span class="h4">Mensalidades</span>
-                                <br/>
-                                <div class="text-sm text-muted">Ver &rarr;</div>
-                            </a>
-                        </div>
-                      </router-link>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                      <router-link to="/admin/ajuda">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-purple" href="#">
-                                <em class="fa-5x fa fa-life-ring mb-3"></em>
-                                <br/>
-                                <span class="h4">Ajuda</span>
-                                <br/>
-                                <div class="text-sm text-muted">Ver &rarr;</div>
-                            </a>
-                        </div>
-                      </router-link>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-warning" href="#">
-                                <em class="fa-5x far fa-gem mb-3"></em>
-                                <br/>
-                                <span class="h4">Buyers</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-danger" href="#">
-                                <em class="fa-5x far fa-building mb-3"></em>
-                                <br/>
-                                <span class="h4">Sellers</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-success" href="#">
-                                <em class="fa-5x far fa-calendar-check mb-3"></em>
-                                <br/>
-                                <span class="h4">Billing</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-dark" href="#">
-                                <em class="fa-5x fa fa-recycle mb-3"></em>
-                                <br/>
-                                <span class="h4">Plans</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="card b">
-                        <div class="card-body text-center">
-                            <a class="link-unstyled text-dark" href="#">
-                                <em class="fa-5x fa fa-street-view mb-3"></em>
-                                <br/>
-                                <span class="h4">Accounts</span>
-                                <br/>
-                                <div class="text-sm text-muted">View all &rarr;</div>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </ContentWrapper>
-</template>
+        <div class="table-body-wrapper">
+          <table class="table-body">
+            <tbody>
+              <tr
+                v-for="{data, nome, plano, valor, id_usuario, status} in dataPerPage"
+                :key="id_usuario"
+              >
+                <td class="metodo col" style="min-width: 16rem!important;">
+                  <p class="col- mb-0 dataPedido text-left ml-3">{{data}}</p>
+                </td>
+                <td class="pedido" style="min-width: 15rem!important;">
+                  <router-link
+                    :to="{path: '/transacoes-internas/detalhe/' + getCripto(parseInt(id_usuario), 0)}"
+                  >
+                    <p class="col- numeroPedido mb-0">{{nome}}</p>
+                  </router-link>
+                </td>
+                <td style="min-width: 13rem!important;">
+                  <p class="col- text-left numeroPedido mr-0 ml-0 pr-0 pl-0 ml-0">{{plano}}</p>
+                </td>
+                <td
+                  class="total text-left ml-1"
+                  style="min-width: 7rem!important;"
+                >R$ {{formatPrice(valor)}}</td>
 
-      
+                <td class="pl-0" style="min-width: 10rem!important;">
+                  <span
+                    class="col- spanStatus alert mr-3 ml-4"
+                    v-bind:class="getClassStatus(status)"
+                  >{{status.toUpperCase()}}</span>
+                </td>
+
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="page-navigation" class="col-xl-12 mt-3">
+        <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
+        <p
+          class="float-left text-center auto col-md-8 mt-1"
+        >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
+        <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
+      </div>
     </div>
   </ContentWrapper>
 </template>
@@ -373,6 +323,9 @@ import constantes_mensagens from "../../api/constantes_mensagens";
 import constantes from "../../api/constantes";
 import API_PLANOS from "../../api/planosAPI";
 import API_CHECKOUT_THUOR_COMISSION from "../../api/checkoutAPIThuorComission";
+import API_MENSALIDADES from '../../api/mensalidadesAPI';
+
+
 Vue.component("v-select", vSelect);
 
 TimeAgo.addLocale(pt);
@@ -394,18 +347,17 @@ export default {
   },
 
   async created() {
-    API_NOTIFICATION.HideLoading();
     const LUser = await UTILIS_API.GetUserSession();
     if (LUser != null && LUser.user.is_user_admin == 1) {
-      // this.timeAgo = new TimeAgo("pt-BR");
-      // let sortOrders = {};
-      // this.columns.forEach(function(key) {
-      //   sortOrders[key] = 1;
-      // });
-      // this.sortOrders = sortOrders;
-      // this.checkIfLogged();
-      //this.data = this.gridData;
-      ///sconsole.log("Filtered", this.dataPerPage);
+      this.timeAgo = new TimeAgo("pt-BR");
+      let sortOrders = {};
+      this.columns.forEach(function(key) {
+        sortOrders[key] = 1;
+      });
+      this.sortOrders = sortOrders;
+      this.checkIfLogged();
+      this.data = this.gridData;
+
     } else {
       API_NOTIFICATION.showNotificationW(
         "Oops!",
@@ -428,6 +380,7 @@ export default {
   },
   data() {
     return {
+      planos: [],
       canPay: false,
       timeAgo: "",
       searchQuery: "",
@@ -440,20 +393,18 @@ export default {
         rememberme: false
       },
       columns: [
-        "metodo",
-        "id",
-        "order_id",
-        "status",
+        "nome",
         "data",
-        "total",
-        "nome_comprador"
+        "status",
+        "plano",
+        "valor"
       ],
       gridData: [],
       startRow: 0,
       rowsPerPage: 10,
       pageSizeMenu: [10, 20, 50, 100],
       data: Array,
-      comissoesList: {},
+      mensalidadesList: {},
       acaoWhats: -1,
       arrayWhatsAppMessage: [],
       arrayWhatsAppMessageOriginal: [],
@@ -509,23 +460,26 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
+            .then(async resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              API_TRANSACOES.GetTransacoesInternas()
-                .then(retProd => {
+              this.planos = await API_PLANOS.GetPlanos();
+              API_LOGIN.GetUsersMensalidades()
+                .then(retMensalidades => {
                   this.gridData = [];
-                  this.comissoesList = retProd.data;
-                  this.qtd_pendente = retProd.data.length;
-                  if (retProd.data.length > 0) {
-                    retProd.data.forEach(async (obj, i) => {
+                  this.mensalidadesList = retMensalidades.data;
+          
+                  this.qtd_pendente = retMensalidades.data.length || 0;
+                  if (retMensalidades.data.length > 0) {
+                    retMensalidades.data.forEach(async (obj, i) => {
                       this.gridData.push({
                         id_usuario: obj.id_usuario,
-                        data_processar: moment(obj.data_processar).format(
+                        nome: obj.nome,
+                        data: moment(obj.proximo_pagamento_mensalidade).format(
                           "DD/MM/YYYY"
                         ),
-                        loja: obj.url_loja,
-                        status: obj.status,
-                        valor: parseFloat(obj.comissao)
+                        status: 'PENDENTE',
+                        plano: this.getPlano(obj.plano).json.nome,
+                        valor: this.getPlano(obj.plano).json.price
                       });
                     });
                   }
@@ -548,6 +502,9 @@ export default {
     },
     getID(id) {
       return id;
+    },
+    getPlano(plano) {
+      return this.planos.filter(x => x.id == plano)[0];
     },
     sortBy: function(key) {
       this.sortKey = key;
@@ -636,24 +593,11 @@ export default {
     },
     selecionaMensagemEnviar(event) {
       this.mensagemEnviarSelecionada = event.target.value;
-    },
-    async getValorComissao(obj) {
-      const LJSON = obj.json_front_end_user_data;
-      const LUser = await UTILIS_API.GetUserSession();
-      var LValorComissao = 0;
-      const LArrayPlan = await API_PLANOS.GetPlanosById(LUser.user.plano);
-      //const LPlano = LArrayPlan.filter(x => x.id == LUser.user.plano)[0];
-      const LPercentComission = LArrayPlan.addon.replace("%", "");
-      const LValCom =
-        (parseFloat(LPercentComission) / 100) *
-        parseFloat(LJSON.dadosComprador.valor);
-      LValorComissao = parseFloat(LValCom);
-      return LValorComissao;
-    },
-    processarComissoes() {
+    },    
+    processarMensalidades() {
       API_NOTIFICATION.showConfirmDialog(
-        "Processar Comissões",
-        "Tem certeza de que deseja processar as comissões?",
+        "Processar Mensalidades",
+        "Tem certeza de que deseja processar as mensalidades?",
         "question",
         () => {
           API_NOTIFICATION.ShowLoading();
@@ -661,13 +605,13 @@ export default {
             constantes.SAND_BOX_MP_PUBLICK_KEY
           );
           window.Mercadopago.clearSession();
-          this.comissoesList.forEach(async (obj, i) => {
+          this.mensalidadesList.forEach(async (obj, i) => {
             API_NOTIFICATION.ShowLoading();
             await this.sleep(2000);
-            var LDadoUsuario = await API_LOGIN.GetUserByID(obj.id_usuario);
-            LDadoUsuario = LDadoUsuario.data;
-            //console.log(LDadoUsuario.data);
-            const LValor = parseFloat(obj.comissao);
+            var LDadoUsuario = await API_LOGIN.GetUserByID(obj.id);          
+            LDadoUsuario = LDadoUsuario.data;            
+            const LPlanoPagar = this.getPlano(obj.plano);
+            const LValor = parseFloat(LPlanoPagar.json.price);
             var FormToken = await UTILIS_API.CREATE_FORM_MP(
               constantes.CONSTANTE_THUOR,
               LValor,
@@ -717,30 +661,23 @@ export default {
                   window.Mercadopago.clearSession();
                   const LUser = await UTILIS_API.GetUserSession();
                   if (LUser) {
+                    const LDataUltimoPagamentoMensalidade = moment().format();
                     var LData = moment()
-                      .add({ days: 7 })
+                      .add({ days: 30 })
                       .format();
-                    LDadoUsuario.proximo_pagamento = LData;
+                    LDadoUsuario.proximo_pagamento_mensalidade = LData;
                     API_LOGIN.UpdateUser(
                       LDadoUsuario.id,
                       LDadoUsuario.plano,
                       LDadoUsuario.json_pagamento,
-                      LDadoUsuario.proximo_pagamento
+                      LDadoUsuario.proximo_pagamento,
+                      LDadoUsuario.proximo_pagamento_mensalidade
                     )
-                      .then(resUpdate => {
-                        API_TRANSACOES.SetPaymentComissionDone(
-                          obj.id_usuario,
-                          obj.data_processar,
-                          paymentData,
-                          retornoPay.data
-                        )
-                          .then(resUpdateSetPaymentDone => {
+                      .then(async resUpdate => {                        
+                            const LInsereMensalidadesPagas = await API_MENSALIDADES.InsereTransacoesInternasMensalidades(obj.id, obj.data, paymentData, retornoPay.data, 'PAID');
+                            const LUltimoPagamentoMensalidade = await API_LOGIN.UpdateUltimoPagamentoUser(obj.id, LDataUltimoPagamentoMensalidade);
                             console.log("Payment Done");
-                            API_NOTIFICATION.HideLoading();
-                          })
-                          .catch(error => {
-                            console.log("Erro ao setar pagamento ", error);
-                          });
+                            API_NOTIFICATION.HideLoading();                          
                       })
                       .catch(error => {
                         console.log(
@@ -754,7 +691,7 @@ export default {
                   console.log("Erro ao tentar efetuar o pagamento", error);
                 });
             });
-            console.log(LDadoUsuario);
+            
           });
         }
       );

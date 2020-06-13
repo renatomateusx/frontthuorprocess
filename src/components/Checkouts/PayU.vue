@@ -70,7 +70,6 @@
                   <label class="switch switch-lg">
                     <input
                       type="checkbox"
-                      @change="updateStatus()"
                       :checked="checkout_form.status == 1"
                       v-model="checkout_form.status"
                       :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.status')}"
@@ -116,7 +115,6 @@
               <div class="form-group">
                 <label class="col-form-label">Processar transação no Market Place automaticamente? *</label>
                 <select
-                  @change="UpdateAtivaAutoProcessamento()"
                   id="processa_automaticamente"
                   name="processa_automaticamente"
                   class="form-control"
@@ -129,7 +127,6 @@
               <div class="form-group">
                 <label class="col-form-label">Ativa boleto? *</label>
                 <select
-                  @change="UpdateAtivaBoleto()"
                   id="ativa_boleto"
                   name="ativa_boleto"
                   class="form-control"
@@ -195,6 +192,24 @@
                   class="invalid-feedback"
                 >{{ errors.first('checkout_form.account_id') }}</span>
               </div>
+              <div class="form-groug">
+                <label class="s col-form-label">Mostrar Prova Social?</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="checkout_form.mostra_prova_social == 1"
+                      v-model="checkout_form.mostra_prova_social"
+                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.mostra_prova_social')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('checkout_form.mostra_prova_social')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.mostra_prova_social') }}</span>
+              </div>
               <div class="required">* Campos requeridos</div>
             </div>
             <div class="card-footer">
@@ -225,6 +240,7 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT_PU from "../../api/checkoutPayUAPI";
 import API_HEADERS from "../../api/configAxios";
+import UTILIS_API from '../../api/utilisAPI';
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -257,7 +273,8 @@ export default {
         status: 1,
         ativa_boleto: 1,
         gateway: 3,
-        id_usuario: 0
+        id_usuario: 0,
+        mostra_prova_social: false
       }
     };
   },
@@ -267,7 +284,7 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_CHECKOUT_PU.GetIntegracaoCheckoutByID(3)
-            .then(resCheckout => {              
+            .then(resCheckout => {
               this.checkout = resCheckout.data;
               //this.checkout_form = this.checkout;
               //yconsole.log(this.checkout.status);
@@ -318,19 +335,22 @@ export default {
         }
       });
     },
-    salvarCheckout() {
+    async salvarCheckout() {
       API_NOTIFICATION.ShowLoading();
-      API_CHECKOUT_PU.InsertCheckout(this.checkout_form)
-        .then(res => {
-          //this.checkIfLogged();
-          API_NOTIFICATION.showNotification(
-            "Checkout Salvo com Sucesso",
-            "success"
-          );
-        })
-        .catch(error => {
-          console.log("Erro ao salvar o checkout MP", error);
-        });
+      const LPodeSalvar = await UTILIS_API.checkUserHasPuttedPaymentInformation();
+      if (LPodeSalvar) {
+        API_CHECKOUT_PU.InsertCheckout(this.checkout_form)
+          .then(res => {
+            //this.checkIfLogged();
+            API_NOTIFICATION.showNotification(
+              "Checkout Salvo com Sucesso",
+              "success"
+            );
+          })
+          .catch(error => {
+            console.log("Erro ao salvar o checkout MP", error);
+          });
+      }
     },
     updateStatus() {
       API_NOTIFICATION.ShowLoading();

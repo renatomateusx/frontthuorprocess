@@ -135,7 +135,6 @@ export default {
         });
     },
     acaoVerEditarIntegracaoCheckout(id) {
-      console.log("ID", id);
       if (id == 1) {
         this.$router.push("/configs/checkouts/mercadopago");
       }

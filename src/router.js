@@ -24,6 +24,9 @@ const Pay = () => import('@/components/Cart/Pay.vue');
 const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
 const Pedidos = () => import('@/views/Pages/Pedidos.vue');
+const Comissoes = () => import('@/views/Pages/Comissoes.vue');
+const Mensalidades = () => import('@/views/Pages/Mensalidades.vue');
+
 const Admin = () => import('@/views/Pages/Admin.vue');
 const DetalhePedido = () => import('@/views/Pages/DetalhePedido.vue');
 const IntegracaoCheckout = () => import('@/views/Pages/IntegracaoCheckout.vue');
@@ -48,6 +51,10 @@ const Redefinir = () => import('@/views/Pages/Redefinir.vue');
 const Review = () => import('@/views/Pages/Review.vue');
 const Apps = () => import('@/views/Pages/Apps.vue');
 const PerfilUsuario = () => import('@/views/Pages/PerfilUsuario.vue');
+const Ajuda = () => import('@/views/Pages/Ajuda.vue');
+const AdminAjuda = () => import('@/views/Pages/AdminAjuda.vue');
+const AdminAjudaEdit = () => import('@/views/Pages/AdminAjudaEdit.vue');
+
 Vue.use(Router)
 
 export default new Router({
@@ -129,6 +136,26 @@ export default new Router({
             {
                 path: '/admin',
                 component: Admin
+            },
+            {
+                path: '/admin/comissoes',
+                component: Comissoes
+            },
+            {
+                path: '/admin/mensalidades',
+                component: Mensalidades
+            },
+            {
+                path: '/admin/ajuda',
+                component: AdminAjuda
+            },
+            {
+                path: '/admin/ajuda/edit/:id',
+                component: AdminAjudaEdit
+            },
+            {
+                path: '/admin/ajuda/nova',
+                component: AdminAjudaEdit
             },
             {
                 path: '/pedidos/detalhe/:id',
@@ -244,6 +271,10 @@ export default new Router({
             {
                 path: '/apps',
                 component: Apps
+            },
+            {
+                path: '/ajuda',
+                component: Ajuda
             },
             {
                 path: '/configs/campanhas',
