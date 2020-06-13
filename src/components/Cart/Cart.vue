@@ -148,13 +148,7 @@
                               </div>
                             </div>
                             <div class="col-md-4 quantity">
-                              <label for="quantity" class>Qtd.:</label>
-                              <!-- <input
-                                id="quantity"
-                                type="number"
-                                v-bind:value="quantity"
-                                class="form-control quantity-input"
-                              />-->
+                              <label for="quantity" class>Qtd.:</label>                             
                               <div class="row QuatroCincopx">
                                 <button
                                   class="input-group-btn btn btn-danger btnIncrementDecrement cursorP col-md-1"
@@ -253,7 +247,9 @@ import API_LOJA from "../../api/lojaAPI";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS_API from "../../api/utilisAPI";
+import Element from "element-ui";
 
+Vue.use(Element);
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
 });
@@ -419,6 +415,7 @@ export default {
       }
     },
     async changeQuantity(idThuor) {
+      console.log(idThuor);
       var Comp = document.getElementById("qtd_" + idThuor);
 
       //console.log("IdThuor", idThuor);

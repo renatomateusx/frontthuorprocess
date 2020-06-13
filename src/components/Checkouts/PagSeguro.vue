@@ -164,6 +164,24 @@
                   class="invalid-feedback"
                 >{{ errors.first('checkout_form.token_acesso') }}</span>
               </div>
+              <div class="form-groug">
+                <label class="s col-form-label">Mostrar Prova Social?</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="checkout_form.mostra_prova_social == 1"
+                      v-model="checkout_form.mostra_prova_social"
+                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.mostra_prova_social')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('checkout_form.mostra_prova_social')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.mostra_prova_social') }}</span>
+              </div>
               <div class="required">* Campos requeridos</div>
             </div>
             <div class="card-footer">
@@ -194,6 +212,7 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
+import UTILIS_API from '../../api/utilisAPI';
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -224,7 +243,8 @@ export default {
         status: 1,
         ativa_boleto: 1,
         gateway: 2,
-        id_usuario: 0
+        id_usuario: 0,
+        mostra_prova_social: false
       }
     };
   },

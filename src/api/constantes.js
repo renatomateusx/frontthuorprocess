@@ -4,8 +4,8 @@ export default Object.freeze({
   PRODUCAO_BOX_MP_PUBLICK_KEY: 'APP_USR-c97da455-7446-4595-968b-75677fcc12d1',
   PRODUCAO_BOX_MP_ACCESS_TOKEN: 'APP_USR-4338451460338304-120717-64a42a12fe590e1715881018b78df091-128404654',
 
-  WEBSITEAPI: 'http://localhost:3000/',
-  //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
+  //WEBSITEAPI: 'http://localhost:3000/',
+  WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
   //WEBSITEAPI: 'https://api.thuor.com:9443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
@@ -156,6 +156,9 @@ export default Object.freeze({
   PATH_SAVE_AJUDA: 'ajuda/SaveAjuda',
   PATH_DELETE_AJUDA_BY_ID: 'ajuda/DeleteAjudaByID',
 
+
+  /* REVIEWS */
+  PATH_GET_REVIEWS: 'reviews/GetReviewByID',
 
   CONSTANTE_THUOR: 'Thuor',
   CONSTANTE_THUOR_EMAIL: 'renatomateusx@gmail.com',
