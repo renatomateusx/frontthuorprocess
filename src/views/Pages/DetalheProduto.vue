@@ -544,7 +544,7 @@
                     class="text-muted"
                     title="Clique para copiar"
                     style="cursor:pointer!important;"
-                    @click.stop.prevent="copyToClip('https://thuor.com/pay/'+getCripto(produtoByID.id, id))"
+                    @click.stop.prevent="copyToClip('https://thuor.com/#pay/'+getCripto(produtoByID.id, id))"
                   >
                     <span class="fa fa-link linkCompra"></span>
                     <strong class="linkCompra">Link de Compra</strong>

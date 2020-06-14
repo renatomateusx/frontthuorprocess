@@ -385,10 +385,12 @@ import API_MKT from "../../api/marketingAPI";
 import API_CHECKOUT_PS from "../../api/checkoutPSAPI";
 import API_CUPOM from "../../api/cuponsAPI";
 import moment from "moment";
-
+import { Validator } from "vee-validate";
 Vue.use(LoadScript);
 
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 

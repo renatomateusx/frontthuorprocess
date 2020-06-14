@@ -5,15 +5,14 @@
   }
 }
 @media only screen and (max-width: 1000px) {
-  .hiddenMobile{
+  .hiddenMobile {
     display: none;
   }
-  .expandInMobile{
-    
-    width: 100%!important;
+  .expandInMobile {
+    width: 100% !important;
     margin-top: 5px;
   }
-  .paddingInMobile{
+  .paddingInMobile {
     padding: 10px 20px !important;
   }
 }
@@ -184,7 +183,6 @@ th.active .arrow {
   padding: 3px !important;
   font-size: 12px !important;
 }
-
 </style>
 <template>
   <ContentWrapper>
@@ -227,26 +225,38 @@ th.active .arrow {
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0 paddingInMobile" style="width: 30em!important;min-width: 30em!important;">
+              <th
+                class="data pl-0 paddingInMobile"
+                style="width: 30em!important;min-width: 30em!important;"
+              >
                 <strong class>
                   <b>NOME</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0 hiddenMobile" style="min-width: 9em!important; width: 9em!important;">
+              <th
+                class="data pl-0 hiddenMobile"
+                style="min-width: 9em!important; width: 9em!important;"
+              >
                 <strong class>
                   <b>VARIANTES</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="status pl-2 hiddenMobile"  style="min-width: 9em!important; width: 9em!important;">
+              <th
+                class="status pl-2 hiddenMobile"
+                style="min-width: 9em!important; width: 9em!important;"
+              >
                 <strong class="col-md-2">
                   <b>ESTOQUE</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              
-              <th class="status pl-2 hiddenMobile" style="min-width: 9em!important; width: 9em!important;">
+
+              <th
+                class="status pl-2 hiddenMobile"
+                style="min-width: 9em!important; width: 9em!important;"
+              >
                 <strong class="col-md-2">
                   <b>MODIFICADO</b>
                 </strong>
@@ -260,15 +270,15 @@ th.active .arrow {
           <table class="table-body">
             <tbody>
               <tr v-for="{id_produto_json, titulo_produto, json_dados_produto} in dataPerPage">
-                <td class="hiddenMobile"  style="min-width: 10em!important; width: 10em!important;">
+                <td class="hiddenMobile" style="min-width: 10em!important; width: 10em!important;">
                   <div class="row">
-                  <div class="checkbox c-checkbox">
-                    <label>
-                      <input type="checkbox" />
-                      <span class="fa fa-check"></span>
-                    </label>
-                  </div>
-                  <span class="id_produto">{{id_produto_json}}</span>
+                    <div class="checkbox c-checkbox">
+                      <label>
+                        <input type="checkbox" />
+                        <span class="fa fa-check"></span>
+                      </label>
+                    </div>
+                    <span class="id_produto">{{id_produto_json}}</span>
                   </div>
                 </td>
                 <td class="padding1010" style="width: 34em!important;min-width: 34em!important;">
@@ -286,9 +296,13 @@ th.active .arrow {
                   </div>
                 </td>
                 <td
-                  style="width: 3em!important;min-width: 3em!important;" class=" hiddenMobile"
+                  style="width: 3em!important;min-width: 3em!important;"
+                  class="hiddenMobile"
                 >{{json_dados_produto.variants.length}}</td>
-                <td class="text-center hiddenMobile" style="width: 15em!important;min-width: 15em!important;">
+                <td
+                  class="text-center hiddenMobile"
+                  style="width: 15em!important;min-width: 15em!important;"
+                >
                   <span class="badge badge-success">Ativo</span>
                 </td>
 
@@ -322,6 +336,8 @@ import API_PRODUTOS from "../../api/produtosAPI";
 import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
 import UTILIS_API from "../../api/utilisAPI";
+import API_LOJA from "../../api/lojaAPI";
+import constantes from '../../api/constantes';
 Vue.use(Loading);
 
 Vue.use(VeeValidate, {
@@ -437,7 +453,7 @@ export default {
       API_LOGIN.VerificaToken()
         .then(res => {
           API_PRODUTOS.GetProdutos()
-            .then(retProd => {              
+            .then(retProd => {
               retProd.data.forEach((obj, i) => {
                 var LImages = obj.json_dados_produto;
                 //this.produtosList = retProd.data;
@@ -461,35 +477,47 @@ export default {
           }
         });
     },
-    importFromShopify() {
+    async importFromShopify() {
       API_NOTIFICATION.ShowLoading();
-      API_PRODUTOS.ImportFromShopify()
-        .then(retorno => {
-          API_PRODUTOS.GetProdutos()
-            .then(retProd => {
-              var LImages = retProd.data[0].json_dados_produto;
-              console.log("Retorno Produtos", LImages.image.src);
-              this.produtosList = retProd.data;
+      const Luser = await UTILIS_API.GetUserSession();
+      var LDadosLoja = await API_LOJA.GetDadosLojaByIdUsuario(Luser.user.id);
+      LDadosLoja = LDadosLoja.data;
 
-              API_NOTIFICATION.Notifica(
-                "Tudo Pronto",
-                "Produtos Importados!",
-                "success"
-              );
-            })
-            .catch(error => {
-              console.log("Erro ao pegar produtos", error);
-            });
-        })
-        .catch(error => {
-          API_NOTIFICATION.HideLoading();
-          API_NOTIFICATION.Notifica(
-            "Oops!",
-            "Ocorreu um problema ao tentar importar os produtos.",
-            "error"
-          );
-          console.log("Erro ao importar produtos do shopify", error);
-        });
+      if (LDadosLoja.plataforma == constantes.PLATAFORMA_SHOPIFY) {
+        API_PRODUTOS.ImportFromShopify()
+          .then(retorno => {
+            API_PRODUTOS.GetProdutos()
+              .then(retProd => {
+                var LImages = retProd.data[0].json_dados_produto;
+                console.log("Retorno Produtos", LImages.image.src);
+                this.produtosList = retProd.data;
+
+                API_NOTIFICATION.Notifica(
+                  "Tudo Pronto",
+                  "Produtos Importados!",
+                  "success"
+                );
+              })
+              .catch(error => {
+                console.log("Erro ao pegar produtos", error);
+              });
+          })
+          .catch(error => {
+            API_NOTIFICATION.HideLoading();
+            API_NOTIFICATION.Notifica(
+              "Oops!",
+              "Ocorreu um problema ao tentar importar os produtos.",
+              "error"
+            );
+            console.log("Erro ao importar produtos do shopify", error);
+          });
+      }else{
+        API_NOTIFICATION.Notifica(
+              "Oops!",
+              "Nenhuma Loja Shopify foi cadastrada.",
+              "error"
+            );
+      }
     }
   }
 };

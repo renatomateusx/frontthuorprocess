@@ -262,7 +262,9 @@ import API_MKT from "../../api/marketingAPI";
 import Hashids from "hashids";
 import UTILIS_API from "../../api/utilisAPI";
 // Tag inputs
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 

@@ -87,6 +87,9 @@ var UTILIS = {
   getRandomStringEmail() {
     let r = Math.random().toString(36).substring(11);
     return r;
+  },
+  sleep(seconds) {
+    return new Promise(r => setTimeout(r, seconds));
   }
 }
 export default UTILIS 

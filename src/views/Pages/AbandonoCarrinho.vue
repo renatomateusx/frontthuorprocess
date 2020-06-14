@@ -143,7 +143,9 @@ import API_LOJA from "../../api/lojaAPI";
 import SequenciaCard from "../../components/Campanhas/SequenciaCard";
 import API_CAMPANHA from "../../api/campanhasAPI";
 
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 

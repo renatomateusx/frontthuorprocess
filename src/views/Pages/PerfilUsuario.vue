@@ -807,7 +807,9 @@ Vue.filter("formatPrice", function(value) {
 });
 
 // Tag inputs
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 
