@@ -1795,6 +1795,7 @@ export default {
     },
     async getDadosPagamentoTransacao() {
       this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+      this.ttrack = await UTILIS_API.GetTtrackSession();
       var transacao = {
         dadosComprador: {
           nome_completo: this.removeAcento(this.nome_completo),

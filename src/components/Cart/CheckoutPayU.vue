@@ -1748,6 +1748,7 @@ export default {
     },
     async getDadosPagamentoTransacao() {
       this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+      this.ttrack = await UTILIS_API.GetTtrackSession();
       this.getSignature();
       var transacao = {
         token: this.DadosCheckout.token_acesso,
@@ -1857,7 +1858,8 @@ export default {
       const LCripto = btoa(JSONString);
       return LCripto;
     },
-    getDadosPagamentoTransacaoBoleto() {
+    async getDadosPagamentoTransacaoBoleto() {
+      this.ttrack = await UTILIS_API.GetTtrackSession();
       this.getSignature();
       const LDaysVenceBoleto =
         this.DadosCheckout.vencimento_boleto ||
@@ -1891,7 +1893,8 @@ export default {
           valor: this.formatPrice(this.granTotal),
           forma: this.formaPagamento,
           barcode: "",
-          urlBoleto: ""
+          urlBoleto: "",
+          ttrack: this.ttrack
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,

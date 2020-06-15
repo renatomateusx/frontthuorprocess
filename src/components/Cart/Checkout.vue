@@ -125,6 +125,10 @@ export default {
         const limpa_carrinho = params.searchParams.get("limpa_carrinho");
         const qtdItems = params.searchParams.get("qtd_items");
         const redirectTo = params.searchParams.get("redirectTo");
+        const ttrack = params.searchParams.get("ttrack");
+        if(ttrack && ttrack != undefined){
+          UTILIS_API.SetTtrackSession(ttrack);
+        }
         for (var i = 0; i < qtdItems; i++) {
           var lpro = await this.pushProducts(
             params.searchParams.get("produto_option_id[" + i + "]"),

@@ -1730,6 +1730,7 @@ export default {
     },
     async getDadosPagamentoTransacao() {
       this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+      this.ttrack = await UTILIS_API.GetTtrackSession();
       this.DadosCheckout.chave_publica = this.public_key;
       var transacao = {
         token: this.DadosCheckout.token_acesso,
@@ -1788,7 +1789,8 @@ export default {
       const LCripto = btoa(JSONString);
       return LCripto;
     },
-    getDadosPagamentoTransacaoBoleto() {
+    async getDadosPagamentoTransacaoBoleto() {
+      this.ttrack = await UTILIS_API.GetTtrackSession();
       const LDaysVenceBoleto =
         this.DadosCheckout.vencimento_boleto ||
         constantes.CONSTANTE_VENCIMENTO_BOLETO;
@@ -1821,7 +1823,8 @@ export default {
           valor: this.formatPrice(this.granTotal),
           forma: this.formaPagamento,
           barcode: "",
-          urlBoleto: ""
+          urlBoleto: "",
+          ttrack: this.ttrack
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
