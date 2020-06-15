@@ -1187,7 +1187,8 @@ export default {
       public_key: "",
       reference_id: "",
       signature: "",
-      descontoCupom: 0
+      descontoCupom: 0,
+      ttrack: 0
     };
   },
   mounted() {},
@@ -1775,7 +1776,8 @@ export default {
           urlBoleto: "",
           parcela: this.parcelas,
           valorParcela: "",
-          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""))
+          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, "")),
+          ttrack: this.ttrack
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,

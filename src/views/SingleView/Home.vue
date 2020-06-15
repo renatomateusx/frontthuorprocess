@@ -37,6 +37,68 @@
         <div class="d-flex align-items-center py-3">
           <div class="w-50 px-3">
             <p class="m-0 lead dataReport">
+              <strong>{{totalVendasFacebook}}</strong>
+            </p>
+            <p class="m-0 text-sm labelReport">Vendas oriundas do Facebook!</p>
+          </div>
+          <div class="w-50 px-3 text-center" v-if="renderComponent">
+            <Sparkline
+              id="totalVendasPerDa"
+              :options="{
+                          type: 'line',
+                          height:'60',
+                          width:'80%',
+                          lineWidth:'2',
+                          lineColor:'#7266ba',
+                          chartRangeMin:'0',
+                          spotColor:'#888',
+                          minSpotColor:'#7266ba',
+                          maxSpotColor:'#7266ba',
+                          fillColor:'',
+                          highlightLineColor:'#fff',
+                          spotRadius:'5',
+                          resize:true
+                      }"
+              v-bind:values="totalVendasFacebookArray"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="list-group-item col-md-6">
+        <div class="d-flex align-items-center py-3">
+          <div class="w-50 px-3">
+            <p class="m-0 lead dataReport">
+              <strong>{{totalVendasGoogle}}</strong>
+            </p>
+            <p class="m-0 text-sm labelReport">Vendas oriundas do Google!</p>
+          </div>
+          <div class="w-50 px-3 text-center" v-if="renderComponent">
+            <Sparkline
+              id="totalVendasPerDa"
+              :options="{
+                          type: 'line',
+                          height:'60',
+                          width:'80%',
+                          lineWidth:'2',
+                          lineColor:'#7266ba',
+                          chartRangeMin:'0',
+                          spotColor:'#888',
+                          minSpotColor:'#7266ba',
+                          maxSpotColor:'#7266ba',
+                          fillColor:'',
+                          highlightLineColor:'#fff',
+                          spotRadius:'5',
+                          resize:true
+                      }"
+              v-bind:values="totalVendasGoogleArray"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="list-group-item col-md-6">
+        <div class="d-flex align-items-center py-3">
+          <div class="w-50 px-3">
+            <p class="m-0 lead dataReport">
               <strong>{{totalVendas}}</strong>
             </p>
             <p class="m-0 text-sm labelReport">Vendas até Hoje!</p>
@@ -231,6 +293,10 @@ export default {
       pedidosBoletos: 0,
       totalPedidosBoletos:0,
       totalPedidosBoletosArray: [],
+      totalVendasFacebookArray:[],
+      totalVendasFacebook:0,
+      totalVendasGoogleArray:[],
+      totalVendasGoogle:0,
     };
   },
   methods: {
@@ -285,6 +351,14 @@ export default {
                     this.pedidosBoletos += 1;
                     this.totalPedidosBoletos += parseFloat( obj.json_front_end_user_data.dadosComprador.valor)
                     this.totalPedidosBoletosArray.push(parseFloat( obj.json_front_end_user_data.dadosComprador.valor));
+                  }
+                  if(obj.ttrack && obj.ttrack == 1){
+                    this.totalVendasFacebook +=1;
+                    this.totalVendasFacebookArray.push(parseFloat( obj.json_front_end_user_data.dadosComprador.valor));
+                  }
+                  if(obj.ttrack && obj.ttrack == 2){
+                    this.totalVendasGoogle +=1;
+                    this.totalVendasGoogle.push(parseFloat( obj.json_front_end_user_data.dadosComprador.valor));
                   }
                   this.forceRerender();
                 });
