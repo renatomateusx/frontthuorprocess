@@ -148,6 +148,7 @@ export default Object.freeze({
   SESSION_DATA_CLIENTES: 'dc',
   SESSION_DATA_CRIPTO: 'cr',
   SESSION_FRETES: 'f',
+  SESSION_TTRACK: 'tt',
   SESSION_CART: 'c',
   SESSION_USER: 'x',
   SESSION_PIXEL: 'p',
