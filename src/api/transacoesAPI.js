@@ -57,7 +57,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                var DadosLoja = await  UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     var LBody = {
 
@@ -100,7 +100,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                var DadosLoja = await  UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -125,7 +125,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                var DadosLoja = await  UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -150,7 +150,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                var DadosLoja = await  UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -175,7 +175,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
-                var DadosLoja = UTILIS_API.GetDadosLojaSession();
+                var DadosLoja = await UTILIS_API.GetDadosLojaSession();
                 if (DadosLoja !== null && DadosLoja !== undefined) {
                     let LBody = {
                         id_usuario: LUser.user.id,
@@ -200,7 +200,7 @@ var API_TRANSACOES = {
         return new Promise(async (resolve, reject) => {
 
 
-            var DadosLoja = UTILIS_API.GetDadosLojaSession();
+            var DadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (DadosLoja !== null && DadosLoja !== undefined) {
                 let LBody = {
                     id_usuario: id_usuario,
@@ -221,8 +221,54 @@ var API_TRANSACOES = {
             }
 
         });
-    }
-
+    },
+    GetChartTransacoesPerDay() {
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                var DadosLoja = await UTILIS_API.GetDadosLojaSession();
+                if (DadosLoja !== null && DadosLoja !== undefined) {
+                    var LBody = {
+                        id_usuario: DadosLoja.id_usuario
+                    }
+                    axios
+                        .post(constantes.WEBSITEAPI + constantes.PATH_GET_CHART_TRANSACOES_PER_DAY, LBody)
+                        .then((response) => {
+                            //console.log("Response", response);
+                            resolve(response);
+                        })
+                        .catch((error) => {
+                            console.log("Reject", error);
+                            reject(error);
+                        });
+                }
+            }
+        });
+    },
+    GetVendasMes() {
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                var DadosLoja = await UTILIS_API.GetDadosLojaSession();
+                if (DadosLoja !== null && DadosLoja !== undefined) {
+                    var LBody = {
+                        id_usuario: DadosLoja.id_usuario
+                    }
+                    axios
+                        .post(constantes.WEBSITEAPI + constantes.PATH_GET_CHART_SALES_MONTH, LBody)
+                        .then((response) => {
+                            //console.log("Response", response);
+                            resolve(response);
+                        })
+                        .catch((error) => {
+                            console.log("Reject", error);
+                            reject(error);
+                        });
+                }
+            }
+        });
+    },
+    
 
 
 

@@ -164,7 +164,9 @@ import { extend } from "vee-validate";
 import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 

@@ -191,7 +191,9 @@ import Hashids from "hashids";
 import UTILIS_API from "../../api/utilisAPI";
 import API_AJUDA from '../../api/ajudaAPI';
 // Tag inputs
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 

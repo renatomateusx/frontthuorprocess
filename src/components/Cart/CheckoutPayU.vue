@@ -430,7 +430,7 @@ h1 {
     <div class="container-fluid">
       <div class="card shopping-cart mb-0">
         <div class="card-header bg-dark text-light">
-          {{getNomeLoja() || 'Thuor.com'}}
+          {{nome_loja || 'Thuor.com'}}
           <!-- <div class="clearfix"></div> -->
           <div class="item-security pull-right float-right black-70 ml30 row" aria-hidden="true">
             <div class="holder-icon col-md-2" style="display:none;">
@@ -1150,6 +1150,7 @@ export default {
       fretes: [],
       freteSelecionado: -1,
       dadosLoja: {},
+      nome_loja: '',
       nomeLoja: "",
       currentStep: 1,
       nome_completo: "",
@@ -1187,7 +1188,8 @@ export default {
       public_key: "",
       reference_id: "",
       signature: "",
-      descontoCupom: 0
+      descontoCupom: 0,
+      ttrack: 0
     };
   },
   mounted() {},
@@ -1211,6 +1213,7 @@ export default {
       var url = window.location.href;
 
       this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+      this.nome_loja = this.dadosLoja.nome_loja;
       this.getCheckouts();
       //console.log("loja", dadosLoja);
 
@@ -1252,6 +1255,7 @@ export default {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
         this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+        this.nome_loja = this.dadosLoja.nome_loja;
         this.produtosCart = JSON.parse(LCart);
         this.getTotal();
         API_NOTIFICATION.HideLoading();
@@ -1747,6 +1751,7 @@ export default {
     },
     async getDadosPagamentoTransacao() {
       this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+      this.ttrack = await UTILIS_API.GetTtrackSession();
       this.getSignature();
       var transacao = {
         token: this.DadosCheckout.token_acesso,
@@ -1775,7 +1780,8 @@ export default {
           urlBoleto: "",
           parcela: this.parcelas,
           valorParcela: "",
-          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""))
+          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, "")),
+          ttrack: this.ttrack
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,
@@ -1855,7 +1861,8 @@ export default {
       const LCripto = btoa(JSONString);
       return LCripto;
     },
-    getDadosPagamentoTransacaoBoleto() {
+    async getDadosPagamentoTransacaoBoleto() {
+      this.ttrack = await UTILIS_API.GetTtrackSession();
       this.getSignature();
       const LDaysVenceBoleto =
         this.DadosCheckout.vencimento_boleto ||
@@ -1889,7 +1896,8 @@ export default {
           valor: this.formatPrice(this.granTotal),
           forma: this.formaPagamento,
           barcode: "",
-          urlBoleto: ""
+          urlBoleto: "",
+          ttrack: this.ttrack
         },
         produtos: this.produtosCart,
         dadosLoja: this.dadosLoja,

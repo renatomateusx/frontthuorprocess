@@ -1,0 +1,142 @@
+{
+    "token": "4f8d0c4118d9f5dc37bcd2627a97d4b0",
+    "note": null,
+    "attributes": {
+      
+    },
+    "original_total_price": 50600,
+    "total_price": 50600,
+    "total_discount": 0,
+    "total_weight": 0,
+    "item_count": 4,
+    "items": [
+      {
+        "id": 33311856853051,
+        "properties": {
+          
+        },
+        "quantity": 3,
+        "variant_id": 33311856853051,
+        "key": "33311856853051:8bfe805300829a7665188da281bd484e",
+        "title": "Bermuda Donet - Preto / P",
+        "price": 12900,
+        "original_price": 12900,
+        "discounted_price": 12900,
+        "line_price": 38700,
+        "original_line_price": 38700,
+        "total_discount": 0,
+        "discounts": [
+          
+        ],
+        "sku": "14:193;5:361386",
+        "grams": 0,
+        "vendor": "Salvador Ofertas",
+        "taxable": true,
+        "product_id": 4789206220859,
+        "product_has_only_default_variant": false,
+        "gift_card": false,
+        "final_price": 12900,
+        "final_line_price": 38700,
+        "url": "/products/bermuda-donet?variant=33311856853051",
+        "featured_image": {
+          "aspect_ratio": 1,
+          "alt": "Bermuda Donet",
+          "height": 800,
+          "url": "https://cdn.shopify.com/s/files/1/0297/5783/3275/products/HTB1lfr3jWAoBKNjSZSyq6yHAVXaN.jpg?v=1586810138",
+          "width": 800
+        },
+        "image": "https://cdn.shopify.com/s/files/1/0297/5783/3275/products/HTB1lfr3jWAoBKNjSZSyq6yHAVXaN.jpg?v=1586810138",
+        "handle": "bermuda-donet",
+        "requires_shipping": true,
+        "product_type": "200000382",
+        "product_title": "Bermuda Donet",
+        "product_description": "Gênero: MasculinoTipo de estampa: LisoMaterial: Algodão e poliésterOcasião: Casual, esporte e lazerTipo de fecho: Cordão\n*Os produtos podem apresentar pequenas variações de cor e/ou estampa.",
+        "variant_title": "Preto / P",
+        "variant_options": [
+          "Preto",
+          "P"
+        ],
+        "options_with_values": [
+          {
+            "name": "Cor",
+            "value": "Preto"
+          },
+          {
+            "name": "Tamanho",
+            "value": "P"
+          }
+        ],
+        "line_level_discount_allocations": [
+          
+        ],
+        "line_level_total_discount": 0
+      },
+      {
+        "id": 33311681085499,
+        "properties": {
+          
+        },
+        "quantity": 1,
+        "variant_id": 33311681085499,
+        "key": "33311681085499:d3e25d7c95d0b053ead45b4b4e4a8b6b",
+        "title": "Bermuda Erkan - Cinza / P",
+        "price": 11900,
+        "original_price": 11900,
+        "discounted_price": 11900,
+        "line_price": 11900,
+        "original_line_price": 11900,
+        "total_discount": 0,
+        "discounts": [
+          
+        ],
+        "sku": "14:173#A3;5:361386",
+        "grams": 0,
+        "vendor": "Salvador Ofertas",
+        "taxable": true,
+        "product_id": 4789163556923,
+        "product_has_only_default_variant": false,
+        "gift_card": false,
+        "final_price": 11900,
+        "final_line_price": 11900,
+        "url": "/products/bermuda-erkan?variant=33311681085499",
+        "featured_image": {
+          "aspect_ratio": 1,
+          "alt": "Bermuda Erkan",
+          "height": 640,
+          "url": "https://cdn.shopify.com/s/files/1/0297/5783/3275/products/H0a9a063361ed4f84a3606843dee944ebu.jpg?v=1586808849",
+          "width": 640
+        },
+        "image": "https://cdn.shopify.com/s/files/1/0297/5783/3275/products/H0a9a063361ed4f84a3606843dee944ebu.jpg?v=1586808849",
+        "handle": "bermuda-erkan",
+        "requires_shipping": true,
+        "product_type": "200000621",
+        "product_title": "Bermuda Erkan",
+        "product_description": "Gênero: MasculinoTipo de estampa: LisoMaterial: PoliésterOcasião: Casual, esporte e lazerTipo de fecho: Cordão\n*Os produtos podem apresentar pequenas variações de cor e/ou estampa.",
+        "variant_title": "Cinza / P",
+        "variant_options": [
+          "Cinza",
+          "P"
+        ],
+        "options_with_values": [
+          {
+            "name": "Cor",
+            "value": "Cinza"
+          },
+          {
+            "name": "Tamanho",
+            "value": "P"
+          }
+        ],
+        "line_level_discount_allocations": [
+          
+        ],
+        "line_level_total_discount": 0
+      }
+    ],
+    "requires_shipping": true,
+    "currency": "BRL",
+    "items_subtotal_price": 50600,
+    "cart_level_discount_applications": [
+      
+    ]
+  }

@@ -478,10 +478,9 @@ import UTILIS_API from "../../api/utilisAPI";
 import lang from "element-ui/lib/locale/lang/pt-br";
 import locale from "element-ui/lib/locale";
 
-locale.use(lang);
-
-// Tag inputs
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 Vue.use(money, { precision: 2 });
