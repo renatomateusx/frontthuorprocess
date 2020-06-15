@@ -82,10 +82,10 @@
       <div class="card shopping-cart">
         <div class="card-header bg-dark text-light">
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-          {{this.dadosLoja.nome_loja || 'Thuor.com'}}
+          {{this.nome_loja || 'Thuor.com'}}
           <a
-            :href="this.dadosLoja.url_loja"
-            v-show="this.dadosLoja && this.dadosLoja.nome_loja"
+            :href="this.url_loja"
+            v-show="this.nome_loja"
             class="btn btn-outline-info btn-sm pull-right ml-3"
           >
             <span class="fa fa-arrow-left"></span> Continue comprando
@@ -285,6 +285,8 @@ export default {
       produtosCart: [],
       dadosLoja: {},
       nomeLoja: "",
+      nome_loja: "",
+      url_loja: "",
       ProdutoString: []
     };
   },
@@ -296,8 +298,11 @@ export default {
     async checkURL() {
       var url = window.location.href;
       this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+      if (this.dadosLoja) {
+        this.nome_loja = this.dadosLoja.nome_loja;
+        this.url_loja = this.dadosLoja.url_loja;
+      }
       if (url.includes("pay")) {
-        
         sessionStorage.removeItem("cart");
         var newURL = url.split("/pay/");
         const PRODUTO = newURL[1];
@@ -320,9 +325,13 @@ export default {
         sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
         this.$router.push("/checkout");
       } else {
-        
         const LCart = sessionStorage.getItem("cart");
         this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+        if (this.dadosLoja) {
+          this.nome_loja = this.dadosLoja.nome_loja;
+          this.url_loja = this.dadosLoja.url_loja;
+        }
+
         this.produtosCart = JSON.parse(LCart);
         API_NOTIFICATION.HideLoading();
       }
@@ -332,7 +341,6 @@ export default {
         try {
           API_PRODUTOS.GetProdutoByIDImported(product, quantity, variante_id)
             .then(retorno => {
-              console.log("Prod", retorno.data);
               this.getDadosLoja(retorno.data.id_usuario);
               resolve(retorno.data);
             })

@@ -430,7 +430,7 @@ h1 {
     <div class="container-fluid">
       <div class="card shopping-cart mb-0">
         <div class="card-header bg-dark text-light">
-          {{getNomeLoja() || 'Thuor.com'}}
+          {{nome_loja || 'Thuor.com'}}
           <!-- <div class="clearfix"></div> -->
           <div class="item-security pull-right float-right black-70 ml30 row" aria-hidden="true">
             <div class="holder-icon col-md-2" style="display:none;">
@@ -1150,6 +1150,7 @@ export default {
       fretes: [],
       freteSelecionado: -1,
       dadosLoja: {},
+      nome_loja: '',
       nomeLoja: "",
       currentStep: 1,
       nome_completo: "",
@@ -1212,6 +1213,7 @@ export default {
       var url = window.location.href;
 
       this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+      this.nome_loja = this.dadosLoja.nome_loja;
       this.getCheckouts();
       //console.log("loja", dadosLoja);
 
@@ -1253,6 +1255,7 @@ export default {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
         this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+        this.nome_loja = this.dadosLoja.nome_loja;
         this.produtosCart = JSON.parse(LCart);
         this.getTotal();
         API_NOTIFICATION.HideLoading();
