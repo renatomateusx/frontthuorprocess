@@ -226,9 +226,12 @@ import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS_API from "../../api/utilisAPI";
 
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
-});
+});;
+
 
 export default {
   created() {

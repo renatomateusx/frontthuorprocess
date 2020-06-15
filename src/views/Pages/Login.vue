@@ -117,9 +117,12 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS_API from "../../api/utilisAPI";
+
 import { Validator } from "vee-validate";
 import pt from "vee-validate/dist/locale/pt_BR";
+Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
+  locale: 'pt',
   fieldsBagName: "formFields" // fix issue with b-table
 });
 
@@ -173,7 +176,7 @@ export default {
             })
             .catch(error => {
               if (error.response.status === 401) {
-                API_NOTIFICATION.Notifica("Oops!", "Login e Senha inválidos");
+                API_NOTIFICATION.Notifica("Oops!", "Login ou Senha inválidos");
               }
               console.log("Erro ao efetuar login", error);
             });

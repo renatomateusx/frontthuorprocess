@@ -493,6 +493,34 @@ var UTILIS_API = {
             }
         })
     },
+    SetTtrackSession(tt) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_TTRACK, btoa(JSON.stringify(tt)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o ttrack session", error);
+                reject(error);
+            }
+        })
+    },
+    GetTtrackSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_TTRACK) == null) {
+                    resolve(null);
+                    return;
+                }
+                const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_TTRACK)));
+                resolve(L);
+            }
+            catch (error) {
+                console.log("Erro ao pegar o ttrack session", error);
+                reject(error);
+            }
+        })
+    },
     removeUserSession() {
         sessionStorage.removeItem(constantes.SESSION_USER);
     },

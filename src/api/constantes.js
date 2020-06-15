@@ -4,6 +4,11 @@ export default Object.freeze({
   PRODUCAO_BOX_MP_PUBLICK_KEY: 'APP_USR-c97da455-7446-4595-968b-75677fcc12d1',
   PRODUCAO_BOX_MP_ACCESS_TOKEN: 'APP_USR-4338451460338304-120717-64a42a12fe590e1715881018b78df091-128404654',
 
+  /* PLATAFORMAS */
+  PLATAFORMA_SHOPIFY: 1,
+
+
+  /* PLATAFORMAS */
   //WEBSITEAPI: 'http://localhost:3000/',
   WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
   //WEBSITEAPI: 'https://api.thuor.com:9443/',
@@ -68,6 +73,8 @@ export default Object.freeze({
   PATH_UPDATE_ATIVA_BOLETO_CHECKOUT_MP: 'checkouts/UpdateAtivaBoletoMP',
   PATH_UPDATE_ATIVA_AUTO_PROCESSAMENTO_CHECKOUT_MP: 'checkouts/UpdateAutoProcessamentoMP',
   PATH_PAY_CHECKOUT_TICKET: 'checkouts/DoPayTicket',
+
+  /* TRANSAÇÕES */
   PATH_PAY_GET_PEDIDOS: 'transacoes/GetPedidos',
   PATH_PAY_GET_PEDIDOS_POR_ID: 'transacoes/GetPedidosByID',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_POR_ID: 'transacoes/ReembolsarPedidoByID',
@@ -75,8 +82,11 @@ export default Object.freeze({
   PATH_SET_PAYMENT_COMISSION_DONE: 'transacoes/SetPaymentComissionDone',
   PATH_PAY_REEMDBOLSAR_PEDIDOS_PAYU_POR_ID: 'transacoes/ReembolsarPedidoPayUID',
   PATH_PAY_GET_TRANSACOES_INTERNAS: 'transacoes/GetTransacoesInternas',
-  
+  PATH_GET_CHART_TRANSACOES_PER_DAY: 'transacoes/GetReportQtdPerDaySales',  
+  PATH_GET_CHART_SALES_MONTH: 'transacoes/GetSalesMonth',  
   PATH_PAY_GET_PAGAMENTOS_EFETUADOS_POR_SELLER: 'transacoes/GetPagamentosEfetuadosPorSeller',  
+
+
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
   PATH_GET_UPSELL: 'upsells/GetUpSells',
@@ -138,6 +148,7 @@ export default Object.freeze({
   SESSION_DATA_CLIENTES: 'dc',
   SESSION_DATA_CRIPTO: 'cr',
   SESSION_FRETES: 'f',
+  SESSION_TTRACK: 'tt',
   SESSION_CART: 'c',
   SESSION_USER: 'x',
   SESSION_PIXEL: 'p',
