@@ -5,15 +5,14 @@
   }
 }
 @media only screen and (max-width: 1000px) {
-  .hiddenMobile{
+  .hiddenMobile {
     display: none;
   }
-  .expandInMobile{
-    
-    width: 100%!important;
+  .expandInMobile {
+    width: 100% !important;
     margin-top: 5px;
   }
-  .paddingInMobile{
+  .paddingInMobile {
     padding: 10px 20px !important;
   }
 }
@@ -116,8 +115,8 @@ th.active .arrow {
 .padding1010 {
   padding: 10px 10px !important;
 }
-.paddingStatus{
-  padding-left: 25px!important;
+.paddingStatus {
+  padding-left: 25px !important;
 }
 .nomeComprador {
   font-size: 11px !important;
@@ -157,7 +156,7 @@ th.active .arrow {
 }
 .spanStatus {
   border-radius: 50% !important;
-  width: 20px!important;
+  width: 20px !important;
   height: 20px;
   padding: 3px !important;
   font-size: 12px !important;
@@ -165,9 +164,9 @@ th.active .arrow {
 .cursorP {
   cursor: pointer !important;
 }
-.imagemServico{
-  height: 20px!important;
-  width: 80px!important;
+.imagemServico {
+  height: 20px !important;
+  width: 80px !important;
 }
 </style>
 <template>
@@ -221,18 +220,18 @@ th.active .arrow {
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class=" hiddenMobile padding1010">
+              <th class="hiddenMobile padding1010">
                 <strong class="col pedido">
                   <b>Serviço</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class=" hiddenMobile padding1010">
+              <th class="hiddenMobile padding1010">
                 <strong class="col- pedido">
                   <b>Status</b>
                 </strong>
                 <span class="arrow"></span>
-              </th>              
+              </th>
             </thead>
           </table>
         </div>
@@ -244,22 +243,21 @@ th.active .arrow {
                 class="cursorP"
                 v-on:click="SelectPixel(id, nome_pixel)"
               >
-                <td  class="col- padding1010">
+                <td class="col- padding1010">
                   <router-link :to="{path: '/marketing/pixels/edit/' + getCripto(id, status)}">
                     <p class="col-md-12 mb-0 numeroPedido">{{nome_pixel}}</p>
                   </router-link>
-                  
                 </td>
                 <td class="col- padding1010 hiddenMobile">
-                  <img :src="getTipoPixel(tipo)" class="avatar imagemServico">
+                  <img :src="getTipoPixel(tipo)" class="avatar imagemServico" />
                 </td>
                 <td class="pl-0 hiddenMobile paddingStatus">
                   <div
-                    class="col- spanStatus alert  padding1010 "
+                    class="col- spanStatus alert padding1010"
                     v-bind:class="getClassStatus(status)"
                   ></div>
                 </td>
-              </tr>            
+              </tr>
             </tbody>
           </table>
         </div>
@@ -312,7 +310,7 @@ export default {
     //data: Array
     // columns: Array
   },
- 
+
   created() {
     this.timeAgo = new TimeAgo("pt-BR");
 
@@ -338,21 +336,21 @@ export default {
         rememberme: false
       },
       selectedPixel: 0,
-      nomeselectedPixel: '',
+      nomeselectedPixel: "",
       gridData: [],
       startRow: 0,
       rowsPerPage: 10,
       pageSizeMenu: [10, 20, 50, 100],
       data: Array,
       pedidosList: {},
-      columns: [        
+      columns: [
         "id",
         "nome",
         "status",
         "produto_from",
         "produto_to",
         "tipo_checkout"
-      ],
+      ]
     };
   },
   computed: {
@@ -410,15 +408,13 @@ export default {
                 .then(retornoPixel => {
                   retornoPixel.data.forEach((obj, i) => {
                     this.gridData.push({
-                              id: obj.id,
-                              nome_pixel: obj.nome_pixel,
-                              status: obj.status,
-                              tipo: obj.tipo
-                            });
+                      id: obj.id,
+                      nome_pixel: obj.nome_pixel,
+                      status: obj.status,
+                      tipo: obj.tipo
+                    });
                     //API_PRODUTOS.GetProdutoIDThuor(obj.id_produto_from);
-                      
                   });
-                  API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
                   console.log("Erro ao pegar os UpSells", error);
@@ -427,6 +423,7 @@ export default {
             .catch(error => {
               console.log("Erro ao pegar dados da loja", error);
             });
+             API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -515,26 +512,33 @@ export default {
       this.selectedPixel = id;
       this.nomeselectedPixel = nome;
     },
-    excluirPixelSelecionado(){
-      API_NOTIFICATION.showConfirmDialog('EXCLUSÃO', 'Deseja realmente excluir ' + this.nomeselectedPixel + '?', 'warning', this.Excluir);
+    excluirPixelSelecionado() {
+      API_NOTIFICATION.showConfirmDialog(
+        "EXCLUSÃO",
+        "Deseja realmente excluir " + this.nomeselectedPixel + "?",
+        "warning",
+        this.Excluir
+      );
     },
-    Excluir(){
+    Excluir() {
       API_PIXEL.DeletePixelByID(this.selectedPixel)
-      .then((resExclude)=>{
-        API_NOTIFICATION.showNotification('Excluído com Sucesso!', 'success');
-        setTimeout(() => {
-          this.checkIfLogged();
-        }, 1000);
-      })
-      .catch((error)=>{
-        console.log("Erro ao excluir o UpSell " + this.nomeselectedPixel, error);
-      })
+        .then(resExclude => {
+          API_NOTIFICATION.showNotification("Excluído com Sucesso!", "success");
+          setTimeout(() => {
+            this.checkIfLogged();
+          }, 1000);
+        })
+        .catch(error => {
+          console.log(
+            "Erro ao excluir o UpSell " + this.nomeselectedPixel,
+            error
+          );
+        });
     },
-    getTipoPixel(id){
-      if(id == 1) return "https://github.bubbstore.com/svg/facebook.svg";
-      if(id == 2) return "https://github.bubbstore.com/svg/google_ads.svg";
+    getTipoPixel(id) {
+      if (id == 1) return "https://github.bubbstore.com/svg/facebook.svg";
+      if (id == 2) return "https://github.bubbstore.com/svg/google_ads.svg";
     }
   }
-
 };
 </script>

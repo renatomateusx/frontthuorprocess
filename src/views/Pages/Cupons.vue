@@ -431,7 +431,6 @@ export default {
                     });
                     //API_PRODUTOS.GetProdutoIDThuor(obj.id_produto_from);
                   });
-                  API_NOTIFICATION.HideLoading();
                 })
                 .catch(error => {
                   console.log("Erro ao pegar os UpSells", error);
@@ -440,6 +439,7 @@ export default {
             .catch(error => {
               console.log("Erro ao pegar dados da loja", error);
             });
+             API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
