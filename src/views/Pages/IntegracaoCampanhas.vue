@@ -117,7 +117,7 @@ export default {
         .then(res => {
           API_CAMPANHA.GetCampanhas()
             .then(resCampanhas => {
-              console.log(resCampanhas.data);
+              //console.log(resCampanhas.data);
               this.campanhaList = resCampanhas.data;
               this.campanhaList.forEach((obj, i) => {
                 API_CAMPANHA.GetCampanhaByID(obj.id).then(resCampanhaID => {
@@ -161,7 +161,7 @@ export default {
       }
     },
     getStatusClassByID(id) {
-      console.log(this.campanhaIDLists);
+      //console.log(this.campanhaIDLists);
       if (this.campanhaIDLists.find(x => x.campanha == id) !== undefined) {
         return this.campanhaIDLists.find(x => x.campanha == id).status
           ? "CampanhaStatusAtivo"

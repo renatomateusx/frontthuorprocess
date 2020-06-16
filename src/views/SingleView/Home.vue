@@ -244,7 +244,7 @@ import UTILIS from "../../utilis/utilis";
 Vue.filter("formatPrice", function(value) {
   if (value) {
     let val = (value / 1).toFixed(2).replace(".", ",");
-    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 });
 
