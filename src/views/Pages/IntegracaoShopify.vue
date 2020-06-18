@@ -25,14 +25,22 @@
   width: 120px;
   height: auto;
 }
-.hidden{
-  display: none!important;
+.hidden {
+  display: none !important;
+}
+.switch input:checked + span {
+  background-color: green;
+}
+.switch input + span {
+  background-color: red;
 }
 </style>
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-italic"><span class="ml-2"></span></span>Integração Shopify
+      <span class="fa fa-italic">
+        <span class="ml-2"></span>
+      </span>Integração Shopify
     </div>
     <strong>
       Preencha o checkout do {{getNomePlataforma()}} corretamente. Lembre-se: nós te avisaremos se houver erros. Mas a responsabilidade de informar os dados é sua!
@@ -50,7 +58,11 @@
               <div class="float-left p-1">
                 <span class="spanNome">{{getNomePlataforma()}}</span>
               </div>
-              <button class="btn btn-block btn btn-primary btn-lg hidden" v-if="plataforma.url_loja" v-on:click="reInstalarTema()">Reinstalar integração</button>
+              <button
+                class="btn btn-block btn btn-primary btn-lg hidden"
+                v-if="plataforma.url_loja"
+                v-on:click="reInstalarTema()"
+              >Reinstalar integração</button>
             </div>
           </div>
         </div>
@@ -65,19 +77,25 @@
           <!-- START card-->
           <div class="card card-default">
             <div class="card-body">
-              <div class="form-group">
-                <label class="control-label" for="status">Ativo</label>
-                <select
-                  @change="updateStatus()"
-                  id="status"
-                  name="status"
-                  class="form-control"
-                  v-model="plataforma_form.status"
-                >
-                  <option selected value="1">Sim</option>
-                  <option value="0">Não</option>
-                </select>
+              <div class="form-groug">
+                <label class="s col-form-label">Status</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="plataforma_form.status == 1"
+                      v-model="plataforma_form.status"
+                      :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.status')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('plataforma_form.status')"
+                  class="invalid-feedback"
+                >{{ errors.first('plataforma_form.status') }}</span>
               </div>
+
               <div class="form-group">
                 <label class="col-form-label">Nome da Loja *</label>
                 <input
@@ -162,7 +180,25 @@
                   class="invalid-feedback"
                 >{{ errors.first('plataforma_form.segredo_compartilhado') }}</span>
               </div>
-              <div class="form-group">
+              <div class="form-groug">
+                <label class="s col-form-label">Sincroniza Automaticamente? *</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="plataforma_form.auto_sincroniza == 1"
+                      v-model="plataforma_form.auto_sincroniza"
+                      :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.auto_sincroniza')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('plataforma_form.auto_sincroniza')"
+                  class="invalid-feedback"
+                >{{ errors.first('plataforma_form.auto_sincroniza') }}</span>
+              </div>
+              <!-- <div class="form-group">
                 <label class="col-form-label">Sincroniza Automaticamente? *</label>
                 <select
                   @change="AutoSinc()"
@@ -174,8 +210,26 @@
                   <option selected value="1">Sim</option>
                   <option value="0">Não</option>
                 </select>
+              </div> -->
+              <div class="form-groug">
+                <label class="s col-form-label">Pula Carrinho? *</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="plataforma_form.pula_carrinho == 1"
+                      v-model="plataforma_form.pula_carrinho"
+                      :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.pula_carrinho')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('plataforma_form.pula_carrinho')"
+                  class="invalid-feedback"
+                >{{ errors.first('plataforma_form.pula_carrinho') }}</span>
               </div>
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label class="col-form-label">Pula Carrinho? *</label>
                 <select
                   @change="PulaCarrinho()"
@@ -187,7 +241,7 @@
                   <option selected value="1">Sim</option>
                   <option value="0">Não</option>
                 </select>
-              </div>
+              </div> -->
               <div class="form-group">
                 <label class="col-form-label">Tipo de Integração *</label>
                 <select
@@ -210,7 +264,25 @@
                   <option selected value="Todos">Todos</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="form-groug">
+                <label class="s col-form-label">Limpa Carrinho? *</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="plataforma_form.limpa_carrinho == 1"
+                      v-model="plataforma_form.limpa_carrinho"
+                      :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.limpa_carrinho')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('plataforma_form.limpa_carrinho')"
+                  class="invalid-feedback"
+                >{{ errors.first('plataforma_form.limpa_carrinho') }}</span>
+              </div>
+              <!-- <div class="form-group">
                 <label class="col-form-label">Limpa Carrinho? *</label>
                 <select
                   @change="LimpaCarrinho()"
@@ -222,7 +294,7 @@
                   <option selected value="1">Sim</option>
                   <option value="0">Não</option>
                 </select>
-              </div>
+              </div> -->
 
               <div class="required">* Campos requeridos</div>
             </div>
@@ -258,7 +330,7 @@ import API_LOJA from "../../api/lojaAPI";
 
 Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
-  locale: 'pt',
+  locale: "pt",
   fieldsBagName: "formFields" // fix issue with b-table
 });
 
@@ -374,12 +446,12 @@ export default {
         .then(res => {
           //this.checkIfLogged();
           API_NOTIFICATION.showNotificationW(
-              "Pronto!",
-              "Integração Realizada com Sucesso! <br> Vá até a seção de 'Apps' para instalar o checkout.",
-              "success"
-            );
+            "Pronto!",
+            "Integração Realizada com Sucesso! <br> Vá até a seção de 'Apps' para instalar o checkout.",
+            "success"
+          );
           // API_LOJA.InstalarReinstalarShopify().then(resInstalarShopify => {
-            
+
           // });
         })
         .catch(error => {

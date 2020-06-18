@@ -166,16 +166,7 @@ Vue.use(VeeValidate, {
 });
 
 export default {
-  async created() {
-    const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
-    if (LDadosLoja == null) {
-      API_NOTIFICATION.showNotificationW(
-        "Oops!",
-        "Para acessar essa página você precisa ter sua loja integrada. <br> Vá até 'Configurações' > 'Integrações' e efetue a integração com sua loja.",
-        "warning"
-      );
-      return;
-    }
+  async created() {   
 
     this.checkIfLogged();
     //this.sequenciasArray.push({ id_sequencia: 1 })

@@ -126,7 +126,7 @@ var API_LOJA = {
         return new Promise(async (resolve, reject) => {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
-
+                plataforma.id_usuario = LDadosUser.user.id;
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_PLATAFORMA_SHOPIFY, plataforma)
                     .then((response) => {
