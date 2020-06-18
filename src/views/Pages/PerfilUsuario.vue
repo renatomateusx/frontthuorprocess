@@ -159,9 +159,12 @@ div > p {
 .styleDivEmpty {
   height: 80% !important;
 }
+.hidden{
+  display: none!important;
+}
 </style>
 <template>
-  <ContentWrapper>
+  <ContentWrapper v-if="canRender">
     <!-- <div class="content-heading" v-show="usuario.nome">
       <span class="fa fa-user">
         <span class="ml-2"></span>
@@ -720,7 +723,6 @@ div > p {
                         :class="{'form-control':true, 'is-invalid': errors.has('dadosProcessamento.complemento')}"
                         autocomplete="complemento"
                         class="col-lg-12"
-                        v-validate="'required'"
                         type="text"
                         name="complemento"
                         v-model="dadosProcessamento.complemento"
@@ -809,13 +811,23 @@ Vue.filter("formatPrice", function(value) {
 // Tag inputs
 Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
-  locale: 'pt',
+  locale: "pt",
   fieldsBagName: "formFields" // fix issue with b-table
 });
 
 export default {
   async created() {
+    const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+    if (LDadosLoja == null) {
+      API_NOTIFICATION.showNotificationW(
+        "Oops!",
+        "Para acessar essa página você precisa ter sua loja integrada. <br> Vá até 'Configurações' > 'Integrações' e efetue a integração com sua loja.",
+        "warning"
+      );
+      return;
+    }
     this.planArray = await API_PLANOS.GetPlanos();
+    this.canRender = true;
     this.checkIfLogged();
   },
   mounted() {
@@ -837,6 +849,7 @@ export default {
 
   data() {
     return {
+      canRender: false,
       selectedPlan: 0,
       planArray: [],
       mensagemID: 0,
@@ -940,7 +953,7 @@ export default {
         .then(async res => {
           this.usuario = await API_LOGIN.GetUserByID(res.data.id);
           this.usuario = this.usuario.data;
-          // console.log(this.usuario);
+          console.log(this.usuario);
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(async resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
@@ -1146,6 +1159,10 @@ export default {
     },
     consultaCEP() {
       var self = this;
+      this.dadosProcessamento.cep = this.dadosProcessamento.cep.replace(
+        /[^\d]/g,
+        ""
+      );
       if (this.dadosProcessamento.cep.length >= 8) {
         this.dadosProcessamento.cep = this.dadosProcessamento.cep.replace(
           /(\d{5})(\d{3})/,

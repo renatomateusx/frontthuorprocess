@@ -33,7 +33,7 @@ var API_APPS = {
                     id: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.GetIntegracaoApps, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_GET_APPS_BY_ID, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);
@@ -45,7 +45,7 @@ var API_APPS = {
             }
         });
     },
-    GetAppsByID(id) {
+    /*GetAppsByID(id) {
         return new Promise(async (resolve, reject) => {
             const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
@@ -65,7 +65,7 @@ var API_APPS = {
                     });
             }
         });
-    },
+    },*/
     SaveIntegracaoApps(app) {
         return new Promise(async (resolve, reject) => {
             const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
@@ -113,10 +113,10 @@ var API_APPS = {
 
                 let LBody = {
                     id_usuario: LDadosLoja.id_usuario,
-                    id: id
+                    app: id
                 }
                 axios
-                    .post(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_CAMPANHA_BY_ID, LBody)
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INTEGRACAO_APPS, LBody)
                     .then((response) => {
                         //console.log("Response", response);
                         resolve(response);

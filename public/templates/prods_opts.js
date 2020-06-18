@@ -928,6 +928,7 @@ class CheckoutMP extends HTMLElement {
         this.HideLoading();
     }
     consultaCEP() {
+        CEP = CEP.replace(/[^\d]/g, "");
         CEP = this._shadowRoot.getElementById("cep");
         if (CEP.value.length >= 8) {
             CEP.value = CEP.value.replace(/(\d{5})(\d{3})/, "$1-$2");

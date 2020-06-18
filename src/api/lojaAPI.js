@@ -4,6 +4,27 @@ import constantes from "./constantes";
 import API_HEADERS from "../api/configAxios";
 import UTILIS_API from "../api/utilisAPI";
 var API_LOJA = {
+    GetDadosLojaS() {
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_LOJA_BY_ID_USUARIO, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+
+        });
+    },
     GetDadosLoja(shop) {
         return new Promise(async (resolve, reject) => {
             let LBody = {
@@ -42,7 +63,7 @@ var API_LOJA = {
     },
     GetFretes() {
         return new Promise(async (resolve, reject) => {
-           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
             if (LDadosLoja != undefined) {
 
                 let LBody = {
@@ -105,7 +126,7 @@ var API_LOJA = {
         return new Promise(async (resolve, reject) => {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
-               
+
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_PLATAFORMA_SHOPIFY, plataforma)
                     .then((response) => {
@@ -123,7 +144,7 @@ var API_LOJA = {
         return new Promise(async (resolve, reject) => {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
-               
+
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_PLATAFORMA, plataforma)
                     .then((response) => {
@@ -141,7 +162,7 @@ var API_LOJA = {
         return new Promise(async (resolve, reject) => {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
-               
+
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_AUTO_SINC_PLATAFORMA_SHOPIFY, plataforma)
                     .then((response) => {
@@ -159,7 +180,7 @@ var API_LOJA = {
         return new Promise(async (resolve, reject) => {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
-               
+
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_LIMPA_CARRINHO_PLATAFORMA_SHOPIFY, plataforma)
                     .then((response) => {
@@ -177,7 +198,7 @@ var API_LOJA = {
         return new Promise(async (resolve, reject) => {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
-               
+
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PULA_CARRINHO_PLATAFORMA_SHOPIFY, plataforma)
                     .then((response) => {
@@ -196,7 +217,7 @@ var API_LOJA = {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
                 var LBody = {
-                    id_usuario : LDadosUser.user.id
+                    id_usuario: LDadosUser.user.id
                 }
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY, LBody)
@@ -211,6 +232,28 @@ var API_LOJA = {
             }
         });
     },
+    InstalarReinstalarAppCheckoutShopify() {
+        return new Promise(async (resolve, reject) => {
+            const LDadosUser = await UTILIS_API.GetUserSession();
+            if (LDadosUser != undefined) {
+                var LBody = {
+                    id_usuario: LDadosUser.user.id
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INSTALAR_CHECKOUT_PLATAFORMA_SHOPIFY, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+
+
 
 
 

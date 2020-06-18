@@ -25,6 +25,9 @@
   width: 120px;
   height: auto;
 }
+.hidden{
+  display: none!important;
+}
 </style>
 <template>
   <ContentWrapper>
@@ -47,7 +50,7 @@
               <div class="float-left p-1">
                 <span class="spanNome">{{getNomePlataforma()}}</span>
               </div>
-              <button class="btn btn-block btn btn-primary btn-lg" v-if="plataforma.url_loja" v-on:click="reInstalarTema()">Reinstalar integração</button>
+              <button class="btn btn-block btn btn-primary btn-lg hidden" v-if="plataforma.url_loja" v-on:click="reInstalarTema()">Reinstalar integração</button>
             </div>
           </div>
         </div>
@@ -319,6 +322,7 @@ export default {
               this.plataforma_form.limpa_carrinho = this.plataforma.limpa_carrinho;
               this.plataforma_form.nome_loja = this.plataforma.nome_loja;
               this.plataforma_form.plataforma = this.plataforma.plataforma;
+              this.plataforma_form.email_loja = this.plataforma.email_loja;
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -369,13 +373,14 @@ export default {
       API_LOJA.InsertPlataformShopify(this.plataforma_form)
         .then(res => {
           //this.checkIfLogged();
-          API_LOJA.InstalarReinstalarShopify().then(resInstalarShopify => {
-            API_NOTIFICATION.showNotificationW(
-              "Aê!",
-              "Integração salvao com sucesso! Aguarde alguns instantes para que a integração esteja completa.",
+          API_NOTIFICATION.showNotificationW(
+              "Pronto!",
+              "Integração Realizada com Sucesso! <br> Vá até a seção de 'Apps' para instalar o checkout.",
               "success"
             );
-          });
+          // API_LOJA.InstalarReinstalarShopify().then(resInstalarShopify => {
+            
+          // });
         })
         .catch(error => {
           console.log("Erro ao salvar o checkout MP", error);
