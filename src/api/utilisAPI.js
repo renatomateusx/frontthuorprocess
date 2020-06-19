@@ -260,7 +260,7 @@ var UTILIS_API = {
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_LEAD_GET_DADOS_COMPRADOR, LBody)
                 .then((response) => {
-                    //console.log("Response Cliente", response);
+                    console.log("Response Cliente", response);
                     resolve(response);
                 })
                 .catch((error) => {

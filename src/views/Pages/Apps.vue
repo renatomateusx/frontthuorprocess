@@ -147,13 +147,14 @@ export default {
         .then(res => {
           API_APPS.GetApps()
             .then(resApps => {
-              qtdApps = resApps.data.length || 0;
+             
               resApps.data.forEach((obj, i) => {
+                 qtdApps += 1;
                 //console.log(obj);
                 var status = 0;
                 API_APPS.GetStatusApp(obj.id).then(resGet => {
                   status = resGet.data.status;
-                  console.log(resGet, status);
+                  // console.log(resGet, status);
                   if (!status) status = obj.nativo;
                   this.appList.push({
                     id: obj.id,
@@ -164,6 +165,7 @@ export default {
                   });
                   //console.log(this.appList);
                 });
+                 API_NOTIFICATION.HideLoading();
               });
             })
             .catch(error => {
@@ -181,7 +183,7 @@ export default {
         });
     },
     acaoAppIntegrar(id, nome) {
-      console.log(id);
+      // console.log(id);
       if (id == 1) {
         this.instalaApp(id);
       } else if (id == 2) {
@@ -201,6 +203,12 @@ export default {
           "info"
         );
       } else if (id == 6) {
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "O App " + nome + " Já é Instalado Nativamente.",
+          "info"
+        );
+      } else if (id == 7) {
         API_NOTIFICATION.showNotificationW(
           "Oops!",
           "O App " + nome + " Já é Instalado Nativamente.",
@@ -240,7 +248,7 @@ export default {
       }
     },
     getAppsIntegracaoByID(id) {
-      console.log(this.integracaoIDList.find(x => x.plataforma == id));
+      // console.log(this.integracaoIDList.find(x => x.plataforma == id));
       if (this.integracaoIDList.find(x => x.plataforma == id) !== undefined) {
         return this.integracaoIDList.find(x => x.plataforma == id).nome_loja;
       }
@@ -285,9 +293,9 @@ export default {
     },
     async getStatusClass(id) {
       const d = await API_APPS.GetStatusApp(id);
-      console.log(
-        d.data.status == 1 ? "CheckoutStatusAtivo" : "CheckoutStatusInativo"
-      );
+      // console.log(
+      //   d.data.status == 1 ? "CheckoutStatusAtivo" : "CheckoutStatusInativo"
+      // );
       return d.data.status == 1
         ? "CheckoutStatusAtivo"
         : "CheckoutStatusInativo";
