@@ -22,8 +22,8 @@
   width: 20px;
 }
 .imgIntegracao {
-  width: 40%!important;
-  height: auto;
+  width: 6em!important;
+  height: 6em!important;
 }
 </style>
 <template>
@@ -59,7 +59,7 @@
           <div class="card-header">
             <div class="my-2 row p-0">
               <img
-                class="mr-2 img-fluid thumb48 col-md-3 imgIntegracao mt-2"
+                class="mr-2 img-fluid col-md-3 imgIntegracao mt-2"
                 v-bind:src="getImageIntegracaoCampanha(id)"
                 alt="App"
               />

@@ -1431,11 +1431,19 @@ export default {
     },
     maskCPF() {
       this.cpf = this.cpf.replace(
+        /[^\d]/g,
+        ""
+      );  
+      this.cpf = this.cpf.replace(
         /(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4"
       );
     },
     maskCPFTitular() {
+      this.cpf_titular = this.cpf_titular.replace(
+        /[^\d]/g,
+        ""
+      );  
       this.cpf_titular = this.cpf_titular.replace(
         /(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4"

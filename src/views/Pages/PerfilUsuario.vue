@@ -1153,6 +1153,10 @@ export default {
     },
     maskCPFTitular() {
       this.dadosProcessamento.cpf_titular = this.dadosProcessamento.cpf_titular.replace(
+        /[^\d]/g,
+        ""
+      );      
+      this.dadosProcessamento.cpf_titular = this.dadosProcessamento.cpf_titular.replace(
         /(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4"
       );
