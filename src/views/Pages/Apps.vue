@@ -119,8 +119,16 @@ Vue.use(VeeValidate, {
 });
 
 export default {
-  created() {
-    API_NOTIFICATION.HideLoading();
+  async created() {
+    const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+    if (LDadosLoja == null) {
+      API_NOTIFICATION.showNotificationW(
+        "Oops!",
+        "Para acessar essa página você precisa ter sua loja integrada. <br> Vá até 'Configurações' > 'Integrações' e efetue a integração com sua loja.",
+        "warning"
+      );
+      return;
+    }
     this.checkIfLogged();
   },
   data() {
@@ -131,6 +139,7 @@ export default {
   },
   methods: {
     checkIfLogged() {
+      var qtdApps = 0;
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
@@ -138,19 +147,25 @@ export default {
             .then(resApps => {
               resApps.data.forEach((obj, i) => {
                 //console.log(obj);
+                var status = 0;
                 API_APPS.GetStatusApp(obj.id).then(resGet => {
-                  
+                  status = resGet.data.status;
                   this.appList.push({
-                    id: obj.id, nome:  obj.nome, imagem: obj.imagem, demo:  obj.demo, status: resGet.data.status
-                  });
+                  id: obj.id,
+                  nome: obj.nome,
+                  imagem: obj.imagem,
+                  demo: obj.demo,
+                  status: status
+                });
                   //console.log(this.appList);
                 });
+                
               });
             })
             .catch(error => {
               console.log("Erro ao pegar Apps", error);
             });
-             API_NOTIFICATION.HideLoading();
+          API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -160,10 +175,13 @@ export default {
         });
     },
     acaoAppIntegrar(id) {
+      console.log(id)
       if (id == 1) {
         this.instalaApp(id);
       } else if (id == 2) {
-        this.$router.push("/configs/integracoes/shopify");
+        this.instalaApp(id);
+      } else if(id == 3){
+        this.$router.push("/apps/thuor-parcel");
       }
     },
     instalaApp(id) {
@@ -174,6 +192,25 @@ export default {
           "question",
           () => {
             this.callInstallationReviewApp();
+          }
+        );
+      }
+      if (id == 2) {
+        API_NOTIFICATION.showNotificationConfirm(
+          "Thuor Checkout",
+          "Esta ação irá instalar o App Thuor Checkout. Você deseja continuar?",
+          "question",
+          () => {
+            API_NOTIFICATION.ShowLoading();
+            API_LOJA.InstalarReinstalarAppCheckoutShopify().then(
+              resInstalarShopify => {
+                API_NOTIFICATION.showNotificationW(
+                  "Pronto!",
+                  "Solicitação Realizada com Sucesso! <br> Aguarde Alguns Instantes para que a Instalação Esteja Completa!",
+                  "success"
+                );
+              }
+            );
           }
         );
       }

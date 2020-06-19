@@ -1405,6 +1405,8 @@ export default {
       router.push("/checkout");
     },
     consultaCEP() {
+      this.CEP = this.CEP.replace(/[^\d]/g, "");
+      this.CEP = this.CEP.replace(/[^\d]/g, "");
       if (this.CEP.length >= 8) {
         this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
         API_NOTIFICATION.ShowLoading();

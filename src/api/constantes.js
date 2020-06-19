@@ -38,7 +38,7 @@ export default Object.freeze({
   PATH_UPDATE_STATUS_PRODUTO: 'produtos/UpdateStatusProduto',
   PATH_UPDATE_TIPO_PRODUTO: 'produtos/UpdateTipoProduto',
   PATH_PRODUTOS_IMPORT: 'integraFuncionalidadeShopify/ImportarProdutosShopify',
-  PATH_INSTALTL_APP_REVIEW: 'integraFuncionalidadeShopify/InstalarAppReview',
+  
   PATH_UPDATE_CUSTOM_FRETE_PRODUTO: 'produtos/UpdateCustomFreteProduto',
   PATH_UPDATE_TIPO_FRETE_PRODUTO: 'produtos/UpdateTipoFreteProduto',
   PATH_UPDATE_URL_DIR_PRODUTO: 'produtos/UpdateURLDirProduto',
@@ -55,7 +55,9 @@ export default Object.freeze({
   PATH_AUTO_SINC_PLATAFORMA_SHOPIFY: 'integracaoShopify/AutoSinc',
   PATH_LIMPA_CARRINHO_PLATAFORMA_SHOPIFY: 'integracaoShopify/PulaCarrinho',
   PATH_PULA_CARRINHO_PLATAFORMA_SHOPIFY: 'integracaoShopify/LimpaCarrinho',
+  
   PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY: 'importarProdutosShopify/ReInstalarIntegracao',
+  PATH_INSTALAR_CHECKOUT_PLATAFORMA_SHOPIFY: 'integraFuncionalidadeShopify/ReInstalarIntegracao',
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_VIACEP_SERVER: 'extras/ViaCEP',
@@ -170,6 +172,10 @@ export default Object.freeze({
 
   /* REVIEWS */
   PATH_GET_REVIEWS: 'reviews/GetReviewByID',
+
+  /* INSTALA APPS SHOPIFY */
+  PATH_INSTALA_APP_THUOR_PARCEL_SHOPIFY: 'integraFuncionalidadeShopify/InstalarAppThuorParcel',
+  PATH_INSTALTL_APP_REVIEW: 'integraFuncionalidadeShopify/InstalarAppReview',
 
   CONSTANTE_THUOR: 'Thuor',
   CONSTANTE_THUOR_EMAIL: 'renatomateusx@gmail.com',
