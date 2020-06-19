@@ -129,7 +129,7 @@
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.email_loja')}"
                   v-model="plataforma_form.email_loja"
-                  v-validate="'required'"
+                  v-validate="'required|email'"
                   type="text"
                   name="email_loja"
                 />
@@ -327,6 +327,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_LOJA from "../../api/lojaAPI";
+import constantes from '../../api/constantes';
 
 Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
@@ -366,7 +367,7 @@ export default {
         id_usuario: "",
         limpa_carrinho: "",
         nome_loja: "",
-        plataforma: "",
+        plataforma: 1,
         id: 0
       }
     };
@@ -442,6 +443,7 @@ export default {
     },
     salvarPlataforma() {
       API_NOTIFICATION.ShowLoading();
+      this.plataforma_form.plataforma = constantes.PLATAFORMA_SHOPIFY;
       API_LOJA.InsertPlataformShopify(this.plataforma_form)
         .then(res => {
           //this.checkIfLogged();

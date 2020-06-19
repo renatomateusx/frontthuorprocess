@@ -614,7 +614,7 @@ var UTILIS_API = {
                 if (LUser != null && (LUser.user.json_pagamento != undefined || LUser.user.json_pagamento != null) && (LUser.user.proximo_pagamento != undefined || LUser.user.proximo_pagamento != null)) {
                     LReturn = true;
                 } else {
-                    API_NOTIFICATION.showNotificationW('Oops!', 'Você precisa escolher um plano antes de fazer isso. Clique no ícone de usuário no topo dessa página e, no lado esquerdo, clique em MEU PERFIL ', 'warning');
+                    API_NOTIFICATION.showNotificationW('Oops!', "Para Configurar o Checkout, você precisa informar as configurações de pagamento. <br> Clique no Ícone <span class='icon-user'></span>, vá até 'Meu Perfil' e Configure.", 'warning');
                 }
             }
             catch (error) {
