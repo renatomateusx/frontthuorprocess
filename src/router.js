@@ -50,6 +50,7 @@ const Activate = () => import('@/views/Pages/Activate.vue');
 const Redefinir = () => import('@/views/Pages/Redefinir.vue');
 const Review = () => import('@/views/Pages/Review.vue');
 const Apps = () => import('@/views/Pages/Apps.vue');
+const AppParcel = () => import('@/views/Pages/AppParcel.vue');
 const PerfilUsuario = () => import('@/views/Pages/PerfilUsuario.vue');
 const Ajuda = () => import('@/views/Pages/Ajuda.vue');
 const AdminAjuda = () => import('@/views/Pages/AdminAjuda.vue');
@@ -271,6 +272,10 @@ export default new Router({
             {
                 path: '/apps',
                 component: Apps
+            },
+            {
+                path: '/apps/thuor-parcel',
+                component: AppParcel
             },
             {
                 path: '/ajuda',

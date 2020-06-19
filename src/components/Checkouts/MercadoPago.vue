@@ -228,14 +228,22 @@ import UTILIS_API from "../../api/utilisAPI";
 
 Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
-  locale: 'pt',
+  locale: "pt",
   fieldsBagName: "formFields" // fix issue with b-table
-});;
-
+});
 
 export default {
-  created() {
-    API_NOTIFICATION.HideLoading();
+  async created() {
+    const LDadosUser = await UTILIS_API.GetUserSession();
+    console.log(LDadosUser);
+    if (LDadosUser.user && LDadosUser.user.json_pagamento == undefined) {
+      API_NOTIFICATION.showNotificationW(
+        "Oops!",
+        "Para Configurar o Checkout, você precisa informar as configurações de pagamento. <br> Clique no Ícone <span class='icon-user'></span>, vá até 'Meu Perfil' e Configure.",
+        "warning"
+      );
+      return;
+    }
     this.checkIfLogged();
   },
   mounted() {

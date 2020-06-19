@@ -296,12 +296,7 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     async checkURL() {
-      var url = window.location.href;
-      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
-      if (this.dadosLoja) {
-        this.nome_loja = this.dadosLoja.nome_loja;
-        this.url_loja = this.dadosLoja.url_loja;
-      }
+      var url = window.location.href;      
       if (url.includes("pay")) {
         sessionStorage.removeItem("cart");
         var newURL = url.split("/pay/");
@@ -340,8 +335,8 @@ export default {
       return new Promise(async (resolve, reject) => {
         try {
           API_PRODUTOS.GetProdutoByIDImported(product, quantity, variante_id)
-            .then(retorno => {
-              this.getDadosLoja(retorno.data.id_usuario);
+            .then(async retorno => {
+              const LDaL = await this.getDadosLoja(retorno.data.id_usuario);
               resolve(retorno.data);
             })
             .catch(error => {
@@ -364,18 +359,20 @@ export default {
       //console.log("ID Thuor", id);
     },
     async getDadosLoja(id_usuario) {
+      return new Promise((resolve, reject) => {
+        API_LOJA.GetDadosLojaByIdUsuario(id_usuario)
+          .then(res => {
+            const LojaData = res.data;
+            this.dadosLoja = LojaData;
+            UTILIS_API.SetDadosLojaSession(LojaData);
+            resolve(1);
+            //API_NOTIFICATION.HideLoading();
+          })
+          .catch(error => {
+            console.log("Erro ao pegar dados da Loja", error);
+          });
+      });
       //API_NOTIFICATION.ShowLoading();
-
-      API_LOJA.GetDadosLojaByIdUsuario(id_usuario)
-        .then(res => {
-          const LojaData = res.data;
-          this.dadosLoja = LojaData;
-          UTILIS_API.SetDadosLojaSession(LojaData);
-          //API_NOTIFICATION.HideLoading();
-        })
-        .catch(error => {
-          console.log("Erro ao pegar dados da Loja", error);
-        });
     },
     getNomeLoja() {
       this.dadosLoja = JSON.parse();
