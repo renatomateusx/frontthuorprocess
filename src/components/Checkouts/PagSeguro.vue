@@ -255,7 +255,7 @@ export default {
         ativa_boleto: 1,
         gateway: 2,
         id_usuario: 0,
-        mostra_prova_social: false
+        mostra_prova_social: 0
       }
     };
   },
@@ -277,6 +277,7 @@ export default {
                 this.checkout_form.nome_fatura = this.checkout.nome_fatura;
                 this.checkout_form.nome = this.checkout.nome;
                 this.checkout_form.chave_publica = this.checkout.chave_publica;
+                this.checkout_form.mostra_prova_social = this.checkout.mostra_prova_social;
               }
               API_NOTIFICATION.HideLoading();
             })

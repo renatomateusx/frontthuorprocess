@@ -378,6 +378,9 @@
               <button class="btn btn-primary btn-block" type="submit">
                 <span class="fa fa-arrow-right"></span>
               </button>
+               <button class="btn btn-primary btn-block" v-on:click="removeSequencia(sequencia)" type="button">
+                <span class="fa fa-trash"></span>
+              </button>
             </div>
           </div>
           <div class="form-group col-lg-12">
@@ -435,9 +438,8 @@ export default {
   watch: {
     seq: function(val) {
       console.log("Mudou", val);
-      this.sequencia.status = this.seq.status;
-      this.sequencia.chave_publica = this.seq.chave_publica;
-      this.sequencia.token_acesso = this.seq.token_acesso;
+      this.sequencia = val;
+      
     }
   },
   computed: {},
@@ -472,8 +474,8 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          console.log(this.seq);
-          if (this.seq.id) {
+          console.log('asdfasd',this.seq);
+          if (this.seq.id && this.seq.status != undefined) {
             this.sequencia = this.seq;
           }
         })
@@ -504,6 +506,9 @@ export default {
     },
     changeStatus(sequencia) {
       this.$emit("UpdateStatusMP", sequencia);
+    },
+    removeSequencia(sequencia){
+      this.$emit("RemoveSequencia", sequencia);
     }
   }
 };

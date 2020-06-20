@@ -96,6 +96,24 @@
                 >{{ errors.first('checkout_form.status') }}</span>
               </div>
               <div class="form-group">
+                <label class="s col-form-label">Mostrar Prova Social?</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="checkout_form.mostra_prova_social == 1"
+                      v-model="checkout_form.mostra_prova_social"
+                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.mostra_prova_social')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('checkout_form.mostra_prova_social')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.mostra_prova_social') }}</span>
+              </div>
+              <div class="form-group">
                 <label class="col-form-label">Nome *</label>
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.nome')}"
@@ -157,6 +175,7 @@
                 <sequencia-mp
                   @AddSequenciaMP="AdicionarSequencia($event)"
                   @UpdateStatusMP="UpdateStatus($event)"
+                  @RemoveSequencia="RemoveSeq($event)"
                   :id="sequenciasArray[i].id"
                   :seq="sequenciasArray[i]"
                 ></sequencia-mp>
@@ -168,24 +187,7 @@
                   v-on:click.prevent="adicionarSequencia()"
                 >Adicionar Sequência</button>
               </div>
-              <div class="form-group">
-                <label class="s col-form-label">Mostrar Prova Social?</label>
-                <div class>
-                  <label class="switch switch-lg">
-                    <input
-                      type="checkbox"
-                      :checked="checkout_form.mostra_prova_social == 1"
-                      v-model="checkout_form.mostra_prova_social"
-                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.mostra_prova_social')}"
-                    />
-                    <span class></span>
-                  </label>
-                </div>
-                <span
-                  v-show="errors.has('checkout_form.mostra_prova_social')"
-                  class="invalid-feedback"
-                >{{ errors.first('checkout_form.mostra_prova_social') }}</span>
-              </div>
+              
               <div class="required">* Campos requeridos</div>
             </div>
             <div class="card-footer">
@@ -263,7 +265,7 @@ export default {
         ativa_boleto: 1,
         gateway: 1,
         id_usuario: 0,
-        mostra_prova_social: false,
+        mostra_prova_social: 0,
         json_checkout: []
       }
     };
@@ -276,7 +278,7 @@ export default {
           API_CHECKOUT.GetIntegracaoCheckoutByID(1)
             .then(resCheckout => {
               this.checkout = resCheckout.data;
-              console.log(resCheckout.data);
+              //console.log(resCheckout.data);
               if (resCheckout.data) {
                 this.checkout_form.status = this.checkout.status;
                 this.checkout_form.ativa_boleto = this.checkout.ativa_boleto;
@@ -287,7 +289,7 @@ export default {
                 this.checkout_form.nome_fatura = this.checkout.nome_fatura;
                 this.checkout_form.nome = this.checkout.nome;
                 this.checkout_form.chave_publica = this.checkout.chave_publica;
-                this.checkout_form.mostra_prova_social = this.checkout_form.mostra_prova_social;
+                this.checkout_form.mostra_prova_social = this.checkout.mostra_prova_social;
                 this.checkout_form.json_checkout =
                   this.checkout.json_checkout || [];
 
@@ -403,7 +405,7 @@ export default {
     adicionarSequencia() {
       this.idSequencia = this.idSequencia + 1;
       this.sequenciasArray.push({ id: this.idSequencia });
-      console.log(this.sequenciasArray);
+      //console.log(this.sequenciasArray);
     },
     AdicionarSequencia(event) {
       API_NOTIFICATION.ShowLoading();
@@ -428,15 +430,22 @@ export default {
     },
     UpdateStatus(event) {
       this.checkout_form.json_checkout.forEach((obj, i) => {
-        console.log(obj);
+        //console.log(obj);
         if (obj.id == event.id) {
           obj.status = 1;
         } else {
           obj.status = 0;
         }
         this.sequenciasArray[i] = obj;
-        console.log(this.sequenciasArray[i]);
+        //console.log(this.sequenciasArray[i]);
       });
+    },
+    RemoveSeq(event){
+      this.sequenciasArray.forEach((obj, i)=>{
+        if(obj.id == event.id){
+          this.sequenciasArray.splice(obj.id, 1);
+        }
+      })
     }
   }
 };
