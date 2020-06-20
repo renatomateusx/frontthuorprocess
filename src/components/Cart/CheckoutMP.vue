@@ -1225,7 +1225,7 @@ export default {
       fretes: [],
       freteSelecionado: -1,
       dadosLoja: {},
-      nome_loja: '',
+      nome_loja: "",
       nomeLoja: "",
       currentStep: 1,
       nome_completo: "",
@@ -1501,12 +1501,14 @@ export default {
       this.currentStep = 2;
     },
     maskCPF() {
+      this.cpf = this.cpf.replace(/[^\d]/g, "");
       this.cpf = this.cpf.replace(
         /(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4"
       );
     },
     maskCPFTitular() {
+      this.cpf_titular = this.cpf_titular.replace(/[^\d]/g, "");
       this.cpf_titular = this.cpf_titular.replace(
         /(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4"
@@ -1555,7 +1557,7 @@ export default {
     },
     getFreteSelecionadoNome() {
       var lnome = "";
-      if (this.fretes.length > 0) {
+      if (this.fretes && this.fretes.length > 0) {
         const LF = this.fretes.find(x => x.id == this.freteSelecionado);
         if (LF) {
           lnome = LF.nome;
@@ -1985,51 +1987,72 @@ export default {
         });
     },
     async populaDadosComprador() {
-      API_NOTIFICATION.ShowLoadingT("Um momento...");
-      if (UTILIS.isValidEmail(this.email)) {
-        UTILIS_API.GetDadosCompradorLead(this.email)
-          .then(resComprador => {
-            const LComprador = resComprador.data;
-            if (LComprador.dadosComprador != undefined) {
-              if (LComprador.dadosComprador.cpf != undefined) {
-                this.cpf = LComprador.dadosComprador.cpf;
-              }
-              if (LComprador.nome != undefined) {
-                this.nome_completo = LComprador.nome;
-              }
-              if (LComprador.telefone != undefined) {
-                this.telefone = LComprador.telefone;
-              }
-              if (
-                LComprador.dadosComprador.cep != undefined &&
-                LComprador.dadosComprador.cep.length > 0
-              ) {
-                this.CEP = LComprador.dadosComprador.cep;
-                this.consultaCEP();
-                this.numero_porta = LComprador.dadosComprador.numero_porta;
+      if (this.email.length > 0) {
+        API_NOTIFICATION.ShowLoadingT("Um momento...");
+        if (UTILIS.isValidEmail(this.email)) {
+          UTILIS_API.GetDadosCompradorLead(this.email)
+            .then(resComprador => {
+              const LComprador = resComprador.data;
+              console.log(LComprador);
+              if (LComprador.dadosComprador != undefined) {
+                if (LComprador.dadosComprador.cpf != undefined) {
+                  this.cpf = LComprador.dadosComprador.cpf;
+                }
+                if (LComprador.nome != undefined) {
+                  this.nome_completo = LComprador.nome;
+                }
+                if (LComprador.telefone != undefined) {
+                  this.telefone = LComprador.telefone;
+                }
+                if (
+                  LComprador.dadosComprador.cep != undefined &&
+                  LComprador.dadosComprador.cep.length > 0
+                ) {
+                  this.CEP = LComprador.dadosComprador.cep;
+                  this.consultaCEP();
+                  this.numero_porta = LComprador.dadosComprador.numero_porta;
+                } else {
+                  API_NOTIFICATION.HideLoading();
+                }
               } else {
                 API_NOTIFICATION.HideLoading();
               }
-            } else {
-              API_NOTIFICATION.HideLoading();
-            }
-          })
-          .catch(error => {
-            console.log("Erro ao pegar dados do comprador", error);
-          });
-      } else {
-        console.log("Email Inválido");
+            })
+            .catch(error => {
+              console.log("Erro ao pegar dados do comprador", error);
+            });
+        } else {
+          console.log("Email Inválido");
+        }
+      }
+    },
+    showPopUpReview(PArray) {
+      try {
+        setInterval(() => {
+          const LReview = PArray[Math.floor(Math.random() * PArray.length)];
+          var html =
+            "<style>.nomereview{font-size: 9px!important; word-break: break-all;}.titlereview{font-size: 12px!important; font-weight:400!important;word-break: break-all;}.iconStar{color:gold; margin-left: 10px!important}.notify{ width: 100%!important; height: 15%!important; } .sweet-alert{height: 6em!important; width: 22em!important;}</style><div class='notify w-100 '><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><br/> <span class='titlereview w-100 text-left'>" +
+            LReview.avaliacao +
+            "</span> <br> <span class='nomereview w-100 text-left'>" +
+            LReview.nome.split(' ')[0] +
+            "</span></div>";
+
+          API_NOTIFICATION.showNotifyCustomPosition(html, "", "bottom-end");
+        }, 15000);
+      } catch (error) {
+        console.log("Erro ao fazer push de reviews", error);
       }
     },
     getPVS(id_produto, url_loja) {
       const LDiv = document.getElementById("divResult");
       const TEMPLATE_INICIAL = '<div class="col-md-1"></div>';
       const TEMPLATE =
-        '<div class="col-xl-3 ml-1 card card-default cardG" style="border-color:gold!important;"><a href="#"><img class="img-thumbnail thumb128 rounded imageThumb {image_display}" src="{img}" alt="{titulo}"/></a><div class="card-body"><p class="d-flex  col-lg-12"><span><small class="mr-1  col-lg-12"><a class="ml-1 fontName col-lg-12" href="#">{nome}<span class="ml-2 fa fa-check-circle checkedBuy" title="Compra Verificada"></span></a></small></span></p><h4><a href="#" class="noopen"><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span></a></h4><p><b>{titulo}</b></p><p>{avaliacao}</p></div></div>';
+        '<div class="col-xl-3 ml-1 card card-default cardG" style="border-color:gold!important;"><a href="#"><img class="img-thumbnail thumb128 rounded imageThumb {image_display}" src="{img}" alt="{titulo}"/></a><div class="card-body"><p class="text-center"><span><small class="mr-1  col-lg-12"><a class="ml-1 fontName col-lg-12" href="#">{nome}<span class="ml-2 fa fa-check-circle checkedBuy" title="Compra Verificada"></span></a></small></span></p><h4><a href="#" class="noopen"><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span><span class="fa fa-star starFulFill"></span></a></h4><p><b>{titulo}</b></p><p>{avaliacao}</p></div></div>';
       API_REVIEWS.GetReviews(id_produto, url_loja)
-        .then(resData => {         
+        .then(resData => {
           const LData = resData.data;
           const LQTD = LData.length;
+          this.showPopUpReview(LData);
           //console.log(LQTD);
 
           if (LQTD > 0) {

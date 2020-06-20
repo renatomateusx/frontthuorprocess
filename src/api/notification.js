@@ -153,6 +153,19 @@ var API_NOTIFICATION = {
               '',
             cancelButtonAriaLabel: 'Thumbs down'
           })
+    },
+    showNotifyCustomPosition(html, icon, position){
+        Vue.swal({
+            width: '15em',
+            padding: '5px',
+            position: position,
+            backdrop: false,
+            icon: icon,
+            title: '',
+            html: html,
+            showConfirmButton: false,
+            timer: 3000
+          })
     }
 }
 export default API_NOTIFICATION 

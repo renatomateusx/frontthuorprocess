@@ -159,8 +159,8 @@ div > p {
 .styleDivEmpty {
   height: 80% !important;
 }
-.hidden{
-  display: none!important;
+.hidden {
+  display: none !important;
 }
 </style>
 <template>
@@ -265,7 +265,7 @@ div > p {
                               class="col-lg-12 ml-4"
                             >Próx. Pag.: {{getProximoPagamento(getDadosUsuario().proximo_pagamento)}}</strong>
                           </div>
-                          <div class="col-md-12 row">
+                          <div class="col-md-12 row" v-if="metodoPag">
                             <img
                               :src="getBandeiraImage().image"
                               class="col-md-2 pr-0 pl-0 mr-0 ml-0"
@@ -274,7 +274,7 @@ div > p {
                               class="col-md-9 pr-0 pl-0 mr-0 ml-1 mt-2 fontBandeiraNome"
                             >{{getBandeiraImage().nome}}, final {{getFinalCard()}}</span>
                           </div>
-                          <div class="col-md-12 row">
+                          <div class="col-md-12 row" v-if="metodoPag">
                             <span class="col-md-2"></span>
                             <span class="fontExpira col-md-9 ml-1 pl-0">Expira em {{getExpiracao()}}</span>
                           </div>
@@ -284,7 +284,7 @@ div > p {
                               @click="scrollMeTo('changeCard')"
                               class="col-md-9 ml-1 pl-0 mt-2 link"
                               title="Clique para alterar"
-                            >Alterar</a>
+                            >Alterar/Informar Dados do Cartão</a>
                           </div>
                         </div>
                         <div class="row col-md-6">
@@ -324,7 +324,7 @@ div > p {
                             class="text-justify col-md-12"
                           >Veja todos os detalhes de seus pagamentos.</small>
                         </div>
-                        <div class="float-left p-1 ml-1 mt-1 row">
+                        <div class="float-left p-1 ml-1 mt-1 row" v-if="metodoPag">
                           <strong class="col-md-12">Dados de Faturamento:</strong>
                           <label class="col-md-12 ml-1">{{getDadosPagador().nome_completo}}</label>
                           <label class="col-md-12 ml-1">{{getDadosPagador().cpf_titular}}</label>
@@ -1153,6 +1153,10 @@ export default {
     },
     maskCPFTitular() {
       this.dadosProcessamento.cpf_titular = this.dadosProcessamento.cpf_titular.replace(
+        /[^\d]/g,
+        ""
+      );      
+      this.dadosProcessamento.cpf_titular = this.dadosProcessamento.cpf_titular.replace(
         /(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4"
       );
@@ -1228,7 +1232,9 @@ export default {
       }
     },
     async getDadosPagamento() {
-      this.metodoPag = this.usuario.json_pagamento.dadosProcessamento.metodoPag;
+      if (this.usuario.json_pagamento) {
+        this.metodoPag = this.usuario.json_pagamento.dadosProcessamento.metodoPag;
+      }
     },
     getDadosPagador() {
       if (this.usuario.json_pagamento) {

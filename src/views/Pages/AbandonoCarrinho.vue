@@ -185,7 +185,7 @@ export default {
         .then(res => {
           API_CAMPANHA.GetCampanhasCarrinhoAbandonado()
           .then((resCampanhaCarrinho)=>{            
-             if(resCampanhaCarrinho.data != undefined){
+             if(resCampanhaCarrinho.data){
               this.campanha = resCampanhaCarrinho.data.sequencia;
                           
               resCampanhaCarrinho.data.sequencia.campanhaSequenciaArray.forEach((obj, i)=>{

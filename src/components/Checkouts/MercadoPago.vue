@@ -38,7 +38,7 @@
       <span class="fa fa-donate"></span>Checkouts
     </div>
     <strong>
-      Preencha o checkout do {{getNomeGateway()}} corretamente. Lembre-se: nós te avisaremos se houver erros. Mas a responsabilidade de informar os dados é sua!
+      Preencha o checkout do {{getNomeGateway()}} corretamente. Lembre-se: nós te avisaremos se houver erros mas, a responsabilidade de informar os dados é sua!
       <br />
       Conte conosco através do suporte {suporte@thuor.com}
       <br />
@@ -96,6 +96,24 @@
                 >{{ errors.first('checkout_form.status') }}</span>
               </div>
               <div class="form-group">
+                <label class="s col-form-label">Mostrar Prova Social?</label>
+                <div class>
+                  <label class="switch switch-lg">
+                    <input
+                      type="checkbox"
+                      :checked="checkout_form.mostra_prova_social == 1"
+                      v-model="checkout_form.mostra_prova_social"
+                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.mostra_prova_social')}"
+                    />
+                    <span class></span>
+                  </label>
+                </div>
+                <span
+                  v-show="errors.has('checkout_form.mostra_prova_social')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.mostra_prova_social') }}</span>
+              </div>
+              <div class="form-group">
                 <label class="col-form-label">Nome *</label>
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.nome')}"
@@ -148,52 +166,28 @@
                   <option value="0">Não</option>
                 </select>
               </div>
-              <div class="form-group">
-                <label class="col-form-label">Chave Pública *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.chave_publica')}"
-                  v-model="checkout_form.chave_publica"
-                  v-validate="'required'"
-                  type="text"
-                  name="chave_publica"
-                />
-                <span
-                  v-show="errors.has('checkout_form.chave_publica')"
-                  class="invalid-feedback"
-                >{{ errors.first('checkout_form.chave_publica') }}</span>
-              </div>
-              <div class="form-group">
-                <label class="col-form-label">Token de Acesso *</label>
-                <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.token_acesso')}"
-                  v-model="checkout_form.token_acesso"
-                  v-validate="'required'"
-                  type="text"
-                  name="token_acesso"
-                />
-                <span
-                  v-show="errors.has('checkout_form.token_acesso')"
-                  class="invalid-feedback"
-                >{{ errors.first('checkout_form.token_acesso') }}</span>
-              </div>
-              <div class="form-groug">
-                <label class="s col-form-label">Mostrar Prova Social?</label>
-                <div class>
-                  <label class="switch switch-lg">
-                    <input
-                      type="checkbox"
-                      :checked="checkout_form.mostra_prova_social == 1"
-                      v-model="checkout_form.mostra_prova_social"
-                      :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.mostra_prova_social')}"
-                    />
-                    <span class></span>
-                  </label>
+              <div v-for="(id, i) in sequenciasArray" :key="i">
+                <div class="mb-1">
+                  <span
+                    class="alert alert-info p-1 col-md-12 mb-1"
+                  >Checkout MP - Checkout {{sequenciasArray[i].id}}</span>
                 </div>
-                <span
-                  v-show="errors.has('checkout_form.mostra_prova_social')"
-                  class="invalid-feedback"
-                >{{ errors.first('checkout_form.mostra_prova_social') }}</span>
+                <sequencia-mp
+                  @AddSequenciaMP="AdicionarSequencia($event)"
+                  @UpdateStatusMP="UpdateStatus($event)"
+                  @RemoveSequencia="RemoveSeq($event)"
+                  :id="sequenciasArray[i].id"
+                  :seq="sequenciasArray[i]"
+                ></sequencia-mp>
               </div>
+              <div class="form-group">
+                <button
+                  type="button"
+                  class="btn btn-block btn btn-primary btn-lg"
+                  v-on:click.prevent="adicionarSequencia()"
+                >Adicionar Sequência</button>
+              </div>
+              
               <div class="required">* Campos requeridos</div>
             </div>
             <div class="card-footer">
@@ -225,7 +219,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS_API from "../../api/utilisAPI";
-
+import SequenciaMp from "../../components/Checkouts/SequenciaMP";
 Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
   locale: "pt",
@@ -235,7 +229,6 @@ Vue.use(VeeValidate, {
 export default {
   async created() {
     const LDadosUser = await UTILIS_API.GetUserSession();
-    console.log(LDadosUser);
     if (LDadosUser.user && LDadosUser.user.json_pagamento == undefined) {
       API_NOTIFICATION.showNotificationW(
         "Oops!",
@@ -254,8 +247,13 @@ export default {
       attributes: {}
     });
   },
+  components: {
+    SequenciaMp
+  },
   data() {
     return {
+      idSequencia: 1,
+      sequenciasArray: [{ id: 1 }],
       checkout: {},
       checkout_form: {
         nome: "",
@@ -267,7 +265,8 @@ export default {
         ativa_boleto: 1,
         gateway: 1,
         id_usuario: 0,
-        mostra_prova_social: false
+        mostra_prova_social: 0,
+        json_checkout: []
       }
     };
   },
@@ -279,15 +278,26 @@ export default {
           API_CHECKOUT.GetIntegracaoCheckoutByID(1)
             .then(resCheckout => {
               this.checkout = resCheckout.data;
-              this.checkout_form.status = this.checkout.status;
-              this.checkout_form.ativa_boleto = this.checkout.ativa_boleto;
-              this.checkout_form.processa_automaticamente = this.checkout.captura_auto;
-              this.checkout_form.gateway = this.checkout.gateway;
-              this.checkout_form.id_usuario = this.checkout.id_usuario;
-              this.checkout_form.token_acesso = this.checkout.token_acesso;
-              this.checkout_form.nome_fatura = this.checkout.nome_fatura;
-              this.checkout_form.nome = this.checkout.nome;
-              this.checkout_form.chave_publica = this.checkout.chave_publica;
+              //console.log(resCheckout.data);
+              if (resCheckout.data) {
+                this.checkout_form.status = this.checkout.status;
+                this.checkout_form.ativa_boleto = this.checkout.ativa_boleto;
+                this.checkout_form.processa_automaticamente = this.checkout.captura_auto;
+                this.checkout_form.gateway = this.checkout.gateway;
+                this.checkout_form.id_usuario = this.checkout.id_usuario;
+                this.checkout_form.token_acesso = this.checkout.token_acesso;
+                this.checkout_form.nome_fatura = this.checkout.nome_fatura;
+                this.checkout_form.nome = this.checkout.nome;
+                this.checkout_form.chave_publica = this.checkout.chave_publica;
+                this.checkout_form.mostra_prova_social = this.checkout.mostra_prova_social;
+                this.checkout_form.json_checkout =
+                  this.checkout.json_checkout || [];
+
+                this.checkout_form.json_checkout.forEach((obj, i) => {
+                  this.sequenciasArray[i] = obj;
+                  //console.log('Seqs', this.sequenciasArray[i].id_sequencia, this.sequenciasArray[i].tempo, this.sequenciasArray[i].tipo_tempo);
+                });
+              }
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -391,6 +401,51 @@ export default {
         .catch(error => {
           console.log("Erro ao salvar o checkout MP", error);
         });
+    },
+    adicionarSequencia() {
+      this.idSequencia = this.idSequencia + 1;
+      this.sequenciasArray.push({ id: this.idSequencia });
+      //console.log(this.sequenciasArray);
+    },
+    AdicionarSequencia(event) {
+      API_NOTIFICATION.ShowLoading();
+      const LEvent = event;
+      const Finded = this.checkout_form.json_checkout.findIndex(
+        x => x.id == LEvent.id
+      );
+      if (Finded > -1) {
+        this.checkout_form.json_checkout[Finded] = LEvent;
+      } else {
+        this.checkout_form.json_checkout.push(LEvent);
+      }
+      this.checkout_form.json_checkout.forEach((obj, i) => {
+        if (obj.id == LEvent.id) {
+          obj.status = 1;
+        } else {
+          obj.status = 0;
+        }
+        this.sequenciasArray[i] = obj;
+      });
+      API_NOTIFICATION.HideLoading();
+    },
+    UpdateStatus(event) {
+      this.checkout_form.json_checkout.forEach((obj, i) => {
+        //console.log(obj);
+        if (obj.id == event.id) {
+          obj.status = 1;
+        } else {
+          obj.status = 0;
+        }
+        this.sequenciasArray[i] = obj;
+        //console.log(this.sequenciasArray[i]);
+      });
+    },
+    RemoveSeq(event){
+      this.sequenciasArray.forEach((obj, i)=>{
+        if(obj.id == event.id){
+          this.sequenciasArray.splice(obj.id, 1);
+        }
+      })
     }
   }
 };
