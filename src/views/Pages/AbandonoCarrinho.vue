@@ -43,7 +43,7 @@
     <strong>
       Crie sequência de mensagens para recuperar e aumentar suas vendas.
       <br />
-      Conte conosco através do suporte {suporte@thuor.com}
+      Conte conosco através do suporte {support@thuor.com}
       <br />
     </strong>
 

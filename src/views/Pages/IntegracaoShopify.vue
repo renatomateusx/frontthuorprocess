@@ -45,7 +45,7 @@
     <strong>
       Preencha o checkout do {{getNomePlataforma()}} corretamente. Lembre-se: nós te avisaremos se houver erros. Mas a responsabilidade de informar os dados é sua!
       <br />
-      Conte conosco através do suporte {suporte@thuor.com}
+      Conte conosco através do suporte {support@thuor.com}
       <br />
     </strong>
 

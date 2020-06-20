@@ -36,7 +36,7 @@
     <strong>
       Todos as campanhas, disponíveis até agora, estão aqui.
       <br />
-      <small>Caso queira adicionar mais campanhas, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.</small>
+      <small>Caso queira adicionar mais campanhas, por favor, mande-nos um e-mail {support@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.</small>
     </strong>
 
     <div class="row mt-3" v-for="{id, nome} in campanhaList" :key="id">

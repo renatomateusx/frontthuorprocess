@@ -40,7 +40,7 @@
     <strong>
       Preencha o checkout do {{getNomeGateway()}} corretamente. Lembre-se: nós te avisaremos se houver erros mas, a responsabilidade de informar os dados é sua!
       <br />
-      Conte conosco através do suporte {suporte@thuor.com}
+      Conte conosco através do suporte {support@thuor.com}
       <br />
     </strong>
 

@@ -130,7 +130,7 @@ export default {
         .catch(error => {
           API_NOTIFICATION.showNotificationW(
             "Oops!",
-            "Conta não encontrada. Envie um e-mail para suporte@thuor.com e relate seu problema."
+            "Conta não encontrada. Envie um e-mail para support@thuor.com e relate seu problema."
           );
           console.log("Erro ao ativar a conta", error);
         });

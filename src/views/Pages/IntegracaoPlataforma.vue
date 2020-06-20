@@ -34,7 +34,7 @@
     <strong>
       Tadas as integrações que fazemos atualmente estão aqui.
       <br />
-      Caso queira integrar com alguma plataforma ou ferramenta, por favor, mande-nos um e-mail {suporte@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.
+      Caso queira integrar com alguma plataforma ou ferramenta, por favor, mande-nos um e-mail {support@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.
     </strong>
 
     <div class="row mt-3" v-for="{id, nome} in integracaoList" :key="id">
