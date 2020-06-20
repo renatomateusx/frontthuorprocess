@@ -125,7 +125,7 @@ var API_CHECKOUT = {
         return new Promise(async (resolve, reject) => {
             const LDadosUser = await UTILIS_API.GetUserSession();
             if (LDadosUser != undefined) {
-
+                checkout_form.id_usuario = LDadosUser.user.id;
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_INSERT_CHECKOUT_MP, checkout_form)
                     .then((response) => {

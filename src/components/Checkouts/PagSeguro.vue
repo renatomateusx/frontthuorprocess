@@ -212,11 +212,11 @@ import API_NOTIFICATION from "../../api/notification";
 import API_LOGIN from "../../api/loginAPI";
 import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
-import UTILIS_API from '../../api/utilisAPI';
+import UTILIS_API from "../../api/utilisAPI";
 
 Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
-  locale: 'pt',
+  locale: "pt",
   fieldsBagName: "formFields" // fix issue with b-table
 });
 
@@ -266,16 +266,18 @@ export default {
         .then(res => {
           API_CHECKOUT.GetIntegracaoCheckoutByID(2)
             .then(resCheckout => {
-              this.checkout = resCheckout.data;
-              this.checkout_form.status = this.checkout.status;
-              this.checkout_form.ativa_boleto = this.checkout.ativa_boleto;
-              this.checkout_form.processa_automaticamente = this.checkout.captura_auto;
-              this.checkout_form.gateway = this.checkout.gateway;
-              this.checkout_form.id_usuario = this.checkout.id_usuario;
-              this.checkout_form.token_acesso = this.checkout.token_acesso;
-              this.checkout_form.nome_fatura = this.checkout.nome_fatura;
-              this.checkout_form.nome = this.checkout.nome;
-              this.checkout_form.chave_publica = this.checkout.chave_publica;
+              if (resCheckout.data) {
+                this.checkout = resCheckout.data;
+                this.checkout_form.status = this.checkout.status;
+                this.checkout_form.ativa_boleto = this.checkout.ativa_boleto;
+                this.checkout_form.processa_automaticamente = this.checkout.captura_auto;
+                this.checkout_form.gateway = this.checkout.gateway;
+                this.checkout_form.id_usuario = this.checkout.id_usuario;
+                this.checkout_form.token_acesso = this.checkout.token_acesso;
+                this.checkout_form.nome_fatura = this.checkout.nome_fatura;
+                this.checkout_form.nome = this.checkout.nome;
+                this.checkout_form.chave_publica = this.checkout.chave_publica;
+              }
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {

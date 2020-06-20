@@ -296,21 +296,24 @@ export default {
         .then(res => {
           API_CHECKOUT_PU.GetIntegracaoCheckoutByID(3)
             .then(resCheckout => {
-              this.checkout = resCheckout.data;
-              //this.checkout_form = this.checkout;
-              //yconsole.log(this.checkout.status);
-              this.checkout_form.status = this.checkout.status;
-              this.checkout_form.ativa_boleto = this.checkout.ativa_boleto || 1;
-              this.checkout_form.processa_automaticamente =
-                this.checkout.captura_auto || 1;
-              this.checkout_form.gateway = this.checkout.gateway || 3;
-              this.checkout_form.id_usuario = this.checkout.id_usuario;
-              this.checkout_form.api_login = this.checkout.api_login;
-              this.checkout_form.api_key = this.checkout.api_key;
-              this.checkout_form.account_id = this.checkout.account_id;
-              this.checkout_form.nome_fatura = this.checkout.nome_fatura;
-              this.checkout_form.nome = this.checkout.nome;
-              this.checkout_form.merchan_id = this.checkout.merchan_id;
+              if (resCheckout.data) {
+                this.checkout = resCheckout.data;
+                //this.checkout_form = this.checkout;
+                //yconsole.log(this.checkout.status);
+                this.checkout_form.status = this.checkout.status;
+                this.checkout_form.ativa_boleto =
+                  this.checkout.ativa_boleto || 1;
+                this.checkout_form.processa_automaticamente =
+                  this.checkout.captura_auto || 1;
+                this.checkout_form.gateway = this.checkout.gateway || 3;
+                this.checkout_form.id_usuario = this.checkout.id_usuario;
+                this.checkout_form.api_login = this.checkout.api_login;
+                this.checkout_form.api_key = this.checkout.api_key;
+                this.checkout_form.account_id = this.checkout.account_id;
+                this.checkout_form.nome_fatura = this.checkout.nome_fatura;
+                this.checkout_form.nome = this.checkout.nome;
+                this.checkout_form.merchan_id = this.checkout.merchan_id;
+              }
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
