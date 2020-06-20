@@ -185,7 +185,7 @@
                   type="button"
                   class="btn btn-block btn btn-primary btn-lg"
                   v-on:click.prevent="adicionarSequencia()"
-                >Adicionar Sequência</button>
+                >Adicionar Checkout</button>
               </div>
               
               <div class="required">* Campos requeridos</div>

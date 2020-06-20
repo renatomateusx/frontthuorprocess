@@ -111,11 +111,12 @@
                 >{{ errors.first('plataforma_form.nome_loja') }}</span>
               </div>
               <div class="form-group">
-                <label class="col-form-label">URL Loja *</label>
+                <label class="col-form-label">URL Loja - Shopify *</label>
                 <input
                   :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.url_loja')}"
                   v-model="plataforma_form.url_loja"
                   v-validate="'required'"
+                  placeholder="Ex: minhaloja"
                   type="text"
                   name="url_loja"
                 />
@@ -123,6 +124,21 @@
                   v-show="errors.has('plataforma_form.url_loja')"
                   class="invalid-feedback"
                 >{{ errors.first('plataforma_form.url_loja') }}</span>
+              </div>
+              <div class="form-group">
+                <label class="col-form-label">URL Personalizada *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('plataforma_form.url_person')}"
+                  v-model="plataforma_form.url_person"
+                  v-validate="'required'"
+                  placeholder="Ex: minhaloja.com"
+                  type="text"
+                  name="url_person"
+                />
+                <span
+                  v-show="errors.has('plataforma_form.url_person')"
+                  class="invalid-feedback"
+                >{{ errors.first('plataforma_form.url_person') }}</span>
               </div>
               <div class="form-group">
                 <label class="col-form-label">E-mail Loja *</label>
@@ -360,6 +376,7 @@ export default {
         tipo_integracao: "",
         url_loja: "",
         email_loja: "",
+        url_person: "",
         chave_api_key: "",
         senha: "",
         segredo_compartilhado: "",
@@ -396,6 +413,7 @@ export default {
               this.plataforma_form.nome_loja = this.plataforma.nome_loja;
               this.plataforma_form.plataforma = this.plataforma.plataforma;
               this.plataforma_form.email_loja = this.plataforma.email_loja;
+              this.plataforma_form.url_person = this.plataforma.url_person;
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
