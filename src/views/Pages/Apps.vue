@@ -43,7 +43,7 @@
     <strong>
       Tadas as nossas Apps estão aqui.
       <br />
-      E sempre adicionaremos mais. Dúvidas? {support@thuor.com}
+      E sempre adicionaremos mais. Dúvidas? {meajuda@thuor.com}
     </strong>
 
     <div class="row mt-3" v-for="{id, nome, imagem, demo, status} in appList" :key="id">

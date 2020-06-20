@@ -34,7 +34,7 @@
     <strong>
       Todos os checkouts que fazemos integração estão aqui.
       <br />
-      <small>Caso queira integrar com outro gateway de pagamento, por favor, mande-nos um e-mail {support@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.</small>
+      <small>Caso queira integrar com outro gateway de pagamento, por favor, mande-nos um e-mail {meajuda@thuor.com} e solicite inclusão. Teremos prazer em lhe atender.</small>
     </strong>
 
     <div class="row mt-3" v-for="{id, nome} in checkoutList" :key="id">

@@ -168,7 +168,7 @@ export default {
                 } else {
                   API_NOTIFICATION.showNotificationW(
                     "Oops!",
-                    "Parece que você ainda não ativou sua conta. Clique no botão de ativar conta, no e-mail que foi enviado para você. <br/> Dúvidas? support@thuor.com",
+                    "Parece que você ainda não ativou sua conta. Clique no botão de ativar conta, no e-mail que foi enviado para você. <br/> Dúvidas? meajuda@thuor.com",
                     "error"
                   );
                 }

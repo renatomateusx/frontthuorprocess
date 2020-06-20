@@ -43,7 +43,7 @@
     <strong>
       Preencha os Campos Abaixo e Clique em Salvar para Instalar.
       <br />
-      Conte conosco através do suporte {support@thuor.com}
+      Conte conosco através do suporte {meajuda@thuor.com}
       <br />
     </strong>
 
