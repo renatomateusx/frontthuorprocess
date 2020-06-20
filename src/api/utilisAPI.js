@@ -260,7 +260,7 @@ var UTILIS_API = {
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_LEAD_GET_DADOS_COMPRADOR, LBody)
                 .then((response) => {
-                    //console.log("Response Cliente", response);
+                    console.log("Response Cliente", response);
                     resolve(response);
                 })
                 .catch((error) => {
@@ -566,6 +566,9 @@ var UTILIS_API = {
                 }
                 if (detail == "cc_rejected_bad_filled_security_code") {
                     resolve('Código de segurança inválido.');
+                }
+                if(detail == "cc_rejected_other_reason"){
+                    resolve('Cartão Inválido.');
                 }
 
             }

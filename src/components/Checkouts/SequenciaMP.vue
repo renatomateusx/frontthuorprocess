@@ -255,6 +255,13 @@
 .hidden {
   display: none !important;
 }
+
+.switch input:checked + span {
+  background-color: green;
+}
+.switch input + span {
+  background-color: red;
+}
 @media only screen and (max-width: 992px) {
   #btnTop {
     display: block !important;
@@ -321,62 +328,62 @@
       <div class="card card-default">
         <div class="card-body">
           <div class="row">
-            <div class="form-group col-md-4">
-              <label class="col-form-label">Mensagem *</label>
-              <select
-                id="mensagem"
-                name="id_mensagem"
-                class="form-control text-center"
-                v-validate="'required'"
-                v-model="sequencia.id_mensagem"
-                :class="{'is-invalid': errors.has('sequencia.id_mensagem')}"
-              >
-                <option
-                  v-for="{id_mensagem, nome_mensagem} in arrayMensagens"
-                  :key="id_mensagem"
-                  :value="id_mensagem"
-                  v-bind:selected="id_mensagem == sequencia.id_mensagem"
-                >{{nome_mensagem}}</option>
-              </select>
+            <div class="form-group col-md-2">
+              <label class="col-form-label">Status *</label>
+              <div class>
+                <label class="switch switch-lg">
+                  <input
+                    type="checkbox"
+                    true-value="1"
+                    false-value="0"
+                    @change="changeStatus(sequencia)"
+                    :checked="sequencia.status == 1"
+                    v-model="sequencia.status"
+                    :class="{'form-control':true, 'is-invalid': errors.has('sequencia.status')}"
+                  />
+                  <span class></span>
+                </label>
+              </div>
             </div>
-            <div class="form-group col-md-3 mr-0 ml-2 pr-0 pl-0">
-              <label class="col-form-label">Tempo *</label>
-              <div class></div>
-              <el-input-number
-                :min="1"
-                :max="1000000"
+            <div class="form-group col-lg-5">
+              <label class="col-form-label">Chave Pública *</label>
+              <input
+                :class="{'form-control':true, 'is-invalid': errors.has('sequencia.chave_publica')}"
+                v-model="sequencia.chave_publica"
                 v-validate="'required'"
-                class="text-center"
-                v-model="sequencia.tempo"
-                :class="{'is-invalid': errors.has('sequencia.tempo')}"
-              ></el-input-number>
+                type="text"
+                name="chave_publica"
+              />
+              <span
+                v-show="errors.has('sequencia.chave_publica')"
+                class="invalid-feedback"
+              >{{ errors.first('sequencia.chave_publica') }}</span>
             </div>
-            <div class="form-group col-md-3">
-              <label class="col-form-label">Tipo *</label>
-              <select
-                id="tipo_tempo"
-                name="tipo_tempo"
-                class="form-control"
+            <div class="form-group col-lg-5">
+              <label class="col-form-label">Token de Acesso *</label>
+              <input
+                :class="{'form-control':true, 'is-invalid': errors.has('sequencia.token_acesso')}"
+                v-model="sequencia.token_acesso"
                 v-validate="'required'"
-                v-model="sequencia.tipo_tempo"
-                :class="{'is-invalid': errors.has('sequencia.tipo_tempo')}"
-              >
-                <option selected value="1">Segundo(s)</option>
-                <option value="2">Minuto(s)</option>
-                <option value="3">Hora(s)</option>
-                <option value="4">Dia(s)</option>
-                <option value="5">Mês(es)</option>
-                <option value="6">Ano(s)</option>
-              </select>
+                type="text"
+                name="token_acesso"
+              />
+              <span
+                v-show="errors.has('sequencia.token_acesso')"
+                class="invalid-feedback"
+              >{{ errors.first('sequencia.token_acesso') }}</span>
             </div>
             <div class="form-group col-md-1 mt-3 mr-0 ml-1 pr-0 pl-0">
               <label class="col-form-label"></label>
               <button class="btn btn-primary btn-block" type="submit">
                 <span class="fa fa-arrow-right"></span>
               </button>
+               <button class="btn btn-primary btn-block" v-on:click="removeSequencia(sequencia)" type="button">
+                <span class="fa fa-trash"></span>
+              </button>
             </div>
           </div>
-          <div class="form-group">
+          <div class="form-group col-lg-12">
             <span
               v-show="errors.has('sequencia.id_mensagem')"
               class="invalid-feedback"
@@ -417,9 +424,8 @@ Vue.use(VeeValidate, {
 });
 
 export default {
-  name: "sequencia-card",
+  name: "sequencia-mp",
   created() {
-    API_NOTIFICATION.ShowLoading();
     this.checkIfLogged();
 
     //document.addEventListener('beforeunload', this.clearSessionStorage);
@@ -429,16 +435,21 @@ export default {
     id: { type: Number, required: true },
     seq: {}
   },
+  watch: {
+    seq: function(val) {
+      console.log("Mudou", val);
+      this.sequencia = val;
+      
+    }
+  },
   computed: {},
   data: function() {
     return {
       sequencia: {
-        id_mensagem: 2,
-        tipo_tempo: 1,
-        tempo: 1
-      },
-      arrayMensagens: [],
-      arrayMensagensOriginal: []
+        status: 1,
+        chave_publica: "",
+        token_acesso: ""
+      }
     };
   },
   mounted() {
@@ -450,30 +461,23 @@ export default {
     });
   },
   methods: {
+    forceRender() {
+      // this.$nextTick(() => {
+      //   // Add the component back in
+      //   this.sequencia.status = this.seq.status;
+      //   this.sequencia.chave_publica = this.seq.chave_publica;
+      //   this.sequencia.token_acesso = this.seq.token_acesso;
+      //   console.log(this.seq);
+      // });
+    },
     checkIfLogged() {
-      //API_NOTIFICATION.ShowLoading();
+      API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_MENSAGERIA.GetMensagens().then(resMensagens => {
-            if (resMensagens.data.length > 0) {
-              console.log(resMensagens.data);
-              this.arrayMensagensOriginal = resMensagens.data;
-              resMensagens.data.forEach((obj, i) => {
-                this.arrayMensagens.push({
-                  id_mensagem: obj.id,
-                  nome_mensagem: obj.nome
-                });
-              });
-              if (this.seq != undefined) {
-                this.sequencia = this.seq;
-              }
-              API_NOTIFICATION.HideLoading();
-            }
-            else{
-              API_NOTIFICATION.showNotificationW('Oops', 'Você Ainda Não tem Mensagens Cadastradas. Cadastre-as Antes de Configurar a Sequência de Mensagens.', 'warning');
-            }
-            
-          });
+          console.log('asdfasd',this.seq);
+          if (this.seq.id && this.seq.status != undefined) {
+            this.sequencia = this.seq;
+          }
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -481,6 +485,7 @@ export default {
             this.$router.go("login");
           }
         });
+      API_NOTIFICATION.HideLoading();
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
@@ -492,12 +497,18 @@ export default {
     },
     salvarSequencia() {
       var LSequencia = {
-        id_sequencia: this.id,
-        id_mensagem: this.sequencia.id_mensagem,
-        tempo: this.sequencia.tempo,
-        tipo_tempo: this.sequencia.tipo_tempo
+        id: this.id,
+        chave_publica: this.sequencia.chave_publica,
+        token_acesso: this.sequencia.token_acesso,
+        status: this.sequencia.status
       };
-      this.$emit("AddSequencia", LSequencia);
+      this.$emit("AddSequenciaMP", LSequencia);
+    },
+    changeStatus(sequencia) {
+      this.$emit("UpdateStatusMP", sequencia);
+    },
+    removeSequencia(sequencia){
+      this.$emit("RemoveSequencia", sequencia);
     }
   }
 };

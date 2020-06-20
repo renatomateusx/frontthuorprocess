@@ -1225,7 +1225,7 @@ class CheckoutMP extends HTMLElement {
 
     getFreteSelecionadoNome() {
         var lnome = "";
-        if (fretes.length > 0) {
+        if (fretes && fretes.length > 0) {
             const LF = fretes.find(x => x.id == freteSelecionado);
             if (LF) {
                 lnome = LF.nome;

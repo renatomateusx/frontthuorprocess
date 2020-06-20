@@ -78,7 +78,7 @@
                 alt="App"
               />
               <span class="col-md-5 mt-2"></span>
-              <button class="btn btn-info col-md-3" v-on:click="acaoAppIntegrar(id)">
+              <button class="btn btn-info col-md-3" v-on:click="acaoAppIntegrar(id, nome)">
                 <span class="fa fa-edit f-20">
                   <span class="ml-2"></span>Instalar
                 </span>
@@ -113,6 +113,7 @@ import API_HEADERS from "../../api/configAxios";
 import API_LOJA from "../../api/lojaAPI";
 import API_APPS from "../../api/appsAPI";
 import API_SHOPIFY from "../../api/shopifyAPI";
+import UTILIS_API from "../../api/utilisAPI";
 
 Vue.use(VeeValidate, {
   fieldsBagName: "formFields" // fix issue with b-table
@@ -120,6 +121,7 @@ Vue.use(VeeValidate, {
 
 export default {
   async created() {
+    API_NOTIFICATION.ShowLoading();
     const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
     if (LDadosLoja == null) {
       API_NOTIFICATION.showNotificationW(
@@ -145,27 +147,33 @@ export default {
         .then(res => {
           API_APPS.GetApps()
             .then(resApps => {
+             
               resApps.data.forEach((obj, i) => {
+                 qtdApps += 1;
                 //console.log(obj);
                 var status = 0;
                 API_APPS.GetStatusApp(obj.id).then(resGet => {
                   status = resGet.data.status;
+                  // console.log(resGet, status);
+                  if (!status) status = obj.nativo;
                   this.appList.push({
-                  id: obj.id,
-                  nome: obj.nome,
-                  imagem: obj.imagem,
-                  demo: obj.demo,
-                  status: status
-                });
+                    id: obj.id,
+                    nome: obj.nome,
+                    imagem: obj.imagem,
+                    demo: obj.demo,
+                    status: status
+                  });
                   //console.log(this.appList);
                 });
-                
+                 API_NOTIFICATION.HideLoading();
               });
             })
             .catch(error => {
               console.log("Erro ao pegar Apps", error);
             });
-          API_NOTIFICATION.HideLoading();
+          if (qtdApps == 0) {
+            API_NOTIFICATION.HideLoading();
+          }
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -174,14 +182,38 @@ export default {
           }
         });
     },
-    acaoAppIntegrar(id) {
-      console.log(id)
+    acaoAppIntegrar(id, nome) {
+      // console.log(id);
       if (id == 1) {
         this.instalaApp(id);
       } else if (id == 2) {
         this.instalaApp(id);
-      } else if(id == 3){
+      } else if (id == 3) {
         this.$router.push("/apps/thuor-parcel");
+      } else if (id == 4) {
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "O App " + nome + " Já é Instalado Nativamente.",
+          "info"
+        );
+      } else if (id == 5) {
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "O App " + nome + " Já é Instalado Nativamente.",
+          "info"
+        );
+      } else if (id == 6) {
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "O App " + nome + " Já é Instalado Nativamente.",
+          "info"
+        );
+      } else if (id == 7) {
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "O App " + nome + " Já é Instalado Nativamente.",
+          "info"
+        );
       }
     },
     instalaApp(id) {
@@ -216,7 +248,7 @@ export default {
       }
     },
     getAppsIntegracaoByID(id) {
-      console.log(this.integracaoIDList.find(x => x.plataforma == id));
+      // console.log(this.integracaoIDList.find(x => x.plataforma == id));
       if (this.integracaoIDList.find(x => x.plataforma == id) !== undefined) {
         return this.integracaoIDList.find(x => x.plataforma == id).nome_loja;
       }
@@ -261,9 +293,9 @@ export default {
     },
     async getStatusClass(id) {
       const d = await API_APPS.GetStatusApp(id);
-      console.log(
-        d.data.status == 1 ? "CheckoutStatusAtivo" : "CheckoutStatusInativo"
-      );
+      // console.log(
+      //   d.data.status == 1 ? "CheckoutStatusAtivo" : "CheckoutStatusInativo"
+      // );
       return d.data.status == 1
         ? "CheckoutStatusAtivo"
         : "CheckoutStatusInativo";
