@@ -165,8 +165,9 @@ export default {
                   });
                   //console.log(this.appList);
                 });
-                 API_NOTIFICATION.HideLoading();
+                 
               });
+              API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
               console.log("Erro ao pegar Apps", error);
