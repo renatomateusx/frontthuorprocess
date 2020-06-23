@@ -1873,7 +1873,7 @@ export default {
             }
           },
           notification_urls: [
-            "https://thuor.com/webhookpagseguro/NotificaBoleto/"
+            "https://app.thuor.com/webhookpagseguro/NotificaBoleto/"
           ]
         }
       };
@@ -2033,14 +2033,13 @@ export default {
     },
     async populaDadosComprador() {
       if (this.email.length > 0) {
-        API_NOTIFICATION.ShowLoadingT("Um momento...");
         if (UTILIS.isValidEmail(this.email)) {
           UTILIS_API.GetDadosCompradorLead(this.email)
             .then(resComprador => {
               const LComprador = resComprador.data;
-              if (LComprador.dadosComprador != undefined) {
-                if (LComprador.dadosComprador.cpf != undefined) {
-                  this.cpf = LComprador.dadosComprador.cpf;
+              if (LComprador != undefined) {
+                if (LComprador.cpf != undefined) {
+                  this.cpf = LComprador.cpf;
                 }
                 if (LComprador.nome != undefined) {
                   this.nome_completo = LComprador.nome;
@@ -2048,18 +2047,13 @@ export default {
                 if (LComprador.telefone != undefined) {
                   this.telefone = LComprador.telefone;
                 }
-                if (
-                  LComprador.dadosComprador.cep != undefined &&
-                  LComprador.dadosComprador.cep.length > 0
-                ) {
-                  this.CEP = LComprador.dadosComprador.cep;
+                if (LComprador.cep != undefined && LComprador.cep.length > 0) {
+                  this.CEP = LComprador.cep;
                   this.consultaCEP();
-                  this.numero_porta = LComprador.dadosComprador.numero_porta;
+                  this.numero_porta = LComprador.numero_porta;
                 } else {
-                  API_NOTIFICATION.HideLoading();
                 }
               } else {
-                API_NOTIFICATION.HideLoading();
               }
             })
             .catch(error => {
@@ -2072,17 +2066,19 @@ export default {
     },
     showPopUpReview(PArray) {
       try {
-        setInterval(() => {
-          const LReview = PArray[Math.floor(Math.random() * PArray.length)];
-          var html =
-            "<style>.nomereview{font-size: 9px!important; word-break: break-all;}.titlereview{font-size: 12px!important; font-weight:400!important;word-break: break-all;}.iconStar{color:gold; margin-left: 10px!important}.notify{ width: 100%!important; height: 15%!important; } .sweet-alert{height: 6em!important; width: 22em!important;}</style><div class='notify w-100 '><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><br/> <span class='titlereview w-100 text-left'>" +
-            LReview.avaliacao +
-            "</span> <br> <span class='nomereview w-100 text-left'>" +
-             LReview.nome.split(' ')[0] +
-            "</span></div>";
+        if (PArray.length > 0) {
+          setInterval(() => {
+            const LReview = PArray[Math.floor(Math.random() * PArray.length)];
+            var html =
+              "<style>.nomereview{font-size: 9px!important; word-break: break-all;}.titlereview{font-size: 12px!important; font-weight:400!important;word-break: break-all;}.iconStar{color:gold; margin-left: 10px!important}.notify{ width: 100%!important; height: 15%!important; } .sweet-alert{height: 6em!important; width: 22em!important;}</style><div class='notify w-100 '><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><br/> <span class='titlereview w-100 text-left'>" +
+              LReview.avaliacao +
+              "</span> <br> <span class='nomereview w-100 text-left'>" +
+              LReview.nome.split(" ")[0] +
+              "</span></div>";
 
-          API_NOTIFICATION.showNotifyCustomPosition(html, "", "bottom-end");
-        }, 15000);
+            API_NOTIFICATION.showNotifyCustomPosition(html, "", "bottom-end");
+          }, 15000);
+        }
       } catch (error) {
         console.log("Erro ao fazer push de reviews", error);
       }

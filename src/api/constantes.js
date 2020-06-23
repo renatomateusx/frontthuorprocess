@@ -10,8 +10,8 @@ export default Object.freeze({
 
   /* PLATAFORMAS */
   //WEBSITEAPI: 'http://localhost:3000/',
-  WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
-  //WEBSITEAPI: 'https://api.thuor.com:9443/',
+  //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
+  WEBSITEAPI: 'https://api.thuor.com:7443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
   API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
@@ -89,13 +89,24 @@ export default Object.freeze({
   PATH_PAY_GET_PAGAMENTOS_EFETUADOS_POR_SELLER: 'transacoes/GetPagamentosEfetuadosPorSeller',  
 
 
-  CONSTANTE_VENCIMENTO_BOLETO: 3,
-  CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
+  /* UP SELL */
+
   PATH_GET_UPSELL: 'upsells/GetUpSells',
   PATH_GET_UPSELL_BY_ID: 'upsells/GetUpSellsByID',
   PATH_SAVE_UPSELL: 'upsells/SaveUpSells',
   PATH_DELETE_UPSELL: 'upsells/DeleteUpSellByID',
   PATH_GET_UPSELL_BY_PRODUCT_ID: 'upsells/GetUpSellByProductID',
+
+  /* CROSS SELL */
+  PATH_GET_CROSSSELL: 'crosssells/GetCrossSells',
+  PATH_GET_CROSSSELL_BY_ID: 'crosssells/GetCrossSellsByID',
+  PATH_SAVE_CROSSSELL: 'crosssells/SaveCrossSells',
+  PATH_DELETE_CROSSSELL: 'crosssells/DeleteCrossSellByID',
+  PATH_GET_CROSSSELL_BY_PRODUCT_ID: 'crosssells/GetCrossSellByProductID',
+
+  CONSTANTE_VENCIMENTO_BOLETO: 3,
+  CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
+  
   PATH_GET_MENSAGERIA: 'mensageria/GetMensagens',
   PATH_SAVE_MENSAGERIA: 'mensageria/SaveMensagem',
   PATH_DELETE_MENSAGERIA: 'mensageria/DeleteMensagensByID',
@@ -176,6 +187,8 @@ export default Object.freeze({
   /* INSTALA APPS SHOPIFY */
   PATH_INSTALA_APP_THUOR_PARCEL_SHOPIFY: 'integraFuncionalidadeShopify/InstalarAppThuorParcel',
   PATH_INSTALTL_APP_REVIEW: 'integraFuncionalidadeShopify/InstalarAppReview',
+  PATH_INSTALTL_APP_CROSS_SELL: 'integraFuncionalidadeShopify/InstalarAppThuorCrossSell',
+  
 
   CONSTANTE_THUOR: 'Thuor',
   CONSTANTE_THUOR_EMAIL: 'renatomateusx@gmail.com',

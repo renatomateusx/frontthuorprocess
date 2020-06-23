@@ -26,8 +26,8 @@
   width: 20px;
 }
 .imgIntegracao {
-  width: 120px;
-  height: auto;
+  width: 70px !important;
+  height: 70px !important;
 }
 .f-20 {
   font-size: 20px !important;
@@ -46,7 +46,7 @@
       E sempre adicionaremos mais. Dúvidas? {meajuda@thuor.com}
     </strong>
 
-    <div class="row mt-3" v-for="{id, nome, imagem, demo, status} in appList" :key="id">
+    <div class="row mt-3" v-for="{id, nome, imagem, demo, status, label} in appList" :key="id">
       <div class="col-xl-4">
         <!-- Aside card-->
         <div class="card b">
@@ -80,7 +80,8 @@
               <span class="col-md-5 mt-2"></span>
               <button class="btn btn-info col-md-3" v-on:click="acaoAppIntegrar(id, nome)">
                 <span class="fa fa-edit f-20">
-                  <span class="ml-2"></span>Instalar
+                  <span class="ml-2"></span>
+                  {{label}}
                 </span>
               </button>
               <div class="float-right mt-4 col-md-1">
@@ -147,9 +148,8 @@ export default {
         .then(res => {
           API_APPS.GetApps()
             .then(resApps => {
-             
               resApps.data.forEach((obj, i) => {
-                 qtdApps += 1;
+                qtdApps += 1;
                 //console.log(obj);
                 var status = 0;
                 API_APPS.GetStatusApp(obj.id).then(resGet => {
@@ -161,11 +161,11 @@ export default {
                     nome: obj.nome,
                     imagem: obj.imagem,
                     demo: obj.demo,
-                    status: status
+                    status: status,
+                    label: obj.label
                   });
                   //console.log(this.appList);
                 });
-                 
               });
               API_NOTIFICATION.HideLoading();
             })
@@ -183,6 +183,13 @@ export default {
           }
         });
     },
+    alreadyInstalled(nome) {
+      API_NOTIFICATION.showNotificationW(
+        "Oops!",
+        "O App " + nome + " Já é Instalado Nativamente.",
+        "info"
+      );
+    },
     acaoAppIntegrar(id, nome) {
       // console.log(id);
       if (id == 1) {
@@ -192,29 +199,15 @@ export default {
       } else if (id == 3) {
         this.$router.push("/apps/thuor-parcel");
       } else if (id == 4) {
-        API_NOTIFICATION.showNotificationW(
-          "Oops!",
-          "O App " + nome + " Já é Instalado Nativamente.",
-          "info"
-        );
+        this.alreadyInstalled(nome);
       } else if (id == 5) {
-        API_NOTIFICATION.showNotificationW(
-          "Oops!",
-          "O App " + nome + " Já é Instalado Nativamente.",
-          "info"
-        );
+        this.alreadyInstalled(nome);
       } else if (id == 6) {
-        API_NOTIFICATION.showNotificationW(
-          "Oops!",
-          "O App " + nome + " Já é Instalado Nativamente.",
-          "info"
-        );
+        this.alreadyInstalled(nome);
       } else if (id == 7) {
-        API_NOTIFICATION.showNotificationW(
-          "Oops!",
-          "O App " + nome + " Já é Instalado Nativamente.",
-          "info"
-        );
+        this.alreadyInstalled(nome);
+      } else if (id == 8) {
+        this.$router.push("/marketing/crosssell");
       }
     },
     instalaApp(id) {

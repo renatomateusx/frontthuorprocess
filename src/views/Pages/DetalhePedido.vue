@@ -232,24 +232,24 @@ th.active .arrow {
             <div class="media-body py-2">
               <div class="text-bold">
                 <p>
-                  <span class="row nomeComprador mb-0">{{this.pedido.nomeComprador}}</span>
+                  <span class="row nomeComprador mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.nome_completo.toUpperCase()}}</span>
                 </p>
                 <p>
-                  <span class="row emailComprador mb-0">{{this.pedido.emailComprador}}</span>
+                  <span class="row emailComprador mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.email}}</span>
                 </p>
                 <p>
                   <span class="row telefoneComprador mb-0">
                     <a
-                      v-bind:href="'https://api.whatsapp.com/send?phone='+unMask(this.pedido.telefoneComprador)"
+                      v-bind:href="'https://api.whatsapp.com/send?phone='+unMask(this.pedido.json_front_end_user_data.dadosComprador.telefone)"
                     >
                       <span class="fab fa-whatsapp foneWhats">
-                        <span class="ml-1">{{this.pedido.telefoneComprador}}</span>
+                        <span class="ml-1">{{this.pedido.json_front_end_user_data.dadosComprador.telefone}}</span>
                       </span>
                     </a>
                   </span>
                 </p>
                 <p>
-                  <span class="row cpfComprador">CPF: {{this.pedido.cpfComprador}}</span>
+                  <span class="row cpfComprador">CPF: {{this.pedido.json_front_end_user_data.dadosComprador.cpf}}</span>
                 </p>
               </div>
             </div>
@@ -264,41 +264,41 @@ th.active .arrow {
         <div class="card-body pt-0 pl-0">
           <div class="media-body pt-2">
             <div class="text-bold">
-              <p class="col-md-12" v-if="this.pedido.bandeira != 'bolbradesco'">
+              <p class="col-md-12" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma != 'bolbradesco'">
                 <img
-                  :src="getImagePaymentID(this.pedido.bandeira)"
+                  :src="getImagePaymentID(this.pedido.json_front_end_user_data.dadosComprador.forma)"
                   class="row imgMethodo float-left pull-left mr-4"
                 />
                 <span
                   class="row mb-0 float-left pull-left mr-6 mt-1"
-                >{{this.pedido.quatroDigitosCartao}}</span>
+                >{{this.pedido.json_front_end_user_data.dadosComprador.numero_cartao.substr(this.pedido.json_front_end_user_data.dadosComprador.numero_cartao.length - 4, this.pedido.json_front_end_user_data.dadosComprador.numero_cartao.length)}}</span>
               </p>
-              <p class="mt-5" v-if="this.pedido.bandeira != 'bolbradesco'">
+              <p class="mt-5" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma != 'bolbradesco'">
                 <span
                   class="row valorTransacao mb-0 mt-3 ml-0"
-                >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
+                >R$ {{this.pedido.json_front_end_user_data.dadosComprador.valor}}</span>
                 <span
                   class="row valorTransacao mb-0 mt-1 ml-0"
-                >{{this.pedido.parcela}}x de R$ {{formatPrice(this.pedido.valorParcela)}}</span>
+                >{{this.pedido.json_front_end_user_data.dadosComprador.parcela}}x de R$ {{this.pedido.json_front_end_user_data.dadosComprador.valorParcela.toFixed(2)}}</span>
               </p>
-              <p class="col-md-12" v-if="this.pedido.bandeira == 'bolbradesco'">
+              <p class="col-md-12" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
                 <img
-                  :src="getImagePaymentID(this.pedido.bandeira)"
+                  :src="getImagePaymentID(this.pedido.json_front_end_user_data.dadosComprador.forma)"
                   class="row imgMethodo float-left pull-left mr-4"
                 />
               </p>
-              <p class="row col-md-12 mt-3 mb-0" v-if="this.pedido.bandeira == 'bolbradesco'">
+              <p class="row col-md-12 mt-3 mb-0" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
                 <span class="row valorTransacao mb-0 mt-1 ml-0">Boleto Bancário</span>
               </p>
-              <p class="row col-md-12 mt-0 mb-0" v-if="this.pedido.bandeira == 'bolbradesco'">
-                <a class="linkBoleto" v-bind:href="this.pedido.linkBoleto">
+              <p class="row col-md-12 mt-0 mb-0" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
+                <a class="linkBoleto" v-bind:href="this.pedido.json_front_end_user_data.dadosComprador.urlBoleto" target="_blank">
                   <span class="row mb-0 mt-0 ml-0 fas fa-eye mt-1 float-left">
                     <span class="ml-1">Ver Boleto</span>
                   </span>
                 </a>
               </p>
-              <p class="row col-md-12 mt-1" v-if="this.pedido.bandeira == 'bolbradesco'">
-                <a class="linkBoleto" v-bind:href="getLinkEnviarBoleto(this.pedido)">
+              <p class="row col-md-12 mt-1" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
+                <a class="linkBoleto" v-bind:href="getLinkEnviarBoleto(this.pedido)" target="_blank">
                   <span class="fab fa-whatsapp">
                     <span class="ml-2">Enviar Boleto</span>
                   </span>
@@ -317,17 +317,17 @@ th.active .arrow {
           <div class="media-body pt-2">
             <div class="text-bold">
               <p>
-                <span class="row nomeComprador mb-0">{{this.pedido.destinatario}}</span>
-                <span class="row mb-0">{{getEndereco()}}, {{this.pedido.numero_porta}}</span>
+                <span class="row nomeComprador mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.destinatario.toUpperCase()}}</span>
+                <span class="row mb-0">{{getEndereco()}}, {{this.pedido.json_front_end_user_data.dadosComprador.numero_porta}}</span>
                 <span
                   class="row mb-0"
-                  v-if="this.pedido.complemento"
-                >Complemento: {{this.pedido.complemento}}</span>
-                <span class="row mb-0">{{this.pedido.cidade}} / {{this.pedido.estado}}</span>
+                  v-if="this.pedido.json_front_end_user_data.dadosComprador.complemento"
+                >Complemento: {{this.pedido.json_front_end_user_data.dadosComprador.complemento}}</span>
+                <span class="row mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.cidade}} / {{this.pedido.json_front_end_user_data.dadosComprador.estado}}</span>
                 <span class="row mb-0">
                   CEP:
                   <strong>
-                    <b>{{this.pedido.cep}}</b>
+                    <b>{{this.pedido.json_front_end_user_data.dadosComprador.cep}}</b>
                   </strong>
                 </span>
               </p>
@@ -345,7 +345,7 @@ th.active .arrow {
               <p class="mt-1">
                 <span
                   class="row valorTransacaoTotal mb-0 mt-0 ml-0"
-                >R$ {{formatPrice(this.pedido.valorPedido)}}</span>
+                >R$ {{this.pedido.json_front_end_user_data.dadosComprador.valor}}</span>
               </p>
               <button
                 class="form-control btn btn-danger"
@@ -385,6 +385,7 @@ import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import constantes from "../../api/constantes";
+import UTILIS_API from "../../api/utilisAPI";
 
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
@@ -590,7 +591,14 @@ export default {
       }
     },
     maskCPF(cpf) {
-      return (cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4"));
+      if (cpf) {
+        return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+      }
+    },
+    maskTelefone(telefone) {
+      if (telefone) {
+        return telefone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      }
     },
     unMask(telefone) {
       if (telefone) return telefone.replace(/\D/g, "");
@@ -683,7 +691,7 @@ export default {
         });
     },
     getLastFourDigits(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       if (LJSON.forma == "bolbradesco") {
         let LCard = LJSON.numero_cartao.replace(/ /g, "");
         return LCard.substring(LCard.length - 4, LCard.length);
@@ -691,31 +699,31 @@ export default {
       return "";
     },
     getLinkBoleto(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       return LJSON.urlBoleto;
     },
     getBarCodeBoleto(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       return LJSON.barcode;
     },
     getExpiracaoBoleto(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       return LJSON.vencimentoBoleto;
     },
     getBandeira(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       return LJSON.bandeira;
     },
     getValor(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       return LJSON.valor;
     },
     getParcela(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       return LJSON.parcela;
     },
     getValorParcela(obj) {
-      const LJSON = JSON.parse(obj.json_front_end_user_data);
+      const LJSON = obj.json_front_end_user_data;
       return LJSON.valorParcela;
     },
     getEndereco() {
@@ -725,15 +733,21 @@ export default {
       return;
     },
     getStatus() {
+
+      var lstatus = "";
       if (this.pedido.status !== undefined) {
-        return this.pedido.status.toUpperCase();
+        if(this.pedido.status == "PAID") lstatus = "APROVADA";
+        if(this.pedido.status == "PENDING") lstatus = "PENDENTE";
+        if(this.pedido.status == "CANCELED") lstatus = "CANCELADA";
+        this.statusAtual = lstatus;
+        return lstatus;
       }
       return;
     },
     populaDadosPedido(obj) {
       const LID = obj.id;
-
-      const LPaymentID = JSON.parse(obj.json_gw_response).payment_method_id;
+      console.log(obj);
+      const LPaymentID = obj.json_gw_response.payment_method_id;
       let LStatus;
       if (obj.status == null) {
         if (this.LPaymentID == "bolbradesco" || this.LPaymentID == "BOLETO") {
@@ -746,36 +760,32 @@ export default {
       }
       this.status = LStatus;
       this.statusAtual = this.status.toUpperCase();
+      console.log("Status", this.status);
       const LData = dateFormat(
-        JSON.parse(obj.json_gw_response).date_created,
+        obj.json_gw_response.date_created,
         "dd/mm/yyyy  HH:MM:ss"
       );
-      const LTimeAgo = JSON.parse(obj.json_gw_response).date_created;
-      const LTotal = JSON.parse(obj.json_gw_response).transaction_amount;
+      const LTimeAgo = obj.json_gw_response.date_created;
+      const LTotal = obj.json_gw_response.transaction_amount;
 
       //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
-      const LOrderID = JSON.parse(obj.json_shopify_response).order.id;
+      const LOrderID = obj.json_shopify_response.order.id;
       this.dataPedido = dateFormat(
-        JSON.parse(obj.json_front_end_user_data).data,
+        obj.json_front_end_user_data.data,
         "dd/mm/yyyy  HH:MM:ss"
       );
-      this.pedido.json_front_end_user_data = JSON.parse(
-        obj.json_front_end_user_data
-      );
+      this.pedido.json_front_end_user_data = obj.json_front_end_user_data;
       //console.log(Date.now(), Date.parse(LData));
       this.pedido.id = obj.id;
       this.pedido.status = LStatus;
-      this.pedido.nomeComprador = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.nome_completo.toUpperCase();
-      this.pedido.emailComprador = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.email;
+      this.pedido.nomeComprador = obj.json_front_end_user_data.dadosComprador.nome_completo.toUpperCase();
+      this.pedido.emailComprador =
+        obj.json_front_end_user_data.dadosComprador.email;
       this.pedido.cpfComprador = this.maskCPF(
-        JSON.parse(obj.json_front_end_user_data).dadosComprador.cpf
+        obj.json_front_end_user_data.dadosComprador.cpf
       );
-      this.pedido.telefoneComprador = this.maskCPF(
-        JSON.parse(obj.json_front_end_user_data).dadosComprador.telefone
+      this.pedido.telefoneComprador = this.maskTelefone(
+        obj.json_front_end_user_data.dadosComprador.telefone
       );
       this.pedido.bandeira = this.getBandeira(obj);
       this.pedido.quatroDigitosCartao = this.getLastFourDigits(obj);
@@ -786,27 +796,17 @@ export default {
       this.pedido.parcela = this.getParcela(obj);
       this.pedido.valorParcela = this.getValorParcela(obj);
 
-      this.pedido.destinatario = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.destinatario.toUpperCase();
-      this.pedido.endereco = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.endereco;
-      this.pedido.numero_porta = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.numero_porta;
-      this.pedido.complemlento = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.complemento;
-      this.pedido.cidade = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.cidade;
-      this.pedido.estado = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.estado;
-      this.pedido.cep = JSON.parse(
-        obj.json_front_end_user_data
-      ).dadosComprador.cep;
+      this.pedido.destinatario = obj.json_front_end_user_data.dadosComprador.destinatario.toUpperCase();
+      this.pedido.endereco =
+        obj.json_front_end_user_data.dadosComprador.endereco;
+      this.pedido.numero_porta =
+        obj.json_front_end_user_data.dadosComprador.numero_porta;
+      this.pedido.complemlento =
+        obj.json_front_end_user_data.dadosComprador.complemento;
+      this.pedido.cidade = obj.json_front_end_user_data.dadosComprador.cidade;
+      this.pedido.estado = obj.json_front_end_user_data.dadosComprador.estado;
+      this.pedido.cep = obj.json_front_end_user_data.dadosComprador.cep;
+      
     }
   }
 };

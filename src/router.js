@@ -37,6 +37,8 @@ const IntegracaoPlataforma = () => import('@/views/Pages/IntegracaoPlataforma.vu
 const IntegracaoShopify = () => import('@/views/Pages/IntegracaoShopify.vue');
 const UpSell = () => import('@/views/Pages/UpSell.vue')
 const UpSellAdd = () => import('@/views/Pages/UpSellAdd.vue');
+const CrossSell = () => import('@/views/Pages/CrossSell.vue')
+const CrossSellAdd = () => import('@/views/Pages/CrossSellAdd.vue');
 const Pixels = () => import('@/views/Pages/Pixels.vue');
 const PixelAdd = () => import('@/views/Pages/PixelAdd.vue');
 const Mensagens = () => import('@/views/Pages/Mensagens.vue');
@@ -174,6 +176,20 @@ export default new Router({
                 path: '/marketing/upsell/edit/:id',
                 component: UpSellAdd
             },
+
+            {
+                path: '/marketing/crosssell',
+                component: CrossSell
+            },
+            {
+                path: '/marketing/crosssell/add',
+                component: CrossSellAdd
+            },
+            {
+                path: '/marketing/crosssell/edit/:id',
+                component: CrossSellAdd
+            },
+
             {
                 path: '/marketing/mensageria',
                 component: Mensagens

@@ -61,7 +61,14 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-donate',
             path: '/marketing/upsell'
-        }, {
+        },
+        {
+            name: 'CrossSell',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-crosshairs',
+            path: '/marketing/crosssell'
+        },
+        {
             name: 'Mensagens',
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-chat',
