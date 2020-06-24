@@ -483,7 +483,12 @@ h1 {
                 </small>
               </a>
 
-              <div class="col-lg-12 collapse" id="collapseResumo" data-parent="#collapseParent">
+              <div
+                class="col-lg-12 collapse"
+                id="collapseResumo"
+                data-parent="#collapseParent"
+                :class="{'show': showOpened}"
+              >
                 <div class="col-md-12 ValorTotalResumo mt-3">
                   <span class="textValorTotal col-md-12">Valor: R$ {{this.formatPrice(granTotal)}}</span>
                 </div>
@@ -1189,14 +1194,15 @@ export default {
       reference_id: "",
       signature: "",
       descontoCupom: 0,
-      ttrack: 0
+      ttrack: 0,
+      showOpened: 0
     };
   },
   mounted() {},
   methods: {
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
@@ -1211,8 +1217,8 @@ export default {
     },
     async checkURL() {
       var url = window.location.href;
-
-      this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+      this.showOpened = await UTILIS_API.GetShowItensOptionSession();
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       this.nome_loja = this.dadosLoja.nome_loja;
       this.getCheckouts();
       //console.log("loja", dadosLoja);
@@ -2086,24 +2092,33 @@ export default {
         if (UTILIS.isValidEmail(this.email)) {
           UTILIS_API.GetDadosCompradorLead(this.email)
             .then(resComprador => {
-              const LComprador = resComprador.data;
-              if (LComprador != undefined) {
-                if (LComprador.cpf != undefined) {
-                  this.cpf = LComprador.cpf;
-                }
-                if (LComprador.nome != undefined) {
-                  this.nome_completo = LComprador.nome;
-                }
-                if (LComprador.telefone != undefined) {
-                  this.telefone = LComprador.telefone;
-                }
-                if (LComprador.cep != undefined && LComprador.cep.length > 0) {
-                  this.CEP = LComprador.cep;
-                  this.consultaCEP();
-                  this.numero_porta = LComprador.numero_porta;
+              if (resComprador.data) {
+                const LComprador = resComprador.data.lead.dadosComprador;
+                if (LComprador != undefined) {
+                  if (LComprador.cpf != undefined) {
+                    this.cpf = LComprador.cpf;
+                  }
+                  if (LComprador.nome != undefined) {
+                    this.nome_completo = LComprador.nome;
+                  }
+                  if (LComprador.telefone != undefined) {
+                    this.telefone = LComprador.telefone;
+                  }
+                  if (LComprador.cpf != undefined) {
+                    this.cpf = LComprador.cpf;
+                  }
+                  if (
+                    LComprador.cep != undefined &&
+                    LComprador.cep.length > 0
+                  ) {
+                    this.CEP = LComprador.cep;
+                    this.consultaCEP();
+                    this.numero_porta = LComprador.numero_porta;
+                    this.complemento = LComprador.complemento;
+                  } else {
+                  }
                 } else {
                 }
-              } else {
               }
             })
             .catch(error => {

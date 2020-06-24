@@ -57,6 +57,7 @@ const PerfilUsuario = () => import('@/views/Pages/PerfilUsuario.vue');
 const Ajuda = () => import('@/views/Pages/Ajuda.vue');
 const AdminAjuda = () => import('@/views/Pages/AdminAjuda.vue');
 const AdminAjudaEdit = () => import('@/views/Pages/AdminAjudaEdit.vue');
+const Dashboard = () => import('@/views/SingleView/Dashboard.vue');
 
 Vue.use(Router)
 
@@ -123,6 +124,10 @@ export default new Router({
             {
                 path: '/home',
                 component: Home
+            },
+            {
+                path: '/dashboard',
+                component: Dashboard
             },
             {
                 path: '/perfil',

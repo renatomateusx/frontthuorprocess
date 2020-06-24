@@ -10,6 +10,12 @@ const Menu = [
         translate: 'sidebar.nav.SINGLEVIEW'
     },
     {
+        name: 'Visão do Vendedor',
+        path: '/dashboard',
+        icon: 'fas fa-crop',
+        translate: 'sidebar.nav.SUBMENU'
+    },
+    {
         name: 'Produtos',
         path: 'produtos',
         icon: 'icon-tag',

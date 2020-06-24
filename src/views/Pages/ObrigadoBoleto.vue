@@ -108,9 +108,15 @@ export default {
       UTILIS_API.GetDadosClientesSession().then(async resCliente => {
         this.dadosCliente = resCliente;
         this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-        this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
+        this.DadosLoja = await UTILIS_API.GetDadosLojaSession();        
+        if(this.DadosLoja){
+          if(this.DadosLoja.limpa_carrinho == 1){
+            sessionStorage.removeItem("cart");
+          }
+        }
         const LCrypto = await UTILIS_API.GetDadosCriptoSession();
-        const SendEmailBoleto = await UTILIS_API.SEND_EMAIL_BOLETO(LCrypto);
+        // console.log("C", LCrypto);
+        //const SendEmailBoleto = await UTILIS_API.SEND_EMAIL_BOLETO(LCrypto, this.getOrderNumber());
         API_NOTIFICATION.HideLoading();
       });
       }
@@ -164,7 +170,6 @@ export default {
     },
     getBarCode() {
       if(this.dadosCliente.dadosCompra){
-      console.log(this.dadosCliente.dadosCompra.dadosComprador);
       return this.dadosCliente.dadosCompra.dadosComprador.dadosComprador
         .barcode;
       }

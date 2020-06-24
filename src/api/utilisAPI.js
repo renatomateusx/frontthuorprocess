@@ -24,9 +24,9 @@ var UTILIS_API = {
 
         });
     },
-    SEND_EMAIL_BOLETO(JSON) {
+    SEND_EMAIL_BOLETO(JSON, pedido) {
         return new Promise(async (resolve, reject) => {
-            let JSON_EMAIL = JSON;
+            let JSON_EMAIL = { JSON_EMAIL: JSON, ordem: pedido};
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_SEND_EMAIL_BOLETO, JSON_EMAIL)
                 .then((response) => {
@@ -260,7 +260,7 @@ var UTILIS_API = {
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_LEAD_GET_DADOS_COMPRADOR, LBody)
                 .then((response) => {
-                    console.log("Response Cliente", response);
+                    // console.log("Response Cliente", response);
                     resolve(response);
                 })
                 .catch((error) => {
@@ -521,6 +521,34 @@ var UTILIS_API = {
             }
         })
     },
+    SetShowItensOptionSession(option) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_OPTION_CART_OPENED, btoa(JSON.stringify(option)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o DadosLoja session", error);
+                reject(error);
+            }
+        })
+    },
+    GetShowItensOptionSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_OPTION_CART_OPENED) != null) {
+                    const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_OPTION_CART_OPENED)));
+                    resolve(L);
+                } else {
+                    resolve(0);
+                }
+            }
+            catch (error) {
+                console.log("Erro ao pegar o DadosLoja session", error);
+                reject(error);
+            }
+        })
+    },
     removeUserSession() {
         sessionStorage.removeItem(constantes.SESSION_USER);
     },
@@ -567,7 +595,7 @@ var UTILIS_API = {
                 if (detail == "cc_rejected_bad_filled_security_code") {
                     resolve('Código de segurança inválido.');
                 }
-                if(detail == "cc_rejected_other_reason"){
+                if (detail == "cc_rejected_other_reason") {
                     resolve('Cartão Inválido.');
                 }
 
@@ -607,7 +635,7 @@ var UTILIS_API = {
         }
     },
     checkUserHasPuttedPaymentInformation() {
-        return new Promise(async(resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             var LReturn = false;
             try {
                 const LUser = await this.GetUserSession();

@@ -859,7 +859,7 @@ export default {
     },
     getImageVariantById(idImage) {
       var images = this.produtoByID.images;
-      if (idImage == undefined) return "";
+      if (idImage == undefined) return images[0].src;
       return images.find(x => x.id === idImage).src || ``;
       // images.forEach((obj, i) => {
 

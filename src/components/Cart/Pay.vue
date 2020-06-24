@@ -318,6 +318,7 @@ export default {
         );
         this.produtosCart.push(lpro);
         sessionStorage.setItem("cart", JSON.stringify(this.produtosCart));
+        UTILIS_API.SetShowItensOptionSession(1);
         this.$router.push("/checkout");
       } else {
         const LCart = sessionStorage.getItem("cart");

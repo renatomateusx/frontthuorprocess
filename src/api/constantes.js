@@ -168,6 +168,7 @@ export default Object.freeze({
   SESSION_LOJA: 'l',
   SESSION_CHECKOUT: 'sc',
   SESSION_ATUAL_PAGE: 'atp',
+  SESSION_OPTION_CART_OPENED: 'opt',
 
   /* MENSALIDADES*/
   PATH_GET_MENSALIDADES_PAGAS: 'mensalidades/GetMensalidadesPagas',
