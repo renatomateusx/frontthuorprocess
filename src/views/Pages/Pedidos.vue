@@ -454,8 +454,8 @@ export default {
                   this.gridData = [];
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
                   //this.pedidosList = retProd.data;
+                  retProd.data.reverse();
                   retProd.data.forEach((obj, i) => {
-                    console.log(obj.json_shopify_response)
                     if (obj != null && obj.json_shopify_response.order) {
                       const LID = obj.id;
 

@@ -194,7 +194,7 @@ th.active .arrow {
 }
 </style>
 <template>
-  <ContentWrapper>
+  <ContentWrapper v-if="canRender">
     <div class="content-heading mt-3">
       <h4 class="contentHeading">
         Pedido: {{pedidoID}} em
@@ -216,7 +216,7 @@ th.active .arrow {
         id="select"
         class="selectPage form-control pull-left float-left"
       >
-        <option v-for="status in statusArray" :value="status">{{status}}</option>
+        <option v-for="status in statusArray" :value="status" :key="status">{{status}}</option>
       </select>
       <!-- <form id="search" class="form-group pull-right float-right">
         <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
@@ -232,10 +232,14 @@ th.active .arrow {
             <div class="media-body py-2">
               <div class="text-bold">
                 <p>
-                  <span class="row nomeComprador mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.nome_completo.toUpperCase()}}</span>
+                  <span
+                    class="row nomeComprador mb-0"
+                  >{{this.pedido.json_front_end_user_data.dadosComprador.nome_completo.toUpperCase()}}</span>
                 </p>
                 <p>
-                  <span class="row emailComprador mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.email}}</span>
+                  <span
+                    class="row emailComprador mb-0"
+                  >{{this.pedido.json_front_end_user_data.dadosComprador.email}}</span>
                 </p>
                 <p>
                   <span class="row telefoneComprador mb-0">
@@ -243,13 +247,17 @@ th.active .arrow {
                       v-bind:href="'https://api.whatsapp.com/send?phone='+unMask(this.pedido.json_front_end_user_data.dadosComprador.telefone)"
                     >
                       <span class="fab fa-whatsapp foneWhats">
-                        <span class="ml-1">{{this.pedido.json_front_end_user_data.dadosComprador.telefone}}</span>
+                        <span
+                          class="ml-1"
+                        >{{this.pedido.json_front_end_user_data.dadosComprador.telefone}}</span>
                       </span>
                     </a>
                   </span>
                 </p>
                 <p>
-                  <span class="row cpfComprador">CPF: {{this.pedido.json_front_end_user_data.dadosComprador.cpf}}</span>
+                  <span
+                    class="row cpfComprador"
+                  >CPF: {{this.pedido.json_front_end_user_data.dadosComprador.cpf}}</span>
                 </p>
               </div>
             </div>
@@ -264,7 +272,10 @@ th.active .arrow {
         <div class="card-body pt-0 pl-0">
           <div class="media-body pt-2">
             <div class="text-bold">
-              <p class="col-md-12" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma != 'bolbradesco'">
+              <p
+                class="col-md-12"
+                v-if="this.pedido.json_front_end_user_data.dadosComprador.forma != 'bolbradesco'"
+              >
                 <img
                   :src="getImagePaymentID(this.pedido.json_front_end_user_data.dadosComprador.forma)"
                   class="row imgMethodo float-left pull-left mr-4"
@@ -273,7 +284,10 @@ th.active .arrow {
                   class="row mb-0 float-left pull-left mr-6 mt-1"
                 >{{this.pedido.json_front_end_user_data.dadosComprador.numero_cartao.substr(this.pedido.json_front_end_user_data.dadosComprador.numero_cartao.length - 4, this.pedido.json_front_end_user_data.dadosComprador.numero_cartao.length)}}</span>
               </p>
-              <p class="mt-5" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma != 'bolbradesco'">
+              <p
+                class="mt-5"
+                v-if="this.pedido.json_front_end_user_data.dadosComprador.forma != 'bolbradesco'"
+              >
                 <span
                   class="row valorTransacao mb-0 mt-3 ml-0"
                 >R$ {{this.pedido.json_front_end_user_data.dadosComprador.valor}}</span>
@@ -281,24 +295,44 @@ th.active .arrow {
                   class="row valorTransacao mb-0 mt-1 ml-0"
                 >{{this.pedido.json_front_end_user_data.dadosComprador.parcela}}x de R$ {{this.pedido.json_front_end_user_data.dadosComprador.valorParcela.toFixed(2)}}</span>
               </p>
-              <p class="col-md-12" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
+              <p
+                class="col-md-12"
+                v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'"
+              >
                 <img
                   :src="getImagePaymentID(this.pedido.json_front_end_user_data.dadosComprador.forma)"
                   class="row imgMethodo float-left pull-left mr-4"
                 />
               </p>
-              <p class="row col-md-12 mt-3 mb-0" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
+              <p
+                class="row col-md-12 mt-3 mb-0"
+                v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'"
+              >
                 <span class="row valorTransacao mb-0 mt-1 ml-0">Boleto Bancário</span>
               </p>
-              <p class="row col-md-12 mt-0 mb-0" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
-                <a class="linkBoleto" v-bind:href="this.pedido.json_front_end_user_data.dadosComprador.urlBoleto" target="_blank">
+              <p
+                class="row col-md-12 mt-0 mb-0"
+                v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'"
+              >
+                <a
+                  class="linkBoleto"
+                  v-bind:href="this.pedido.json_front_end_user_data.dadosComprador.urlBoleto"
+                  target="_blank"
+                >
                   <span class="row mb-0 mt-0 ml-0 fas fa-eye mt-1 float-left">
                     <span class="ml-1">Ver Boleto</span>
                   </span>
                 </a>
               </p>
-              <p class="row col-md-12 mt-1" v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'">
-                <a class="linkBoleto" v-bind:href="getLinkEnviarBoleto(this.pedido)" target="_blank">
+              <p
+                class="row col-md-12 mt-1"
+                v-if="this.pedido.json_front_end_user_data.dadosComprador.forma == 'bolbradesco'"
+              >
+                <a
+                  class="linkBoleto"
+                  v-bind:href="getLinkEnviarBoleto(this.pedido)"
+                  target="_blank"
+                >
                   <span class="fab fa-whatsapp">
                     <span class="ml-2">Enviar Boleto</span>
                   </span>
@@ -317,13 +351,19 @@ th.active .arrow {
           <div class="media-body pt-2">
             <div class="text-bold">
               <p>
-                <span class="row nomeComprador mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.destinatario.toUpperCase()}}</span>
-                <span class="row mb-0">{{getEndereco()}}, {{this.pedido.json_front_end_user_data.dadosComprador.numero_porta}}</span>
+                <span
+                  class="row nomeComprador mb-0"
+                >{{this.pedido.json_front_end_user_data.dadosComprador.destinatario.toUpperCase()}}</span>
+                <span
+                  class="row mb-0"
+                >{{getEndereco()}}, {{this.pedido.json_front_end_user_data.dadosComprador.numero_porta}}</span>
                 <span
                   class="row mb-0"
                   v-if="this.pedido.json_front_end_user_data.dadosComprador.complemento"
                 >Complemento: {{this.pedido.json_front_end_user_data.dadosComprador.complemento}}</span>
-                <span class="row mb-0">{{this.pedido.json_front_end_user_data.dadosComprador.cidade}} / {{this.pedido.json_front_end_user_data.dadosComprador.estado}}</span>
+                <span
+                  class="row mb-0"
+                >{{this.pedido.json_front_end_user_data.dadosComprador.cidade}} / {{this.pedido.json_front_end_user_data.dadosComprador.estado}}</span>
                 <span class="row mb-0">
                   CEP:
                   <strong>
@@ -349,7 +389,7 @@ th.active .arrow {
               </p>
               <button
                 class="form-control btn btn-danger"
-                v-if="this.status.toUpperCase()!= 'CANCELADA' ||this.status.toUpperCase()!= 'REEMBOLSADA' "
+                v-if="this.status.toUpperCase() != 'CANCELADA' && this.status.toUpperCase() != 'REEMBOLSADA'  && this.status.toUpperCase() != 'PENDENTE' && this.pedido.json_front_end_user_data.dadosComprador.forma !='bolbradesco'"
                 v-on:click="devolverPagamento(pedido)"
               >Reembolsar</button>
             </div>
@@ -414,6 +454,7 @@ export default {
   },
   data() {
     return {
+      canRender: false,
       pedidoID: 0,
       timeAgo: "",
       searchQuery: "",
@@ -631,19 +672,37 @@ export default {
       );
     },
     devolverPagamento(pPedido) {
-      API_NOTIFICATION.showNotificationConfirm(
-        "Atenção. Esta ação não poderá ser revertida",
-        "Deseja cancelar a compra e reembolsar o cliente?",
-        "warning",
-        event => {
-          API_NOTIFICATION.ShowLoading();
-          if (this.DadosCheckout.gateway == 1) {
-            this.devolverPagamentoMP(pPedido);
-          } else if (this.DadosCheckout.gateway == 2) {
-            this.devolverPagamentoPS(pPedido);
-          } else if (this.DadosCheckout.gateway == 3) {
-            this.devolverPagamentoPayU(pPedido);
+      API_NOTIFICATION.showNotifyCustomInputReembolsa(
+        "Digite um Novo Valor Para Reembolso Parcial",
+        "Confirmar",
+        pPedido,
+        (response, novoValor) => {
+          const LOldValue =
+            pPedido.json_front_end_user_data.dadosComprador.valor;
+          const LNewValue = novoValor;
+          if (
+            LNewValue > 0 &&
+            LNewValue != LOldValue &&
+            LNewValue < LOldValue
+          ) {
+            pPedido.json_front_end_user_data.dadosComprador.valor = LNewValue;
+            API_NOTIFICATION.showNotificationConfirm(
+              "Atenção. <br> Esta ação não poderá ser revertida",
+              "Deseja cancelar a compra e reembolsar o cliente?",
+              "warning",
+              event => {
+                API_NOTIFICATION.ShowLoading();
+                if (this.DadosCheckout.gateway == 1) {
+                  this.devolverPagamentoMP(pPedido);
+                } else if (this.DadosCheckout.gateway == 2) {
+                  this.devolverPagamentoPS(pPedido);
+                } else if (this.DadosCheckout.gateway == 3) {
+                  this.devolverPagamentoPayU(pPedido);
+                }
+              }
+            );
           }
+          console.log("Testezin", response, novoValor);
         }
       );
     },
@@ -652,7 +711,10 @@ export default {
       API_NOTIFICATION.ShowLoading();
     },
     devolverPagamentoMP(pPedido) {
-      API_TRANSACOES.ReembolsarCliente(pPedido.id)
+      API_TRANSACOES.ReembolsarCliente(
+        pPedido.id,
+        pPedido.json_front_end_user_data.dadosComprador.valor
+      )
         .then(res => {
           API_NOTIFICATION.showNotification(
             "Reembolsado com sucesso",
@@ -665,7 +727,10 @@ export default {
         });
     },
     devolverPagamentoPS(pPedido) {
-      API_TRANSACOES.ReembolsarClienteCheckoutPS(pPedido.id)
+      API_TRANSACOES.ReembolsarClienteCheckoutPS(
+        pPedido.id,
+        pPedido.json_front_end_user_data.dadosComprador.valor
+      )
         .then(res => {
           API_NOTIFICATION.showNotification(
             "Reembolsado com sucesso",
@@ -678,7 +743,10 @@ export default {
         });
     },
     devolverPagamentoPayU(pPedido) {
-      API_TRANSACOES.ReembolsarClienteCheckoutPS(pPedido.id)
+      API_TRANSACOES.ReembolsarClienteCheckoutPS(
+        pPedido.id,
+        pPedido.json_front_end_user_data.dadosComprador.valor
+      )
         .then(res => {
           API_NOTIFICATION.showNotification(
             "Reembolsado com sucesso",
@@ -733,80 +801,81 @@ export default {
       return;
     },
     getStatus() {
-
       var lstatus = "";
       if (this.pedido.status !== undefined) {
-        if(this.pedido.status == "PAID") lstatus = "APROVADA";
-        if(this.pedido.status == "PENDING") lstatus = "PENDENTE";
-        if(this.pedido.status == "CANCELED") lstatus = "CANCELADA";
+        if (this.pedido.status == "PAID") lstatus = "APROVADA";
+        if (this.pedido.status == "PENDING") lstatus = "PENDENTE";
+        if (this.pedido.status == "CANCELED") lstatus = "CANCELADA";
         this.statusAtual = lstatus;
         return lstatus;
       }
       return;
     },
     populaDadosPedido(obj) {
-      const LID = obj.id;
-      console.log(obj);
-      const LPaymentID = obj.json_gw_response.payment_method_id;
-      let LStatus;
-      if (obj.status == null) {
-        if (this.LPaymentID == "bolbradesco" || this.LPaymentID == "BOLETO") {
-          LStatus = "pendente";
+      if (obj) {
+        API_NOTIFICATION.ShowLoading();
+        const LID = obj.id;
+        const LPaymentID = obj.json_gw_response.payment_method_id;
+        let LStatus;
+        if (obj.status == null) {
+          if (this.LPaymentID == "bolbradesco" || this.LPaymentID == "BOLETO") {
+            LStatus = "pendente";
+          } else {
+            LStatus = "aprovada";
+          }
         } else {
-          LStatus = "aprovada";
+          LStatus = obj.status;
         }
-      } else {
-        LStatus = obj.status;
+        this.status = LStatus;
+        this.statusAtual = this.status.toUpperCase();
+        const LData = dateFormat(
+          obj.json_gw_response.date_created,
+          "dd/mm/yyyy  HH:MM:ss"
+        );
+        const LTimeAgo = obj.json_gw_response.date_created;
+        const LTotal = obj.json_gw_response.transaction_amount;
+
+        //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
+        const LOrderID = obj.json_shopify_response.order.id;
+        this.dataPedido = dateFormat(
+          obj.json_front_end_user_data.data,
+          "dd/mm/yyyy  HH:MM:ss"
+        );
+        this.pedido.json_front_end_user_data = obj.json_front_end_user_data;
+        //console.log(Date.now(), Date.parse(LData));
+        this.pedido.id = obj.id;
+        this.pedido.status = LStatus;
+        this.pedido.nomeComprador = obj.json_front_end_user_data.dadosComprador.nome_completo.toUpperCase();
+        this.pedido.emailComprador =
+          obj.json_front_end_user_data.dadosComprador.email;
+        this.pedido.cpfComprador = this.maskCPF(
+          obj.json_front_end_user_data.dadosComprador.cpf
+        );
+        this.pedido.telefoneComprador = this.maskTelefone(
+          obj.json_front_end_user_data.dadosComprador.telefone
+        );
+        this.pedido.bandeira = this.getBandeira(obj);
+        this.pedido.quatroDigitosCartao = this.getLastFourDigits(obj);
+        this.pedido.linkBoleto = this.getLinkBoleto(obj);
+        this.pedido.dataExpiracao = this.getExpiracaoBoleto(obj);
+        this.pedido.codigoBarras = this.getBarCodeBoleto(obj);
+        this.pedido.valorPedido = this.getValor(obj);
+        this.pedido.parcela = this.getParcela(obj);
+        this.pedido.valorParcela = this.getValorParcela(obj);
+
+        this.pedido.destinatario = obj.json_front_end_user_data.dadosComprador.destinatario.toUpperCase();
+        this.pedido.endereco =
+          obj.json_front_end_user_data.dadosComprador.endereco;
+        this.pedido.numero_porta =
+          obj.json_front_end_user_data.dadosComprador.numero_porta;
+        this.pedido.complemlento =
+          obj.json_front_end_user_data.dadosComprador.complemento;
+        this.pedido.cidade = obj.json_front_end_user_data.dadosComprador.cidade;
+        this.pedido.estado = obj.json_front_end_user_data.dadosComprador.estado;
+        this.pedido.cep = obj.json_front_end_user_data.dadosComprador.cep;
+        this.canRender = true;
+        API_NOTIFICATION.HideLoading();
       }
-      this.status = LStatus;
-      this.statusAtual = this.status.toUpperCase();
-      console.log("Status", this.status);
-      const LData = dateFormat(
-        obj.json_gw_response.date_created,
-        "dd/mm/yyyy  HH:MM:ss"
-      );
-      const LTimeAgo = obj.json_gw_response.date_created;
-      const LTotal = obj.json_gw_response.transaction_amount;
-
-      //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
-      const LOrderID = obj.json_shopify_response.order.id;
-      this.dataPedido = dateFormat(
-        obj.json_front_end_user_data.data,
-        "dd/mm/yyyy  HH:MM:ss"
-      );
-      this.pedido.json_front_end_user_data = obj.json_front_end_user_data;
-      //console.log(Date.now(), Date.parse(LData));
-      this.pedido.id = obj.id;
-      this.pedido.status = LStatus;
-      this.pedido.nomeComprador = obj.json_front_end_user_data.dadosComprador.nome_completo.toUpperCase();
-      this.pedido.emailComprador =
-        obj.json_front_end_user_data.dadosComprador.email;
-      this.pedido.cpfComprador = this.maskCPF(
-        obj.json_front_end_user_data.dadosComprador.cpf
-      );
-      this.pedido.telefoneComprador = this.maskTelefone(
-        obj.json_front_end_user_data.dadosComprador.telefone
-      );
-      this.pedido.bandeira = this.getBandeira(obj);
-      this.pedido.quatroDigitosCartao = this.getLastFourDigits(obj);
-      this.pedido.linkBoleto = this.getLinkBoleto(obj);
-      this.pedido.dataExpiracao = this.getExpiracaoBoleto(obj);
-      this.pedido.codigoBarras = this.getBarCodeBoleto(obj);
-      this.pedido.valorPedido = this.getValor(obj);
-      this.pedido.parcela = this.getParcela(obj);
-      this.pedido.valorParcela = this.getValorParcela(obj);
-
-      this.pedido.destinatario = obj.json_front_end_user_data.dadosComprador.destinatario.toUpperCase();
-      this.pedido.endereco =
-        obj.json_front_end_user_data.dadosComprador.endereco;
-      this.pedido.numero_porta =
-        obj.json_front_end_user_data.dadosComprador.numero_porta;
-      this.pedido.complemlento =
-        obj.json_front_end_user_data.dadosComprador.complemento;
-      this.pedido.cidade = obj.json_front_end_user_data.dadosComprador.cidade;
-      this.pedido.estado = obj.json_front_end_user_data.dadosComprador.estado;
-      this.pedido.cep = obj.json_front_end_user_data.dadosComprador.cep;
-      
     }
   }
 };

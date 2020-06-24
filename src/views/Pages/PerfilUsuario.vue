@@ -1206,7 +1206,7 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     async ProcessaAutorizacao() {
-      window.Mercadopago.setPublishableKey(constantes.SAND_BOX_MP_PUBLICK_KEY);
+      window.Mercadopago.setPublishableKey(constantes.PRODUCAO_BOX_MP_PUBLICK_KEY);
       var FormToken = await UTILIS_API.CREATE_FORM_MP(
         constantes.CONSTANTE_THUOR,
         parseFloat(this.dadosProcessamento.valor),
