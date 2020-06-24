@@ -544,7 +544,7 @@
                     class="text-muted"
                     title="Clique para copiar"
                     style="cursor:pointer!important;"
-                    @click.stop.prevent="copyToClip('https://thuor.com/pay/'+getCripto(produtoByID.id, id))"
+                    @click.stop.prevent="copyToClip('https://app.thuor.com/pay/'+getCripto(produtoByID.id, id))"
                   >
                     <span class="fa fa-link linkCompra"></span>
                     <strong class="linkCompra">Link de Compra</strong>
@@ -555,7 +555,7 @@
             </div>
           </div>
           <input type="hidden" id="copyClipBoard" />
-          <!-- AQUI TERMINA O COMPONENTE DA VARIANTE, DOLADO DIREITO. TRANSFORME EM COMPONENTE DEPOIS -->
+          <!-- AQUI TERMINA O COMPONENTE DA VARIANTE, DO LADO DIREITO. TRANSFORME EM COMPONENTE DEPOIS -->
         </div>
         <div class="card">
           <div class="card-body mb-0">
@@ -859,7 +859,7 @@ export default {
     },
     getImageVariantById(idImage) {
       var images = this.produtoByID.images;
-      if (idImage == undefined) return "";
+      if (idImage == undefined) return images[0].src;
       return images.find(x => x.id === idImage).src || ``;
       // images.forEach((obj, i) => {
 
@@ -1031,7 +1031,7 @@ export default {
     },
     obterCheckout(id_produto){
       //https://thuor.com/templates/checkoutmp.js
-      const code = '&lt;script src="https://thuor.com/templates/checkoutmp.js"&gt;&lt;/script&gt;<br>&lt;checkout-mp id_produto="'+id_produto+'"&gt;&lt;/checkout-mp&gt;';
+      const code = '&lt;script src="https://app.thuor.com/templates/checkoutmp.js"&gt;&lt;/script&gt;<br>&lt;checkout-mp id_produto="'+id_produto+'"&gt;&lt;/checkout-mp&gt;';
       const title = "<strong>Atenção!</strong>";
       
       const html = "<div class='card card-default'><p>Copie o código a seguir e insira na sua página de vendas.</p><br/><br/> <small class='fontSizeSmall'>"+code+"</small> <br/><br/><strong>Se você não tem conhecimento, fale com alguém que tenha ou vá até a página de ajuda para saber como instalar.</strong> <br><small>Lembre-se: esse checkout está disponível, por enquanto, apenas para o MercadoPago. Então verifique se o seu checkout do MercadoPago está ativo para tal.</small></div>";
@@ -1039,7 +1039,7 @@ export default {
     },
     obterVariantes(id_produto){
       //https://thuor.com/templates/checkoutmp.js
-      const code = '&lt;script src="https://thuor.com/templates/prods_opts.min.js"&gt;&lt;/script&gt;<br>&lt;thuor-opcoes id_produto="'+id_produto+'" direct_to_checkout="true"&gt;&lt;/thuor-opcoes&gt;';
+      const code = '&lt;script src="https://app.thuor.com/templates/prods_opts.min.js"&gt;&lt;/script&gt;<br>&lt;thuor-opcoes id_produto="'+id_produto+'" direct_to_checkout="true"&gt;&lt;/thuor-opcoes&gt;';
       const title = "<strong>Atenção!</strong>";
       
       const html = "<div class='card card-default'><p>Copie o código a seguir e insira na sua página de vendas.</p><br/><br/> <small class='fontSizeSmall'>"+code+"</small> <br/><br/><strong>Se você não tem conhecimento, fale com alguém que tenha ou vá até a página de ajuda para saber como instalar.</strong> <br><small>Lembre-se: a tag direct_to_checkout deve ser 'true' ou 'false'. Qualquer outro valor será considerado como false e o seu cliente será enviado para a tela de carrinho.</small></div>";

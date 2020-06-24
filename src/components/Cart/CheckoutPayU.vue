@@ -483,7 +483,12 @@ h1 {
                 </small>
               </a>
 
-              <div class="col-lg-12 collapse" id="collapseResumo" data-parent="#collapseParent">
+              <div
+                class="col-lg-12 collapse"
+                id="collapseResumo"
+                data-parent="#collapseParent"
+                :class="{'show': showOpened}"
+              >
                 <div class="col-md-12 ValorTotalResumo mt-3">
                   <span class="textValorTotal col-md-12">Valor: R$ {{this.formatPrice(granTotal)}}</span>
                 </div>
@@ -1189,14 +1194,15 @@ export default {
       reference_id: "",
       signature: "",
       descontoCupom: 0,
-      ttrack: 0
+      ttrack: 0,
+      showOpened: 0
     };
   },
   mounted() {},
   methods: {
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
-      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
@@ -1211,8 +1217,8 @@ export default {
     },
     async checkURL() {
       var url = window.location.href;
-
-      this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+      this.showOpened = await UTILIS_API.GetShowItensOptionSession();
+      this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       this.nome_loja = this.dadosLoja.nome_loja;
       this.getCheckouts();
       //console.log("loja", dadosLoja);
@@ -2083,33 +2089,36 @@ export default {
     },
     async populaDadosComprador() {
       if (this.email.length > 0) {
-        API_NOTIFICATION.ShowLoadingT("Um momento...");
         if (UTILIS.isValidEmail(this.email)) {
           UTILIS_API.GetDadosCompradorLead(this.email)
             .then(resComprador => {
-              const LComprador = resComprador.data;
-              if (LComprador.dadosComprador != undefined) {
-                if (LComprador.dadosComprador.cpf != undefined) {
-                  this.cpf = LComprador.dadosComprador.cpf;
-                }
-                if (LComprador.nome != undefined) {
-                  this.nome_completo = LComprador.nome;
-                }
-                if (LComprador.telefone != undefined) {
-                  this.telefone = LComprador.telefone;
-                }
-                if (
-                  LComprador.dadosComprador.cep != undefined &&
-                  LComprador.dadosComprador.cep.length > 0
-                ) {
-                  this.CEP = LComprador.dadosComprador.cep;
-                  this.consultaCEP();
-                  this.numero_porta = LComprador.dadosComprador.numero_porta;
+              if (resComprador.data) {
+                const LComprador = resComprador.data.lead.dadosComprador;
+                if (LComprador != undefined) {
+                  if (LComprador.cpf != undefined) {
+                    this.cpf = LComprador.cpf;
+                  }
+                  if (LComprador.nome != undefined) {
+                    this.nome_completo = LComprador.nome;
+                  }
+                  if (LComprador.telefone != undefined) {
+                    this.telefone = LComprador.telefone;
+                  }
+                  if (LComprador.cpf != undefined) {
+                    this.cpf = LComprador.cpf;
+                  }
+                  if (
+                    LComprador.cep != undefined &&
+                    LComprador.cep.length > 0
+                  ) {
+                    this.CEP = LComprador.cep;
+                    this.consultaCEP();
+                    this.numero_porta = LComprador.numero_porta;
+                    this.complemento = LComprador.complemento;
+                  } else {
+                  }
                 } else {
-                  API_NOTIFICATION.HideLoading();
                 }
-              } else {
-                API_NOTIFICATION.HideLoading();
               }
             })
             .catch(error => {
@@ -2122,17 +2131,19 @@ export default {
     },
     showPopUpReview(PArray) {
       try {
-        setInterval(() => {
-          const LReview = PArray[Math.floor(Math.random() * PArray.length)];
-          var html =
-            "<style>.nomereview{font-size: 9px!important; word-break: break-all;}.titlereview{font-size: 12px!important; font-weight:400!important;word-break: break-all;}.iconStar{color:gold; margin-left: 10px!important}.notify{ width: 100%!important; height: 15%!important; } .sweet-alert{height: 6em!important; width: 22em!important;}</style><div class='notify w-100 '><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><br/> <span class='titlereview w-100 text-left'>" +
-            LReview.avaliacao +
-            "</span> <br> <span class='nomereview w-100 text-left'>" +
-             LReview.nome.split(' ')[0] +
-            "</span></div>";
+        if (PArray.length > 0) {
+          setInterval(() => {
+            const LReview = PArray[Math.floor(Math.random() * PArray.length)];
+            var html =
+              "<style>.nomereview{font-size: 9px!important; word-break: break-all;}.titlereview{font-size: 12px!important; font-weight:400!important;word-break: break-all;}.iconStar{color:gold; margin-left: 10px!important}.notify{ width: 100%!important; height: 15%!important; } .sweet-alert{height: 6em!important; width: 22em!important;}</style><div class='notify w-100 '><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><span class='fa fa-star iconStar'></span><br/> <span class='titlereview w-100 text-left'>" +
+              LReview.avaliacao +
+              "</span> <br> <span class='nomereview w-100 text-left'>" +
+              LReview.nome.split(" ")[0] +
+              "</span></div>";
 
-          API_NOTIFICATION.showNotifyCustomPosition(html, "", "bottom-end");
-        }, 15000);
+            API_NOTIFICATION.showNotifyCustomPosition(html, "", "bottom-end");
+          }, 15000);
+        }
       } catch (error) {
         console.log("Erro ao fazer push de reviews", error);
       }

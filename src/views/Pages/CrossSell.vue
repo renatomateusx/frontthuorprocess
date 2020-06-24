@@ -148,23 +148,28 @@ th.active .arrow {
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-arrow-up">
+      <span class="icon-shuffle">
         <span class="ml-2"></span>
-      </span>UpSells
+      </span>Cross Sells
     </div>
     <small>
-      Todos os UpSells criados por você estão aqui.
-      <br />Para criar um novo UpSell, basta clicar no botão de 'Novo UpSell'. Lembre-se: é permitido apenas 1 por produto.
+      Todos os Cross Selling criados por você estão aqui.
+      <br />Para criar um novo CrossSell, basta clicar no botão de 'Novo CrossSell'.
     </small>
     <p></p>
     <div class="float-left pull-left mb-3">
-      <button class="btn btn-danger btn-lg" v-on:click="excluirUpSellSelecionado()" v-show="selectedUpSell > 0">
+      <button class="btn btn-danger btn-lg" v-on:click="excluirCrossSellSelecionado()" v-show="selectedCrossSell > 0">
         <span class="fa fa-trash"></span> Excluir Selecionado
       </button>
     </div>
+     <div class="float-left pull-left mb-3">
+      <button class="btn btn-danger btn-lg" v-on:click="instalarCrossSellApp()">
+        <span class="fas fa-crosshairs"></span> Instalar App
+      </button>
+    </div>
     <div class="float-right pull-right mb-3">
-      <button class="btn btn-primary btn-lg" v-on:click="adicionarNovoUpSell()">
-        <span class="fa fa-plus"></span> Novo UpSell
+      <button class="btn btn-primary btn-lg" v-on:click="adicionarNovoCrossSell()">
+        <span class="fa fa-plus"></span> Novo CrossSell
       </button>
     </div>
     <div class="wrapper col-xl-12">
@@ -193,8 +198,8 @@ th.active .arrow {
                 <span class="arrow"></span>
               </th>
               <th style="width: 250px!important;">
-                <strong class="col-md-3 pedido">
-                  <b>Ao Comprar</b>
+                <strong class="col-md-3 pedido" >
+                  <b>Ao Visualizar</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
@@ -206,7 +211,7 @@ th.active .arrow {
               </th>
               <th class="data pl-0" style="width: 200px!important;">
                 <strong class>
-                  <b>Oferecer quando</b>
+                  <b>Onde Oferecer</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
@@ -223,10 +228,10 @@ th.active .arrow {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, status, tipo_checkout, nome, produto_from, produto_to} in dataPerPage" class="cursorP" v-on:click="SelectUpSell(id, nome)"
+                v-for="{id, status, tipo_checkout, nome, produto_from, produto_to} in dataPerPage" class="cursorP" v-on:click="SelectCrossSell(id, nome)"
               >
                 <td style="width: 200px!important;" class="data padding1010">
-                   <router-link :to="{path: '/marketing/upsell/edit/' + getCripto(id, status)}">
+                   <router-link :to="{path: '/marketing/crosssell/edit/' + getCripto(id, status)}">
                     <p class="col-md-12 mb-0 dataPedido">{{nome}}</p>
                   </router-link>
                   
@@ -286,6 +291,8 @@ import TimeAgo from "javascript-time-ago";
 import pt from "javascript-time-ago/locale/pt";
 import Hashids from "hashids";
 import UTILIS_API from "../../api/utilisAPI";
+import API_APPS from '../../api/appsAPI';
+import API_INTEGRACAO_SHOPIFY_APPS from "../../api/integracoesShopifyAPI";
 TimeAgo.addLocale(pt);
 Vue.use(Loading);
 
@@ -328,8 +335,8 @@ export default {
         password: "",
         rememberme: false
       },
-      selectedUpSell: 0,
-      nomeSelectedUpSell: '',
+      selectedCrossSell: 0,
+      nomeselectedCrossSell: '',
       gridData: [],
       startRow: 0,
       rowsPerPage: 10,
@@ -397,22 +404,31 @@ export default {
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              API_MKT.GetUpSells()
+              API_MKT.GetCrossSells()
                 .then(retornoUpSell => {
                   retornoUpSell.data.forEach((obj, i) => {
                     API_PRODUTOS.GetProdutoIDThuor(obj.id_produto_from)
                       .then(resProdFrom => {
-                        API_PRODUTOS.GetProdutoIDThuor(obj.id_produto_to)
+                        console.log(obj.id_produto_to, obj.id_produto_to);
+                        const LProdTo = obj.id_produto_to.split(',');
+                        const LArrayProTo =[];
+                        LProdTo.forEach((objP, i)=>{
+                          API_PRODUTOS.GetProdutoIDThuor(objP)
+                          .then(async resProdTo => {
+                            LArrayProTo.push(resProdTo.data.titulo_produto);
+                          });
+                        })
+                        API_PRODUTOS.GetProdutoIDThuor(LProdTo[0])
                           .then(async resProdTo => {
                             this.gridData.push({
                               id: obj.id,
                               nome: obj.nome,
                               status: obj.status,
-                              tipo_checkout: await this.getTipoCheckout(
-                                obj.tipo_checkout
+                              quando_oferecer: await this.getTipoQuandoOferecer(
+                                obj.quando_oferecer
                               ),
                               produto_from: resProdFrom.data.titulo_produto,
-                              produto_to: resProdTo.data.titulo_produto
+                              produto_to: LArrayProTo.toString()
                             });
                           })
                           .catch(errorProd => {
@@ -448,12 +464,11 @@ export default {
       this.sortKey = key;
       this.sortOrders[key] = this.sortOrders[key] * -1;
     },
-    getTipoCheckout(id) {
+    getTipoQuandoOferecer(id) {
       return new Promise(async (resolve, reject) => {
         var LReturn = "";
-        if (id == 1) LReturn = "No Checkout";
-        if (id == 2) LReturn = "Na Finalização";
-        if (id == 3) LReturn = "E-mail e WhatsApp";
+        if (id == 2) LReturn = "No Carrinho";
+        if (id == 1) LReturn = "No Produto";
         resolve(LReturn);
       });
     },
@@ -514,18 +529,18 @@ export default {
       // console.log("ID Deshashed", numbers);
       return produtHashed;
     },
-    adicionarNovoUpSell() {
-      this.$router.push("/marketing/upsell/add");
+    adicionarNovoCrossSell() {
+      this.$router.push("/marketing/crosssell/add");
     },
-    SelectUpSell(id, nome) {
-      this.selectedUpSell = id;
-      this.nomeSelectedUpSell = nome;
+    SelectCrossSell(id, nome) {
+      this.selectedCrossSell = id;
+      this.nomeselectedCrossSell = nome;
     },
-    excluirUpSellSelecionado(){
-      API_NOTIFICATION.showConfirmDialog('EXCLUSÃO', 'Deseja realmente excluir ' + this.nomeSelectedUpSell + '?', 'warning', this.ExcluirUpSell);
+    excluirCrossSellSelecionado(){
+      API_NOTIFICATION.showConfirmDialog('EXCLUSÃO', 'Deseja realmente excluir ' + this.nomeselectedCrossSell + '?', 'warning', this.ExcluirCrossSell);
     },
-    ExcluirUpSell(){
-      API_MKT.DeleteUpSellByID(this.selectedUpSell)
+    ExcluirCrossSell(){
+      API_MKT.DeleteCrossSellByID(this.selectedCrossSell)
       .then((resExclude)=>{
         API_NOTIFICATION.showNotification('Excluído com Sucesso!', 'success');
         setTimeout(() => {
@@ -533,7 +548,15 @@ export default {
         }, 1000);
       })
       .catch((error)=>{
-        console.log("Erro ao excluir o UpSell " + this.nomeSelectedUpSell, error);
+        console.log("Erro ao excluir o UpSell " + this.nomeselectedCrossSell, error);
+      })
+    },
+    instalarCrossSellApp(){
+      API_NOTIFICATION.showNotificationConfirm("Thuor Cross Sell", "Você Está Prestes a Instalar o App Cross Sell na Sua Loja. Continuar?", "question", ()=>{
+        API_INTEGRACAO_SHOPIFY_APPS.InstalaAppThuorCrossSellShopify()
+        .then((res)=>{
+          API_NOTIFICATION.showNotification('Instalado com Sucesso!', 'success');
+        })
       })
     }
   }

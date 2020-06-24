@@ -210,8 +210,8 @@ th.active .arrow {
         <p
           class="float-left text-center auto col-xl-12 mt-1 mb-2"
         >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
-        <button class="float-left btn btn-primary" @click="movePages(-1)">Voltar</button>
-        <button class="float-right btn btn-primary" @click="movePages(1)">Próxima</button>
+        <button class="float-left btn btn-primary" @click.prevent="movePages(-1)">Voltar</button>
+        <button class="float-right btn btn-primary" @click.prevent="movePages(1)">Próxima</button>
       </div>
     </div>
   </ContentWrapper>
@@ -254,7 +254,12 @@ export default {
     functionClick: Function,
     arrayAux: Array
   },
-
+  watch:{
+    arrayAux: function(val){
+      this.arrayAux = val;
+      // this.GetProdutos();
+    }
+  },
   created() {
     this.timeAgo = new TimeAgo("pt-BR");
 

@@ -10,6 +10,12 @@ const Menu = [
         translate: 'sidebar.nav.SINGLEVIEW'
     },
     {
+        name: 'Visão do Vendedor',
+        path: '/dashboard',
+        icon: 'fas fa-crop',
+        translate: 'sidebar.nav.SUBMENU'
+    },
+    {
         name: 'Produtos',
         path: 'produtos',
         icon: 'icon-tag',
@@ -61,7 +67,14 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-donate',
             path: '/marketing/upsell'
-        }, {
+        },
+        {
+            name: 'CrossSell',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-crosshairs',
+            path: '/marketing/crosssell'
+        },
+        {
             name: 'Mensagens',
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-chat',
