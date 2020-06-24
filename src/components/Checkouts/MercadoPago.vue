@@ -40,7 +40,7 @@
     <strong>
       Preencha o checkout do {{getNomeGateway()}} corretamente. Lembre-se: nós te avisaremos se houver erros mas, a responsabilidade de informar os dados é sua!
       <br />
-      Conte conosco através do suporte {suporte@thuor.com}
+      Conte conosco através do suporte {meajuda@thuor.com}
       <br />
     </strong>
 
@@ -185,7 +185,7 @@
                   type="button"
                   class="btn btn-block btn btn-primary btn-lg"
                   v-on:click.prevent="adicionarSequencia()"
-                >Adicionar Sequência</button>
+                >Adicionar Checkout</button>
               </div>
               
               <div class="required">* Campos requeridos</div>
@@ -430,15 +430,16 @@ export default {
     },
     UpdateStatus(event) {
       this.checkout_form.json_checkout.forEach((obj, i) => {
-        //console.log(obj);
+        console.log(obj);
+        obj.status = 0;
         if (obj.id == event.id) {
           obj.status = 1;
         } else {
           obj.status = 0;
-        }
-        this.sequenciasArray[i] = obj;
+        }       
         //console.log(this.sequenciasArray[i]);
       });
+       this.sequenciasArray = this.checkout_form.json_checkout;
     },
     RemoveSeq(event){
       this.sequenciasArray.forEach((obj, i)=>{

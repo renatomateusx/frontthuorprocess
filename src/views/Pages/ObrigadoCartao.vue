@@ -22,10 +22,7 @@
                 <h4 class="mt-4 mb-0">
                   Pedido:
                   <strong>
-                    <a
-                      v-bind:href="getURLBoleto()"
-                      target="_blank"
-                    >{{getOrderNumber()}}</a>
+                    <a v-bind:href="getURLBoleto()" target="_blank">{{getOrderNumber()}}</a>
                   </strong>
                 </h4>
               </div>
@@ -95,7 +92,12 @@ export default {
       this.dadosCliente = await UTILIS_API.GetDadosClientesSession();
       this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
       console.log(this.dadosCliente);
-      this.DadosLoja = await UTILIS_API.GetDadosLojaSession();     
+      this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
+      if (this.DadosLoja) {
+        if (this.DadosLoja.limpa_carrinho == 1) {
+          sessionStorage.removeItem("cart");
+        }
+      }
       API_NOTIFICATION.HideLoading();
     },
     copyToClip(comp) {

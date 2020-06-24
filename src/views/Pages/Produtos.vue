@@ -337,7 +337,7 @@ import Datatable from "@/components/Tables/Datatable";
 import moment from "moment";
 import UTILIS_API from "../../api/utilisAPI";
 import API_LOJA from "../../api/lojaAPI";
-import constantes from '../../api/constantes';
+import constantes from "../../api/constantes";
 Vue.use(Loading);
 
 Vue.use(VeeValidate, {
@@ -452,23 +452,7 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_PRODUTOS.GetProdutos()
-            .then(retProd => {
-              retProd.data.forEach((obj, i) => {
-                var LImages = obj.json_dados_produto;
-                //this.produtosList = retProd.data;
-                this.gridData.push({
-                  id_produto_json: obj.id_produto_json,
-                  titulo_produto: obj.titulo_produto,
-                  json_dados_produto: obj.json_dados_produto
-                });
-              });
-
-              API_NOTIFICATION.HideLoading();
-            })
-            .catch(error => {
-              console.log("Erro ao pegar produtos", error);
-            });
+          this.getProdutos();
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -486,21 +470,7 @@ export default {
       if (LDadosLoja.plataforma == constantes.PLATAFORMA_SHOPIFY) {
         API_PRODUTOS.ImportFromShopify()
           .then(retorno => {
-            API_PRODUTOS.GetProdutos()
-              .then(retProd => {
-                var LImages = retProd.data[0].json_dados_produto;
-                console.log("Retorno Produtos", LImages.image.src);
-                this.produtosList = retProd.data;
-
-                API_NOTIFICATION.Notifica(
-                  "Tudo Pronto",
-                  "Produtos Importados!",
-                  "success"
-                );
-              })
-              .catch(error => {
-                console.log("Erro ao pegar produtos", error);
-              });
+            this.getProdutos();
           })
           .catch(error => {
             API_NOTIFICATION.HideLoading();
@@ -511,13 +481,32 @@ export default {
             );
             console.log("Erro ao importar produtos do shopify", error);
           });
-      }else{
+      } else {
         API_NOTIFICATION.Notifica(
-              "Oops!",
-              "Nenhuma Loja Shopify foi cadastrada.",
-              "error"
-            );
+          "Oops!",
+          "Nenhuma Loja Shopify foi cadastrada.",
+          "error"
+        );
       }
+    },
+    getProdutos() {
+      API_PRODUTOS.GetProdutos()
+        .then(retProd => {
+          retProd.data.forEach((obj, i) => {
+            var LImages = obj.json_dados_produto;
+            //this.produtosList = retProd.data;
+            this.gridData.push({
+              id_produto_json: obj.id_produto_json,
+              titulo_produto: obj.titulo_produto,
+              json_dados_produto: obj.json_dados_produto
+            });
+          });
+
+          API_NOTIFICATION.HideLoading();
+        })
+        .catch(error => {
+          console.log("Erro ao pegar produtos", error);
+        });
     }
   }
 };

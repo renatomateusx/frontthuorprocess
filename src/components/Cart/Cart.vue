@@ -44,6 +44,10 @@
 }
 .btnIncrementDecrement {
   height: 21px;
+  min-width: 45px!important;
+}
+.input-number{
+  min-width: 45px!important;;
 }
 .spanIncrementDecrement {
   top: -6px;
@@ -77,7 +81,8 @@
 }
 </style>
 <template>
-  <div class="block-center">
+<!-- COLOQUEI O CAN RENDER PARA EVITAR QUE SEJA RENDERIZADO, JÁ QUE É PARA IR DIRETO PARA O CHECKOUT. O CART É APENAS PARA MONTAR DADOS -->
+  <div class="block-center" v-if="canRender">
     <div class="container">
       <div class="card shopping-cart">
         <div class="card-header bg-dark text-light">
@@ -261,6 +266,7 @@ export default {
   },
   data() {
     return {
+      canRender: false,
       price: 123.45,
       money: {
         decimal: ",",
@@ -319,6 +325,7 @@ export default {
         API_NOTIFICATION.HideLoading();
         //GUARDA O [1] PARA USAR COMO QUISER.
         window.location.href = newURL[0];
+        
         if (redirectTo == "checkout") {
           this.$router.push("/checkout");
         }
@@ -335,6 +342,7 @@ export default {
         }
         this.produtosCart = JSON.parse(LCart);
         API_NOTIFICATION.HideLoading();
+        this.$router.push("/checkout");
       }
     },
     async pushProducts(product, quantity, variante_id) {

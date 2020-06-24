@@ -373,15 +373,16 @@
                 class="invalid-feedback"
               >{{ errors.first('sequencia.token_acesso') }}</span>
             </div>
-            <div class="form-group col-md-1 mt-3 mr-0 ml-1 pr-0 pl-0">
-              <label class="col-form-label"></label>
-              <button class="btn btn-primary btn-block" type="submit">
+            <div class="form-group row col-md-12">
+              <div class="col-md-2 ml-1 mr-1"></div>
+              <button class="btn btn-primary btn-block ml-4" type="submit">
                 <span class="fa fa-arrow-right"></span>
-              </button>
-               <button class="btn btn-primary btn-block" v-on:click="removeSequencia(sequencia)" type="button">
+              </button>   
+              <button class="btn btn-primary btn-block  ml-4" v-on:click="removeSequencia(sequencia)" type="button">
                 <span class="fa fa-trash"></span>
-              </button>
+              </button>          
             </div>
+            
           </div>
           <div class="form-group col-lg-12">
             <span
