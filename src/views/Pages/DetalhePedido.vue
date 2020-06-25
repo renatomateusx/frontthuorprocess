@@ -672,6 +672,7 @@ export default {
       );
     },
     devolverPagamento(pPedido) {
+      var self = this;
       API_NOTIFICATION.showNotifyCustomInputReembolsa(
         "Digite um Novo Valor Para Reembolso Parcial",
         "Confirmar",
@@ -692,12 +693,12 @@ export default {
               "warning",
               event => {
                 API_NOTIFICATION.ShowLoading();
-                if (this.DadosCheckout.gateway == 1) {
-                  this.devolverPagamentoMP(pPedido);
-                } else if (this.DadosCheckout.gateway == 2) {
-                  this.devolverPagamentoPS(pPedido);
-                } else if (this.DadosCheckout.gateway == 3) {
-                  this.devolverPagamentoPayU(pPedido);
+                if (self.DadosCheckout.gateway == 1) {
+                  self.devolverPagamentoMP(pPedido);
+                } else if (self.DadosCheckout.gateway == 2) {
+                  self.devolverPagamentoPS(pPedido);
+                } else if (self.DadosCheckout.gateway == 3) {
+                  self.devolverPagamentoPayU(pPedido);
                 }
               }
             );

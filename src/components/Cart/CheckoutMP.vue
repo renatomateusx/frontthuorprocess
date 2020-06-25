@@ -1432,6 +1432,10 @@ export default {
               this.estado = retornoCEP.uf;
               this.complemento = retornoCEP.complemento;
               this.destinatario = this.nome_completo;
+              const numbP = document.getElementById("numero_porta");
+              if(numbP){
+                numbP.focus();
+              }
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
