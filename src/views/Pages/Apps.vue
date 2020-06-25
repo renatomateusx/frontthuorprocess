@@ -142,19 +142,16 @@ export default {
   },
   methods: {
     checkIfLogged() {
-      var qtdApps = 0;
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
-        .then(res => {
+        .then(async res => {
+          const LRetorno = await 
           API_APPS.GetApps()
             .then(resApps => {
               resApps.data.forEach((obj, i) => {
-                qtdApps += 1;
-                //console.log(obj);
                 var status = 0;
                 API_APPS.GetStatusApp(obj.id).then(resGet => {
                   status = resGet.data.status;
-                  // console.log(resGet, status);
                   if (!status) status = obj.nativo;
                   this.appList.push({
                     id: obj.id,
@@ -164,17 +161,15 @@ export default {
                     status: status,
                     label: obj.label
                   });
-                  //console.log(this.appList);
                 });
               });
-              API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
               console.log("Erro ao pegar Apps", error);
             });
-          if (qtdApps == 0) {
+          
             API_NOTIFICATION.HideLoading();
-          }
+          
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -208,7 +203,9 @@ export default {
         this.alreadyInstalled(nome);
       } else if (id == 8) {
         this.$router.push("/marketing/crosssell");
-      }
+      } else if (id == 9) {
+        this.alreadyInstalled(nome);
+      } 
     },
     instalaApp(id) {
       if (id == 1) {

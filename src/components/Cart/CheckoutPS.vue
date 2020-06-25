@@ -763,7 +763,7 @@ h1 {
                     />
                   </div>
 
-                  <div class="col-md-6 mt-1" v-show="bairro">
+                  <div class="col-md-6 mt-1" v-show="endereco">
                     <label class="col-xl-6 col-form-label labelForm paddingZero mb-1">Bairro</label>
                     <input
                       class="form-control required"
@@ -1337,40 +1337,65 @@ export default {
       router.push("/checkout");
     },
     consultaCEP() {
-      this.CEP = this.CEP.replace(/[^\d]/g, "");
-      if (this.CEP.length >= 8) {
-        API_NOTIFICATION.ShowLoading();
-        this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
-        UTILIS_API.VIA_CEP(this.CEP)
-          .then(retornoCEP => {
-            this.endereco = retornoCEP.logradouro;
-            this.bairro = retornoCEP.bairro;
-            this.cidade = retornoCEP.localidade;
-            this.estado = retornoCEP.uf;
-            this.complemento = retornoCEP.complemento;
-            this.destinatario = this.nome_completo;
-            API_NOTIFICATION.HideLoading();
-          })
-          .catch(error => {
-            this.endereco = "";
-            this.bairro = "";
-            this.cidade = "";
-            this.estado = "";
-            this.complemento = "";
-            this.destinatario = "";
-            console.log(
-              "Erro ao tentar pegar dados do endereço do usuário",
-              error
-            );
-            API_NOTIFICATION.HideLoading();
-          });
-      } else {
-        this.endereco = "";
-        this.bairro = "";
-        this.cidade = "";
-        this.estado = "";
-        this.complemento = "";
-        this.destinatario = "";
+      if (this.enderecoManual == false) {
+        this.CEP = this.CEP.replace(/[^\d]/g, "");
+        this.CEP = this.CEP.replace(/[^\d]/g, "");
+        if (this.CEP.length >= 8) {
+          this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
+          API_NOTIFICATION.ShowLoading();
+          var self = this;
+          setTimeout(() => {
+            if (self.endereco.length < 1) {
+              self.preencheEnderecoManualmente();
+            }
+          }, 2500);
+          UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
+            .then(retornoCEP => {
+              this.endereco = retornoCEP.logradouro;
+              this.bairro = retornoCEP.bairro;
+              this.cidade = retornoCEP.localidade;
+              this.estado = retornoCEP.uf;
+              this.complemento = retornoCEP.complemento;
+              this.destinatario = this.nome_completo;
+              API_NOTIFICATION.HideLoading();
+            })
+            .catch(error => {
+              API_NOTIFICATION.HideLoading();
+              this.endereco = "";
+              this.bairro = "";
+              this.cidade = "";
+              this.estado = "";
+              this.complemento = "";
+              this.destinatario = "";
+              console.log(
+                "Erro ao tentar pegar dados do endereço do usuário",
+                error
+              );
+            });
+        } else {
+          this.endereco = "";
+          this.bairro = "";
+          this.cidade = "";
+          this.estado = "";
+          this.complemento = "";
+          this.destinatario = "";
+          API_NOTIFICATION.HideLoading();
+        }
+      }
+    },
+    preencheEnderecoManualmente() {
+      this.enderecoManual = true;
+      API_NOTIFICATION.showNotificationW(
+        "Oops!",
+        "Endereço Não Encontrado. <br> Preencha Manualmente.",
+        "warning"
+      );
+      var self = this;
+
+      self.endereco = "Preencha seu endereço";
+      const add = document.getElementById("endereco");
+      if (add) {
+        add.focus();
       }
     },
     validarStep(step) {

@@ -246,7 +246,7 @@ option {
                   <p class="col-md-12 mb-0 dataPedido">{{data}}</p>
                   <p class="col-md-12 mb-0 tempoPedido">{{time_ago}}</p>
                 </td>
-                <td class="total pl-0">R$ {{formatPrice(total)}}</td>
+                <td class="total pl-0 p-0">R$ {{total.toLocaleString('pt-BR')}}</td>
                 <td class="pl-0" style="min-width: 80px!important; width: 80px!important;">
                   <span
                     class="spanStatus alert"
@@ -431,11 +431,11 @@ export default {
     checkIfLogged() {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
-        .then(res => {
-          API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
+        .then(async res => {
+          const lwatloja = await API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
+            .then(async resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              API_MENSAGERIA.GetMensagensWhatsApp()
+              const LWaitMensagem = await API_MENSAGERIA.GetMensagensWhatsApp()
                 .then(resMensagensWhats => {
                   //console.log(resMensagensWhats.data);
                   this.arrayWhatsAppMessageOriginal = resMensagensWhats.data;
@@ -449,7 +449,7 @@ export default {
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
                 });
-              API_TRANSACOES.GetTransacoes()
+              const LWaitTransacoes = await API_TRANSACOES.GetTransacoes()
                 .then(retProd => {
                   this.gridData = [];
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
@@ -604,7 +604,8 @@ export default {
     },
     getValue(obj) {
       const LJSON = obj.json_front_end_user_data;
-      return parseFloat(LJSON.dadosComprador.valor);
+      console.log(LJSON.dadosComprador.valor);
+      return LJSON.dadosComprador.valor;
     },
     selecionaMensagemEnviar(event) {
       this.mensagemEnviarSelecionada = event.target.value;

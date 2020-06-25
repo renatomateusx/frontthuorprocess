@@ -323,7 +323,7 @@ export default {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
               this.selectUserName();
             });
-            API_TRANSACOES.GetChartTransacoesPerDay()
+            const LVendasMes = await API_TRANSACOES.GetChartTransacoesPerDay()
               .then(resPerDayChart => {
                 this.totalVendasPerDay = [];
                 resPerDayChart.data.forEach(async (obj, i) => {
@@ -336,7 +336,7 @@ export default {
                 console.log("Erro ao recuperar chat per day", error);
               });
 
-            API_TRANSACOES.GetVendasMes()
+            const LVendas = await API_TRANSACOES.GetVendasMes()
               .then(resPerDayChart => {
                 resPerDayChart.data.forEach(async (obj, i) => {
                   if(obj.json_front_end_user_data.dadosComprador.valor){
