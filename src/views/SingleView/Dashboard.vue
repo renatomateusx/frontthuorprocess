@@ -28,11 +28,13 @@
     </div>
     <div class="row">
       <div class="col-12 text-center">
-        <h2 class="text-thin "><span class="fa fa-crop mr-2"></span>Minhas Vendas</h2>
+        <h2 class="text-thin">
+          <span class="fa fa-crop mr-2"></span>Minhas Vendas
+        </h2>
         <p>Se quiser melhorar o seu Dash, mande-nos um e-mail solicitando a inclusão de algum gráfico ou dado que deseja: {meajuda@thuor.com}</p>
       </div>
     </div>
-    <div class="row ">
+    <div class="row">
       <div class="list-group-item col-md-6">
         <div class="d-flex align-items-center py-3">
           <div class="w-50 px-3">
@@ -126,7 +128,7 @@
           </div>
         </div>
       </div>
-    
+
       <div class="list-group-item col-md-6">
         <div class="d-flex align-items-center py-3">
           <div class="w-50 px-3">
@@ -134,7 +136,10 @@
               <strong>R$ {{totalQtdVendasMes | formatPrice}}</strong>
             </p>
             <p class="m-0 text-sm labelReport">Em Vendas neste Mês</p>
-            <span class="mt-2 mb-2">{{pedidosRealizados}} <b>pedido(s) realizado(s)</b></span>
+            <span class="mt-2 mb-2">
+              {{pedidosRealizados}}
+              <b>pedido(s) realizado(s)</b>
+            </span>
           </div>
           <div class="w-50 px-3 text-center" v-if="renderComponent">
             <Sparkline
@@ -158,7 +163,7 @@
           </div>
         </div>
       </div>
-    
+
       <div class="list-group-item col-md-6">
         <div class="d-flex align-items-center py-3">
           <div class="w-50 px-3">
@@ -166,7 +171,10 @@
               <strong>R$ {{totalReceitas | formatPrice}}</strong>
             </p>
             <p class="m-0 text-sm labelReport">Receita / Mês</p>
-            <span class="mt-2 mb-2">{{pedidosPagos}} <b>pedido(s) pago(s)</b></span>
+            <span class="mt-2 mb-2">
+              {{pedidosPagos}}
+              <b>pedido(s) pago(s)</b>
+            </span>
           </div>
           <div class="w-50 px-3 text-center" v-if="renderComponent">
             <Sparkline
@@ -190,7 +198,7 @@
           </div>
         </div>
       </div>
-    
+
       <div class="list-group-item col-md-6">
         <div class="d-flex align-items-center py-3">
           <div class="w-50 px-3">
@@ -198,7 +206,10 @@
               <strong>R$ {{totalPedidosBoletos | formatPrice}}</strong>
             </p>
             <p class="m-0 text-sm labelReport">Pedidos / Mês</p>
-            <span class="mt-2 mb-2">{{pedidosBoletos}} <b>pedido(s) com boleto(s)</b></span>
+            <span class="mt-2 mb-2">
+              {{pedidosBoletos}}
+              <b>pedido(s) com boleto(s)</b>
+            </span>
           </div>
           <div class="w-50 px-3 text-center" v-if="renderComponent">
             <Sparkline
@@ -291,12 +302,12 @@ export default {
       pedidosPagos: 0,
       pedidosRealizados: 0,
       pedidosBoletos: 0,
-      totalPedidosBoletos:0,
+      totalPedidosBoletos: 0,
       totalPedidosBoletosArray: [],
-      totalVendasFacebookArray:[],
-      totalVendasFacebook:0,
-      totalVendasGoogleArray:[],
-      totalVendasGoogle:0,
+      totalVendasFacebookArray: [],
+      totalVendasFacebook: 0,
+      totalVendasGoogleArray: [],
+      totalVendasGoogle: 0
     };
   },
   methods: {
@@ -339,30 +350,53 @@ export default {
             const LVendas = await API_TRANSACOES.GetVendasMes()
               .then(resPerDayChart => {
                 resPerDayChart.data.forEach(async (obj, i) => {
-                  if(obj.json_front_end_user_data.dadosComprador.valor){
+                  // console.log(
+                  //   this.getValue(
+                  //     obj.json_front_end_user_data.dadosComprador.valor
+                  //   )
+                  // );
+                  if (obj.json_front_end_user_data.dadosComprador.valor) {
                     this.totalVendasMes.push(
-                      parseInt(obj.json_front_end_user_data.dadosComprador.valor)
+                      parseInt(
+                        obj.json_front_end_user_data.dadosComprador.valor
+                      )
                     );
-                    const LValue = obj.json_front_end_user_data.dadosComprador.valor.toLocaleString("pt-BR")
-                    this.totalQtdVendasMes += parseFloat(LValue.replace(",","."));
+                    const LValue = this.getValue(obj.json_front_end_user_data.dadosComprador.valor);
+                    this.totalQtdVendasMes += LValue;
                     this.pedidosRealizados += 1;
-                    if (obj.json_front_end_user_data.dadosComprador.forma == "creditCard") {
-                      this.totalReceitasArray.push(parseInt( obj.json_front_end_user_data.dadosComprador.valor));
-                      this.totalReceitas += parseFloat(LValue.replace(",","."));
+                    if (
+                      obj.json_front_end_user_data.dadosComprador.forma ==
+                      "creditCard"
+                    ) {
+                      this.totalReceitasArray.push(
+                        parseInt(
+                          obj.json_front_end_user_data.dadosComprador.valor
+                        )
+                      );
+                      this.totalReceitas += LValue;
                       this.pedidosPagos += 1;
                     }
-                    if(obj.json_front_end_user_data.dadosComprador.forma == "bolbradesco"){
+                    if (
+                      obj.json_front_end_user_data.dadosComprador.forma ==
+                      "bolbradesco"
+                    ) {
                       this.pedidosBoletos += 1;
-                      this.totalPedidosBoletos += parseFloat(LValue.replace(",","."))
-                      this.totalPedidosBoletosArray.push( obj.json_front_end_user_data.dadosComprador.valor);
+                      this.totalPedidosBoletos += LValue;
+                      this.totalPedidosBoletosArray.push(
+                        obj.json_front_end_user_data.dadosComprador.valor
+                      );
                     }
-                    if(obj.ttrack && obj.ttrack == 1){
-                      this.totalVendasFacebook += LValue.replace(",",".");
-                      this.totalVendasFacebookArray.push(obj.json_front_end_user_data.dadosComprador.valor);
+                    if (obj.ttrack && obj.ttrack == 1) {
+                      this.totalVendasFacebook += LValue;
+                      this.totalVendasFacebookArray.push(
+                        obj.json_front_end_user_data.dadosComprador.valor
+                      );
                     }
-                    if(obj.ttrack && obj.ttrack == 2){
-                      this.totalVendasGoogle += LValue.replace(",",".");
-                      this.totalVendasGoogle.push( obj.json_front_end_user_data.dadosComprador.valor);
+                    if (obj.ttrack && obj.ttrack == 2) {
+                      this.totalVendasGoogle += LValue;
+                      this.totalVendasGoogle.push(
+                        obj.json_front_end_user_data.dadosComprador.valor
+                      );
                     }
                     this.forceRerender();
                   }
@@ -380,6 +414,18 @@ export default {
     },
     changeLanguage(lang) {
       this.$i18n.i18next.changeLanguage(lang);
+    },
+    getValue(value) {
+      const index = value.split(",");
+      if (index.length > 2) {
+        
+        // console.log("With Milhar", value);
+        return parseFloat(value.replace(",","").replace(",","."));
+      }
+      if (index.length == 2) {
+        // console.log("No Milhar", value);
+        return parseFloat(value.replace(",","."));
+      }
     }
   }
 };

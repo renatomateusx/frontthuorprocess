@@ -15,7 +15,6 @@ var API_PRODUTOS = {
                 axios
                     .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTOS, LBody, LHeaders)
                     .then((response) => {
-                        ////console.log("Response", response);
                         resolve(response);
                     })
                     .catch((error) => {
@@ -46,6 +45,28 @@ var API_PRODUTOS = {
             }
         });
     },
+    GetProdutoByIDThuorUnique(id) {
+        return new Promise(async (resolve, reject) => {
+            var LUser = await UTILIS_API.GetUserSession();
+            if (LUser !== null && LUser !== undefined) {
+                let LBody = {
+                    id_produto: id
+                }
+                const LHeaders = await API_HEADERS.getHeader();
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_PRODUTO_BY_ID_THUOR_UNIQUE, LBody, LHeaders)
+                    .then((response) => {
+                        // console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    
     GetProdutoByIDThuor(id, quant, variant) {
         return new Promise(async (resolve, reject) => {
             let LBody = {

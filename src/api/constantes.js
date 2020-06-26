@@ -32,6 +32,7 @@ export default Object.freeze({
   PATH_TOKEN: 'users/VerificaToken',
   PATH_PRODUTOS: 'produtos/GetProdutos',
   PATH_PRODUTO_BY_ID: 'produtos/GetProdutoByID',
+  PATH_PRODUTO_BY_ID_THUOR_UNIQUE: 'produtos/GetProdutoByIDThuorUnique',
   PATH_PRODUTO_BY_ID_THUOR: 'produtos/GetProdutoByIDThuor',
   PATH_PRODUTO_ID_THUOR: 'produtos/GetProdutoIDThuor',
   PATH_PRODUTO_BY_ID_IMPORTED: 'produtos/GetProdutoByIDImported',
@@ -58,6 +59,8 @@ export default Object.freeze({
   
   PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY: 'importarProdutosShopify/ReInstalarIntegracao',
   PATH_INSTALAR_CHECKOUT_PLATAFORMA_SHOPIFY: 'integraFuncionalidadeShopify/ReInstalarIntegracao',
+  PATH_INSTALAR_POP_UP_PLATAFORMA_SHOPIFY: 'integraFuncionalidadeShopify/InstalarAppPopUp',
+  
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_VIACEP_SERVER: 'extras/ViaCEP',
