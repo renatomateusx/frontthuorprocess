@@ -368,6 +368,10 @@ h1 {
   color: red;
   font-size: 15px !important;
 }
+
+.textPrecoFree {
+  color: green;
+}
 @media only screen and (max-width: 992px) {
   #btnTop {
     display: block !important;
@@ -1360,6 +1364,9 @@ export default {
       router.push("/checkout");
     },
     consultaCEP() {
+      if (this.CEP.length == 0) {
+        this.enderecoManual = false;
+      }
       if (this.enderecoManual == false) {
         this.CEP = this.CEP.replace(/[^\d]/g, "");
         this.CEP = this.CEP.replace(/[^\d]/g, "");
@@ -1367,22 +1374,21 @@ export default {
           this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
           API_NOTIFICATION.ShowLoading();
           var self = this;
-          setTimeout(() => {
-            if (self.endereco.length < 1) {
-              self.preencheEnderecoManualmente();
-            }
-          }, 2500);
           UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
             .then(retornoCEP => {
-              this.endereco = retornoCEP.logradouro;
-              this.bairro = retornoCEP.bairro;
-              this.cidade = retornoCEP.localidade;
-              this.estado = retornoCEP.uf;
-              this.complemento = retornoCEP.complemento;
-              this.destinatario = this.nome_completo;
-              const numbP = document.getElementById("numero_porta");
-              if(numbP){
-                numbP.focus();
+              if (retornoCEP == null) {
+                self.preencheEnderecoManualmente();
+              } else {
+                this.endereco = retornoCEP.logradouro;
+                this.bairro = retornoCEP.bairro;
+                this.cidade = retornoCEP.localidade;
+                this.estado = retornoCEP.uf;
+                this.complemento = retornoCEP.complemento;
+                this.destinatario = this.nome_completo;
+                const numbP = document.getElementById("numero_porta");
+                if (numbP) {
+                  numbP.focus();
+                }
               }
               API_NOTIFICATION.HideLoading();
             })
