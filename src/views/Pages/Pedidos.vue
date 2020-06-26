@@ -251,7 +251,7 @@ option {
                   <span
                     class="spanStatus alert"
                     v-bind:class="getClassStatus(status)"
-                  >{{status.toUpperCase()}}</span>
+                  >{{toUpperCase(status)}}</span>
                 </td>
                 <td>
                   <div class="row">
@@ -501,8 +501,6 @@ export default {
                     }
                     //console.log(Date.now(), Date.parse(LData));
                   });
-
-                  
                 })
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
@@ -511,7 +509,7 @@ export default {
             .catch(error => {
               console.log("Erro ao pegar dados da loja", error);
             });
-            API_NOTIFICATION.HideLoading();
+          API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -559,7 +557,9 @@ export default {
       return LSTR2;
     },
     toUpperCase(str) {
-      return str.toUpperCase();
+      if (str) {
+        return str.toUpperCase();
+      }
     },
     getImagePaymentID(paymentID) {
       if (paymentID !== undefined) {
@@ -571,15 +571,17 @@ export default {
       }
     },
     getClassStatus(status) {
-      if (status == "pendente" || status.toUpperCase() == "PENDING")
+      if (status != undefined) {
+        if (status == "pendente" || status.toUpperCase() == "PENDING")
+          return "alert-warning";
+        if (status == "cancelada" || status.toUpperCase() == "CANCELED")
+          return "alert-danger";
+        if (status == "aprovada" || status.toUpperCase() == "APPROVED")
+          return "alert-success";
+        if (status == "entregue" || status.toUpperCase() == "DELIVERED")
+          return "alert-success";
         return "alert-warning";
-      if (status == "cancelada" || status.toUpperCase() == "CANCELED")
-        return "alert-danger";
-      if (status == "aprovada" || status.toUpperCase() == "APPROVED")
-        return "alert-success";
-      if (status == "entregue" || status.toUpperCase() == "DELIVERED")
-        return "alert-success";
-      return "alert-warning";
+      }
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
@@ -672,7 +674,7 @@ export default {
     },
     getBarCodeBoleto(obj) {
       const LJSON = obj.json_front_end_user_data;
-      return LJSON.dadosComprador.barcode;      
+      return LJSON.dadosComprador.barcode;
       return "";
     },
     getProdutoName(arrayProdutos) {
@@ -688,10 +690,10 @@ export default {
     },
     getLinkBoleto(obj) {
       const LJSON = obj.json_front_end_user_data;
-      return LJSON.dadosComprador.urlBoleto;      
+      return LJSON.dadosComprador.urlBoleto;
     },
     getStatusTranslate(status) {
-      if (status) {
+      if (status != undefined) {
         if (status.toUpperCase() == "APPROVED") {
           return "aprovada";
         }

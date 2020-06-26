@@ -677,7 +677,7 @@ h1 {
           <!-- START STEP 2-->
           <div class="col-md-4 mt-0 mb-0 cardSide">
             <!-- START card-->
-            <div class="card card-default mb-0">
+            <div class="card card-default mb-0" v-show="currentStep > 1">
               <div class="card-header rounded">
                 <span class="badge badge-blue iconBadge">2</span>
                 <span class="dadosPessoais">Entrega</span>
@@ -775,6 +775,27 @@ h1 {
                   </div>
                 </div>
                 <div class="form-group row formGroup" v-show="endereco">
+                  <div class="col-md-6 mt-1">
+                    <label class="col-xl-12 col-form-label labelForm paddingZero mb-1">Cidade</label>
+                    <input
+                      class="form-control required"
+                      autocomplete="city"
+                      type="text"
+                      v-model="cidade"
+                    />
+                  </div>
+
+                  <div class="col-md-6 mt-1" v-show="endereco">
+                    <label class="col-xl-6 col-form-label labelForm paddingZero mb-1">Estado</label>
+                    <input
+                      class="form-control required"
+                      autocomplete="state"
+                      type="text"
+                      v-model="estado"
+                    />
+                  </div>
+                </div>
+                <div class="form-group row formGroup" v-show="endereco">
                   <label class="col-xl-12 col-form-label labelForm">Complemento</label>
                   <div class="col-md-12">
                     <input
@@ -796,7 +817,7 @@ h1 {
                     />
                   </div>
                 </div>
-
+                
                 <div class="form-group row mt-3">
                   <div class="col-xl-12">
                     <button
@@ -859,7 +880,7 @@ h1 {
           <!-- START STEP 3-->
           <div class="col-md-4 mt-0 mb-0 cardSide">
             <!-- START card-->
-            <div class="card card-default mb-0">
+            <div class="card card-default mb-0" v-show="currentStep > 2">
               <div class="card-header rounded">
                 <span class="badge badge-blue iconBadge">3</span>
                 <span class="dadosPessoais">Pagamento</span>
@@ -1412,6 +1433,9 @@ export default {
       router.push("/checkout");
     },
     consultaCEP() {
+      if(this.CEP.length == 0){
+        this.enderecoManual = false;
+      }
       if (this.enderecoManual == false) {
         this.CEP = this.CEP.replace(/[^\d]/g, "");
         this.CEP = this.CEP.replace(/[^\d]/g, "");
@@ -1464,11 +1488,12 @@ export default {
     },
     preencheEnderecoManualmente() {
       this.enderecoManual = true;
-      API_NOTIFICATION.showNotificationW(
-        "Oops!",
-        "Endereço Não Encontrado. <br> Preencha Manualmente.",
-        "warning"
-      );
+      API_NOTIFICATION.HideLoading();
+      // API_NOTIFICATION.showNotificationW(
+      //   "Oops!",
+      //   "Endereço Não Encontrado. <br> Preencha Manualmente.",
+      //   "warning"
+      // );
       var self = this;
 
       self.endereco = "Preencha seu endereço";
