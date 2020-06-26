@@ -35,7 +35,7 @@ var API_NOTIFICATION = {
         this.isShowingLoading = true;
         Vue.swal({
             customClass: 'swal-wide',
-            title: '<span class="text-aguard">'+text+'</span>',
+            title: '<span class="text-aguard">' + text + '</span>',
             html: " <div class='card-body align-items-center justify-content-center'>             <div class='ball-scale-ripple-multiple widthLoadingDiv'>                <div class='loadingSwall'></div>               <div class='loadingSwall'></div>                <div class='loadingSwall'></div>            </div>        </div>",
             showConfirmButton: false,
             showCancelButton: false,
@@ -116,13 +116,13 @@ var API_NOTIFICATION = {
             confirmButtonText: 'Sim, faça isso!',
             cancelButtonText: 'Não'
         }).then((result) => {
-            
+
             if (result.value) {
                 callback();
             }
         })
     },
-    showConfirmDialog(title, message, type, callback){
+    showConfirmDialog(title, message, type, callback) {
         Vue.swal({
             title: title,
             text: message,
@@ -132,29 +132,29 @@ var API_NOTIFICATION = {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Sim',
             cancelButtonText: 'Não',
-          }).then((result) => {
+        }).then((result) => {
             if (result.value) {
-              callback();
+                callback();
             }
-          })
+        })
     },
-    showDynamicHTML(title, icon, html){
+    showDynamicHTML(title, icon, html) {
         Vue.swal({
             title: title,
             icon: icon,
-            html:html,
+            html: html,
             showCloseButton: true,
             showCancelButton: false,
             focusConfirm: false,
             confirmButtonText:
-              '<i class="fa fa-thumbs-up"></i> Certo!',
+                '<i class="fa fa-thumbs-up"></i> Certo!',
             confirmButtonAriaLabel: 'Thumbs up, great!',
             cancelButtonText:
-              '',
+                '',
             cancelButtonAriaLabel: 'Thumbs down'
-          })
+        })
     },
-    showNotifyCustomPosition(html, icon, position){
+    showNotifyCustomPosition(html, icon, position) {
         Vue.swal({
             width: '15em',
             padding: '5px',
@@ -165,7 +165,28 @@ var API_NOTIFICATION = {
             html: html,
             showConfirmButton: false,
             timer: 3000
-          })
+        })
+    },
+    showNotifyCustomInputReembolsa(title, btnText, pPedido, functi) {
+        Vue.swal({
+            title: title,
+            input: 'text',
+            html: '<strong><b>' +pPedido.json_front_end_user_data.dadosComprador.valor+'</b></strong>',
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: btnText,
+            showLoaderOnConfirm: true,
+            preConfirm: (valor) => {
+               return valor;
+            },
+            allowOutsideClick: () => !Swal.isLoading()
+        }).then((result) => {
+            if (result.value > 0) {
+               functi(pPedido, result.value);
+            }
+        })
     }
 }
 export default API_NOTIFICATION 

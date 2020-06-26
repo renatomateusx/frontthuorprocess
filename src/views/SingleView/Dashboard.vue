@@ -300,6 +300,10 @@ export default {
     };
   },
   methods: {
+    formatPrice(value) {
+      let val = (value / 1).toFixed(2).replace(".", ",");
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
     forceRerender() {
       // Remove my-component from the DOM
       this.renderComponent = false;
@@ -319,7 +323,7 @@ export default {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
               this.selectUserName();
             });
-            API_TRANSACOES.GetChartTransacoesPerDay()
+            const LVendasMes = await API_TRANSACOES.GetChartTransacoesPerDay()
               .then(resPerDayChart => {
                 this.totalVendasPerDay = [];
                 resPerDayChart.data.forEach(async (obj, i) => {
@@ -332,35 +336,36 @@ export default {
                 console.log("Erro ao recuperar chat per day", error);
               });
 
-            API_TRANSACOES.GetVendasMes()
+            const LVendas = await API_TRANSACOES.GetVendasMes()
               .then(resPerDayChart => {
                 resPerDayChart.data.forEach(async (obj, i) => {
-                  this.totalVendasMes.push(
-                    parseInt(obj.json_front_end_user_data.dadosComprador.valor.replace(",","."))
-                  );
-                  this.totalQtdVendasMes += parseFloat(
-                    obj.json_front_end_user_data.dadosComprador.valor.replace(",",".")
-                  );
-                  this.pedidosRealizados += 1;
-                  if (obj.json_front_end_user_data.dadosComprador.forma == "creditCard") {
-                    this.totalReceitasArray.push(parseInt( obj.json_front_end_user_data.dadosComprador.valor.replace(",",".")));
-                    this.totalReceitas += parseFloat( obj.json_front_end_user_data.dadosComprador.valor.replace(",","."));
-                    this.pedidosPagos += 1;
+                  if(obj.json_front_end_user_data.dadosComprador.valor){
+                    this.totalVendasMes.push(
+                      parseInt(obj.json_front_end_user_data.dadosComprador.valor)
+                    );
+                    const LValue = obj.json_front_end_user_data.dadosComprador.valor.toLocaleString("pt-BR")
+                    this.totalQtdVendasMes += parseFloat(LValue.replace(",","."));
+                    this.pedidosRealizados += 1;
+                    if (obj.json_front_end_user_data.dadosComprador.forma == "creditCard") {
+                      this.totalReceitasArray.push(parseInt( obj.json_front_end_user_data.dadosComprador.valor));
+                      this.totalReceitas += parseFloat(LValue.replace(",","."));
+                      this.pedidosPagos += 1;
+                    }
+                    if(obj.json_front_end_user_data.dadosComprador.forma == "bolbradesco"){
+                      this.pedidosBoletos += 1;
+                      this.totalPedidosBoletos += parseFloat(LValue.replace(",","."))
+                      this.totalPedidosBoletosArray.push( obj.json_front_end_user_data.dadosComprador.valor);
+                    }
+                    if(obj.ttrack && obj.ttrack == 1){
+                      this.totalVendasFacebook += LValue.replace(",",".");
+                      this.totalVendasFacebookArray.push(obj.json_front_end_user_data.dadosComprador.valor);
+                    }
+                    if(obj.ttrack && obj.ttrack == 2){
+                      this.totalVendasGoogle += LValue.replace(",",".");
+                      this.totalVendasGoogle.push( obj.json_front_end_user_data.dadosComprador.valor);
+                    }
+                    this.forceRerender();
                   }
-                  if(obj.json_front_end_user_data.dadosComprador.forma == "bolbradesco"){
-                    this.pedidosBoletos += 1;
-                    this.totalPedidosBoletos += parseFloat( obj.json_front_end_user_data.dadosComprador.valor.replace(",","."))
-                    this.totalPedidosBoletosArray.push(parseFloat( obj.json_front_end_user_data.dadosComprador.valor.replace(",",".")));
-                  }
-                  if(obj.ttrack && obj.ttrack == 1){
-                    this.totalVendasFacebook +=1;
-                    this.totalVendasFacebookArray.push(parseFloat( obj.json_front_end_user_data.dadosComprador.valor.replace(",",".")));
-                  }
-                  if(obj.ttrack && obj.ttrack == 2){
-                    this.totalVendasGoogle +=1;
-                    this.totalVendasGoogle.push(parseFloat( obj.json_front_end_user_data.dadosComprador.valor.replace(",",".")));
-                  }
-                  this.forceRerender();
                 });
               })
               .catch(error => {

@@ -670,6 +670,7 @@ div > p {
                         v-validate="'required'"
                         type="text"
                         name="endereco"
+                        id="endereco"
                         v-model="dadosProcessamento.endereco"
                       />
 
@@ -1155,7 +1156,7 @@ export default {
       this.dadosProcessamento.cpf_titular = this.dadosProcessamento.cpf_titular.replace(
         /[^\d]/g,
         ""
-      );      
+      );
       this.dadosProcessamento.cpf_titular = this.dadosProcessamento.cpf_titular.replace(
         /(\d{3})(\d{3})(\d{3})(\d{2})/,
         "$1.$2.$3-$4"
@@ -1173,6 +1174,11 @@ export default {
           "$1-$2"
         );
         API_NOTIFICATION.ShowLoading();
+        setTimeout(() => {
+          if (self.dadosProcessamento.endereco.length < 1) {
+            self.preencheEnderecoManualmente();
+          }
+        }, 2500);
         UTILIS_API.VIA_CEP(this.dadosProcessamento.cep.replace(/[.-]/g, ""))
           .then(retornoCEP => {
             self.dadosProcessamento.endereco = retornoCEP.logradouro;
@@ -1205,8 +1211,26 @@ export default {
       let val = (value / 1).toFixed(2).replace(".", ",");
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
+    preencheEnderecoManualmente() {
+      this.enderecoManual = true;
+      API_NOTIFICATION.showNotificationW(
+        "Oops!",
+        "Endereço Não Encontrado. <br> Preencha Manualmente.",
+        "warning"
+      );
+      var self = this;
+
+      self.endereco = "Preencha seu endereço";
+      const add = document.getElementById("endereco");
+
+      if (add) {
+        add.focus();
+      }
+    },
     async ProcessaAutorizacao() {
-      window.Mercadopago.setPublishableKey(constantes.SAND_BOX_MP_PUBLICK_KEY);
+      window.Mercadopago.setPublishableKey(
+        constantes.PRODUCAO_BOX_MP_PUBLICK_KEY
+      );
       var FormToken = await UTILIS_API.CREATE_FORM_MP(
         constantes.CONSTANTE_THUOR,
         parseFloat(this.dadosProcessamento.valor),
@@ -1249,6 +1273,7 @@ export default {
       return "";
     },
     iniciaPagamentoBackEnd(status, response) {
+      console.log(response);
       if (status != 200 && status != 201) {
         //console.log("Não foi possível gerar o token", response.message);
         window.Mercadopago.clearSession();
@@ -1317,6 +1342,10 @@ export default {
                     "Plano Registrado Com Sucesso. Esperamos que você venda muito! Conte conosco sempre!",
                     "success"
                   );
+                  var self = this;
+                  setTimeout(() => {
+                    self.checkIfLogged();
+                  }, 3000);
                 })
                 .catch(error => {
                   console.log("Erro ao tentar atualizar o usuário", error);
