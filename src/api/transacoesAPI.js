@@ -121,7 +121,7 @@ var API_TRANSACOES = {
             }
         });
     },
-    ReembolsarCliente(id) {
+    ReembolsarCliente(id, valor) {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
@@ -130,7 +130,8 @@ var API_TRANSACOES = {
                     let LBody = {
                         id_usuario: LUser.user.id,
                         shop: DadosLoja.url_loja,
-                        id: id
+                        id: id,
+                        valor: valor
                     }
                     axios
                         .post(constantes.WEBSITEAPI + constantes.PATH_PAY_REEMDBOLSAR_PEDIDOS_POR_ID, LBody)
@@ -146,7 +147,7 @@ var API_TRANSACOES = {
             }
         });
     },
-    ReembolsarClienteCheckoutPS(id) {
+    ReembolsarClienteCheckoutPS(id, valor) {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
@@ -155,7 +156,8 @@ var API_TRANSACOES = {
                     let LBody = {
                         id_usuario: LUser.user.id,
                         shop: DadosLoja.url_loja,
-                        id: id
+                        id: id,
+                        valor:valor
                     }
                     axios
                         .post(constantes.WEBSITEAPI + constantes.PATH_PAY_REEMDBOLSAR_PEDIDOS_PS_POR_ID, LBody)
@@ -171,7 +173,7 @@ var API_TRANSACOES = {
             }
         });
     },
-    ReembolsarClienteCheckoutPayU(id) {
+    ReembolsarClienteCheckoutPayU(id, valor) {
         return new Promise(async (resolve, reject) => {
             var LUser = await UTILIS_API.GetUserSession();
             if (LUser !== null && LUser !== undefined) {
@@ -180,7 +182,8 @@ var API_TRANSACOES = {
                     let LBody = {
                         id_usuario: LUser.user.id,
                         shop: DadosLoja.url_loja,
-                        id: id
+                        id: id,
+                        valor:valor
                     }
                     axios
                         .post(constantes.WEBSITEAPI + constantes.PATH_PAY_REEMDBOLSAR_PEDIDOS_PS_POR_ID, LBody)

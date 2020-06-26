@@ -397,9 +397,8 @@ export default {
           API_LOJA.GetIntegracaoPlataformaByID(1)
             .then(resCheckout => {
               this.plataforma = resCheckout.data;
-              console.log(this.plataforma);
               this.plataforma_form.id = this.plataforma.id;
-              this.plataforma_form.status = this.plataforma.status;
+              this.plataforma_form.status = parseInt(this.plataforma.status);
               this.plataforma_form.auto_sincroniza = this.plataforma.auto_sincroniza;
               this.plataforma_form.pula_carrinho = this.plataforma.pula_carrinho;
               this.plataforma_form.tipo_integracao = this.plataforma.tipo_integracao;
@@ -414,6 +413,7 @@ export default {
               this.plataforma_form.plataforma = this.plataforma.plataforma;
               this.plataforma_form.email_loja = this.plataforma.email_loja;
               this.plataforma_form.url_person = this.plataforma.url_person;
+              console.log(this.plataforma_form);
               API_NOTIFICATION.HideLoading();
             })
             .catch(error => {
@@ -435,7 +435,7 @@ export default {
       return "";
     },
     getNomePlataforma() {
-      if (this.plataforma.plataforma == 1) {
+      if (this.plataforma.plataforma == constantes.PLATAFORMA_SHOPIFY) {
         return " Shopify ";
       }
 

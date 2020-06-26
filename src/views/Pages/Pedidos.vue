@@ -246,12 +246,12 @@ option {
                   <p class="col-md-12 mb-0 dataPedido">{{data}}</p>
                   <p class="col-md-12 mb-0 tempoPedido">{{time_ago}}</p>
                 </td>
-                <td class="total pl-0">R$ {{formatPrice(total)}}</td>
+                <td class="total pl-0 p-0">R$ {{total.toLocaleString('pt-BR')}}</td>
                 <td class="pl-0" style="min-width: 80px!important; width: 80px!important;">
                   <span
                     class="spanStatus alert"
                     v-bind:class="getClassStatus(status)"
-                  >{{status.toUpperCase()}}</span>
+                  >{{toUpperCase(status)}}</span>
                 </td>
                 <td>
                   <div class="row">
@@ -431,11 +431,11 @@ export default {
     checkIfLogged() {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
-        .then(res => {
-          API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
-            .then(resLoja => {
+        .then(async res => {
+          const lwatloja = await API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
+            .then(async resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
-              API_MENSAGERIA.GetMensagensWhatsApp()
+              const LWaitMensagem = await API_MENSAGERIA.GetMensagensWhatsApp()
                 .then(resMensagensWhats => {
                   //console.log(resMensagensWhats.data);
                   this.arrayWhatsAppMessageOriginal = resMensagensWhats.data;
@@ -449,13 +449,13 @@ export default {
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
                 });
-              API_TRANSACOES.GetTransacoes()
+              const LWaitTransacoes = await API_TRANSACOES.GetTransacoes()
                 .then(retProd => {
                   this.gridData = [];
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
                   //this.pedidosList = retProd.data;
+                  retProd.data.reverse();
                   retProd.data.forEach((obj, i) => {
-                    console.log(obj.json_shopify_response)
                     if (obj != null && obj.json_shopify_response.order) {
                       const LID = obj.id;
 
@@ -501,8 +501,6 @@ export default {
                     }
                     //console.log(Date.now(), Date.parse(LData));
                   });
-
-                  
                 })
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
@@ -511,7 +509,7 @@ export default {
             .catch(error => {
               console.log("Erro ao pegar dados da loja", error);
             });
-            API_NOTIFICATION.HideLoading();
+          API_NOTIFICATION.HideLoading();
         })
         .catch(error => {
           console.log("Erro ao verificar token", error);
@@ -559,7 +557,9 @@ export default {
       return LSTR2;
     },
     toUpperCase(str) {
-      return str.toUpperCase();
+      if (str) {
+        return str.toUpperCase();
+      }
     },
     getImagePaymentID(paymentID) {
       if (paymentID !== undefined) {
@@ -571,15 +571,17 @@ export default {
       }
     },
     getClassStatus(status) {
-      if (status == "pendente" || status.toUpperCase() == "PENDING")
+      if (status != undefined) {
+        if (status == "pendente" || status.toUpperCase() == "PENDING")
+          return "alert-warning";
+        if (status == "cancelada" || status.toUpperCase() == "CANCELED")
+          return "alert-danger";
+        if (status == "aprovada" || status.toUpperCase() == "APPROVED")
+          return "alert-success";
+        if (status == "entregue" || status.toUpperCase() == "DELIVERED")
+          return "alert-success";
         return "alert-warning";
-      if (status == "cancelada" || status.toUpperCase() == "CANCELED")
-        return "alert-danger";
-      if (status == "aprovada" || status.toUpperCase() == "APPROVED")
-        return "alert-success";
-      if (status == "entregue" || status.toUpperCase() == "DELIVERED")
-        return "alert-success";
-      return "alert-warning";
+      }
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
@@ -604,7 +606,8 @@ export default {
     },
     getValue(obj) {
       const LJSON = obj.json_front_end_user_data;
-      return parseFloat(LJSON.dadosComprador.valor);
+      console.log(LJSON.dadosComprador.valor);
+      return LJSON.dadosComprador.valor;
     },
     selecionaMensagemEnviar(event) {
       this.mensagemEnviarSelecionada = event.target.value;
@@ -671,7 +674,7 @@ export default {
     },
     getBarCodeBoleto(obj) {
       const LJSON = obj.json_front_end_user_data;
-      return LJSON.dadosComprador.barcode;      
+      return LJSON.dadosComprador.barcode;
       return "";
     },
     getProdutoName(arrayProdutos) {
@@ -687,10 +690,10 @@ export default {
     },
     getLinkBoleto(obj) {
       const LJSON = obj.json_front_end_user_data;
-      return LJSON.dadosComprador.urlBoleto;      
+      return LJSON.dadosComprador.urlBoleto;
     },
     getStatusTranslate(status) {
-      if (status) {
+      if (status != undefined) {
         if (status.toUpperCase() == "APPROVED") {
           return "aprovada";
         }

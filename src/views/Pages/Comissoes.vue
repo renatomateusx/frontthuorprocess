@@ -474,7 +474,7 @@ export default {
                         ),
                         loja: obj.url_loja,
                         status: obj.status,
-                        valor: parseFloat(obj.comissao)
+                        valor: obj.comissao
                       });
                     });
                   }
