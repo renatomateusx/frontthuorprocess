@@ -184,7 +184,7 @@
                   class="invalid-feedback"
                 >{{ errors.first('novocrosssell.quando_oferecer') }}</span>
               </div>
-              
+
               <div class="required">* Campos Obrigatórios</div>
             </div>
 
@@ -403,10 +403,10 @@ export default {
           this.novocrosssell.id_produto_selecionado_dois = this.novocrosssell.id_produto_to.split(
             ","
           );
-          var larrayAuxy=[];
+          var larrayAuxy = [];
           this.novocrosssell.id_produto_selecionado_dois.forEach((objP, i) => {
             const Lpo = larrayAuxy.includes(objP);
-            if(!Lpo) larrayAuxy.push(objP);
+            if (!Lpo) larrayAuxy.push(objP);
           });
           this.novocrosssell.id_produto_selecionado_dois = larrayAuxy;
           this.arrayAuxUm.push({
@@ -419,7 +419,7 @@ export default {
             } else {
               this.arrayAuxDois.push({ id_thuor: objP });
             }
-          });         
+          });
 
           API_NOTIFICATION.HideLoading();
         })
@@ -447,6 +447,7 @@ export default {
         titulo +
         "</p></div>";
       this.novocrosssell.id_produto_selecionado_um = id;
+      
       const el = document.getElementById("buttonProdutoUm");
       el.innerHTML = LDiv;
       this.collapse("#collapseExample", "#collapseExample", "#buttonProdutoUm");
@@ -458,7 +459,7 @@ export default {
         '" />  <p class="col-md-8 mb-0 dataPedido mt-2 pull-left float-left" style="top: 15px!important; text-align:left!important">' +
         titulo +
         "</p></div>";
-      
+
       const LFind = this.arrayAuxDois.findIndex(x => x.id_thuor == id);
       if (LFind > -1) {
         this.arrayAuxDois.splice(LFind, 1);

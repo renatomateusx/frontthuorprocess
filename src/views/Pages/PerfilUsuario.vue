@@ -1164,6 +1164,9 @@ export default {
     },
     consultaCEP() {
       var self = this;
+      if (this.dadosProcessamento.cep.length == 0) {
+        this.enderecoManual = false;
+      }
       this.dadosProcessamento.cep = this.dadosProcessamento.cep.replace(
         /[^\d]/g,
         ""
@@ -1174,13 +1177,11 @@ export default {
           "$1-$2"
         );
         API_NOTIFICATION.ShowLoading();
-        setTimeout(() => {
-          if (self.dadosProcessamento.endereco.length < 1) {
-            self.preencheEnderecoManualmente();
-          }
-        }, 2500);
         UTILIS_API.VIA_CEP(this.dadosProcessamento.cep.replace(/[.-]/g, ""))
           .then(retornoCEP => {
+            if (retornoCEP == null) {
+              self.preencheEnderecoManualmente();
+            }
             self.dadosProcessamento.endereco = retornoCEP.logradouro;
             self.dadosProcessamento.bairro = retornoCEP.bairro;
             self.dadosProcessamento.cidade = retornoCEP.localidade;

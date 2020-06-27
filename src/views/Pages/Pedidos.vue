@@ -606,7 +606,6 @@ export default {
     },
     getValue(obj) {
       const LJSON = obj.json_front_end_user_data;
-      console.log(LJSON.dadosComprador.valor);
       return LJSON.dadosComprador.valor;
     },
     selecionaMensagemEnviar(event) {

@@ -200,12 +200,14 @@ export default {
       } else if (id == 6) {
         this.alreadyInstalled(nome);
       } else if (id == 7) {
-        this.alreadyInstalled(nome);
+        this.$router.push("/marketing/upsell");
       } else if (id == 8) {
         this.$router.push("/marketing/crosssell");
       } else if (id == 9) {
         this.alreadyInstalled(nome);
-      } 
+      } else if(id == 10){
+        this.$router.push("/apps/thuor-pop-up");
+      }
     },
     instalaApp(id) {
       if (id == 1) {
