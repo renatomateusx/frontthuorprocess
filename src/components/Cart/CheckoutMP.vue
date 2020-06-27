@@ -2059,7 +2059,7 @@ export default {
         });
     },
     async populaDadosComprador() {
-      if (this.email.length > 0) {
+      if (this.email.length > 0 && this.nome_completo.length == 0) {
         if (UTILIS.isValidEmail(this.email)) {
           UTILIS_API.GetDadosCompradorLead(this.email)
             .then(resComprador => {
