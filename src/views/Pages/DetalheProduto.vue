@@ -100,6 +100,12 @@
 .fontSizeSmall{
   font-size: 12px!important;
 }
+@media only screen and (max-width: 992px) {
+  .marginLeft{
+    margin-left: 0px!important;
+  }
+}
+
 </style>
 <template>
   <ContentWrapper>

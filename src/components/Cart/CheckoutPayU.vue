@@ -368,6 +368,10 @@ h1 {
   color: red;
   font-size: 15px !important;
 }
+
+.textPrecoFree {
+  color: green;
+}
 @media only screen and (max-width: 992px) {
   #btnTop {
     display: block !important;
@@ -601,7 +605,7 @@ h1 {
                       type="text"
                       minlength="5"
                       v-model.lazy="nome_completo"
-                      @focus="populaDadosComprador()"
+
                       id="nome_completo"
                       placeholder="Digite seu nome aqui"
                       required
@@ -1219,7 +1223,12 @@ export default {
       showOpened: 0
     };
   },
-  mounted() {},
+  mounted() {
+    const LEmailUser = this.$refs["email_user"];
+    if (LEmailUser) {
+      LEmailUser.addEventListener("blur", this.populaDadosComprador);
+    }
+  },
   methods: {
     formatPrice(value) {
       let val = (value / 1).toFixed(2).replace(".", ",");
@@ -1360,45 +1369,46 @@ export default {
       router.push("/checkout");
     },
     consultaCEP() {
-      if (this.enderecoManual == false) {
+      if (this.CEP.length >= 8) {
         this.CEP = this.CEP.replace(/[^\d]/g, "");
         this.CEP = this.CEP.replace(/[^\d]/g, "");
         if (this.CEP.length >= 8) {
           this.CEP = this.CEP.replace(/(\d{5})(\d{3})/, "$1-$2");
           API_NOTIFICATION.ShowLoading();
           var self = this;
-          setTimeout(() => {
-            if (self.endereco.length < 1) {
-              self.preencheEnderecoManualmente();
-            }
-          }, 2500);
-          UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
-            .then(retornoCEP => {
-              this.endereco = retornoCEP.logradouro;
-              this.bairro = retornoCEP.bairro;
-              this.cidade = retornoCEP.localidade;
-              this.estado = retornoCEP.uf;
-              this.complemento = retornoCEP.complemento;
-              this.destinatario = this.nome_completo;
-              const numbP = document.getElementById("numero_porta");
-              if(numbP){
-                numbP.focus();
-              }
-              API_NOTIFICATION.HideLoading();
-            })
-            .catch(error => {
-              API_NOTIFICATION.HideLoading();
-              this.endereco = "";
-              this.bairro = "";
-              this.cidade = "";
-              this.estado = "";
-              this.complemento = "";
-              this.destinatario = "";
-              console.log(
-                "Erro ao tentar pegar dados do endereço do usuário",
-                error
-              );
-            });
+          if (this.endereco.length == 0) {
+            UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
+              .then(retornoCEP => {
+                if (retornoCEP == null) {
+                  self.preencheEnderecoManualmente();
+                } else {
+                  this.endereco = retornoCEP.logradouro;
+                  this.bairro = retornoCEP.bairro;
+                  this.cidade = retornoCEP.localidade;
+                  this.estado = retornoCEP.uf;
+                  this.complemento = retornoCEP.complemento;
+                  this.destinatario = this.nome_completo;
+                  const numbP = document.getElementById("numero_porta");
+                  if (numbP) {
+                    numbP.focus();
+                  }
+                  API_NOTIFICATION.HideLoading();
+                }
+              })
+              .catch(error => {
+                API_NOTIFICATION.HideLoading();
+                this.endereco = "";
+                this.bairro = "";
+                this.cidade = "";
+                this.estado = "";
+                this.complemento = "";
+                this.destinatario = "";
+                console.log(
+                  "Erro ao tentar pegar dados do endereço do usuário",
+                  error
+                );
+              });
+          }
         } else {
           this.endereco = "";
           this.bairro = "";
@@ -1408,6 +1418,14 @@ export default {
           this.destinatario = "";
           API_NOTIFICATION.HideLoading();
         }
+      } else {
+        this.endereco = "";
+        this.bairro = "";
+        this.cidade = "";
+        this.estado = "";
+        this.complemento = "";
+        this.destinatario = "";
+        API_NOTIFICATION.HideLoading();
       }
     },
     preencheEnderecoManualmente() {
@@ -2140,7 +2158,7 @@ export default {
         });
     },
     async populaDadosComprador() {
-      if (this.email.length > 0) {
+      if (this.email.length > 0 && this.nome_completo.length == 0) {
         if (UTILIS.isValidEmail(this.email)) {
           UTILIS_API.GetDadosCompradorLead(this.email)
             .then(resComprador => {
@@ -2150,8 +2168,8 @@ export default {
                   if (LComprador.cpf != undefined) {
                     this.cpf = LComprador.cpf;
                   }
-                  if (LComprador.nome != undefined) {
-                    this.nome_completo = LComprador.nome;
+                  if (LComprador.nome_completo != undefined) {
+                    this.nome_completo = LComprador.nome_completo;
                   }
                   if (LComprador.telefone != undefined) {
                     this.telefone = LComprador.telefone;

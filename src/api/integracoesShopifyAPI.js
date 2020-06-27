@@ -24,6 +24,26 @@ var API_INTEGRACAO_SHOPIFY_APPS = {
             }
         });
     },
+    InstalaAppThuorPopUpShopify() {
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+                let LBody = {
+                    id_usuario: LDadosLoja.id_usuario
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_INSTALAR_POP_UP_PLATAFORMA_SHOPIFY, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
     InstalaAppThuorCrossSellShopify() {
         return new Promise(async (resolve, reject) => {
             const LDadosLoja = await UTILIS_API.GetDadosLojaSession();

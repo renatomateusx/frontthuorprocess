@@ -1,5 +1,6 @@
 import UTILIS_API from "./utilisAPI";
-
+var arrayPendentes = [];
+var LTagEvent = "AW-{ID}/{ROTULO}";
 var API_GOOGLE_PIXEL = {
     InsertScript() {
         return new Promise(async (resolve, reject) => {
@@ -16,8 +17,9 @@ var API_GOOGLE_PIXEL = {
         });
     },
     async TriggerGoogleEvent(event, boleto) {
-        var LTagEvent = "AW-{ID}/{ROTULO}";
+        
         const dadosPixel = await UTILIS_API.GetPixelSession();
+        var self = this;
         dadosPixel.forEach((obj, i) => {
             if (obj.tipo == 2) {
                 var LProdutos = [];
@@ -31,16 +33,12 @@ var API_GOOGLE_PIXEL = {
                                 if (LProdutoFinded != undefined) {
                                     if (obj.marca_boleto && boleto != undefined) {
                                         //gtag('event', event);
-                                        gtag('event', event, {
-                                            'send_to': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
-                                        });
+                                        self.Trigger(event, obj.google_id_conversao, obj.google_rotulo_conversao);
                                         //console.log("Event 1");
                                     }
                                     else if (boleto == undefined) {
                                         //gtag('event', event);
-                                        gtag('event', event, {
-                                            'send': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
-                                        });
+                                        self.Trigger(event, obj.google_id_conversao, obj.google_rotulo_conversao);
                                         //console.log("Event 2");
                                     }
                                 }
@@ -49,16 +47,12 @@ var API_GOOGLE_PIXEL = {
                     }
                     else if (boleto !== undefined && obj.marca_boleto == 1) {
                         //gtag('event', event);
-                        gtag('event', event, {
-                            'send_to': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
-                        });
+                        self.Trigger(event, obj.google_id_conversao, obj.google_rotulo_conversao);
                         //console.log("Event 3", event);
                     }
                     else if (boleto == undefined) {
                         //gtag('event', event);
-                        gtag('event', event, {
-                            'send_to': LTagEvent.replace('{ID}', obj.google_id_conversao).replace('{ROTULO}', obj.google_rotulo_conversao)
-                        });
+                        self.Trigger(event, obj.google_id_conversao, obj.google_rotulo_conversao);
                         //console.log("Event 4", event);
                     }
                 }
@@ -68,9 +62,11 @@ var API_GOOGLE_PIXEL = {
 
     },
     InsertScriptById(id) {
+        var self = this;
         return new Promise(async (resolve, reject) => {
             const pluginGG = document.createElement("script");
             pluginGG.onload = function () {
+                self.checkArray();
                 resolve(true);
             };
             pluginGG.setAttribute(
@@ -82,15 +78,37 @@ var API_GOOGLE_PIXEL = {
         });
     },
     InsertTagScript(id, id_aly) {
+        var self = this;
         return new Promise(async (resolve, reject) => {
             const pluginGG2 = document.createElement("script");
-            var inlineScript = document.createTextNode("window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-" + id + "', {'send_page_view': false, 'optimize_id': 'GTM-"+id+"'}); gtag('config', 'GA-" + id + "', {'optimize_id': 'GTM-"+id+"'}); gtag('config', 'AW-" + id_aly + "');");
+            var inlineScript = document.createTextNode("window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-" + id + "', {'send_page_view': false, 'optimize_id': 'GTM-" + id + "'}); gtag('config', 'GA-" + id + "', {'optimize_id': 'GTM-" + id + "'}); gtag('config', 'AW-" + id_aly + "');");
+            pluginGG2.onload = function () {
+                self.checkArray();
+                resolve(1);
+            };
             pluginGG2.appendChild(inlineScript);
             document.head.appendChild(pluginGG2);
-            resolve(1);
         });
     },
-
+    Trigger(event, google_id_conversao, google_rotulo_conversao) {
+        if (typeof gtag !== "undefined") {
+            gtag('event', event, {
+                'send_to': LTagEvent.replace('{ID}', google_id_conversao).replace('{ROTULO}', google_rotulo_conversao)
+            });
+        } else {
+            arrayPendentes.push({ "event": event, "id_conv": google_id_conversao, "rot_conv": google_rotulo_conversao });
+        }
+    },
+    checkArray() {
+        const arrayLocal = arrayPendentes;
+        if (arrayLocal) {
+            if (arrayLocal.length > 0) {
+                arrayLocal.forEach((obj, i) => {
+                    this.Trigger(obj.event, obj.id_conv, obj.rot_conv);
+                })
+            }
+        }
+    }
     /*
     EVENTOS
     gtag('event', 'add_payment_info', {

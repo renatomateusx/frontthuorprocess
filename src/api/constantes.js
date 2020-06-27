@@ -1,17 +1,17 @@
 export default Object.freeze({
-  SAND_BOX_MP_PUBLICK_KEY: 'TEST-5e8249a3-5691-4ae9-bf45-8705c09b5c0e',
-  SAND_BOX_MP_ACCESS_TOKEN: 'TEST-4338451460338304-120717-21b6daffeb2a7bd8ba4a59afb113f0fe-128404654',
-  PRODUCAO_BOX_MP_PUBLICK_KEY: 'APP_USR-c97da455-7446-4595-968b-75677fcc12d1',
-  PRODUCAO_BOX_MP_ACCESS_TOKEN: 'APP_USR-4338451460338304-120717-64a42a12fe590e1715881018b78df091-128404654',
+  SAND_BOX_MP_PUBLICK_KEY: 'TEST-855e506f-55a1-4372-8371-f9029f000dfe',
+  SAND_BOX_MP_ACCESS_TOKEN: 'TEST-4338451460338304-062723-f2a8d25a06742e898d2b113a30045269-128404654',
+  PRODUCAO_BOX_MP_PUBLICK_KEY: 'APP_USR-31d91702-7d63-4ea4-9cb9-bb571658239e',
+  PRODUCAO_BOX_MP_ACCESS_TOKEN: 'APP_USR-4338451460338304-062723-6b49958aaa1cf3d4c37d8f0dd984c7f8-128404654',
 
   /* PLATAFORMAS */
   PLATAFORMA_SHOPIFY: 1,
 
 
   /* PLATAFORMAS */
-  //WEBSITEAPI: 'http://localhost:3000/',
+  WEBSITEAPI: 'http://localhost:3000/',
   //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
-  WEBSITEAPI: 'https://api.thuor.com:7443/',
+  //WEBSITEAPI: 'https://api.thuor.com:7443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
   API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
@@ -32,6 +32,7 @@ export default Object.freeze({
   PATH_TOKEN: 'users/VerificaToken',
   PATH_PRODUTOS: 'produtos/GetProdutos',
   PATH_PRODUTO_BY_ID: 'produtos/GetProdutoByID',
+  PATH_PRODUTO_BY_ID_THUOR_UNIQUE: 'produtos/GetProdutoByIDThuorUnique',
   PATH_PRODUTO_BY_ID_THUOR: 'produtos/GetProdutoByIDThuor',
   PATH_PRODUTO_ID_THUOR: 'produtos/GetProdutoIDThuor',
   PATH_PRODUTO_BY_ID_IMPORTED: 'produtos/GetProdutoByIDImported',
@@ -58,6 +59,8 @@ export default Object.freeze({
   
   PATH_INSTALAR_REINSTALAR_PLATAFORMA_SHOPIFY: 'importarProdutosShopify/ReInstalarIntegracao',
   PATH_INSTALAR_CHECKOUT_PLATAFORMA_SHOPIFY: 'integraFuncionalidadeShopify/ReInstalarIntegracao',
+  PATH_INSTALAR_POP_UP_PLATAFORMA_SHOPIFY: 'integraFuncionalidadeShopify/InstalarAppPopUp',
+  
   PATH_LOJA_BY_ID_USUARIO: 'integracaoShopify/GetDadosLojaByIDUsuario',
   PATH_VIACEP: 'https://viacep.com.br/ws/@/json/',
   PATH_VIACEP_SERVER: 'extras/ViaCEP',
