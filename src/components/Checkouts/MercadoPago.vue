@@ -166,6 +166,21 @@
                   <option value="0">Não</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label class="col-form-label">Quantidade de Compra por IP *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.limite_ip')}"
+                  v-model="checkout_form.limite_ip"
+                  v-validate="'required'"
+                  type="text"
+                  name="limite_ip"
+                />
+                <small>Limita a Quantidade de Compra Oriundas de um IP. Informe 0 para Não Limitar.</small>
+                <span
+                  v-show="errors.has('checkout_form.limite_ip')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.limite_ip') }}</span>
+              </div>
               <div v-for="(id, i) in sequenciasArray" :key="i">
                 <div class="mb-1">
                   <span
@@ -256,6 +271,7 @@ export default {
       sequenciasArray: [{ id: 1 }],
       checkout: {},
       checkout_form: {
+        limite_ip:0,
         nome: "",
         nome_fatura: "",
         chave_publica: "",
@@ -290,9 +306,9 @@ export default {
                 this.checkout_form.nome = this.checkout.nome;
                 this.checkout_form.chave_publica = this.checkout.chave_publica;
                 this.checkout_form.mostra_prova_social = this.checkout.mostra_prova_social;
+                this.checkout_form.limite_ip = this.checkout.limite_ip || 0;
                 this.checkout_form.json_checkout =
                   this.checkout.json_checkout || [];
-
                 this.checkout_form.json_checkout.forEach((obj, i) => {
                   this.sequenciasArray[i] = obj;
                   //console.log('Seqs', this.sequenciasArray[i].id_sequencia, this.sequenciasArray[i].tempo, this.sequenciasArray[i].tipo_tempo);

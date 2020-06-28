@@ -1,5 +1,10 @@
 <template>
-  <div ref="container"></div>
+  <ContentWrapper>
+    <div ref="container" v-show="canRender"></div>
+    <div ref="containerBlocked" v-show="!canRender">
+      <bloqueio-compra></bloqueio-compra>
+    </div>
+  </ContentWrapper>
 </template>
 <script>
 import Vue from "vue";
@@ -24,6 +29,7 @@ import CheckoutPayU from "./CheckoutPayU.vue";
 import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
 import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 import API_PIXEL from "../../api/pixelsAPI";
+import BloqueioCompra from "../Checkouts/BloqueioCheckout";
 var md5 = require("md5");
 
 Vue.use(LoadScript);
@@ -48,9 +54,13 @@ export default {
     //console.log(this.fretes);
     this.checkURL();
   },
+  components: {
+    BloqueioCompra
+  },
   computed: {},
   data() {
     return {
+      canRender: true,
       price: 123.45,
       money: {
         decimal: ",",
@@ -126,7 +136,7 @@ export default {
         const qtdItems = params.searchParams.get("qtd_items");
         const redirectTo = params.searchParams.get("redirectTo");
         const ttrack = params.searchParams.get("ttrack");
-        if(ttrack && ttrack != undefined){
+        if (ttrack && ttrack != undefined) {
           UTILIS_API.SetTtrackSession(ttrack);
         }
         for (var i = 0; i < qtdItems; i++) {
@@ -175,9 +185,28 @@ export default {
     },
     getCheckouts() {
       API_CHECKOUT.GetCheckouts()
-        .then(retornoCheckout => {
+        .then(async retornoCheckout => {
           this.DadosCheckout = retornoCheckout.data;
           UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);
+          const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+          if (this.DadosCheckout.limite_ip > 0) {
+            UTILIS_API.getIPRequest().then(async res => {
+              const LIP = await UTILIS_API.GetLimiteCheckoutSession();
+              if (LIP) {
+                 var dt = new Date();
+                if (
+                  LIP.store == LDadosLoja.url_loja &&
+                  LIP.ip == res.ip &&
+                  LIP.qtd == this.DadosCheckout.limite_ip &&
+                  LIP.time >= dt.getTime()
+                ) {
+                  this.canRender = false;
+                }else{
+                  this.canRender = true;
+                }
+              }
+            });
+          }
           this.iniciaCheckout();
         })
         .catch(error => {

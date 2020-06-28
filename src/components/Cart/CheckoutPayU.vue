@@ -1379,7 +1379,7 @@ export default {
           if (this.endereco.length == 0) {
             UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
               .then(retornoCEP => {
-                if (retornoCEP == null) {
+                if (retornoCEP.logradouro == undefined) {
                   self.preencheEnderecoManualmente();
                 } else {
                   this.endereco = retornoCEP.logradouro;
@@ -2122,14 +2122,17 @@ export default {
       }
     },
     removeAcento(text) {
-      text = text.toLowerCase();
-      text = text.replace(new RegExp("[ÁÀÂÃ]", "gi"), "a");
-      text = text.replace(new RegExp("[ÉÈÊ]", "gi"), "e");
-      text = text.replace(new RegExp("[ÍÌÎ]", "gi"), "i");
-      text = text.replace(new RegExp("[ÓÒÔÕ]", "gi"), "o");
-      text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
-      text = text.replace(new RegExp("[Ç]", "gi"), "c");
-      return text;
+       if (text) {
+        text = text.toLowerCase();
+        text = text.replace(new RegExp("[ÁÀÂÃ]", "gi"), "a");
+        text = text.replace(new RegExp("[ÉÈÊ]", "gi"), "e");
+        text = text.replace(new RegExp("[ÍÌÎ]", "gi"), "i");
+        text = text.replace(new RegExp("[ÓÒÔÕ]", "gi"), "o");
+        text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
+        text = text.replace(new RegExp("[Ç]", "gi"), "c");
+        return text;
+      }
+      return "";
     },
     getCripto(parametro_um, parametro_dois) {
       const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");

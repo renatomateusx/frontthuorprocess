@@ -770,17 +770,17 @@ class CheckoutMP extends HTMLElement {
         produtosCart.forEach((obj, i) => {
             LTotal += (parseFloat(obj.variant_price) * parseFloat(obj.quantity));
             const LTemplate = TEMPLATE_ITENS_CART
-            .replace("{img}", obj.variant_img)
-            .replace("{title}", obj.title)
-            .replace("{variant_title}", obj.variant_title)
-            .replace("{quantity}", obj.quantity)
-            .replace("{variant_price}", this.formatPrice(obj.variant_price))
-            .replace("{id_cart}", "cartTrash"+i);
+                .replace("{img}", obj.variant_img)
+                .replace("{title}", obj.title)
+                .replace("{variant_title}", obj.variant_title)
+                .replace("{quantity}", obj.quantity)
+                .replace("{variant_price}", this.formatPrice(obj.variant_price))
+                .replace("{id_cart}", "cartTrash" + i);
             LDivItens.insertAdjacentHTML('beforeend', LTemplate);
-            var LId = "cartTrash"+i;
+            var LId = "cartTrash" + i;
             const LTrash = this._shadowRoot.getElementById(LId);
             var self = this;
-            LTrash.addEventListener('click', ()=>{
+            LTrash.addEventListener('click', () => {
                 self.removeItemFromCart(LId, obj);
             })
             this.getTotal();
@@ -795,28 +795,28 @@ class CheckoutMP extends HTMLElement {
         granTot2.innerHTML = valr.concat(this.formatPrice(granTotal));
 
         if (produtosCart.length > 0) {
-            const formContinua = this._shadowRoot.getElementById("formContinua");            
-            formContinua.classList.remove("hidden");            
+            const formContinua = this._shadowRoot.getElementById("formContinua");
+            formContinua.classList.remove("hidden");
         }
         this.HideLoading();
         //this.UpSellNoCheckout = 0;
     }
 
-    async montaDadosCarrinho(){
-        var LDirect= '';
-        if(direct_to_checkout == true){
+    async montaDadosCarrinho() {
+        var LDirect = '';
+        if (direct_to_checkout == true) {
             LDirect = 'checkout';
         }
-        else{
-            LDirect= 'cart';
+        else {
+            LDirect = 'cart';
         }
         const LProd = JSON.parse(sessionStorage.getItem("cart"));
-        const LEndCart = "limpa_carrinho=1&redirectTo="+LDirect+"&qtd_items="+LProd.length+"&store="+dadosLoja.url_loja;
+        const LEndCart = "limpa_carrinho=1&redirectTo=" + LDirect + "&qtd_items=" + LProd.length + "&store=" + dadosLoja.url_loja;
         const LInitUrl = ULR_BASE_WEB + "cart/items?";
         const LTemplateProduct = "produto_option_id[{id}]={value_one}&produto_option_quantity[{id}]={value_two}&produto_option_variante_id[{id}]={value_three}&";
         var UrlFinal = "";
-        LProd.forEach((obj, i)=>{
-            
+        LProd.forEach((obj, i) => {
+
             UrlFinal = UrlFinal + LTemplateProduct.replace(/{id}/g, i).replace("{value_one}", obj.id_thuor).replace("{value_two}", obj.quantity).replace("{value_three}", obj.variant_id);
         })
         UrlFinal = LInitUrl + UrlFinal + LEndCart;
@@ -825,18 +825,18 @@ class CheckoutMP extends HTMLElement {
         window.location.href = UrlFinal;
     }
 
-    removeItemFromCart(i, obj){
+    removeItemFromCart(i, obj) {
         this.ShowLoading();
         const LProd = JSON.parse(sessionStorage.getItem("cart"));
         const LItem = LProd.findIndex(x => x.id_thuor == obj.id_thuor);
-        if(LItem > -1){
+        if (LItem > -1) {
             LProd.splice(LItem, 1);
             sessionStorage.setItem("cart", JSON.stringify(LProd));
             this.reprocessaItensCart();
         }
     }
 
-    reprocessaItensCart(){
+    reprocessaItensCart() {
         produtosCart = JSON.parse(sessionStorage.getItem("cart"));
         const LDivItens = this._shadowRoot.getElementById("items");
         LDivItens.innerHTML = "";
@@ -850,18 +850,18 @@ class CheckoutMP extends HTMLElement {
         produtosCart.forEach((obj, i) => {
             LTotal += (parseFloat(obj.variant_price) * parseFloat(obj.quantity));
             const LTemplate = TEMPLATE_ITENS_CART
-            .replace("{img}", obj.variant_img)
-            .replace("{title}", obj.title)
-            .replace("{variant_title}", obj.variant_title)
-            .replace("{quantity}", obj.quantity)
-            .replace("{variant_price}", this.formatPrice(obj.variant_price))
-            .replace("{id_cart}", "cartTrash"+i);
+                .replace("{img}", obj.variant_img)
+                .replace("{title}", obj.title)
+                .replace("{variant_title}", obj.variant_title)
+                .replace("{quantity}", obj.quantity)
+                .replace("{variant_price}", this.formatPrice(obj.variant_price))
+                .replace("{id_cart}", "cartTrash" + i);
             LDivItens.insertAdjacentHTML('beforeend', LTemplate);
-            var LId = "cartTrash"+i;
+            var LId = "cartTrash" + i;
             const LTrash = this._shadowRoot.getElementById(LId);
             var self = this;
-            LTrash.addEventListener('click', ()=>{
-                self.removeItemFromCart(LId, )
+            LTrash.addEventListener('click', () => {
+                self.removeItemFromCart(LId,)
             })
             this.getTotal();
         });
@@ -875,7 +875,7 @@ class CheckoutMP extends HTMLElement {
         granTot2.innerHTML = valr.concat(this.formatPrice(granTotal));
 
         if (produtosCart.length > 0) {
-            const formContinua = this._shadowRoot.getElementById("formContinua");          
+            const formContinua = this._shadowRoot.getElementById("formContinua");
             formContinua.classList.remove("hidden");
         }
         this.HideLoading();
@@ -902,12 +902,12 @@ class CheckoutMP extends HTMLElement {
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
     setDadosEndereco(dadosEndereco) {
-        if (dadosEndereco != "") {
-            endereco = this._shadowRoot.getElementById("endereco");
-            bairro = this._shadowRoot.getElementById("bairro");
-            cidade = this._shadowRoot.getElementById("cidadeestado");
-            complemento = this._shadowRoot.getElementById("complemento");
-            destinatario = this._shadowRoot.getElementById("destinatario");
+        endereco = this._shadowRoot.getElementById("endereco");
+        bairro = this._shadowRoot.getElementById("bairro");
+        cidade = this._shadowRoot.getElementById("cidadeestado");
+        complemento = this._shadowRoot.getElementById("complemento");
+        destinatario = this._shadowRoot.getElementById("destinatario");
+        if (dadosEndereco.logradouro != undefined) {
             endereco.value = dadosEndereco.logradouro;
             bairro.value = dadosEndereco.bairro;
             cidade.innerHTML = dadosEndereco.localidade + " - " + dadosEndereco.uf;
@@ -1549,11 +1549,11 @@ class CheckoutMP extends HTMLElement {
         btnAcao.addEventListener("click", () => {
             this.montaDadosCarrinho();
         });
-        
+
         const cmdCol = this._shadowRoot.getElementById("collapseR");
         cmdCol.addEventListener("click", () => {
             this.collapse('#collapseResumo', '#comandoCollapse');
-        })       
+        })
         // const btnDadosP = this._shadowRoot.getElementById("btnDadosPe");
         // btnDadosP.addEventListener("click", () => {
         //     this.validateMyForm();

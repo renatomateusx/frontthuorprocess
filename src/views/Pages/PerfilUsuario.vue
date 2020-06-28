@@ -954,7 +954,6 @@ export default {
         .then(async res => {
           this.usuario = await API_LOGIN.GetUserByID(res.data.id);
           this.usuario = this.usuario.data;
-          console.log(this.usuario);
           API_LOJA.GetDadosLojaByIdUsuario(res.data.id)
             .then(async resLoja => {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
@@ -1032,27 +1031,12 @@ export default {
       const obj = await API_PLANOS.GetPlanosByID(plano);
       const LDiv = document.getElementById(obj.json.nome);
       const LPreco = parseFloat(obj.json.price);
-      // if (LDiv) {
-      //   LDiv.classList.remove("Selecionado");
-      //   LDiv.classList.add("DeSelecionado");
-      // }
-      // if (plano == obj.json.id) {
-      //   const LNovoSelecionado = document.getElementById(nome);
-      //   if (LNovoSelecionado) {
-      //     LNovoSelecionado.classList.add("Selecionado");
-      //   }
-      // }
-      // ArrayP.forEach((obj, i) => {
-      //   console.log("asdf", obj.json);
-
-      // });
-
       this.usuario.plano = plano;
       var LMensagem = "";
       var LProximoPagamentoMensal = moment().format();
       if (LPreco > 0) {
         LMensagem =
-          "O Pagamento Mensal Se Dá de Forma Pré-Paga e Poderá ser cobrado até o final do dia. Deseja continuar?";
+          "Ao Escolher Este Plano, o Pagamento Mensal se dá de forma Pré-Paga e deverá ser cobrado até o final do dia. Deseja continuar?";
       } else {
         LMensagem = "Tem certeza de que deseja alterar seu plano? ";
         LProximoPagamentoMensal = null;
@@ -1091,6 +1075,13 @@ export default {
                     "Dados Atualizados Com Sucesso",
                     "success"
                   );
+                  var self = this;
+                  setTimeout(() => {
+                    self.checkIfLogged();
+                    this.scrollMeTo("changePlan", true);
+                    document.body.scrollTop = 0; // For Safari
+                    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+                  }, 3000);
                 })
                 .catch(error => {
                   console.log(
@@ -1179,7 +1170,7 @@ export default {
         API_NOTIFICATION.ShowLoading();
         UTILIS_API.VIA_CEP(this.dadosProcessamento.cep.replace(/[.-]/g, ""))
           .then(retornoCEP => {
-            if (retornoCEP == null) {
+            if (retornoCEP.logradouro == undefined) {
               self.preencheEnderecoManualmente();
             }
             self.dadosProcessamento.endereco = retornoCEP.logradouro;
@@ -1213,20 +1204,9 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     preencheEnderecoManualmente() {
-      this.enderecoManual = true;
-      API_NOTIFICATION.showNotificationW(
-        "Oops!",
-        "Endereço Não Encontrado. <br> Preencha Manualmente.",
-        "warning"
-      );
+      API_NOTIFICATION.HideLoading();
       var self = this;
-
       self.endereco = "Preencha seu endereço";
-      const add = document.getElementById("endereco");
-
-      if (add) {
-        add.focus();
-      }
     },
     async ProcessaAutorizacao() {
       window.Mercadopago.setPublishableKey(
@@ -1346,6 +1326,9 @@ export default {
                   var self = this;
                   setTimeout(() => {
                     self.checkIfLogged();
+                    this.scrollMeTo("changeCard", true);
+                    document.body.scrollTop = 0; // For Safari
+                    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
                   }, 3000);
                 })
                 .catch(error => {
@@ -1448,21 +1431,25 @@ export default {
       }
       return "";
     },
-    scrollMeTo(refName) {
+    scrollMeTo(refName, hide) {
       API_NOTIFICATION.ShowLoading();
       const eleRef = document.getElementById(refName);
       if (eleRef) {
         eleRef.classList.remove("hidden");
         eleRef.classList.add("visible");
       }
-      setTimeout(() => {
-        var element = this.$refs[refName];
-        element.scrollIntoView({ behavior: "smooth" });
-        var top = element.offsetTop;
-        window.scrollTo(0, top);
-        API_NOTIFICATION.HideLoading();
-      }, 500);
-
+      if (hide && hide == true) {
+        eleRef.classList.remove("visible");
+        eleRef.classList.add("hidden");
+      } else {
+        setTimeout(() => {
+          var element = this.$refs[refName];
+          element.scrollIntoView({ behavior: "smooth" });
+          var top = element.offsetTop;
+          window.scrollTo(0, top);
+          API_NOTIFICATION.HideLoading();
+        }, 500);
+      }
       // var element = this.$els[refName];
       // element.scrollIntoView();
     },

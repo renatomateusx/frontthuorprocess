@@ -549,6 +549,34 @@ var UTILIS_API = {
             }
         })
     },
+    SetLimiteCheckoutSession(dados) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_LIMITE_BUY, btoa(JSON.stringify(dados)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o Limite de Compra session", error);
+                reject(error);
+            }
+        })
+    },
+    GetLimiteCheckoutSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_LIMITE_BUY) != null) {
+                    const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_LIMITE_BUY)));
+                    resolve(L);
+                } else {
+                    resolve(null);
+                }
+            }
+            catch (error) {
+                console.log("Erro ao pegar o Limite de Compra session", error);
+                reject(error);
+            }
+        })
+    },
     removeUserSession() {
         sessionStorage.removeItem(constantes.SESSION_USER);
     },

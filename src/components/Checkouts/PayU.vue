@@ -274,6 +274,7 @@ export default {
     return {
       checkout: {},
       checkout_form: {
+        limite_ip:0,
         nome: "",
         nome_fatura: "",
         merchan_id: "",
@@ -314,6 +315,7 @@ export default {
                 this.checkout_form.nome = this.checkout.nome;
                 this.checkout_form.merchan_id = this.checkout.merchan_id;
                 this.checkout_form.mostra_prova_social = this.checkout.mostra_prova_social;
+                this.checkout_form.limite_ip = this.checkout.limite_ip || 0;
               }
               API_NOTIFICATION.HideLoading();
             })

@@ -104,25 +104,62 @@ export default {
       return new Promise(r => setTimeout(r, seconds));
     },
     getDadosCompra() {
-      try{
-      UTILIS_API.GetDadosClientesSession().then(async resCliente => {
-        this.dadosCliente = resCliente;
-        this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-        this.DadosLoja = await UTILIS_API.GetDadosLojaSession();        
-        if(this.DadosLoja){
-          if(this.DadosLoja.limpa_carrinho == 1){
-            sessionStorage.removeItem("cart");
+      try {
+        UTILIS_API.GetDadosClientesSession().then(async resCliente => {
+          this.dadosCliente = resCliente;
+          this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
+          this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
+
+          const LLimite = await this.processaQuantidadeLimite();
+          if (this.DadosLoja) {
+            if (this.DadosLoja.limpa_carrinho == 1) {
+              sessionStorage.removeItem("cart");
+            }
           }
-        }
-        const LCrypto = await UTILIS_API.GetDadosCriptoSession();
-        // console.log("C", LCrypto);
-        //const SendEmailBoleto = await UTILIS_API.SEND_EMAIL_BOLETO(LCrypto, this.getOrderNumber());
-        API_NOTIFICATION.HideLoading();
-      });
-      }
-      catch(error){
+          const LCrypto = await UTILIS_API.GetDadosCriptoSession();
+          // console.log("C", LCrypto);
+          //const SendEmailBoleto = await UTILIS_API.SEND_EMAIL_BOLETO(LCrypto, this.getOrderNumber());
+          API_NOTIFICATION.HideLoading();
+        });
+      } catch (error) {
         console.log("Erro ao recuperar dados da compra", error);
       }
+    },
+    processaQuantidadeLimite() {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const LDadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
+          if (LDadosCheckout.limite_ip > 0) {
+            var qtd = 0;
+            const LLimite = await UTILIS_API.GetLimiteCheckoutSession();
+            if (LLimite) {
+              qtd = LLimite.qtd + 1;
+            } else {
+              qtd += 1;
+            }
+            UTILIS_API.getIPRequest()
+              .then(resIP => {
+                var dt = new Date();
+                dt.setHours(dt.getHours() + 1);
+                var LLoja = {
+                  ip: resIP.ip,
+                  store: this.DadosLoja.url_loja,
+                  qtd: qtd,
+                  time: dt.getTime()
+                };
+                UTILIS_API.SetLimiteCheckoutSession(LLoja);
+                resolve(1);
+              })
+              .catch(error => {
+                resolve(0);
+              });
+          } else {
+            resolve(1);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
     },
     copyToClip(comp) {
       document.getElementById("copyClipBoard").value = comp;
@@ -169,9 +206,9 @@ export default {
       window.location.href = "http://" + this.DadosLoja.url_loja;
     },
     getBarCode() {
-      if(this.dadosCliente.dadosCompra){
-      return this.dadosCliente.dadosCompra.dadosComprador.dadosComprador
-        .barcode;
+      if (this.dadosCliente.dadosCompra) {
+        return this.dadosCliente.dadosCompra.dadosComprador.dadosComprador
+          .barcode;
       }
       return "";
     },

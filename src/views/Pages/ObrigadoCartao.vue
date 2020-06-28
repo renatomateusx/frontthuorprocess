@@ -91,14 +91,51 @@ export default {
     async getDadosCompra() {
       this.dadosCliente = await UTILIS_API.GetDadosClientesSession();
       this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
-      console.log(this.dadosCliente);
       this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
+      const LLimite = await this.processaQuantidadeLimite();
       if (this.DadosLoja) {
         if (this.DadosLoja.limpa_carrinho == 1) {
           sessionStorage.removeItem("cart");
         }
       }
+       const LCrypto = await UTILIS_API.GetDadosCriptoSession();
       API_NOTIFICATION.HideLoading();
+    },
+    processaQuantidadeLimite() {
+      return new Promise(async (resolve, reject) => {
+        try {
+          const LDadosCheckout = await UTILIS_API.GetDadosCheckoutSession();
+          if (LDadosCheckout.limite_ip > 0) {
+            var qtd = 0;
+            const LLimite = await UTILIS_API.GetLimiteCheckoutSession();
+            if (LLimite) {
+              qtd = LLimite.qtd + 1;
+            } else {
+              qtd += 1;
+            }
+            UTILIS_API.getIPRequest()
+              .then(resIP => {
+                var dt = new Date();
+                dt.setHours(dt.getHours() + 1);
+                var LLoja = {
+                  ip: resIP.ip,
+                  store: this.DadosLoja.url_loja,
+                  qtd: qtd,
+                  time: dt.getTime()
+                };
+                UTILIS_API.SetLimiteCheckoutSession(LLoja);
+                resolve(1);
+              })
+              .catch(error => {
+                resolve(0);
+              });
+          } else {
+            resolve(1);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      });
     },
     copyToClip(comp) {
       document.getElementById("copyClipBoard").value = comp;
