@@ -169,6 +169,7 @@ export default Object.freeze({
   SESSION_USER: 'x',
   SESSION_PIXEL: 'p',
   SESSION_LOJA: 'l',
+  SESSION_LIMITE_BUY: 'lil',
   SESSION_CHECKOUT: 'sc',
   SESSION_ATUAL_PAGE: 'atp',
   SESSION_OPTION_CART_OPENED: 'opt',

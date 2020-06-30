@@ -258,7 +258,7 @@ th.active .arrow {
         <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
         <p
           class="float-left text-center auto col-md-8 mt-1"
-        >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
+        >{{startRow / rowsPerPage + 1}} de {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
         <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>

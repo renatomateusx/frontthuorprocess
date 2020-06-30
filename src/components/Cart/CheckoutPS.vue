@@ -742,7 +742,7 @@ h1 {
                     v-show="getCidade()"
                   >{{getCidade()}} - {{getEstado()}}</span>
                 </div>
-                <div class="form-group row formGroup" v-show="endereco">
+                <div class="form-group row formGroup" v-show="continuaEndereco">
                   <label class="col-md-12 col-form-label labelForm">Endereço</label>
                   <div class="col-xl-12">
                     <input
@@ -755,7 +755,7 @@ h1 {
                     />
                   </div>
                 </div>
-                <div class="form-group row formGroup" v-show="endereco">
+                <div class="form-group row formGroup" v-show="continuaEndereco">
                   <div class="col-md-6 mt-1">
                     <label class="col-xl-12 col-form-label labelForm paddingZero mb-1">Número</label>
                     <input
@@ -766,7 +766,7 @@ h1 {
                     />
                   </div>
 
-                  <div class="col-md-6 mt-1" v-show="endereco">
+                  <div class="col-md-6 mt-1" v-show="continuaEndereco">
                     <label class="col-xl-6 col-form-label labelForm paddingZero mb-1">Bairro</label>
                     <input
                       class="form-control required"
@@ -776,7 +776,7 @@ h1 {
                     />
                   </div>
                 </div>
-                <div class="form-group row formGroup" v-show="endereco">
+                <div class="form-group row formGroup" v-show="continuaEndereco">
                   <div class="col-md-6 mt-1">
                     <label class="col-xl-12 col-form-label labelForm paddingZero mb-1">Cidade</label>
                     <input
@@ -787,7 +787,7 @@ h1 {
                     />
                   </div>
 
-                  <div class="col-md-6 mt-1" v-show="endereco">
+                  <div class="col-md-6 mt-1" v-show="continuaEndereco">
                     <label class="col-xl-6 col-form-label labelForm paddingZero mb-1">Estado</label>
                     <input
                       class="form-control required"
@@ -797,7 +797,7 @@ h1 {
                     />
                   </div>
                 </div>
-                <div class="form-group row formGroup" v-show="endereco">
+                <div class="form-group row formGroup" v-show="continuaEndereco">
                   <label class="col-xl-12 col-form-label labelForm">Complemento</label>
                   <div class="col-md-12">
                     <input
@@ -808,7 +808,7 @@ h1 {
                     />
                   </div>
                 </div>
-                <div class="form-group row formGroup" v-show="endereco">
+                <div class="form-group row formGroup" v-show="continuaEndereco">
                   <label class="col-xl-12 col-form-label labelForm">Destinatário</label>
                   <div class="col-md-12">
                     <input
@@ -1164,6 +1164,7 @@ export default {
   computed: {},
   data() {
     return {
+      continuaEndereco: false,
       price: 123.45,
       money: {
         decimal: ",",
@@ -1221,7 +1222,7 @@ export default {
     };
   },
   mounted() {
-     const LEmailUser = this.$refs["email_user"];
+    const LEmailUser = this.$refs["email_user"];
     if (LEmailUser) {
       LEmailUser.addEventListener("blur", this.populaDadosComprador);
     }
@@ -1385,6 +1386,7 @@ export default {
                   this.estado = retornoCEP.uf;
                   this.complemento = retornoCEP.complemento;
                   this.destinatario = this.nome_completo;
+                  this.continuaEndereco = true;
                   const numbP = document.getElementById("numero_porta");
                   if (numbP) {
                     numbP.focus();
@@ -1400,6 +1402,7 @@ export default {
                 this.estado = "";
                 this.complemento = "";
                 this.destinatario = "";
+                this.continuaEndereco = false;
                 console.log(
                   "Erro ao tentar pegar dados do endereço do usuário",
                   error
@@ -1428,14 +1431,8 @@ export default {
     preencheEnderecoManualmente() {
       this.enderecoManual = true;
       API_NOTIFICATION.HideLoading();
-      // API_NOTIFICATION.showNotificationW(
-      //   "Oops!",
-      //   "Endereço Não Encontrado. <br> Preencha Manualmente.",
-      //   "warning"
-      // );
       var self = this;
-
-      self.endereco = "Preencha seu endereço";
+      this.continuaEndereco = true;
       const add = document.getElementById("endereco");
       if (add) {
         add.focus();
@@ -1813,6 +1810,7 @@ export default {
     async getDadosPagamentoTransacao() {
       this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       this.ttrack = await UTILIS_API.GetTtrackSession();
+      const bandeira = await UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""));
       this.DadosCheckout.chave_publica = this.public_key;
       var transacao = {
         token: this.DadosCheckout.token_acesso,
@@ -1841,7 +1839,7 @@ export default {
           urlBoleto: "",
           parcela: this.parcelas,
           valorParcela: "",
-          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, "")),
+          bandeira: bandeira,
           ttrack: this.ttrack
         },
         produtos: this.produtosCart,
@@ -2073,14 +2071,17 @@ export default {
       }
     },
     removeAcento(text) {
-      text = text.toLowerCase();
-      text = text.replace(new RegExp("[ÁÀÂÃ]", "gi"), "a");
-      text = text.replace(new RegExp("[ÉÈÊ]", "gi"), "e");
-      text = text.replace(new RegExp("[ÍÌÎ]", "gi"), "i");
-      text = text.replace(new RegExp("[ÓÒÔÕ]", "gi"), "o");
-      text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
-      text = text.replace(new RegExp("[Ç]", "gi"), "c");
-      return text;
+      if (text) {
+        text = text.toLowerCase();
+        text = text.replace(new RegExp("[ÁÀÂÃ]", "gi"), "a");
+        text = text.replace(new RegExp("[ÉÈÊ]", "gi"), "e");
+        text = text.replace(new RegExp("[ÍÌÎ]", "gi"), "i");
+        text = text.replace(new RegExp("[ÓÒÔÕ]", "gi"), "o");
+        text = text.replace(new RegExp("[ÚÙÛ]", "gi"), "u");
+        text = text.replace(new RegExp("[Ç]", "gi"), "c");
+        return text;
+      }
+      return "";
     },
     getCripto(parametro_um, parametro_dois) {
       const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");

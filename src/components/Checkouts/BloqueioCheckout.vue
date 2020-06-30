@@ -324,66 +324,15 @@
 </style>
 <template>
   <div class="col-md-4 mt-0 mb-0 cardSide">
-    <form data-vv-scope="sequencia" @submit.prevent="validateBeforeSubmit('sequencia')">
+    <form>
       <div class="card card-default">
         <div class="card-body">
           <div class="row">
-            <div class="form-group col-md-2">
-              <label class="col-form-label">Status *</label>
-              <div class>
-                <label class="switch switch-lg">
-                  <input
-                    type="checkbox"
-                    true-value="1"
-                    false-value="0"
-                    @change="changeStatus(sequencia)"
-                    :checked="sequencia.status == 1"
-                    v-model="sequencia.status"
-                    :class="{'form-control':true, 'is-invalid': errors.has('sequencia.status')}"
-                  />
-                  <span class></span>
-                </label>
+            <div class="form-group col-md-12">
+              <div class="" v-html="HTML_MESSAGE">
               </div>
             </div>
-            <div class="form-group col-lg-5">
-              <label class="col-form-label">Chave Pública *</label>
-              <input
-                :class="{'form-control':true, 'is-invalid': errors.has('sequencia.chave_publica')}"
-                v-model="sequencia.chave_publica"
-                v-validate="'required'"
-                type="text"
-                name="chave_publica"
-              />
-              <span
-                v-show="errors.has('sequencia.chave_publica')"
-                class="invalid-feedback"
-              >{{ errors.first('sequencia.chave_publica') }}</span>
-            </div>
-            <div class="form-group col-lg-5">
-              <label class="col-form-label">Token de Acesso *</label>
-              <input
-                :class="{'form-control':true, 'is-invalid': errors.has('sequencia.token_acesso')}"
-                v-model="sequencia.token_acesso"
-                v-validate="'required'"
-                type="text"
-                name="token_acesso"
-              />
-              <span
-                v-show="errors.has('sequencia.token_acesso')"
-                class="invalid-feedback"
-              >{{ errors.first('sequencia.token_acesso') }}</span>
-            </div>
-            <div class="form-group row col-md-12">
-              <div class="col-md-2 ml-1 mr-1"></div>
-              <button class="btn btn-primary btn-block ml-4" type="submit">
-                <span class="fa fa-arrow-right"></span>
-              </button>   
-              <button class="btn btn-primary btn-block  ml-4" v-on:click="removeSequencia(sequencia)" type="button">
-                <span class="fa fa-trash"></span>
-              </button>          
-            </div>
-            
-          </div>          
+          </div>
         </div>
       </div>
     </form>
@@ -411,90 +360,26 @@ Vue.use(VeeValidate, {
 });
 
 export default {
-  name: "sequencia-mp",
+  name: "bloqueio-compra",
   created() {
-    this.checkIfLogged();
 
-    //document.addEventListener('beforeunload', this.clearSessionStorage);
   },
-  props: {
-    noCheckout: { type: Number, required: false },
-    id: { type: Number, required: true },
-    seq: {}
-  },
-  watch: {
-    seq: function(val) {
-
-      this.sequencia = val;
-      
-    }
-  },
+  props: {},
+  watch: {},
   computed: {},
   data: function() {
     return {
-      sequencia: {
-        status: 1,
-        chave_publica: "",
-        token_acesso: ""
-      }
+      HTML_MESSAGE: '',
+      dadosLoja: {}
     };
   },
-  mounted() {
-    this.$validator.localize("pt", {
-      messages: {
-        required: field => "* Este campo é obrigatório."
-      },
-      attributes: {}
-    });
+  async mounted() {
+    this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
+    this.HTML_MESSAGE = `Caro Cliente, <br> A Loja ${this.dadosLoja.nome_loja} está processando muitos pedidos nesse momento. <br> Tente novamente daqui uns instantes ou volte mais tarde.`;
   },
   methods: {
     forceRender() {
-      // this.$nextTick(() => {
-      //   // Add the component back in
-      //   this.sequencia.status = this.seq.status;
-      //   this.sequencia.chave_publica = this.seq.chave_publica;
-      //   this.sequencia.token_acesso = this.seq.token_acesso;
-      //   console.log(this.seq);
-      // });
-    },
-    checkIfLogged() {
-      API_NOTIFICATION.ShowLoading();
-      API_LOGIN.VerificaToken()
-        .then(res => {
-          if (this.seq.id && this.seq.status != undefined) {
-            this.sequencia = this.seq;
-          }
-        })
-        .catch(error => {
-          console.log("Erro ao verificar token", error);
-          if (error.response.status === 401) {
-            this.$router.go("login");
-          }
-        });
-      API_NOTIFICATION.HideLoading();
-    },
-    validateBeforeSubmit(scope) {
-      this.$validator.validateAll(scope).then(result => {
-        if (result) {
-          this.salvarSequencia();
-          return;
-        }
-      });
-    },
-    salvarSequencia() {
-      var LSequencia = {
-        id: this.id,
-        chave_publica: this.sequencia.chave_publica,
-        token_acesso: this.sequencia.token_acesso,
-        status: this.sequencia.status
-      };
-      this.$emit("AddSequenciaMP", LSequencia);
-    },
-    changeStatus(sequencia) {
-      this.$emit("UpdateStatusMP", sequencia);
-    },
-    removeSequencia(sequencia){
-      this.$emit("RemoveSequencia", sequencia);
+
     }
   }
 };
