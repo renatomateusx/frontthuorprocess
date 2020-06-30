@@ -1155,7 +1155,7 @@ export default {
         API_NOTIFICATION.ShowLoading();
         UTILIS_API.VIA_CEP(this.dadosProcessamento.cep.replace(/[.-]/g, ""))
           .then(retornoCEP => {
-            if (retornoCEP.logradouro == undefined) {
+            if (retornoCEP == null) {
               self.preencheEnderecoManualmente();
             }
             self.dadosProcessamento.endereco = retornoCEP.logradouro;

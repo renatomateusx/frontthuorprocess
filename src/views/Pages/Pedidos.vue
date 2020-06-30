@@ -231,10 +231,10 @@ option {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago} in dataPerPage"
+                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago, bandeira} in dataPerPage"
               >
                 <td class="metodo">
-                  <img :src="getImagePaymentID(metodo)" class="imgMethodo" />
+                  <img :src="getImagePaymentID(metodo,bandeira)" class="imgMethodo" />
                 </td>
                 <td class="pedido" style="width: 120px!important;">
                   <router-link :to="{path: '/pedidos/detalhe/' + getCripto(id, order_id)}">
@@ -449,12 +449,11 @@ export default {
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
                 });
-              const LWaitTransacoes = await API_TRANSACOES.GetTransacoes()
+              await API_TRANSACOES.GetTransacoes()
                 .then(retProd => {
                   this.gridData = [];
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
                   //this.pedidosList = retProd.data;
-                  retProd.data.reverse();
                   retProd.data.forEach((obj, i) => {
                     if (obj != null && obj.json_shopify_response.order) {
                       const LID = obj.id;
@@ -481,6 +480,8 @@ export default {
                         obj.json_front_end_user_data.dadosComprador
                           .nome_completo
                       );
+                      const Bandeira =
+                        obj.json_front_end_user_data.dadosComprador.Bandeira;
                       const LOrderID = obj.json_shopify_response.order.id;
                       this.gridData.push({
                         metodo: LPaymentID,
@@ -496,7 +497,8 @@ export default {
                           "time"
                         ),
                         json_front_end_user_data: obj.json_front_end_user_data,
-                        json_gw_response: obj.json_gw_response
+                        json_gw_response: obj.json_gw_response,
+                        bandeira: Bandeira
                       });
                     }
                     //console.log(Date.now(), Date.parse(LData));
@@ -561,13 +563,23 @@ export default {
         return str.toUpperCase();
       }
     },
-    getImagePaymentID(paymentID) {
-      if (paymentID !== undefined) {
-        if (paymentID == "BOLETO" || paymentID == "bolbradesco")
-          return "img/barcode.png";
-        else if (paymentID.toUpperCase() == "MASTER") return "img/master.png";
-        else if (paymentID.toUpperCase() == "VISA") return "img/visa.png";
-        else return "img/visa.png";
+    getImagePaymentID(paymentForm, bandeira) {
+      console.log(paymentForm);
+      if (paymentForm == "BOLETO" || paymentForm == "bolbradesco") {
+        return "img/barcode.png";
+      } else {
+        if (bandeira) {
+          if (
+            bandeira.toUpperCase() == "MASTER" ||
+            bandeira.toUpperCase() == "MASTERCARD"
+          ) {
+            return "img/master.png";
+          } else if (bandeira.toUpperCase() == "VISA") {
+            return "img/visa.png";
+          } else return "img/credit-card.png";
+        } else {
+          return "img/credit-card.png";
+        }
       }
     },
     getClassStatus(status) {
@@ -648,12 +660,11 @@ export default {
               /[^0-9\.]+/g,
               ""
             );
-        const DadosBoleto = this.gridData.find(x => x.id == id)
-          .json_gw_response;
+        const DadosBoleto = this.gridData.find(x => x.id == id);
         const LBarCode = this.getBarCodeBoleto(DadosBoleto);
         const LProdutos = this.gridData.find(x => x.id == id)
           .json_front_end_user_data.produtos;
-        const Link = this.gridData.find(x => x.id == id).json_gw_response;
+        const Link = this.gridData.find(x => x.id == id);
         const LlinkBoleto = await this.getLinkBoleto(Link);
         var LprodutoTitle = await this.getProdutoName(LProdutos);
         const Nome = this.gridData

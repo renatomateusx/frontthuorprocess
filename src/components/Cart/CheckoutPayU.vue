@@ -1380,7 +1380,7 @@ export default {
           if (this.endereco.length == 0) {
             UTILIS_API.VIA_CEP(this.CEP.replace(/[.-]/g, ""))
               .then(retornoCEP => {
-                if (retornoCEP.logradouro == undefined) {
+                if (retornoCEP == null) {
                   self.preencheEnderecoManualmente();
                 } else {
                   this.endereco = retornoCEP.logradouro;
@@ -1828,6 +1828,7 @@ export default {
     async getDadosPagamentoTransacao() {
       this.dadosLoja = await UTILIS_API.GetDadosLojaSession();
       this.ttrack = await UTILIS_API.GetTtrackSession();
+      const bandeira = await UTILIS_API.GetCardType(this.card_number.replace(/ /g, ""));
       this.getSignature();
       var transacao = {
         token: this.DadosCheckout.token_acesso,
@@ -1856,7 +1857,7 @@ export default {
           urlBoleto: "",
           parcela: this.parcelas,
           valorParcela: "",
-          bandeira: UTILIS_API.GetCardType(this.card_number.replace(/ /g, "")),
+          bandeira: bandeira,
           ttrack: this.ttrack
         },
         produtos: this.produtosCart,

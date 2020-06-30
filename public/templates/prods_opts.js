@@ -935,7 +935,12 @@ class CheckoutMP extends HTMLElement {
             this.ShowLoading();
             this.postAxios(URL_END_PONT_GET_CEP, { cep: CEP.value }, (retornoCEP => {
                 var retornoCEP = retornoCEP.data;
-                this.setDadosEndereco(retornoCEP);
+                if (retornoCEP != null) {
+                    this.setDadosEndereco(retornoCEP);
+                }
+                else {
+                    this.setDadosEndereco('');
+                }
 
             }));
         } else {
