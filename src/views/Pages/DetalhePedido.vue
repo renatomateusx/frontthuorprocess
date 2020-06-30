@@ -596,7 +596,7 @@ export default {
           return "img/barcode.png";
         else if (paymentID.toUpperCase() == "MASTER") return "img/master.png";
         else if (paymentID.toUpperCase() == "VISA") return "img/visa.png";
-        else return "img/visa.png";
+        else return "img/credit-card.png";
       }
     },
     getClassStatus(status) {
@@ -816,7 +816,7 @@ export default {
       if (obj) {
         API_NOTIFICATION.ShowLoading();
         const LID = obj.id;
-        const LPaymentID = obj.json_gw_response.payment_method_id;
+        const LPaymentID = obj.json_front_end_user_data.dadosComprador.forma;
         let LStatus;
         if (obj.status == null) {
           if (this.LPaymentID == "bolbradesco" || this.LPaymentID == "BOLETO") {
@@ -830,11 +830,11 @@ export default {
         this.status = LStatus;
         this.statusAtual = this.status.toUpperCase();
         const LData = dateFormat(
-          obj.json_gw_response.date_created,
+          obj.json_front_end_user_data.dadosComprador.data,
           "dd/mm/yyyy  HH:MM:ss"
         );
-        const LTimeAgo = obj.json_gw_response.date_created;
-        const LTotal = obj.json_gw_response.transaction_amount;
+        const LTimeAgo = obj.json_front_end_user_data.dadosComprador.data;
+        const LTotal = obj.json_front_end_user_data.dadosComprador.valor;
 
         //time_ago: this.timeAgo.format(Date.parse(LTimeAgo),  Date.now(), "time")
         const LOrderID = obj.json_shopify_response.order.id;

@@ -285,7 +285,7 @@ th.active .arrow {
                   <div class="media ml-0 mr-0">
                     <img
                       class="img-fluid circle ml-0 mr-0"
-                      v-bind:src="json_dados_produto.image.src"
+                      v-bind:src="getImage(json_dados_produto)"
                       alt="Image"
                     />
                     <span class="titulo_produto ml-2">
@@ -316,7 +316,7 @@ th.active .arrow {
         <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
         <p
           class="float-left text-center auto col-md-8 mt-1"
-        >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
+        >{{startRow / rowsPerPage + 1}} de {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
         <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>
@@ -403,6 +403,7 @@ export default {
   },
   data() {
     return {
+      LNoImage : 'https://app.thuor.com/img/no-image.png',
       login: {
         email: "",
         password: "",
@@ -442,7 +443,7 @@ export default {
       let newStartRow = this.startRow + amount * this.rowsPerPage;
       if (
         this.filteredData != undefined &&
-        newStartRow >= 0 &&
+        newStartRow > 0 &&
         newStartRow < this.filteredData.length
       ) {
         this.startRow = newStartRow;
@@ -488,6 +489,19 @@ export default {
           "error"
         );
       }
+    },
+    getImage(json_dados_produto) {
+      
+      if (json_dados_produto != null && json_dados_produto != undefined) {
+        if (json_dados_produto.image != null) {
+          return json_dados_produto.image.src;
+        }
+        if(json_dados_produto.image == null && json_dados_produto.images.length == 0){
+          return this.LNoImage;
+        }
+        return "";
+      }
+      return "";
     },
     getProdutos() {
       API_PRODUTOS.GetProdutos()

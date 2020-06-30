@@ -209,7 +209,7 @@ th.active .arrow {
       <div id="page-navigation" class="col-xl-12 mt-3">
         <p
           class="float-left text-center auto col-xl-12 mt-1 mb-2"
-        >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
+        >{{startRow / rowsPerPage + 1}} de {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
         <button class="float-left btn btn-primary" @click.prevent="movePages(-1)">Voltar</button>
         <button class="float-right btn btn-primary" @click.prevent="movePages(1)">Próxima</button>
       </div>
@@ -275,6 +275,7 @@ export default {
   },
   data() {
     return {
+       LNoImage : 'https://app.thuor.com/img/no-image.png',
       idProduto: 0,
       tituloProduto: "",
       imageProduto: "",
@@ -350,8 +351,11 @@ export default {
         const LImag = obj.json_dados_produto.image;
         if (LImag != undefined) {
           LImageSRC = LImag.src;
-        } else if (LImages != undefined) {
+        } else if (LImages != undefined && LImages.length > 0) {
           LImageSRC = LImages[0].src;
+        }
+        else{
+          LImageSRC = this.LNoImage;
         }
         resolve(LImageSRC);
       });

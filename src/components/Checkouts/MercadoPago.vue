@@ -166,19 +166,36 @@
                   <option value="0">Não</option>
                 </select>
               </div>
+              <div class="form-group">
+                <label class="col-form-label">Quantidade de Compra por IP *</label>
+                <input
+                  :class="{'form-control':true, 'is-invalid': errors.has('checkout_form.limite_ip')}"
+                  v-model="checkout_form.limite_ip"
+                  v-validate="'required'"
+                  type="text"
+                  name="limite_ip"
+                />
+                <small>Limita a Quantidade de Compra Oriundas de um IP. Informe 0 para Não Limitar.</small>
+                <span
+                  v-show="errors.has('checkout_form.limite_ip')"
+                  class="invalid-feedback"
+                >{{ errors.first('checkout_form.limite_ip') }}</span>
+              </div>
               <div v-for="(id, i) in sequenciasArray" :key="i">
-                <div class="mb-1">
-                  <span
-                    class="alert alert-info p-1 col-md-12 mb-1"
-                  >Checkout MP - Checkout {{sequenciasArray[i].id}}</span>
+                <div :id="'seq_form'+sequenciasArray[i].id">
+                  <div class="mb-1">
+                    <span
+                      class="alert alert-info p-1 col-md-12 mb-1"
+                    >Checkout MP - Checkout {{sequenciasArray[i].id}}</span>
+                  </div>
+                  <sequencia-mp
+                    @AddSequenciaMP="AdicionarSequencia($event)"
+                    @UpdateStatusMP="UpdateStatus($event)"
+                    @RemoveSequencia="RemoveSeq($event)"
+                    :id="sequenciasArray[i].id"
+                    :seq="sequenciasArray[i]"
+                  ></sequencia-mp>
                 </div>
-                <sequencia-mp
-                  @AddSequenciaMP="AdicionarSequencia($event)"
-                  @UpdateStatusMP="UpdateStatus($event)"
-                  @RemoveSequencia="RemoveSeq($event)"
-                  :id="sequenciasArray[i].id"
-                  :seq="sequenciasArray[i]"
-                ></sequencia-mp>
               </div>
               <div class="form-group">
                 <button
@@ -187,7 +204,7 @@
                   v-on:click.prevent="adicionarSequencia()"
                 >Adicionar Checkout</button>
               </div>
-              
+
               <div class="required">* Campos requeridos</div>
             </div>
             <div class="card-footer">
@@ -247,6 +264,9 @@ export default {
       attributes: {}
     });
   },
+  watch: {
+    sequenciasArray: function(val) {}
+  },
   components: {
     SequenciaMp
   },
@@ -256,6 +276,7 @@ export default {
       sequenciasArray: [{ id: 1 }],
       checkout: {},
       checkout_form: {
+        limite_ip: 0,
         nome: "",
         nome_fatura: "",
         chave_publica: "",
@@ -290,9 +311,9 @@ export default {
                 this.checkout_form.nome = this.checkout.nome;
                 this.checkout_form.chave_publica = this.checkout.chave_publica;
                 this.checkout_form.mostra_prova_social = this.checkout.mostra_prova_social;
+                this.checkout_form.limite_ip = this.checkout.limite_ip || 0;
                 this.checkout_form.json_checkout =
                   this.checkout.json_checkout || [];
-
                 this.checkout_form.json_checkout.forEach((obj, i) => {
                   this.sequenciasArray[i] = obj;
                   //console.log('Seqs', this.sequenciasArray[i].id_sequencia, this.sequenciasArray[i].tempo, this.sequenciasArray[i].tipo_tempo);
@@ -332,6 +353,14 @@ export default {
     validateBeforeSubmit(scope) {
       this.$validator.validateAll(scope).then(result => {
         if (result) {
+          if (this.checkout_form.json_checkout.length == 0) {
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Você precisa informar a Chave Pública e o Token de Acesso!",
+              "warning"
+            );
+            return;
+          }
           this.salvarCheckout();
           return;
         }
@@ -436,17 +465,23 @@ export default {
           obj.status = 1;
         } else {
           obj.status = 0;
-        }       
+        }
         //console.log(this.sequenciasArray[i]);
       });
-       this.sequenciasArray = this.checkout_form.json_checkout;
+      this.sequenciasArray = this.checkout_form.json_checkout;
     },
-    RemoveSeq(event){
-      this.sequenciasArray.forEach((obj, i)=>{
-        if(obj.id == event.id){
-          this.sequenciasArray.splice(obj.id, 1);
-        }
-      })
+    RemoveSeq(event) {
+      const finder = this.sequenciasArray.findIndex(x => x.id == event.id);
+      if (finder > -1) {
+        this.sequenciasArray.splice(finder, 1);
+      }
+      const finderJSON = this.checkout_form.json_checkout.findIndex(x => x.id == event.id);
+      if (finderJSON > -1) {
+        this.checkout_form.json_checkout.splice(finderJSON, 1);
+      }
+      if(this.sequenciasArray.length == 0){
+        this.sequenciasArray.push({ id: this.idSequencia });
+      }
     }
   }
 };

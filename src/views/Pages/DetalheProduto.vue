@@ -622,6 +622,7 @@ export default {
   computed: {},
   data() {
     return {
+       LNoImage : 'https://app.thuor.com/img/no-image.png',
       price: 123.45,
       money: {
         decimal: ",",
@@ -865,6 +866,9 @@ export default {
     },
     getImageVariantById(idImage) {
       var images = this.produtoByID.images;
+      if(images.length == 0){
+        return this.LNoImage;
+      }
       if (idImage == undefined) return images[0].src;
       return images.find(x => x.id === idImage).src || ``;
       // images.forEach((obj, i) => {

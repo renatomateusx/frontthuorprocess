@@ -1,5 +1,10 @@
 <template>
-  <div ref="container"></div>
+  <ContentWrapper>
+    <div ref="container" v-show="canRender"></div>
+    <div ref="containerBlocked" v-show="!canRender">
+      <bloqueio-compra></bloqueio-compra>
+    </div>
+  </ContentWrapper>
 </template>
 <script>
 import Vue from "vue";
@@ -24,6 +29,7 @@ import CheckoutPayU from "./CheckoutPayU.vue";
 import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
 import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 import API_PIXEL from "../../api/pixelsAPI";
+import BloqueioCompra from "../Checkouts/BloqueioCheckout";
 var md5 = require("md5");
 
 Vue.use(LoadScript);
@@ -48,9 +54,13 @@ export default {
     //console.log(this.fretes);
     this.checkURL();
   },
+  components: {
+    BloqueioCompra
+  },
   computed: {},
   data() {
     return {
+      canRender: true,
       price: 123.45,
       money: {
         decimal: ",",
@@ -126,7 +136,7 @@ export default {
         const qtdItems = params.searchParams.get("qtd_items");
         const redirectTo = params.searchParams.get("redirectTo");
         const ttrack = params.searchParams.get("ttrack");
-        if(ttrack && ttrack != undefined){
+        if (ttrack && ttrack != undefined) {
           UTILIS_API.SetTtrackSession(ttrack);
         }
         for (var i = 0; i < qtdItems; i++) {
@@ -152,11 +162,29 @@ export default {
       } else {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
-        this.produtosCart = JSON.parse(LCart);
+        if (LCart) {
+          this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+          this.produtosCart = JSON.parse(LCart);
+        } else {
+          this.canRender = false;
+          window.location.href = await this.getURLLoja();
+        }
       }
     },
-
+    getURLLoja() {
+      return new Promise((resolve, reject) => {
+        try {
+          if (this.dadosLoja.url_loja) {
+            const url = "https://" + this.dadosLoja.url_loja;
+            resolve(url);
+          } else {
+            resolve(0);
+          }
+        } catch (error) {
+          console.log("Erro ao verificar se a loja está aqui", error);
+        }
+      });
+    },
     async getDadosLoja() {
       //API_NOTIFICATION.ShowLoading();
       var params = new URL(window.location.href);
@@ -175,9 +203,32 @@ export default {
     },
     getCheckouts() {
       API_CHECKOUT.GetCheckouts()
-        .then(retornoCheckout => {
+        .then(async retornoCheckout => {
+          if (!retornoCheckout.data) {
+            this.canRender = false;
+            API_NOTIFICATION.HideLoading();
+          }
           this.DadosCheckout = retornoCheckout.data;
           UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);
+          const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+          if (this.DadosCheckout.limite_ip > 0) {
+            UTILIS_API.getIPRequest().then(async res => {
+              const LIP = await UTILIS_API.GetLimiteCheckoutSession();
+              if (LIP) {
+                var dt = new Date();
+                if (
+                  LIP.store == LDadosLoja.url_loja &&
+                  LIP.ip == res.ip &&
+                  LIP.qtd == this.DadosCheckout.limite_ip &&
+                  LIP.time >= dt.getTime()
+                ) {
+                  this.canRender = false;
+                } else {
+                  this.canRender = true;
+                }
+              }
+            });
+          }
           this.iniciaCheckout();
         })
         .catch(error => {

@@ -393,7 +393,7 @@ export default {
         .then(res => {
           API_PRODUTOS.GetProdutos()
             .then(retProd => {
-              var LImages = JSON.parse(retProd.data[0].json_dados_produto);
+              var LImages = retProd.data[0].json_dados_produto;
               this.produtosList = retProd.data;
               this.options2 = this.produtosList;
               var self = this;

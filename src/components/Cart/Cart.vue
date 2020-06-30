@@ -349,12 +349,7 @@ export default {
       return new Promise(async (resolve, reject) => {
         try {
           API_PRODUTOS.GetProdutoByIDThuor(product, quantity, variante_id)
-            .then(retorno => {
-              //console.log("Opa", product, quantity, variante_id);
-              //console.log("Opa", retorno.data);
-
-              //this.produtosCart.push(LProd);
-              //console.log("Lprod", LProd);
+            .then(retorno => {            
               resolve(retorno.data);
             })
             .catch(error => {
