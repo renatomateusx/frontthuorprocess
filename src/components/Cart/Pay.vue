@@ -77,7 +77,7 @@
 }
 </style>
 <template>
-  <div class="block-center">
+  <div class="block-center" v-if="canRender">
     <div class="container">
       <div class="card shopping-cart">
         <div class="card-header bg-dark text-light">
@@ -268,6 +268,7 @@ export default {
   },
   data() {
     return {
+      canRender:false,
       price: 123.45,
       money: {
         decimal: ",",

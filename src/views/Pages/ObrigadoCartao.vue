@@ -64,7 +64,7 @@ import UTILIS from "../../utilis/utilis.js";
 import UpSellCard from "../../components/Cart/UpSellCard";
 export default {
   template: `#templateObrigado`,
-  created() {
+  async created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
     API_FACEBOOK_PIXEL.InsertScript().then(res => {
@@ -98,7 +98,7 @@ export default {
           sessionStorage.removeItem("cart");
         }
       }
-       const LCrypto = await UTILIS_API.GetDadosCriptoSession();
+      const LCrypto = await UTILIS_API.GetDadosCriptoSession();
       API_NOTIFICATION.HideLoading();
     },
     processaQuantidadeLimite() {

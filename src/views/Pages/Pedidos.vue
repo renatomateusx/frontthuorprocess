@@ -289,7 +289,7 @@ option {
         <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
         <p
           class="float-left text-center auto col-md-8 mt-1"
-        >{{startRow / rowsPerPage + 1}} out of {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
+        >{{startRow / rowsPerPage + 1}} de {{Math.ceil(filteredData.length / rowsPerPage)}}</p>
         <button class="float-right btn btn-primary col-md-2" @click="movePages(1)">Próxima</button>
       </div>
     </div>
@@ -340,6 +340,7 @@ export default {
   },
 
   created() {
+    API_NOTIFICATION.ShowLoading();
     this.timeAgo = new TimeAgo("pt-BR");
 
     let sortOrders = {};
@@ -429,7 +430,6 @@ export default {
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     },
     checkIfLogged() {
-      API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(async res => {
           const lwatloja = await API_LOJA.GetDadosLojaByIdUsuario(res.data.id)

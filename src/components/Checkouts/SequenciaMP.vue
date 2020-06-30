@@ -383,21 +383,7 @@
               </button>          
             </div>
             
-          </div>
-          <div class="form-group col-lg-12">
-            <span
-              v-show="errors.has('sequencia.id_mensagem')"
-              class="invalid-feedback"
-            >{{ errors.first('sequencia.id_mensagem') }}</span>
-            <span
-              v-show="errors.has('sequencia.tempo')"
-              class="invalid-feedback"
-            >{{ errors.first('sequencia.tempo') }}</span>
-            <span
-              v-show="errors.has('sequencia.tipo_tempo')"
-              class="invalid-feedback"
-            >{{ errors.first('sequencia.tipo_tempo') }}</span>
-          </div>
+          </div>          
         </div>
       </div>
     </form>
@@ -438,7 +424,7 @@ export default {
   },
   watch: {
     seq: function(val) {
-      console.log("Mudou", val);
+
       this.sequencia = val;
       
     }
@@ -475,7 +461,6 @@ export default {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          console.log('asdfasd',this.seq);
           if (this.seq.id && this.seq.status != undefined) {
             this.sequencia = this.seq;
           }

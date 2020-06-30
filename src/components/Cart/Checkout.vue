@@ -162,11 +162,29 @@ export default {
       } else {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
-        this.dadosLoja = UTILIS_API.GetDadosLojaSession();
-        this.produtosCart = JSON.parse(LCart);
+        if (LCart) {
+          this.dadosLoja = UTILIS_API.GetDadosLojaSession();
+          this.produtosCart = JSON.parse(LCart);
+        } else {
+          this.canRender = false;
+          window.location.href = await this.getURLLoja();
+        }
       }
     },
-
+    getURLLoja() {
+      return new Promise((resolve, reject) => {
+        try {
+          if (this.dadosLoja.url_loja) {
+            const url = "https://" + this.dadosLoja.url_loja;
+            resolve(url);
+          } else {
+            resolve(0);
+          }
+        } catch (error) {
+          console.log("Erro ao verificar se a loja está aqui", error);
+        }
+      });
+    },
     async getDadosLoja() {
       //API_NOTIFICATION.ShowLoading();
       var params = new URL(window.location.href);
@@ -186,6 +204,10 @@ export default {
     getCheckouts() {
       API_CHECKOUT.GetCheckouts()
         .then(async retornoCheckout => {
+          if (!retornoCheckout.data) {
+            this.canRender = false;
+            API_NOTIFICATION.HideLoading();
+          }
           this.DadosCheckout = retornoCheckout.data;
           UTILIS_API.SetDadosCheckoutSession(this.DadosCheckout);
           const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
@@ -193,7 +215,7 @@ export default {
             UTILIS_API.getIPRequest().then(async res => {
               const LIP = await UTILIS_API.GetLimiteCheckoutSession();
               if (LIP) {
-                 var dt = new Date();
+                var dt = new Date();
                 if (
                   LIP.store == LDadosLoja.url_loja &&
                   LIP.ip == res.ip &&
@@ -201,7 +223,7 @@ export default {
                   LIP.time >= dt.getTime()
                 ) {
                   this.canRender = false;
-                }else{
+                } else {
                   this.canRender = true;
                 }
               }

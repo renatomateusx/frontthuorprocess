@@ -75,7 +75,7 @@ import UTILIS from "../../utilis/utilis.js";
 import UpSellCard from "../../components/Cart/UpSellCard";
 export default {
   template: `#templateObrigado`,
-  created() {
+  async created() {
     API_NOTIFICATION.ShowLoading();
     this.getDadosCompra();
 
@@ -84,7 +84,7 @@ export default {
     });
     API_GOOGLE_PIXEL.InsertScript().then(resG => {
       API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase", "boleto");
-    });
+    });    
   },
   components: {
     UpSellCard
@@ -109,7 +109,6 @@ export default {
           this.dadosCliente = resCliente;
           this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
           this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
-
           const LLimite = await this.processaQuantidadeLimite();
           if (this.DadosLoja) {
             if (this.DadosLoja.limpa_carrinho == 1) {

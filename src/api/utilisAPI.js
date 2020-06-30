@@ -26,7 +26,7 @@ var UTILIS_API = {
     },
     SEND_EMAIL_BOLETO(JSON, pedido) {
         return new Promise(async (resolve, reject) => {
-            let JSON_EMAIL = { JSON_EMAIL: JSON, ordem: pedido};
+            let JSON_EMAIL = { JSON_EMAIL: JSON, ordem: pedido };
             axios
                 .post(constantes.WEBSITEAPI + constantes.PATH_SEND_EMAIL_BOLETO, JSON_EMAIL)
                 .then((response) => {
@@ -667,9 +667,6 @@ var UTILIS_API = {
             var LReturn = false;
             try {
                 const LUser = await this.GetUserSession();
-                //LUser.user.json_pagamento = null;
-                //LUser.user.proximo_pagamento = null;
-                console.log(LUser.user);
                 if (LUser != null && (LUser.user.json_pagamento != undefined || LUser.user.json_pagamento != null) && (LUser.user.proximo_pagamento != undefined || LUser.user.proximo_pagamento != null)) {
                     LReturn = true;
                 } else {
@@ -681,6 +678,21 @@ var UTILIS_API = {
                 reject(error);
             }
             resolve(LReturn);
+        })
+    },
+    pushBackButton(string) {
+        return new Promise((resolve, reject) => {
+            try {
+                const LQTD = 100;
+                const arrayQTD = [LQTD];
+                arrayQTD.forEach((obj, i) => {
+                    history.pushState({ url: string }, string, 'obrigado-boleto');
+                })
+                resolve(1);
+            }
+            catch (error) {
+                reject(error);
+            }
         })
     }
 

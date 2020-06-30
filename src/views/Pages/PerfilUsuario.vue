@@ -162,6 +162,9 @@ div > p {
 .hidden {
   display: none !important;
 }
+.imgBandeira{
+  width: 2rem!important;
+}
 </style>
 <template>
   <ContentWrapper v-if="canRender">
@@ -268,7 +271,7 @@ div > p {
                           <div class="col-md-12 row" v-if="metodoPag">
                             <img
                               :src="getBandeiraImage().image"
-                              class="col-md-2 pr-0 pl-0 mr-0 ml-0"
+                              class="col-md-2 pr-0 pl-0 mr-0 ml-0 imgBandeira"
                             />
                             <span
                               class="col-md-9 pr-0 pl-0 mr-0 ml-1 mt-2 fontBandeiraNome"
@@ -930,24 +933,6 @@ export default {
           console.log("Errros", erros);
         });
     },
-    salvarMensagem() {
-      API_NOTIFICATION.ShowLoading();
-      API_usuario.SaveMensagem(this.usuario)
-        .then(res => {
-          API_NOTIFICATION.showNotificationW(
-            "Pronto!",
-            "Mensagem Salva com sucesso!",
-            "success"
-          );
-          var self = this;
-          setTimeout(() => {
-            self.$router.push("/marketing/usuario");
-          }, 1500);
-        })
-        .catch(error => {
-          console.log("Erro ao salvar a mensagem", error);
-        });
-    },
     checkIfLogged() {
       API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
@@ -1320,15 +1305,12 @@ export default {
                 .then(resUpdate => {
                   API_NOTIFICATION.showNotificationW(
                     "Pronto!",
-                    "Plano Registrado Com Sucesso. Esperamos que você venda muito! Conte conosco sempre!",
+                    "Plano Registrado Com Sucesso! <br> Esperamos que você venda muito! Conte conosco sempre! <br> Faça o Login Novamente.",
                     "success"
                   );
                   var self = this;
                   setTimeout(() => {
-                    self.checkIfLogged();
-                    this.scrollMeTo("changeCard", true);
-                    document.body.scrollTop = 0; // For Safari
-                    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+                   UTILIS_API.Sair();
                   }, 3000);
                 })
                 .catch(error => {
