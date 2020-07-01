@@ -9,9 +9,9 @@ export default Object.freeze({
 
 
   /* PLATAFORMAS */
-  WEBSITEAPI: 'http://localhost:3000/',
+  //WEBSITEAPI: 'http://localhost:3000/',
   //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
-  //WEBSITEAPI: 'https://api.thuor.com:7443/',
+  WEBSITEAPI: 'https://api.thuor.com:7443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
   API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',

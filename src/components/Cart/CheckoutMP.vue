@@ -374,6 +374,10 @@ h1 {
 .textPrecoFree {
   color: green;
 }
+
+#jivo_chat_widget{
+  display: none!important;
+}
 @media only screen and (max-width: 992px) {
   #btnTop {
     display: block !important;
