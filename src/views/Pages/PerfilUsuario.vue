@@ -247,7 +247,7 @@ div > p {
                           <div class="plan-price card-body">
                             <div class="text-lg ">
                               <sup>
-                                <small class="simbolPrice">R$</small>
+                                <small class="simbolPrice"> $</small>
                               </sup>
                               <strong>
                                 <span class="priceFont">{{getPlanoEscolhidoPrice}}</span>
@@ -378,13 +378,13 @@ div > p {
                           :key="id"
                         >
                           <span class="col-md-4">{{data | formatDate}}</span>
-                          <span class="col-md-4">R$ {{valor_comissao | formatPrice}}</span>
+                          <span class="col-md-4"> $ {{valor_comissao }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                            R$ {{totalPago | formatPrice}}
+                             $ {{totalPago }}
                           </span>
                         </div>
                       </div>
@@ -417,13 +417,13 @@ div > p {
                           <span class="col-md-4">{{data | formatDate}}</span>
                           <span
                             class="col-md-4"
-                          >R$ {{json_pagamento.transaction_amount | formatPrice}}</span>
+                          > $ {{json_pagamento.transaction_amount }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                            R$ {{totalPagoMensalidades | formatPrice}}
+                             $ {{totalPagoMensalidades }}
                           </span>
                         </div>
                       </div>
@@ -461,10 +461,10 @@ div > p {
                       <div class="plan-price card-body">
                         <div class="text-lg">
                           <sup>
-                            <small class="simbolPrice">R$</small>
+                            <small class="simbolPrice"> $</small>
                           </sup>
                           <strong>
-                            <span class="priceFont">{{json.price || '0.00' | formatPrice}}</span>
+                            <span class="priceFont">{{json.price || '0.00' }}</span>
                             <span class="month">/mês</span>
                           </strong>
                           <!-- span.plan-period /mo-->
@@ -741,7 +741,7 @@ div > p {
                   <div class="row col-md-12">
                     <small
                       class="text-justify"
-                    >A atualização do cartão de crédito não faz upgrade de assinatura. O Thuor emitirá uma autorização temporária de R$ 1,50 no seu cartão apenas para confirmar a existência do mesmo. Trata-se apenas de uma autorização, e NÃO uma cobrança. Ao cadastrar um cartão, você autoriza o Thuor salvar suas informações para realizar os seus pagamentos.</small>
+                    >A atualização do cartão de crédito não faz upgrade de assinatura. O Thuor emitirá uma autorização temporária de  $ 1,50 no seu cartão apenas para confirmar a existência do mesmo. Trata-se apenas de uma autorização, e NÃO uma cobrança. Ao cadastrar um cartão, você autoriza o Thuor salvar suas informações para realizar os seus pagamentos.</small>
                   </div>
                   <div class="row col-md-12 mt-2">
                     <strong>
