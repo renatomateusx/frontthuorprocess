@@ -41,7 +41,7 @@
               v-on:click="downloadBoleto()"
             >Download do Boleto</button>
           </div>
-          <div class="col-xl-12 divBarCode mt-2" @click.stop.prevent="copyToClip(getBarCode())">
+          <div class="col-xl-12 divBarCode mt-2" @click.stop.prevent="copyToClip(getBarCode())" v-show="DadosCheckout.gateway > 1">
             <h4
               class="mt-2 mb-2 text-justify textInformativo"
             >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>

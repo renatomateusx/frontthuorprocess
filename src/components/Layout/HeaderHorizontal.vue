@@ -65,7 +65,7 @@
             menuClass="animated flipInX"
             right
           >
-            <template slot="button-content">
+            <template slot="button-content hidden">
               <em class="icon-bell"></em>
               <span class="badge badge-danger">11</span>
             </template>
@@ -109,7 +109,7 @@
                   </div>
                 </div>
                 <!-- last list item-->
-                <div class="list-group-item list-group-item-action">
+                <div class="list-group-item list-group-item-action hidden">
                   <span class="d-flex align-items-center">
                     <span class="text-sm">More notifications</span>
                     <span class="badge badge-danger ml-auto">14</span>

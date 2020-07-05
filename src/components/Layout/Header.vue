@@ -1,3 +1,8 @@
+<style scoped>
+.hidden{
+  display:none!important;
+}
+</style>
 <template>
   <header class="topnavbar-wrapper">
     <!-- START Top Navbar-->
@@ -79,7 +84,7 @@
           <ToggleFullscreen tag="A" class="nav-link" href="#" />
         </li>
         <!-- START Alert menu-->
-        <b-nav-item-dropdown class="dropdown-list" no-caret menuClass="animated flipInX" right>
+        <b-nav-item-dropdown class="dropdown-list hidden" no-caret menuClass="animated " right>
           <template slot="button-content">
             <em class="icon-bell"></em>
             <span class="badge badge-danger">11</span>
@@ -112,7 +117,7 @@
                 </div>
               </div>
               <!-- list item-->
-              <div class="list-group-item list-group-item-action">
+              <div class="list-group-item list-group-item-action hidden">
                 <div class="media">
                   <div class="align-self-start mr-2">
                     <em class="fas fa-tasks fa-2x text-success"></em>
@@ -124,7 +129,7 @@
                 </div>
               </div>
               <!-- last list item-->
-              <div class="list-group-item list-group-item-action">
+              <div class="list-group-item list-group-item-action hidden">
                 <span class="d-flex align-items-center">
                   <span class="text-sm">More notifications</span>
                   <span class="badge badge-danger ml-auto">14</span>

@@ -53,7 +53,7 @@ div > p {
   list-style: none;
 }
 .priceFont {
-  font-size: 50px;
+  font-size: 25px;
   font-weight: 900;
   color: #23b7e5;
   font-family: Rubik, sans-serif;
@@ -245,7 +245,7 @@ div > p {
                           <span class="col-md-12 planoEscolhido">PLANO ATUAL</span>
                           <span class="col-md-12 bold-md">{{getPlanoEscolhidoNome}}</span>
                           <div class="plan-price card-body">
-                            <div class="text-lg">
+                            <div class="text-lg ">
                               <sup>
                                 <small class="simbolPrice">R$</small>
                               </sup>
@@ -445,7 +445,7 @@ div > p {
                 <div class="row">
                   <!-- PLAN-->
                   <div
-                    class="col-lg-4 mt-3 card card-default mr-0 selectedPlan"
+                    class="col-lg-3 mt-3 card card-default mr-0 selectedPlan"
                     :class="usuario.plano == id ? 'Selecionado' : 'DeSelecionado'"
                     :id="json.nome"
                     v-for="{id, json} in planArray"
@@ -464,18 +464,19 @@ div > p {
                             <small class="simbolPrice">R$</small>
                           </sup>
                           <strong>
-                            <span class="priceFont">{{json.price}}</span>
+                            <span class="priceFont">{{json.price || '0.00' | formatPrice}}</span>
                             <span class="month">/mês</span>
                           </strong>
                           <!-- span.plan-period /mo-->
                         </div>
-                        <div class="text-center my-1">
+                        <div class="text-center my-1" >
                           <div class="text-bold text-justify">
                             <strong class="priceFontAddOn">+{{json.addon}}</strong>
                             <span class="porpedido ml-1">por pedido pago</span>
                           </div>
                         </div>
-                        <strong class="cobradoPor">* Cobrado por semana *</strong>
+                        <strong v-if="json.id > 1" class="cobradoPor">* Cobrado por semana *</strong>
+                        
                       </div>
                       <ul class="plan-features text-justify pl-0">
                         <li class="checkInformation" v-for="{title} in json.benefits" :key="title">
