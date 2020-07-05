@@ -261,12 +261,17 @@ div > p {
                                 <span class="porpedido ml-1">por pedido pago</span>
                               </div>
                             </div>
-                            <strong class="cobradoPor col-md-12">* Cobrado por semana *</strong>
+                            <strong v-if="getPlanoEscolhidoAddon > 1" class="cobradoPor col-md-12">* Cobrado por semana *</strong>
                           </div>
-                          <div class="col-md-12 row">
+                          <div class="col-xl-12 row" v-if="getPlanoEscolhidoAddon > 1">
                             <strong
                               class="col-lg-12 ml-4"
                             >Próx. Pag.: {{getProximoPagamento(getDadosUsuario().proximo_pagamento)}}</strong>
+                          </div>
+                           <div class="col-xl-12 row">
+                            <strong
+                              class="col-lg-12 ml-4" v-if="getDadosUsuario().proximo_pagamento_mensalidade"
+                            >Próx. Pag. Mensalidade: {{getProximoPagamento(getDadosUsuario().proximo_pagamento_mensalidade)}}</strong>
                           </div>
                           <div class="col-md-12 row" v-if="metodoPag">
                             <img
@@ -378,13 +383,13 @@ div > p {
                           :key="id"
                         >
                           <span class="col-md-4">{{data | formatDate}}</span>
-                          <span class="col-md-4"> $ {{valor_comissao }}</span>
+                          <span class="col-md-4"> $ {{valor_comissao | formatPriceDolar }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                             $ {{totalPago }}
+                             $ {{totalPago | formatPriceDolar}}
                           </span>
                         </div>
                       </div>
@@ -417,13 +422,13 @@ div > p {
                           <span class="col-md-4">{{data | formatDate}}</span>
                           <span
                             class="col-md-4"
-                          > $ {{json_pagamento.transaction_amount }}</span>
+                          > $ {{json_pagamento.transaction_amount | formatPriceDolar }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                             $ {{totalPagoMensalidades }}
+                             $ {{totalPagoMensalidades | formatPriceDolar }}
                           </span>
                         </div>
                       </div>
@@ -810,6 +815,13 @@ Vue.filter("formatPrice", function(value) {
   if (value) {
     let val = (value / 1).toFixed(2).replace(".", ",");
     return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+});
+
+Vue.filter("formatPriceDolar", function(value) {
+  if (value) {
+    let val = (value / 1).toFixed(2).replace(",", ".");
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 });
 
