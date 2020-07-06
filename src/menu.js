@@ -17,13 +17,14 @@ const Menu = [
     },
     {
         name: 'Produtos',
-        path: 'produtos',
+        /*path: 'produtos',*/
+        path: '/produtos/todos',
         icon: 'icon-tag',
-        submenu: [{
+        /*submenu: [{
             name: 'Ver Todos',
             translate: 'sidebar.nav.SUBMENU',
             path: '/produtos/todos'
-        }]
+        }]*/
     },
     {
         name: 'Pedidos',
