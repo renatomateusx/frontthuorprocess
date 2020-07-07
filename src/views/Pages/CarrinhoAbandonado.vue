@@ -2,6 +2,15 @@
 .card-flat {
   margin-top: 80px !important;
 }
+.hidden {
+  display: none !important;
+}
+.iconP {
+  cursor: pointer !important;
+}
+.alertPadding {
+  padding: 0 !important;
+}
 .shopifysvg {
   width: 20px !important;
   height: 20px !important;
@@ -159,17 +168,23 @@ option {
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-donate">
+      <span class="fas fa-cart-arrow-down">
         <span class="ml-2"></span>
-      </span>Pedidos
+      </span>Carrinho Abandonado
     </div>
     <small>
-      Todos os pedidos processados pelo Thuor estão aqui.
-      <br />Nós avisamos sempre para a loja, onde você poderá processar o pedido. Solicitando, se for o caso, do seu fornecedor.
+      Todos os carrinhos abandonados processados pelo Thuor ou por terceiros estão aqui.
+      <br />Se quiser importar mais carrinhos abandonados, faça upload do arquivo por aqui.
     </small>
     <p></p>
-
-    <div class="wrapper col-xl-12">
+    <button type="button" v-on:click="uploadFileCarrinhoAbandonado()" class="btn btn-primary btn-lg">
+      <span class="fa fa-upload"></span> Fazer Upload
+    </button>
+    <input type="file" id="fileUpload" accept=".csv, .txt" class="hidden" />
+    <button type="button" v-on:click="baixarArquivoExemplo()" class="ml-2 btn btn-warning btn-lg">
+      <span class="fa fa-eye"></span> Ver de Arquivo Exemplo
+    </button>
+    <div class="wrapper col-xl-12 mt-2">
       <label
         class="float-left mr-2 col-form-label labelForm"
         for="inlineFormInputGroup"
@@ -181,40 +196,44 @@ option {
       >
         <option v-for="pageSize in pageSizeMenu" :value="pageSize">{{pageSize}}</option>
       </select>
-      <form id="search" class="form-group pull-right float-right">
-        <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
+      <form id="search" class="form-group pull-right float-right col-xl-6 row">
+        <input
+          name="query"
+          placeholder="Pesquise aqui"
+          class="form-control col-xl-11"
+          v-model="searchQuery"
+        />
+        <span
+          class="fa-2x fa fa-trash iconP col-xl-1 mt-1"
+          title="Limpar Campo de Pesquisa"
+          v-on:click="()=>{ searchQuery = '';}"
+        ></span>
       </form>
       <div id="grid-template">
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th class="metodo">
-                <strong>
-                  <b></b>
-                </strong>
-                <span class="arrow"></span>
-              </th>
               <th style="width: 160px!important;">
                 <strong class="col-md-4 pedido">
-                  <b>Pedido</b>
+                  <b>Criado em</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               <th class="data pl-0">
                 <strong class>
-                  <b>Data</b>
+                  <b>Valor</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               <th class="data pl-0" style="min-width: 80px!important; width: 80px!important;">
                 <strong class>
-                  <b>Valor</b>
+                  <b>Produto(s)</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               <th class="status pl-2">
                 <strong class="col-md-2">
-                  <b>Status</b>
+                  <b>Cliente</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
@@ -231,15 +250,11 @@ option {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago, bandeira, order_number} in dataPerPage"
+                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago, bandeira} in dataPerPage"
               >
-                <td class="metodo">
-                  <img :src="getImagePaymentID(metodo,bandeira)" class="imgMethodo" />
-                </td>
                 <td class="pedido" style="width: 120px!important;">
                   <router-link :to="{path: '/pedidos/detalhe/' + getCripto(id, order_id)}">
                     <p class="col-md-12 numeroPedido mb-0">{{order_id}}</p>
-                    <p class="col-md-12 numeroPedido mb-0">#{{order_number}}</p>
                   </router-link>
                   <p class="col-md-12 text-left nomeComprador grey mb-0">{{nome_comprador}}</p>
                 </td>
@@ -320,7 +335,7 @@ import UTILIS_API from "../../api/utilisAPI";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import constantes_mensagens from "../../api/constantes_mensagens";
-import constantes from '../../api/constantes';
+import API_CARRINHO_ABANDONADO from "../../api/carrinhoAbandonadoAPI";
 Vue.component("v-select", vSelect);
 
 TimeAgo.addLocale(pt);
@@ -500,11 +515,10 @@ export default {
                         ),
                         json_front_end_user_data: obj.json_front_end_user_data,
                         json_gw_response: obj.json_gw_response,
-                        bandeira: Bandeira,
-                        order_number: obj.json_front_end_user_data.dadosLoja.plataforma == constantes.PLATAFORMA_SHOPIFY ? obj.json_shopify_response.order.order_number : ''
+                        bandeira: Bandeira
                       });
                     }
-                    console.log(obj.json_shopify_response);
+                    //console.log(Date.now(), Date.parse(LData));
                   });
                 })
                 .catch(error => {
@@ -567,6 +581,7 @@ export default {
       }
     },
     getImagePaymentID(paymentForm, bandeira) {
+      console.log(paymentForm);
       if (paymentForm == "BOLETO" || paymentForm == "bolbradesco") {
         return "img/barcode.png";
       } else {
@@ -716,6 +731,59 @@ export default {
           return "pendente";
         }
       }
+    },
+    async uploadFileCarrinhoAbandonado() {
+      var arquivoInvalido = false;
+      const LFile = document.getElementById("fileUpload");
+      LFile.addEventListener("change", () => {
+        API_NOTIFICATION.ShowLoading();
+        var file = LFile.files[0];
+        var reader = new FileReader();
+        reader.onload = async function(progressEvent) {
+          // By lines
+          var lines = this.result.split(/\r\n|\n/);
+          lines.forEach(async (obj, i) => {
+            if (i > 0) {
+              const Linhas = obj.split(",");
+              if (Linhas.length >= 5) {
+                var carrinho = {
+                  valor_produto: Linhas[0],
+                  nome_cliente: Linhas[1],
+                  email_cliente: Linhas[2],
+                  telefone_cliente: Linhas[3],
+                  token_push_cliente: Linhas[4],
+                  produtos: Linhas[5],
+                  produtos_skus: Linhas[6],
+                  link_compra: Linhas[7],
+                  criado_em: moment().format(),
+                  modificado_em: null,
+                  status: 0,
+                  campanha_enviar = 1,
+                  
+                };
+                const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(carrinho);
+              }
+            }
+          });
+
+          API_NOTIFICATION.showNotificationW(
+            "Pronto!",
+            "Arquivo Importado",
+            "success"
+          );
+        };
+        reader.readAsText(file);
+      });
+      if (LFile) {
+        LFile.click();
+      }
+    },
+    baixarArquivoExemplo() {
+      API_NOTIFICATION.ShowLoading();
+      const URL =
+        "https://docs.google.com/spreadsheets/d/1AOp85og6fSY26MvqZcLJ0w0MO8kf4RszY4rO_kl6ERo/edit?usp=sharing";
+      UTILIS_API.OpenWindow(URL);
+      API_NOTIFICATION.HideLoading();
     }
   }
 };

@@ -162,8 +162,8 @@ div > p {
 .hidden {
   display: none !important;
 }
-.imgBandeira{
-  width: 2rem!important;
+.imgBandeira {
+  width: 2rem !important;
 }
 </style>
 <template>
@@ -245,9 +245,9 @@ div > p {
                           <span class="col-md-12 planoEscolhido">PLANO ATUAL</span>
                           <span class="col-md-12 bold-md">{{getPlanoEscolhidoNome}}</span>
                           <div class="plan-price card-body">
-                            <div class="text-lg ">
+                            <div class="text-lg">
                               <sup>
-                                <small class="simbolPrice"> $</small>
+                                <small class="simbolPrice">$</small>
                               </sup>
                               <strong>
                                 <span class="priceFont">{{getPlanoEscolhidoPrice}}</span>
@@ -261,16 +261,20 @@ div > p {
                                 <span class="porpedido ml-1">por pedido pago</span>
                               </div>
                             </div>
-                            <strong v-if="getPlanoEscolhidoAddon > 1" class="cobradoPor col-md-12">* Cobrado por semana *</strong>
+                            <strong
+                              v-if="getPlanoEscolhidoAddon > 1"
+                              class="cobradoPor col-md-12"
+                            >* Cobrado por semana *</strong>
                           </div>
                           <div class="col-xl-12 row" v-if="getPlanoEscolhidoAddon > 1">
                             <strong
                               class="col-lg-12 ml-4"
                             >Próx. Pag.: {{getProximoPagamento(getDadosUsuario().proximo_pagamento)}}</strong>
                           </div>
-                           <div class="col-xl-12 row">
+                          <div class="col-xl-12 row">
                             <strong
-                              class="col-lg-12 ml-4" v-if="getDadosUsuario().proximo_pagamento_mensalidade"
+                              class="col-lg-12 ml-4"
+                              v-if="getDadosUsuario().proximo_pagamento_mensalidade"
                             >Próx. Pag. Mensalidade: {{getProximoPagamento(getDadosUsuario().proximo_pagamento_mensalidade)}}</strong>
                           </div>
                           <div class="col-md-12 row" v-if="metodoPag">
@@ -383,13 +387,13 @@ div > p {
                           :key="id"
                         >
                           <span class="col-md-4">{{data | formatDate}}</span>
-                          <span class="col-md-4"> $ {{valor_comissao | formatPriceDolar }}</span>
+                          <span class="col-md-4">$ {{valor_comissao | formatPriceDolar }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                             $ {{totalPago | formatPriceDolar}}
+                            $ {{totalPago | formatPriceDolar}}
                           </span>
                         </div>
                       </div>
@@ -422,13 +426,13 @@ div > p {
                           <span class="col-md-4">{{data | formatDate}}</span>
                           <span
                             class="col-md-4"
-                          > $ {{json_pagamento.transaction_amount | formatPriceDolar }}</span>
+                          >$ {{json_pagamento.transaction_amount | formatPriceDolar }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                             $ {{totalPagoMensalidades | formatPriceDolar }}
+                            $ {{totalPagoMensalidades | formatPriceDolar }}
                           </span>
                         </div>
                       </div>
@@ -466,7 +470,7 @@ div > p {
                       <div class="plan-price card-body">
                         <div class="text-lg">
                           <sup>
-                            <small class="simbolPrice"> $</small>
+                            <small class="simbolPrice">$</small>
                           </sup>
                           <strong>
                             <span class="priceFont">{{json.price || '0.00' }}</span>
@@ -474,14 +478,13 @@ div > p {
                           </strong>
                           <!-- span.plan-period /mo-->
                         </div>
-                        <div class="text-center my-1" >
+                        <div class="text-center my-1">
                           <div class="text-bold text-justify">
                             <strong class="priceFontAddOn">+{{json.addon}}</strong>
                             <span class="porpedido ml-1">por pedido pago</span>
                           </div>
                         </div>
                         <strong v-if="json.id > 1" class="cobradoPor">* Cobrado por semana *</strong>
-                        
                       </div>
                       <ul class="plan-features text-justify pl-0">
                         <li class="checkInformation" v-for="{title} in json.benefits" :key="title">
@@ -746,7 +749,7 @@ div > p {
                   <div class="row col-md-12">
                     <small
                       class="text-justify"
-                    >A atualização do cartão de crédito não faz upgrade de assinatura. O Thuor emitirá uma autorização temporária de  $ 1,50 no seu cartão apenas para confirmar a existência do mesmo. Trata-se apenas de uma autorização, e NÃO uma cobrança. Ao cadastrar um cartão, você autoriza o Thuor salvar suas informações para realizar os seus pagamentos.</small>
+                    >A atualização do cartão de crédito não faz upgrade de assinatura. O Thuor emitirá uma autorização temporária de $ 1,50 no seu cartão apenas para confirmar a existência do mesmo. Trata-se apenas de uma autorização, e NÃO uma cobrança. Ao cadastrar um cartão, você autoriza o Thuor salvar suas informações para realizar os seus pagamentos.</small>
                   </div>
                   <div class="row col-md-12 mt-2">
                     <strong>
@@ -1024,77 +1027,89 @@ export default {
     },
 
     async escolherPlano(plano, nome) {
-      this.selectedPlan = plano;
-      const ArrayP = this.planArray;
-      const obj = await API_PLANOS.GetPlanosByID(plano);
-      const LDiv = document.getElementById(obj.json.nome);
-      const LPreco = parseFloat(obj.json.price);
-      this.usuario.plano = plano;
-      var LMensagem = "";
-      var LProximoPagamentoMensal = moment().format();
-      if (LPreco > 0) {
-        LMensagem =
-          "Ao Escolher Este Plano, o Pagamento Mensal se dá de forma Pré-Paga e deverá ser cobrado até o final do dia. Deseja continuar?";
-      } else {
-        LMensagem = "Tem certeza de que deseja alterar seu plano? ";
-        LProximoPagamentoMensal = null;
-      }
-      if (this.usuario.json_pagamento) {
-        if (this.usuario.json_pagamento.plano != this.usuario.plano) {
-          var self = this;
-          API_NOTIFICATION.showConfirmDialog(
-            "Ei!",
-            LMensagem,
-            "question",
-            () => {
-              this.usuario.json_pagamento.plano = self.usuario.plano;
-              this.usuario.proximo_pagamento_mensalidade = LProximoPagamentoMensal;
-              this.usuario.json_pagamento.plano_escolhido = self.usuario.plano;
-              if (
-                this.usuario.proximo_pagamento == null ||
-                this.usuario.proximo_pagamento == undefined
-              ) {
-                var LData = moment()
-                  .add({ days: 7 })
-                  .format();
-                this.usuario.proximo_pagamento = LData;
-                // console.log(this.usuario.proximo_pagamento);
-              }
-              API_LOGIN.UpdateUser(
-                this.usuario.id,
-                this.usuario.plano,
-                this.usuario.json_pagamento,
-                this.usuario.proximo_pagamento,
-                this.usuario.proximo_pagamento_mensalidade
-              )
-                .then(async resUpdated => {
-                  API_NOTIFICATION.showNotificationW(
-                    "Pronto!",
-                    "Dados Atualizados Com Sucesso",
-                    "success"
-                  );
-                  var self = this;
-                  setTimeout(() => {
-                    self.checkIfLogged();
-                    this.scrollMeTo("changePlan", true);
-                    document.body.scrollTop = 0; // For Safari
-                    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-                  }, 3000);
-                })
-                .catch(error => {
-                  console.log(
-                    "Erro ao tentar atualizar os dados do usuário. ",
-                    error
-                  );
-                  API_NOTIFICATION.showNotificationW(
-                    "Oops!",
-                    "Ocorreu um Erro ao Tentar Atualizar os Dados do Usuário",
-                    "error"
-                  );
-                });
-            }
-          );
+      if (this.usuario.plano < plano) {
+        this.selectedPlan = plano;
+        const ArrayP = this.planArray;
+        const obj = await API_PLANOS.GetPlanosByID(plano);
+        const LDiv = document.getElementById(obj.json.nome);
+        const LPreco = parseFloat(obj.json.price);
+        this.usuario.plano = plano;
+        var LMensagem = "";
+        var LProximoPagamentoMensal = moment().format();
+        if (LPreco > 0) {
+          LMensagem =
+            "Ao Escolher Este Plano, o Pagamento Mensal se dá de forma Pré-Paga e deverá ser cobrado até o final do dia. Deseja continuar?";
+        } else {
+          LMensagem = "Tem certeza de que deseja alterar seu plano? ";
+          LProximoPagamentoMensal = null;
         }
+        if (this.usuario.json_pagamento) {
+          if (this.usuario.json_pagamento.plano != this.usuario.plano) {
+            var self = this;
+            API_NOTIFICATION.showConfirmDialog(
+              "Ei!",
+              LMensagem,
+              "question",
+              () => {
+                this.usuario.json_pagamento.plano = self.usuario.plano;
+                this.usuario.proximo_pagamento_mensalidade = LProximoPagamentoMensal;
+                this.usuario.json_pagamento.plano_escolhido =
+                  self.usuario.plano;
+                if (
+                  this.usuario.proximo_pagamento == null ||
+                  this.usuario.proximo_pagamento == undefined
+                ) {
+                  var LData = moment()
+                    .add({ days: 7 })
+                    .format();
+                  this.usuario.proximo_pagamento = LData;
+                  // console.log(this.usuario.proximo_pagamento);
+                }
+                API_LOGIN.UpdateUser(
+                  this.usuario.id,
+                  this.usuario.plano,
+                  this.usuario.json_pagamento,
+                  this.usuario.proximo_pagamento,
+                  this.usuario.proximo_pagamento_mensalidade
+                )
+                  .then(async resUpdated => {
+                    API_NOTIFICATION.showNotificationW(
+                      "Pronto!",
+                      "Dados Atualizados Com Sucesso.<br> Efetue o Login Novamente.",
+                      "success"
+                    );
+                    setTimeout(() => {
+                      UTILIS_API.Sair();
+                    }, 2000);
+                    var self = this;
+                    setTimeout(() => {
+                      self.checkIfLogged();
+                      this.scrollMeTo("changePlan", true);
+                      document.body.scrollTop = 0; // For Safari
+                      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+                    }, 3000);
+                  })
+                  .catch(error => {
+                    console.log(
+                      "Erro ao tentar atualizar os dados do usuário. ",
+                      error
+                    );
+                    API_NOTIFICATION.showNotificationW(
+                      "Oops!",
+                      "Ocorreu um Erro ao Tentar Atualizar os Dados do Usuário",
+                      "error"
+                    );
+                  });
+              }
+            );
+          }
+        }
+      } else {
+        API_NOTIFICATION.showNotificationW(
+          "Oops!",
+          "Entre em contato conosco para alteração do plano. {meajuda@thuor.com}",
+          "warning"
+        );
       }
     },
     getClass(id, nome) {
@@ -1322,7 +1337,7 @@ export default {
                   );
                   var self = this;
                   setTimeout(() => {
-                   UTILIS_API.Sair();
+                    UTILIS_API.Sair();
                   }, 3000);
                 })
                 .catch(error => {
