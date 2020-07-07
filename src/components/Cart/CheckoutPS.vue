@@ -591,6 +591,7 @@ h1 {
                       type="email"
                       v-model.lazy="email"
                       id="email_user"
+                      ref="email_user"
                       placeholder="Digite seu E-mail"
                       required
                     />
@@ -1132,6 +1133,7 @@ import UpSellCard from "../../components/Cart/UpSellCard";
 import API_CLIENTES from "../../api/clientesAPI";
 import CupomCard from "../../components/Cart/CupomCard";
 import creditCardType from "credit-card-type";
+import API_REVIEWS from '../../api/reviewsAPI';
 Vue.use(LoadScript);
 
 Vue.use(VeeValidate, {
@@ -2027,7 +2029,9 @@ export default {
         UTILIS_API.SetDadosCriptoSession(LCripto);
         API_CHECKOUT_PS.DoPayPagSeguro(LCripto)
           .then(retornoPaymentPagSeguro => {
+            console.log(retornoPaymentPagSeguro)
             if (
+              
               retornoPaymentPagSeguro.data.status != undefined &&
               (retornoPaymentPagSeguro.data.status.toUpperCase() ==
                 "DECLINED" ||
@@ -2051,6 +2055,13 @@ export default {
           })
           .catch(error => {
             console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+            API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Pagamento Rejeitado. <br>"+
+              "Verifique se os Dados do Cartão estão corretos.",
+              "error",
+              "error"
+            );
           });
       }
     },

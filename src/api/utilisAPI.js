@@ -238,23 +238,7 @@ var UTILIS_API = {
             }
         }
     },
-    GetTrackCode(code) {
-        return new Promise(async (resolve, reject) => {
-            let LBody = {
-                code: code
-            }
-            axios
-                .post(constantes.WEBSITEAPI + constantes.PATH_GET_TRACKING_CODE, LBody)
-                .then((response) => {
-                    //console.log("Response", response);
-                    resolve(response);
-                })
-                .catch((error) => {
-                    console.log("Reject", error);
-                    reject(error);
-                });
-        });
-    },
+   
     Sair() {
         sessionStorage.clear();
         localStorage.clear();
@@ -677,8 +661,18 @@ var UTILIS_API = {
                 const LUser = await this.GetUserSession();
                 if (LUser != null && (LUser.user.json_pagamento != undefined || LUser.user.json_pagamento != null) && (LUser.user.proximo_pagamento != undefined || LUser.user.proximo_pagamento != null)) {
                     LReturn = true;
-                } else {
+                }
+                else{
+                    LReturn = false;
                     API_NOTIFICATION.showNotificationW('Oops!', "Para Configurar o Checkout, você precisa informar as configurações de pagamento. <br> Clique no Ícone <span class='icon-user'></span>, vá até 'Meu Perfil' e Configure.", 'warning');
+                }
+
+                if(LUser.user.plano > 1){
+                    LReturn = true;                
+                }
+                else{
+                    LReturn = false;
+                    API_NOTIFICATION.showNotificationW('Oops!', "Para Configurar o Checkout você precisa escolher o plano a partir do 'Pro 1'. <br> Clique no Ícone <span class='icon-user'></span>, vá até 'Meu Perfil' e Configure.", 'warning');
                 }
             }
             catch (error) {
@@ -702,6 +696,66 @@ var UTILIS_API = {
                 reject(error);
             }
         })
+    },
+    OpenWindow(url, target){
+        var ltarget = "_blank";
+        if(target){
+            ltarget = target;
+        }
+        window.open(url, ltarget);
+    },
+    GetStatusColor(STATUS){
+        if(STATUS == "NÃO PAGO"){
+            return "danger";
+        }
+        if(STATUS == "ATRASADOS"){
+            return "danger";
+        }
+        if(STATUS == "RET. AO REMETENTE"){
+            return "danger";
+        }
+        if(STATUS == "FALHA NA ENTREGA"){
+            return "danger";
+        }
+
+        if(STATUS == "EM TRÂNSITO"){
+            return "success";
+        }
+        if(STATUS == "SAIU PARA ENTREGA"){
+            return "success";
+        }
+        if(STATUS == "ENTREGUE"){
+            return "success";
+        }
+        if(STATUS == "DELIVERED"){
+            return "success";
+        }
+
+        if(STATUS == "EXCLUÍDOS"){
+            return "info";
+        }
+        if(STATUS == "AGUARDANDO ENVIO"){
+            return "info";
+        }
+
+        if(STATUS == "SEM UPDATE"){
+            return "warning";
+        }
+        if(STATUS == "INVÁLIDO"){
+            return "warning";
+        }
+        if(STATUS == "PENDENTE"){
+            return "warning";
+        }
+        if(STATUS == "PENDING"){
+            return "warning";
+        }
+        if(STATUS == "TRIBUTADOS"){
+            return "warning";
+        }
+        if(STATUS == "SEM DEFINIÇÃO"){
+            return "warning";
+        }
     }
 
 

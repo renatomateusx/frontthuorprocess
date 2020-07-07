@@ -591,6 +591,7 @@ h1 {
                       type="email"
                       v-model.lazy="email"
                       id="email_user"
+                      ref="email_user"
                       placeholder="Digite seu E-mail"
                       required
                     />

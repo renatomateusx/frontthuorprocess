@@ -223,7 +223,6 @@ Vue.use(VeeValidate, {
 export default {
   async created() {
     const LDadosUser = await UTILIS_API.GetUserSession();
-    console.log(LDadosUser);
     if (LDadosUser.user && LDadosUser.user.json_pagamento == undefined) {
       API_NOTIFICATION.showNotificationW(
         "Oops!",

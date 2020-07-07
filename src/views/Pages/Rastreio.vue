@@ -156,6 +156,8 @@ import moment from "moment";
 import dateFormat from "dateformat";
 import API_NOTIFICATION from "../../api/notification";
 import UTILIS_API from "../../api/utilisAPI";
+import API_RASTREIO from '../../api/rastreioAPI';
+
 Vue.filter("formatDate", function(value) {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY hh:mm");
@@ -359,7 +361,7 @@ export default {
     initializeTrack() {
       API_NOTIFICATION.ShowLoading();
       if (this.trackingCode.length > 1) {
-        UTILIS_API.GetTrackCode(this.trackingCode)
+        API_RASTREIO.GetTrackCode(this.trackingCode)
           .then(resTrackingCode => {
             if (resTrackingCode.data.length > 0) {
               this.dataTracker = resTrackingCode.data[0];

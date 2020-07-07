@@ -255,7 +255,7 @@ th.active .arrow {
         </div>
       </div>
       <div id="page-navigation" class="col-xl-12 mt-3">
-        <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Voltar</button>
+        <button class="float-left btn btn-primary col-md-2" @click="movePages(-1)">Anterior</button>
         <p
           class="float-left text-center auto col-md-8 mt-1"
         >{{startRow / rowsPerPage + 1}} de {{Math.ceil(filteredData.length / rowsPerPage)}}</p>

@@ -35,20 +35,30 @@
             >Somente quando recebermos a confirmação, em até 72h após o pagamento, seguiremos com o envio das suas compras. O prazo de entrega passa a ser contado somente após a confirmação do pagamento.</p>
           </div>
           <up-sell-card @update="getDadosCompra()" :noCheckout="2" class="mb-3"></up-sell-card>
-          <div class="col-xl-12">
-            <button
-              class="btn btn-success btnDownload pull-right float-right"
-              v-on:click="downloadBoleto()"
-            >Download do Boleto</button>
-          </div>
-          <div class="col-xl-12 divBarCode mt-2" @click.stop.prevent="copyToClip(getBarCode())">
+
+          <div
+            class="col-xl-12 divBarCode mt-2"
+            @click.stop.prevent="copyToClip(getBarCode())"
+            v-show="DadosCheckout.gateway > 1"
+          >
             <h4
               class="mt-2 mb-2 text-justify textInformativo"
             >Para facilitar, você pode clicar em qualquer lugar deste quadrado para copiar o código de barras:</h4>
             <h5 class="text-center">{{getBarCode()}}</h5>
           </div>
-          <div class="col-xl-12 mt-2">
-            <button class="btn btn-success btnDownload" v-on:click="voltarLoja()">Voltar para a loja</button>
+          <div class="col-12 row ">
+            <div class="col-sm-6 col-md-6 mt-2 ">
+              <button
+                class="btn btn-success btnDownload"
+                v-on:click="voltarLoja()"
+              >Voltar para a loja</button>
+            </div>
+            <div class="col-sm-6 col-md-6 mt-2">
+              <button
+                class="btn btn-success btnDownload pull-right float-right"
+                v-on:click="downloadBoleto()"
+              >Download do Boleto</button>
+            </div>
           </div>
         </div>
       </div>
@@ -84,7 +94,7 @@ export default {
     });
     API_GOOGLE_PIXEL.InsertScript().then(resG => {
       API_GOOGLE_PIXEL.TriggerGoogleEvent("purchase", "boleto");
-    });    
+    });
   },
   components: {
     UpSellCard
@@ -108,6 +118,7 @@ export default {
         UTILIS_API.GetDadosClientesSession().then(async resCliente => {
           this.dadosCliente = resCliente;
           this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
+          this.DadosCheckout = this.dadosCliente.dadosCompra.dadosComprador.dadosCheckout;
           this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
           const LLimite = await this.processaQuantidadeLimite();
           if (this.DadosLoja) {

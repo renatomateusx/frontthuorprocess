@@ -15,7 +15,9 @@
     <div class="content-heading">
       <div>
         Home
-        <small>{{welcome}}</small>
+        <router-link :to="{path: '/perfil'}">
+          <small>{{welcome}}</small>
+        </router-link>
       </div>
       <!-- START Language list-->
       <div class="ml-auto" style="display:none">
@@ -32,10 +34,7 @@
         <p>Quando tivermos algum aviso para você é aqui que ele irá aparecer.</p>
       </div>
     </div>
-    <div class="row ">
-    
-     
-    </div>
+    <div class="row"></div>
   </ContentWrapper>
 </template>
 
@@ -104,12 +103,12 @@ export default {
       pedidosPagos: 0,
       pedidosRealizados: 0,
       pedidosBoletos: 0,
-      totalPedidosBoletos:0,
+      totalPedidosBoletos: 0,
       totalPedidosBoletosArray: [],
-      totalVendasFacebookArray:[],
-      totalVendasFacebook:0,
-      totalVendasGoogleArray:[],
-      totalVendasGoogle:0,
+      totalVendasFacebookArray: [],
+      totalVendasFacebook: 0,
+      totalVendasGoogleArray: [],
+      totalVendasGoogle: 0
     };
   },
   methods: {
@@ -132,7 +131,6 @@ export default {
               UTILIS_API.SetDadosLojaSession(resLoja.data);
               this.selectUserName();
             });
-            
           }
           API_NOTIFICATION.HideLoading();
         })

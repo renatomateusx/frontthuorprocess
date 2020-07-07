@@ -278,7 +278,6 @@ export default {
       document.head.appendChild(pluginPS);
       await this.sleep(1000);
       if (PagSeguro !== undefined) {
-        console.log(PagSeguro);
         var ComponentClassCheckoutPS = Vue.extend(CheckoutPS);
         var instanceCheckoutPS = new ComponentClassCheckoutPS();
         instanceCheckoutPS.$mount(); // pass nothing
