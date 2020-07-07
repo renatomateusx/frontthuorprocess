@@ -159,6 +159,13 @@ export default Object.freeze({
   PATH_GET_PLANOS: 'planos/GetPlanos',
   PATH_GET_PLANOS_BY_ID: 'planos/GetPlanosByID',
 
+  /* RASTREIO */
+  PAT_GET_FULFILLMENTS: 'fulfillments/GetFulFillment',
+  PAT_INSERT_FULFILLMENTS: 'fulfillments/InsertFulFillment',
+  PAT_UPDATE_STATUS_INTERNO_FULFILLMENTS: 'fulfillments/UpdateFulFillmentStatusInterno',
+
+
+
 
   /* CONSTANTES SESSIONS */
   SESSION_DATA_CLIENTES: 'dc',

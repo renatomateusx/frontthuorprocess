@@ -59,7 +59,7 @@ const Ajuda = () => import('@/views/Pages/Ajuda.vue');
 const AdminAjuda = () => import('@/views/Pages/AdminAjuda.vue');
 const AdminAjudaEdit = () => import('@/views/Pages/AdminAjudaEdit.vue');
 const Dashboard = () => import('@/views/SingleView/Dashboard.vue');
-
+const PainelRastreio = () => import('@/views/Pages/PainelRastreio');
 Vue.use(Router)
 
 export default new Router({
@@ -302,6 +302,10 @@ export default new Router({
             {
                 path: '/apps/thuor-pop-up',
                 component: AppPopUp
+            },
+            {
+                path: '/apps/thuor-tracker',
+                component: PainelRastreio
             },
             {
                 path: '/ajuda',

@@ -53,7 +53,7 @@ div > p {
   list-style: none;
 }
 .priceFont {
-  font-size: 50px;
+  font-size: 25px;
   font-weight: 900;
   color: #23b7e5;
   font-family: Rubik, sans-serif;
@@ -245,9 +245,9 @@ div > p {
                           <span class="col-md-12 planoEscolhido">PLANO ATUAL</span>
                           <span class="col-md-12 bold-md">{{getPlanoEscolhidoNome}}</span>
                           <div class="plan-price card-body">
-                            <div class="text-lg">
+                            <div class="text-lg ">
                               <sup>
-                                <small class="simbolPrice">R$</small>
+                                <small class="simbolPrice"> $</small>
                               </sup>
                               <strong>
                                 <span class="priceFont">{{getPlanoEscolhidoPrice}}</span>
@@ -261,12 +261,17 @@ div > p {
                                 <span class="porpedido ml-1">por pedido pago</span>
                               </div>
                             </div>
-                            <strong class="cobradoPor col-md-12">* Cobrado por semana *</strong>
+                            <strong v-if="getPlanoEscolhidoAddon > 1" class="cobradoPor col-md-12">* Cobrado por semana *</strong>
                           </div>
-                          <div class="col-md-12 row">
+                          <div class="col-xl-12 row" v-if="getPlanoEscolhidoAddon > 1">
                             <strong
                               class="col-lg-12 ml-4"
                             >Próx. Pag.: {{getProximoPagamento(getDadosUsuario().proximo_pagamento)}}</strong>
+                          </div>
+                           <div class="col-xl-12 row">
+                            <strong
+                              class="col-lg-12 ml-4" v-if="getDadosUsuario().proximo_pagamento_mensalidade"
+                            >Próx. Pag. Mensalidade: {{getProximoPagamento(getDadosUsuario().proximo_pagamento_mensalidade)}}</strong>
                           </div>
                           <div class="col-md-12 row" v-if="metodoPag">
                             <img
@@ -378,13 +383,13 @@ div > p {
                           :key="id"
                         >
                           <span class="col-md-4">{{data | formatDate}}</span>
-                          <span class="col-md-4">R$ {{valor_comissao | formatPrice}}</span>
+                          <span class="col-md-4"> $ {{valor_comissao | formatPriceDolar }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                            R$ {{totalPago | formatPrice}}
+                             $ {{totalPago | formatPriceDolar}}
                           </span>
                         </div>
                       </div>
@@ -417,13 +422,13 @@ div > p {
                           <span class="col-md-4">{{data | formatDate}}</span>
                           <span
                             class="col-md-4"
-                          >R$ {{json_pagamento.transaction_amount | formatPrice}}</span>
+                          > $ {{json_pagamento.transaction_amount | formatPriceDolar }}</span>
                           <span class="col-md-4">{{status | formatStatus}}</span>
                         </div>
                         <div class="float-right mt-2 col-md-12 mt-5 mr-5">
                           <span class="pull-right float-right">
                             <strong>Total Pago:</strong>
-                            R$ {{totalPagoMensalidades | formatPrice}}
+                             $ {{totalPagoMensalidades | formatPriceDolar }}
                           </span>
                         </div>
                       </div>
@@ -445,7 +450,7 @@ div > p {
                 <div class="row">
                   <!-- PLAN-->
                   <div
-                    class="col-lg-4 mt-3 card card-default mr-0 selectedPlan"
+                    class="col-lg-3 mt-3 card card-default mr-0 selectedPlan"
                     :class="usuario.plano == id ? 'Selecionado' : 'DeSelecionado'"
                     :id="json.nome"
                     v-for="{id, json} in planArray"
@@ -461,21 +466,22 @@ div > p {
                       <div class="plan-price card-body">
                         <div class="text-lg">
                           <sup>
-                            <small class="simbolPrice">R$</small>
+                            <small class="simbolPrice"> $</small>
                           </sup>
                           <strong>
-                            <span class="priceFont">{{json.price}}</span>
+                            <span class="priceFont">{{json.price || '0.00' }}</span>
                             <span class="month">/mês</span>
                           </strong>
                           <!-- span.plan-period /mo-->
                         </div>
-                        <div class="text-center my-1">
+                        <div class="text-center my-1" >
                           <div class="text-bold text-justify">
                             <strong class="priceFontAddOn">+{{json.addon}}</strong>
                             <span class="porpedido ml-1">por pedido pago</span>
                           </div>
                         </div>
-                        <strong class="cobradoPor">* Cobrado por semana *</strong>
+                        <strong v-if="json.id > 1" class="cobradoPor">* Cobrado por semana *</strong>
+                        
                       </div>
                       <ul class="plan-features text-justify pl-0">
                         <li class="checkInformation" v-for="{title} in json.benefits" :key="title">
@@ -740,7 +746,7 @@ div > p {
                   <div class="row col-md-12">
                     <small
                       class="text-justify"
-                    >A atualização do cartão de crédito não faz upgrade de assinatura. O Thuor emitirá uma autorização temporária de R$ 1,50 no seu cartão apenas para confirmar a existência do mesmo. Trata-se apenas de uma autorização, e NÃO uma cobrança. Ao cadastrar um cartão, você autoriza o Thuor salvar suas informações para realizar os seus pagamentos.</small>
+                    >A atualização do cartão de crédito não faz upgrade de assinatura. O Thuor emitirá uma autorização temporária de  $ 1,50 no seu cartão apenas para confirmar a existência do mesmo. Trata-se apenas de uma autorização, e NÃO uma cobrança. Ao cadastrar um cartão, você autoriza o Thuor salvar suas informações para realizar os seus pagamentos.</small>
                   </div>
                   <div class="row col-md-12 mt-2">
                     <strong>
@@ -809,6 +815,13 @@ Vue.filter("formatPrice", function(value) {
   if (value) {
     let val = (value / 1).toFixed(2).replace(".", ",");
     return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+});
+
+Vue.filter("formatPriceDolar", function(value) {
+  if (value) {
+    let val = (value / 1).toFixed(2).replace(",", ".");
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 });
 
@@ -1239,7 +1252,6 @@ export default {
       return "";
     },
     iniciaPagamentoBackEnd(status, response) {
-      console.log(response);
       if (status != 200 && status != 201) {
         //console.log("Não foi possível gerar o token", response.message);
         window.Mercadopago.clearSession();

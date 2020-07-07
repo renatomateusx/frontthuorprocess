@@ -20,7 +20,9 @@
                 <div class="user-block-info">
                   <span class="user-block-name">Oi, {{LNome}}</span>
                   <router-link class="nav-link" to="/perfil" title="Meu Perfil">
-                    <span class="user-block-role fa fa-user"><span class="ml-2">Meu Perfil</span></span>
+                    <span class="user-block-role fa fa-user">
+                      <span class="ml-2">Meu Perfil</span>
+                    </span>
                   </router-link>
                 </div>
               </div>
@@ -86,7 +88,7 @@
           </template>
         </ul>
         <!-- END sidebar nav-->
-      </nav>      
+      </nav>
     </div>
     <!-- END Sidebar (left)-->
   </aside>
@@ -119,6 +121,7 @@ export default {
   },
   mounted() {
     SidebarRun(this.$router);
+    this.CallPlugin();
   },
   computed: {
     ...mapState({
@@ -134,6 +137,16 @@ export default {
     }
   },
   methods: {
+    CallPlugin() {
+      //code.jivosite.com/widget/D4OiMEZhgk
+      const plugin = document.createElement("script");
+      plugin.onload = function() {
+        console.log("Carregado Script JIVO");
+      };
+      plugin.setAttribute("src", "//code.jivosite.com/widget/D4OiMEZhgk");
+      plugin.async = true;
+      document.head.appendChild(plugin);
+    },
     buildCollapseList() {
       /** prepare initial state of collapse menus. Doesnt allow same route names */
       let collapse = {};
