@@ -35,7 +35,7 @@ var API_CHECKOUT = {
                     'Content-Type': 'application/json',
                 })
                 .then((response) => {
-                    //console.log("Response", response);
+                    console.log("Response", response);
                     resolve(response);
                 })
                 .catch((error) => {

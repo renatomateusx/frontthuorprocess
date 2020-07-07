@@ -1252,7 +1252,6 @@ export default {
       return "";
     },
     iniciaPagamentoBackEnd(status, response) {
-      console.log(response);
       if (status != 200 && status != 201) {
         //console.log("Não foi possível gerar o token", response.message);
         window.Mercadopago.clearSession();

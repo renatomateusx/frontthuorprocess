@@ -198,7 +198,7 @@ export default {
       } else if (id == 5) {
         this.alreadyInstalled(nome);
       } else if (id == 6) {
-        this.alreadyInstalled(nome);
+        this.$router.push("/apps/thuor-tracker");
       } else if (id == 7) {
         this.$router.push("/marketing/upsell");
       } else if (id == 8) {

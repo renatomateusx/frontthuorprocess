@@ -661,8 +661,18 @@ var UTILIS_API = {
                 const LUser = await this.GetUserSession();
                 if (LUser != null && (LUser.user.json_pagamento != undefined || LUser.user.json_pagamento != null) && (LUser.user.proximo_pagamento != undefined || LUser.user.proximo_pagamento != null)) {
                     LReturn = true;
-                } else {
+                }
+                else{
+                    LReturn = false;
                     API_NOTIFICATION.showNotificationW('Oops!', "Para Configurar o Checkout, você precisa informar as configurações de pagamento. <br> Clique no Ícone <span class='icon-user'></span>, vá até 'Meu Perfil' e Configure.", 'warning');
+                }
+
+                if(LUser.user.plano > 1){
+                    LReturn = true;                
+                }
+                else{
+                    LReturn = false;
+                    API_NOTIFICATION.showNotificationW('Oops!', "Para Configurar o Checkout você precisa escolher o plano a partir do 'Pro 1'. <br> Clique no Ícone <span class='icon-user'></span>, vá até 'Meu Perfil' e Configure.", 'warning');
                 }
             }
             catch (error) {
