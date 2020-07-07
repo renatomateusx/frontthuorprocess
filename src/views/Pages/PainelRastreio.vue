@@ -200,8 +200,9 @@ th.active .arrow {
     </div>
     <small>
       Todos os seus rastreios estão aqui.
-      <br />Você pode importar quantos quiser. Se você usa o nosso checkout transparente, a importação é automática.
+      <br />Você pode importar quantos quiser. Se você usa o nosso checkout transparente a importação é automática.    
     </small>
+      <br/><strong> Aceitamos apenas arquivos com extensão '.csv (separado por vírgula)'</strong>
     <p></p>
     <button type="button" v-on:click="uploadFileRastreio()" class="btn btn-primary btn-lg">
       <span class="fa fa-upload"></span> Fazer Upload
