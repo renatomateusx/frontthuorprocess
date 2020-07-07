@@ -177,7 +177,11 @@ option {
       <br />Se quiser importar mais carrinhos abandonados, faça upload do arquivo por aqui.
     </small>
     <p></p>
-    <button type="button" v-on:click="uploadFileCarrinhoAbandonado()" class="btn btn-primary btn-lg">
+    <button
+      type="button"
+      v-on:click="uploadFileCarrinhoAbandonado()"
+      class="btn btn-primary btn-lg"
+    >
       <span class="fa fa-upload"></span> Fazer Upload
     </button>
     <input type="file" id="fileUpload" accept=".csv, .txt" class="hidden" />
@@ -221,19 +225,13 @@ option {
               </th>
               <th class="data pl-0">
                 <strong class>
-                  <b>Valor</b>
+                  <b>Cliente</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0" style="min-width: 80px!important; width: 80px!important;">
+              <th class="data pl-0" style="min-width: 15rem!important;">
                 <strong class>
                   <b>Produto(s)</b>
-                </strong>
-                <span class="arrow"></span>
-              </th>
-              <th class="status pl-2">
-                <strong class="col-md-2">
-                  <b>Cliente</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
@@ -250,36 +248,37 @@ option {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago, bandeira} in dataPerPage"
+                v-for="({id_cart, criado_em, valor_produto, produtos, telefone_cliente, produtos_skus, nome_cliente},index) in dataPerPage"
+                :key="id_cart"
               >
-                <td class="pedido" style="width: 120px!important;">
-                  <router-link :to="{path: '/pedidos/detalhe/' + getCripto(id, order_id)}">
-                    <p class="col-md-12 numeroPedido mb-0">{{order_id}}</p>
-                  </router-link>
-                  <p class="col-md-12 text-left nomeComprador grey mb-0">{{nome_comprador}}</p>
-                </td>
                 <td class="data padding1010">
-                  <p class="col-md-12 mb-0 dataPedido">{{data}}</p>
-                  <p class="col-md-12 mb-0 tempoPedido">{{time_ago}}</p>
+                  <p class="col-md-12 mb-0 dataPedido">{{criado_em | formatDate}}</p>
                 </td>
-                <td class="total pl-0 p-0">R$ {{total.toLocaleString('pt-BR')}}</td>
-                <td class="pl-0" style="min-width: 80px!important; width: 80px!important;">
-                  <span
-                    class="spanStatus alert"
-                    v-bind:class="getClassStatus(status)"
-                  >{{toUpperCase(status)}}</span>
+                <td class="pedido" style="width: 120px!important;">
+                  <!-- :to="{path: '/pedidos/detalhe/' + getCripto(id_cart, index)}" -->
+                  <router-link >
+                    <p class="col-md-12 numeroPedido mb-0">{{nome_cliente}}</p>
+                  </router-link>
+                  <p
+                    class="col-md-12 text-left nomeComprador grey mb-0"
+                    v-if="valor_produto"
+                  >R$ {{valor_produto | formatPrice}}</p>
+                </td>
+                <td class="data padding1010" style="min-width: 15rem!important">
+                  <p class="col-md-12 mb-0 dataPedido">{{produtos}}</p>
+                  <p class="col-md-12 mb-0 tempoPedido">{{produtos_skus}}</p>
                 </td>
                 <td>
-                  <div class="row">
+                  <div class="row" v-if="telefone_cliente != undefined">
                     <select
-                      v-bind:id="getCripto(id, order_id)"
+                      v-bind:id="getCripto(id_cart, index)"
                       @change="selecionaMensagemEnviar($event)"
                       class="form-control col-md-8 background-whatsapp"
                     >
                       <option value="-1">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspEnvie uma Mensagem</option>
                       <option
                         value="0"
-                        v-show="metodo == 'bolbradesco' || metodo == 'BOLETO'"
+                        v-show="telefone_cliente != undefined"
                       >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspMensagem de Boleto</option>
                       <option
                         v-for="{id_mensagem, nome_mensagem} in arrayWhatsAppMessage"
@@ -293,6 +292,9 @@ option {
                     >
                       <span class="fa fa-paper-plane"></span>
                     </button>
+                  </div>
+                  <div v-else>
+                    <span class="alert alert-info">NENHUMA AÇÃO NO MOMENTO</span>
                   </div>
                 </td>
                 <td></td>
@@ -347,6 +349,12 @@ Vue.use(VeeValidate, {
 Vue.filter("formatDate", function(value) {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY hh:mm");
+  }
+});
+Vue.filter("formatPrice", function(value) {
+  if (value) {
+    let val = (value / 1).toFixed(2).replace(".", ",");
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 });
 
@@ -466,58 +474,22 @@ export default {
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
                 });
-              await API_TRANSACOES.GetTransacoes()
-                .then(retProd => {
+              await API_CARRINHO_ABANDONADO.GetCarrinho()
+                .then(retCarrinho => {
                   this.gridData = [];
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
                   //this.pedidosList = retProd.data;
-                  retProd.data.forEach((obj, i) => {
-                    if (obj != null && obj.json_shopify_response.order) {
-                      const LID = obj.id;
+                  retCarrinho.forEach((obj, i) => {
+                    this.gridData.push({
+                      id_cart: obj.id_cart,
+                      criado_em: obj.criado_em,
+                      valor_produto: obj.valor_produto,
+                      produtos: obj.produtos,
+                      produtos_skus: obj.produtos_skus,
+                      nome_cliente: obj.nome_cliente,
+                      telefone_cliente: obj.telefone_cliente
+                    });
 
-                      const LPaymentID = this.getPaymentMethodID(obj);
-                      //console.log(LPaymentID);
-                      let LStatus;
-                      if (obj.status == null) {
-                        if (this.LPaymentID == "BOLETO") {
-                          LStatus = "pendente";
-                        } else {
-                          LStatus = "aprovada";
-                        }
-                      } else {
-                        LStatus = this.getStatusTranslate(obj.status);
-                      }
-                      const LData = dateFormat(
-                        this.getDataCreated(obj),
-                        "dd/mm/yyyy  HH:MM:ss"
-                      );
-                      const LTimeAgo = this.getDataCreated(obj);
-                      const LTotal = this.getValue(obj);
-                      const LNomeComprador = this.toCamelCase(
-                        obj.json_front_end_user_data.dadosComprador
-                          .nome_completo
-                      );
-                      const Bandeira =
-                        obj.json_front_end_user_data.dadosComprador.Bandeira;
-                      const LOrderID = obj.json_shopify_response.order.id;
-                      this.gridData.push({
-                        metodo: LPaymentID,
-                        id: LID,
-                        order_id: LOrderID,
-                        status: LStatus,
-                        data: LData,
-                        total: LTotal,
-                        nome_comprador: LNomeComprador,
-                        time_ago: this.timeAgo.format(
-                          Date.parse(LTimeAgo),
-                          Date.now(),
-                          "time"
-                        ),
-                        json_front_end_user_data: obj.json_front_end_user_data,
-                        json_gw_response: obj.json_gw_response,
-                        bandeira: Bandeira
-                      });
-                    }
                     //console.log(Date.now(), Date.parse(LData));
                   });
                 })
@@ -614,6 +586,7 @@ export default {
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
+      console.log(id_pedido, id_ordem);
       const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
       const produtHashed = hashids.encode(
         id_pedido.toString(),
@@ -758,10 +731,11 @@ export default {
                   criado_em: moment().format(),
                   modificado_em: null,
                   status: 0,
-                  campanha_enviar = 1,
-                  
+                  campanha_enviar: 1
                 };
-                const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(carrinho);
+                const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(
+                  carrinho
+                );
               }
             }
           });
