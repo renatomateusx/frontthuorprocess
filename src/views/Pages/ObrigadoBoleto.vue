@@ -83,6 +83,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import UpSellCard from "../../components/Cart/UpSellCard";
+import API_CARRINHO_ABANDONADO from '../../api/carrinhoAbandonadoAPI';
 export default {
   template: `#templateObrigado`,
   async created() {
@@ -121,6 +122,10 @@ export default {
           this.DadosCheckout = this.dadosCliente.dadosCompra.dadosComprador.dadosCheckout;
           this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
           const LLimite = await this.processaQuantidadeLimite();
+          const LCarrinho = await UTILIS_API.GetAbandonCartSession();
+          if (LCarrinho) {
+              const LReturnUpdateCarrinho = await API_CARRINHO_ABANDONADO.UpdateStatusCarrinho(1, LCarrinho);
+          }
           if (this.DadosLoja) {
             if (this.DadosLoja.limpa_carrinho == 1) {
               sessionStorage.removeItem("cart");

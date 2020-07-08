@@ -569,6 +569,34 @@ var UTILIS_API = {
             }
         })
     },
+    SetAbandonCartSession(dados) {
+        return new Promise((resolve, reject) => {
+            try {
+                sessionStorage.setItem(constantes.SESSION_ABANDONED_CART, btoa(JSON.stringify(dados)));
+                resolve(1);
+            }
+            catch (error) {
+                console.log("Erro ao setar o Limite de Compra session", error);
+                reject(error);
+            }
+        })
+    },
+    GetAbandonCartSession() {
+        return new Promise((resolve, reject) => {
+            try {
+                if (sessionStorage.getItem(constantes.SESSION_ABANDONED_CART) != null) {
+                    const L = JSON.parse(atob(sessionStorage.getItem(constantes.SESSION_ABANDONED_CART)));
+                    resolve(L);
+                } else {
+                    resolve(null);
+                }
+            }
+            catch (error) {
+                console.log("Erro ao pegar o Limite de Compra session", error);
+                reject(error);
+            }
+        })
+    },    
     removeUserSession() {
         sessionStorage.removeItem(constantes.SESSION_USER);
     },

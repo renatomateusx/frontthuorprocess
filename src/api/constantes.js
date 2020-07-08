@@ -7,11 +7,13 @@ export default Object.freeze({
   /* PLATAFORMAS */
   PLATAFORMA_SHOPIFY: 1,
 
+  WEBSITE: 'https://app.thuor.com',
+  WEBSITE_CART: 'https://app.thuor.com/cart/items?',
 
   /* PLATAFORMAS */
-  WEBSITEAPI: 'http://localhost:3000/',
+  //WEBSITEAPI: 'http://localhost:3000/',
   //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
-  //WEBSITEAPI: 'https://api.thuor.com:7443/',
+  WEBSITEAPI: 'https://api.thuor.com:7443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   PATH_PS_SESSION: 'checkouts/SessionPagSeguro',
   PATH_PS_CHARGE: 'checkouts/DoPayPagSeguroCard',
@@ -115,7 +117,9 @@ export default Object.freeze({
   /* CARRINHO ABANDONADO */
   PATH_GET_CARRINHO: 'carrinhoAbandonado/GetCarrinho',
   PATH_SAVE_CARRINHO: 'carrinhoAbandonado/SaveCarrinho',
-
+  PATH_UPDATE_STATUS_CARRINHO: 'carrinhoAbandonado/UpdateStatusCarrinho',
+  PATH_UPDATE_CADOS_CLIENTE_CARRINHO: 'carrinhoAbandonado/UpdateDadosClienteCarrinho',
+  
 
 
   CONSTANTE_VENCIMENTO_BOLETO: 3,
@@ -191,6 +195,7 @@ export default Object.freeze({
   SESSION_CHECKOUT: 'sc',
   SESSION_ATUAL_PAGE: 'atp',
   SESSION_OPTION_CART_OPENED: 'opt',
+  SESSION_ABANDONED_CART: 'ab',
 
   /* MENSALIDADES*/
   PATH_GET_MENSALIDADES_PAGAS: 'mensalidades/GetMensalidadesPagas',

@@ -41,7 +41,52 @@ var API_CARRINHO_ABANDONADO = {
                     });
             }
         });
+    },
+    UpdateStatusCarrinho(status, ids){
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+                var LBody = {
+                    status:status,
+                    id_cart: ids
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_STATUS_CARRINHO, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response.data);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
+    },
+    UpdateDadosClienteCarrinho(nome_cliente, email_cliente, telefone_cliente,ids){
+        return new Promise(async (resolve, reject) => {
+            const LDadosLoja = await UTILIS_API.GetDadosLojaSession();
+            if (LDadosLoja != undefined) {
+                var LBody = {
+                    nome_cliente:nome_cliente, 
+                    email_cliente:email_cliente, 
+                    telefone_cliente:telefone_cliente,
+                    id_cart: ids
+                }
+                axios
+                    .post(constantes.WEBSITEAPI + constantes.PATH_UPDATE_CADOS_CLIENTE_CARRINHO, LBody)
+                    .then((response) => {
+                        //console.log("Response", response);
+                        resolve(response.data);
+                    })
+                    .catch((error) => {
+                        console.log("Reject", error);
+                        reject(error);
+                    });
+            }
+        });
     }
+    
     
 }
 export default API_CARRINHO_ABANDONADO 

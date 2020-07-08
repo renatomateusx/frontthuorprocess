@@ -30,6 +30,10 @@ import API_FACEBOOK_PIXEL from "../../api/pixelFacebookTrigger";
 import API_GOOGLE_PIXEL from "../../api/pixelGoogleTrigger";
 import API_PIXEL from "../../api/pixelsAPI";
 import BloqueioCompra from "../Checkouts/BloqueioCheckout";
+import constantes from '../../api/constantes';
+import moment from "moment";
+import API_CARRINHO_ABANDONADO from '../../api/carrinhoAbandonadoAPI';
+
 var md5 = require("md5");
 
 Vue.use(LoadScript);
@@ -163,6 +167,7 @@ export default {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
         if (LCart) {
+          const LPrepareCarrinhoAbandonado = this.prepareAbandonCart(LCart);
           this.dadosLoja = UTILIS_API.GetDadosLojaSession();
           this.produtosCart = JSON.parse(LCart);
         } else {
@@ -170,6 +175,42 @@ export default {
           window.location.href = await this.getURLLoja();
         }
       }
+    },
+    prepareAbandonCart(LCart) {
+      return new Promise((resolve, reject) => {
+        var LURLCartEmail = constantes.WEBSITE_CART
+        var LTitulo = "";
+        var LRetornoID = [];
+        try {
+          const LocalCart = JSON.parse(LCart);
+          LocalCart.forEach(async (objCart, i)=>{
+            var PathLink = "produto_option_id[" + i + "]={idProd}&produto_option_quantity[" + i + "]={quantidade}&produto_option_variante_id[" + i + "]={variante}&";
+            LURLCartEmail = constantes.WEBSITE_CART + PathLink.replace("{idProd}", objCart.id_thuor).replace("{quantidade}", objCart.quantity).replace("{variante}", objCart.variant_id);
+            LURLCartEmail += "redirectTo=cart";
+            LTitulo = objCart.title + " - " + objCart.variant_title + "";
+            var LBodyCarrinho = {
+              valor_produto: objCart.variant_price,
+              nome_cliente: null,
+              email_cliente: null,
+              telefone_cliente: null,
+              token_push_cliente: null,
+              produtos: LTitulo,
+              produtos_skus: objCart.variant_id,
+              link_compra: LURLCartEmail,
+              criado_em: moment().format(),
+              modificado_em: null,
+              status: 0,
+              campanha_enviar: 1
+            }
+            const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(LBodyCarrinho);
+            LRetornoID.push(LRetorno);
+          });          
+          UTILIS_API.SetAbandonCartSession(LRetornoID);          
+
+        } catch (error) {
+          console.log("Erro ao preparar o carrinho abandonado", error);
+        }
+      });
     },
     getURLLoja() {
       return new Promise((resolve, reject) => {
