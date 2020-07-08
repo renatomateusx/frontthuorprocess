@@ -34,24 +34,24 @@
 </style>
 <template>
   <ContentWrapper>
-    <div class="content-heading" v-show="this.novocrosssell.nome.length < 2">
+    <div class="content-heading" v-show="this.novodownsell.nome.length < 2">
       <span class="fa fa-plus">
         <span class="ml-2"></span>
-      </span>Novo CrossSell
+      </span>Novo DownSell
     </div>
-    <div class="content-heading" v-show="this.novocrosssell.nome.length > 1">
+    <div class="content-heading" v-show="this.novodownsell.nome.length > 1">
       <span class="fa fa-edit">
         <span class="ml-2"></span>
       </span>
-      CrossSell: {{this.novocrosssell.nome}}
+      DownSell: {{this.novodownsell.nome}}
     </div>
     <small
-      v-show="this.novocrosssell.nome.length > 1"
-    >Preencha os campos abaixo para criar o CrossSell.</small>
+      v-show="this.novodownsell.nome.length > 1"
+    >Preencha os campos abaixo para criar o DownSell.</small>
     <!-- START row-->
     <div class="row">
       <div class="col-xl-12">
-        <form @submit.prevent="validateBeforeSubmit('novocrosssell')" data-vv-scope="novocrosssell">
+        <form @submit.prevent="validateBeforeSubmit('novodownsell')" data-vv-scope="novodownsell">
           <!-- START card-->
           <div class="card card-default">
             <div class="card-header">
@@ -59,25 +59,25 @@
             </div>
             <div class="card-body">
               <div class="form-group">
-                <label class="col-form-label">Nome do CrossSell *</label>
+                <label class="col-form-label">Nome do DownSell *</label>
                 <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('novocrosssell.nome')}"
-                  v-model="novocrosssell.nome"
+                  :class="{'form-control':true, 'is-invalid': errors.has('novodownsell.nome')}"
+                  v-model="novodownsell.nome"
                   v-validate="'required'"
                   type="text"
                   name="nome"
                 />
                 <span
-                  v-show="errors.has('novocrosssell.nome')"
+                  v-show="errors.has('novodownsell.nome')"
                   class="invalid-feedback"
-                >{{ errors.first('novocrosssell.nome') }}</span>
+                >{{ errors.first('novodownsell.nome') }}</span>
               </div>
               <div class="form-group">
                 <label class="col-form-label">Ao Visualizar o produto... *</label>
                 <button
                   type="button"
                   id="buttonProdutoUm"
-                  :class="{'custom-control-input':false, 'is-invalid': errors.has('novocrosssell.id_produto_selecionado_um'), 'opcaoSelecionada': novocrosssell.id_produto_selecionado_um > 0, 'opcaoDeselecionada': novocrosssell.id_produto_selecionado_um == 0} "
+                  :class="{'custom-control-input':false, 'is-invalid': errors.has('novodownsell.id_produto_selecionado_um'), 'opcaoSelecionada': novodownsell.id_produto_selecionado_um > 0, 'opcaoDeselecionada': novodownsell.id_produto_selecionado_um == 0} "
                   v-on:click="collapse('#collapseExample', '#collapseExample', '#buttonProdutoUm')"
                   class="btn btn-secondary btn-lg col-md-12 p-0 pl-0 pd-0 pt-0 pb-0"
                 >{{lhtml}}</button>
@@ -85,30 +85,30 @@
                 <div
                   class="collapse"
                   id="collapseExample"
-                  :class="{'show': novocrosssell.id_produto_selecionado_um.length > 0}"
+                  :class="{'show': novodownsell.id_produto_selecionado_um.length > 0}"
                 >
                   <div class="card">
                     <prods :functionClick="SelectedValueProdutoUm" :arrayAux="arrayAuxUm"></prods>
                   </div>
                 </div>
                 <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('novocrosssell.id_produto_selecionado_um')}"
-                  v-model="novocrosssell.id_produto_selecionado_um"
+                  :class="{'form-control':true, 'is-invalid': errors.has('novodownsell.id_produto_selecionado_um')}"
+                  v-model="novodownsell.id_produto_selecionado_um"
                   v-validate="'required'"
                   type="hidden"
                   name="id_produto_selecionado_um"
                 />
                 <span
-                  v-show="errors.has('novocrosssell.id_produto_selecionado_um')"
+                  v-show="errors.has('novodownsell.id_produto_selecionado_um')"
                   class="invalid-feedback"
-                >{{ errors.first('novocrosssell.id_produto_selecionado_um') }}</span>
+                >{{ errors.first('novodownsell.id_produto_selecionado_um') }}</span>
               </div>
               <div class="form-group">
                 <label class="col-form-label">Oferecer... *</label>
                 <button
                   type="button"
                   id="buttonProdutoDois"
-                  :class="{'custom-control-input':false, 'is-invalid': errors.has('novocrosssell.id_produto_selecionado_dois'), 'opcaoSelecionada': novocrosssell.id_produto_selecionado_dois.length > 0, 'opcaoDeselecionada': novocrosssell.id_produto_selecionado_dois.length ==0} "
+                  :class="{'custom-control-input':false, 'is-invalid': errors.has('novodownsell.id_produto_selecionado_dois'), 'opcaoSelecionada': novodownsell.id_produto_selecionado_dois.length > 0, 'opcaoDeselecionada': novodownsell.id_produto_selecionado_dois.length ==0} "
                   v-on:click="collapse('#collapseExampleDois', '#collapseExampleDois', '#buttonProdutoDois')"
                   class="btn btn-secondary btn-lg col-md-12 p-0 pl-0 pd-0 pt-0 pb-0"
                 >{{lhtml}}</button>
@@ -116,7 +116,7 @@
                 <div
                   class="collapse"
                   id="collapseExampleDois"
-                  :class="{'show': novocrosssell.id_produto_selecionado_dois.length > 0}"
+                  :class="{'show': novodownsell.id_produto_selecionado_dois.length > 0}"
                 >
                   <div class="card">
                     <prods
@@ -127,16 +127,16 @@
                   </div>
                 </div>
                 <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('novocrosssell.id_produto_selecionado_dois')}"
-                  v-model="novocrosssell.id_produto_selecionado_dois"
+                  :class="{'form-control':true, 'is-invalid': errors.has('novodownsell.id_produto_selecionado_dois')}"
+                  v-model="novodownsell.id_produto_selecionado_dois"
                   v-validate="'required'"
                   type="hidden"
                   name="id_produto_selecionado_dois"
                 />
                 <span
-                  v-show="errors.has('novocrosssell.id_produto_selecionado_dois')"
+                  v-show="errors.has('novodownsell.id_produto_selecionado_dois')"
                   class="invalid-feedback"
-                >{{ errors.first('novocrosssell.id_produto_selecionado_dois') }}</span>
+                >{{ errors.first('novodownsell.id_produto_selecionado_dois') }}</span>
               </div>
               <div class="form-group">
                 <label class="col-form-label">Onde Oferecer *</label>
@@ -144,7 +144,7 @@
                   <button
                     type="button"
                     id="buttonCheckout"
-                    :class="{'opcaoSelecionada': novocrosssell.quando_oferecer == 1, 'opcaoDeselecionada': novocrosssell.quando_oferecer !==1} "
+                    :class="{'opcaoSelecionada': novodownsell.quando_oferecer == 1, 'opcaoDeselecionada': novodownsell.quando_oferecer !==1} "
                     v-on:click="selecionaTipoCheckout(1)"
                     class="btn btn-secondary btn-lg col-md-3 p-0 pl-0 pd-0 pt-0 pb-0 ml-3"
                   >
@@ -158,7 +158,7 @@
                   <button
                     type="button"
                     id="buttonCheckout"
-                    :class="{'opcaoSelecionada': novocrosssell.quando_oferecer == 2, 'opcaoDeselecionada': novocrosssell.quando_oferecer !==2} "
+                    :class="{'opcaoSelecionada': novodownsell.quando_oferecer == 2, 'opcaoDeselecionada': novodownsell.quando_oferecer !==2} "
                     v-on:click="selecionaTipoCheckout(2)"
                     class="btn btn-secondary btn-lg col-md-3 p-0 pl-0 pd-0 pt-0 pb-0 ml-4"
                   >
@@ -173,16 +173,16 @@
                   </button>
                 </div>
                 <input
-                  :class="{'form-control':true, 'is-invalid': errors.has('novocrosssell.quando_oferecer')}"
-                  v-model="novocrosssell.quando_oferecer"
+                  :class="{'form-control':true, 'is-invalid': errors.has('novodownsell.quando_oferecer')}"
+                  v-model="novodownsell.quando_oferecer"
                   v-validate="'required'"
                   type="hidden"
                   name="quando_oferecer"
                 />
                 <span
-                  v-show="errors.has('novocrosssell.quando_oferecer')"
+                  v-show="errors.has('novodownsell.quando_oferecer')"
                   class="invalid-feedback"
-                >{{ errors.first('novocrosssell.quando_oferecer') }}</span>
+                >{{ errors.first('novodownsell.quando_oferecer') }}</span>
               </div>
 
               <div class="required">* Campos Obrigatórios</div>
@@ -194,8 +194,8 @@
                   <div class="custom-control custom-checkbox">
                     <input
                       type="checkbox"
-                      :class="{'custom-control-input':true, 'is-invalid': errors.has('novocrosssell.status')}"
-                      v-model="novocrosssell.status"
+                      :class="{'custom-control-input':true, 'is-invalid': errors.has('novodownsell.status')}"
+                      v-model="novodownsell.status"
                       v-validate="'required'"
                       checked
                       name="status"
@@ -203,9 +203,9 @@
                     />
                     <label class="custom-control-label" for="status">Ativo</label>
                     <span
-                      v-show="errors.has('novocrosssell.status')"
+                      v-show="errors.has('novodownsell.status')"
                       class="invalid-feedback"
-                    >{{ errors.first('novocrosssell.status') }}</span>
+                    >{{ errors.first('novodownsell.status') }}</span>
                   </div>
                 </div>
                 <div class="float-right">
@@ -245,9 +245,9 @@ Vue.use(VeeValidate, {
 export default {
   async created() {
     if (this.$route.params.id != undefined) {
-      this.CrossSellID = this.$route.params.id;
-      this.CrossSellIDString = await this.getDeCripto(this.CrossSellID);
-      this.getCrossSellByID(this.CrossSellIDString[0]);
+      this.DownSellID = this.$route.params.id;
+      this.DownSellIDString = await this.getDeCripto(this.DownSellID);
+      this.getDownSellByID(this.DownSellIDString[0]);
     } else {
       this.checkIfLogged();
     }
@@ -268,9 +268,9 @@ export default {
       componentProdDois: 0,
       arrayAuxUm: [],
       arrayAuxDois: [],
-      CrossSellIDString: "",
-      CrossSellID: "",
-      novocrosssell: {
+      DownSellIDString: "",
+      DownSellID: "",
+      novodownsell: {
         nome: "",
         status: 1,
         id_produto_selecionado_um: 0,
@@ -297,7 +297,7 @@ export default {
         .validateAll(scope)
         .then(result => {
           if (result) {
-            if (this.novocrosssell.id_produto_selecionado_um < 1) {
+            if (this.novodownsell.id_produto_selecionado_um < 1) {
               this.errors.add({
                 scope: scope,
                 field: "id_produto_selecionado_um",
@@ -305,7 +305,7 @@ export default {
               });
               return;
             } else if (
-              this.novocrosssell.id_produto_selecionado_dois.length < 1
+              this.novodownsell.id_produto_selecionado_dois.length < 1
             ) {
               this.errors.add({
                 scope: scope,
@@ -313,7 +313,7 @@ export default {
                 msg: "Escolha um produto"
               });
               return;
-            } else if (this.novocrosssell.quando_oferecer < 1) {
+            } else if (this.novodownsell.quando_oferecer < 1) {
               this.errors.add({
                 scope: scope,
                 field: "quando_oferecer",
@@ -322,7 +322,7 @@ export default {
               return;
             }
 
-            self.salvarCrossSell();
+            self.salvarDownSell();
             return;
           }
           console.log("Correct them errors!", result);
@@ -331,23 +331,23 @@ export default {
           console.log("Errros", erros);
         });
     },
-    salvarCrossSell() {
+    salvarDownSell() {
       API_NOTIFICATION.ShowLoading();
-      this.novocrosssell.id_produto_selecionado_dois = this.novocrosssell.id_produto_selecionado_dois.toString();
-      API_MKT.SalvarCrossSell(this.novocrosssell)
+      this.novodownsell.id_produto_selecionado_dois = this.novodownsell.id_produto_selecionado_dois.toString();
+      API_MKT.SalvarDownSell(this.novodownsell)
         .then(res => {
           API_NOTIFICATION.showNotificationW(
             "Pronto!",
-            "CrossSell Criado com sucesso!",
+            "DownSell Criado com sucesso!",
             "success"
           );
           var self = this;
           setTimeout(() => {
-            self.$router.push("/marketing/crosssell");
+            self.$router.push("/marketing/downsell");
           }, 1500);
         })
         .catch(error => {
-          console.log("Erro ao salvar o CrossSell", error);
+          console.log("Erro ao salvar o DownSell", error);
         });
     },
     addTag(newTag) {
@@ -393,26 +393,26 @@ export default {
         }
       });
     },
-    getCrossSellByID(id) {
+    getDownSellByID(id) {
       API_NOTIFICATION.ShowLoading();
-      API_MKT.GetCrossSellsByID(id)
+      API_MKT.GetDownSellsByID(id)
         .then(res => {
-          this.novocrosssell = res.data;
+          this.novodownsell = res.data;
 
-          this.novocrosssell.id_produto_selecionado_um = this.novocrosssell.id_produto_from;
-          this.novocrosssell.id_produto_selecionado_dois = this.novocrosssell.id_produto_to.split(
+          this.novodownsell.id_produto_selecionado_um = this.novodownsell.id_produto_from;
+          this.novodownsell.id_produto_selecionado_dois = this.novodownsell.id_produto_to.split(
             ","
           );
           var larrayAuxy = [];
-          this.novocrosssell.id_produto_selecionado_dois.forEach((objP, i) => {
+          this.novodownsell.id_produto_selecionado_dois.forEach((objP, i) => {
             const Lpo = larrayAuxy.includes(objP);
             if (!Lpo) larrayAuxy.push(objP);
           });
-          this.novocrosssell.id_produto_selecionado_dois = larrayAuxy;
+          this.novodownsell.id_produto_selecionado_dois = larrayAuxy;
           this.arrayAuxUm.push({
-            id_thuor: this.novocrosssell.id_produto_selecionado_um
+            id_thuor: this.novodownsell.id_produto_selecionado_um
           });
-          this.novocrosssell.id_produto_selecionado_dois.forEach((objP, i) => {
+          this.novodownsell.id_produto_selecionado_dois.forEach((objP, i) => {
             const LFind = this.arrayAuxDois.findIndex(x => x.id_thuor == id);
             if (LFind > -1) {
               this.arrayAuxDois.splice(LFind, 1);
@@ -446,7 +446,7 @@ export default {
         '" />  <p class="col-md-8 mb-0 dataPedido mt-2 pull-left float-left" style="top: 15px!important; text-align:left!important">' +
         titulo +
         "</p></div>";
-      this.novocrosssell.id_produto_selecionado_um = id;
+      this.novodownsell.id_produto_selecionado_um = id;
       
       const el = document.getElementById("buttonProdutoUm");
       el.innerHTML = LDiv;
@@ -463,10 +463,10 @@ export default {
       const LFind = this.arrayAuxDois.findIndex(x => x.id_thuor == id);
       if (LFind > -1) {
         this.arrayAuxDois.splice(LFind, 1);
-        this.novocrosssell.id_produto_selecionado_dois.splice(LFind, 1);
+        this.novodownsell.id_produto_selecionado_dois.splice(LFind, 1);
       } else {
         this.arrayAuxDois.push({ id_thuor: id });
-        this.novocrosssell.id_produto_selecionado_dois.push(id);
+        this.novodownsell.id_produto_selecionado_dois.push(id);
       }
       this.arrayAuxDois.reduce(
         (unique, item) => (unique.includes(item) ? unique : [...unique, item]),
@@ -485,7 +485,7 @@ export default {
       console.log("Removendo ID", id);
     },
     selecionaTipoCheckout(id) {
-      this.novocrosssell.quando_oferecer = id;
+      this.novodownsell.quando_oferecer = id;
     }
   }
 };

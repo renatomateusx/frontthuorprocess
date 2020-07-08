@@ -343,7 +343,7 @@
               <label class="col-form-label">Tempo *</label>
               <div class></div>
               <el-input-number
-                :min="1"
+                :min="sequencia.tipo_tempo == 2 ? 10:1"
                 :max="1000000"
                 v-validate="'required'"
                 class="text-center"
@@ -361,8 +361,8 @@
                 v-model="sequencia.tipo_tempo"
                 :class="{'is-invalid': errors.has('sequencia.tipo_tempo')}"
               >
-                <option selected value="1">Segundo(s)</option>
-                <option value="2">Minuto(s)</option>
+                <!-- <option  value="1">Segundo(s)</option> -->
+                <option selected value="2">Minuto(s)</option>
                 <option value="3">Hora(s)</option>
                 <option value="4">Dia(s)</option>
                 <option value="5">Mês(es)</option>
@@ -491,6 +491,11 @@ export default {
       });
     },
     salvarSequencia() {
+      if(this.sequencia.tipo_tempo == 2){
+        if(this.sequencia.tempo < 10){
+          this.sequencia.tempo = 10;
+        }
+      }
       var LSequencia = {
         id_sequencia: this.id,
         id_mensagem: this.sequencia.id_mensagem,

@@ -1995,6 +1995,13 @@ export default {
         })
         .catch(error => {
           console.log("Erro ao efetuar o pagamento no PagSeguro", error);
+          API_NOTIFICATION.showNotificationW(
+              "Oops!",
+              "Compra não Concluída. <br>"+
+              "Um e-mail para a loja " + this.dadosLoja.nome_loja + " já foi enviado.",
+              "error",
+              "error"
+            );
         });
     },
     async iniciaPagamentoBackEndCard() {

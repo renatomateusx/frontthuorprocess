@@ -2,6 +2,15 @@
 .card-flat {
   margin-top: 80px !important;
 }
+.hidden {
+  display: none !important;
+}
+.iconP {
+  cursor: pointer !important;
+}
+.alertPadding {
+  padding: 0 !important;
+}
 .shopifysvg {
   width: 20px !important;
   height: 20px !important;
@@ -159,17 +168,27 @@ option {
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-donate">
+      <span class="fas fa-cart-arrow-down">
         <span class="ml-2"></span>
-      </span>Pedidos
+      </span>Carrinho Abandonado
     </div>
     <small>
-      Todos os pedidos processados pelo Thuor estão aqui.
-      <br />Nós avisamos sempre para a loja, onde você poderá processar o pedido. Solicitando, se for o caso, do seu fornecedor.
+      Todos os carrinhos abandonados processados pelo Thuor ou por terceiros estão aqui.
+      <br />Se quiser importar mais carrinhos abandonados, faça upload do arquivo por aqui.
     </small>
     <p></p>
-
-    <div class="wrapper col-xl-12">
+    <button
+      type="button"
+      v-on:click="uploadFileCarrinhoAbandonado()"
+      class="btn btn-primary btn-lg"
+    >
+      <span class="fa fa-upload"></span> Fazer Upload
+    </button>
+    <input type="file" id="fileUpload" accept=".csv, .txt" class="hidden" />
+    <button type="button" v-on:click="baixarArquivoExemplo()" class="ml-2 btn btn-warning btn-lg">
+      <span class="fa fa-eye"></span> Ver de Arquivo Exemplo
+    </button>
+    <div class="wrapper col-xl-12 mt-2">
       <label
         class="float-left mr-2 col-form-label labelForm"
         for="inlineFormInputGroup"
@@ -181,40 +200,38 @@ option {
       >
         <option v-for="pageSize in pageSizeMenu" :value="pageSize">{{pageSize}}</option>
       </select>
-      <form id="search" class="form-group pull-right float-right">
-        <input name="query" placeholder="Pesquise aqui" class="form-control" v-model="searchQuery" />
+      <form id="search" class="form-group pull-right float-right col-xl-6 row">
+        <input
+          name="query"
+          placeholder="Pesquise aqui"
+          class="form-control col-xl-11"
+          v-model="searchQuery"
+        />
+        <span
+          class="fa-2x fa fa-trash iconP col-xl-1 mt-1"
+          title="Limpar Campo de Pesquisa"
+          v-on:click="()=>{ searchQuery = '';}"
+        ></span>
       </form>
       <div id="grid-template">
         <div class="table-header-wrapper">
           <table class="table-header">
             <thead>
-              <th class="metodo">
-                <strong>
-                  <b></b>
-                </strong>
-                <span class="arrow"></span>
-              </th>
               <th style="width: 160px!important;">
                 <strong class="col-md-4 pedido">
-                  <b>Pedido</b>
+                  <b>Criado em</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
               <th class="data pl-0">
                 <strong class>
-                  <b>Data</b>
+                  <b>Cliente</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
-              <th class="data pl-0" style="min-width: 80px!important; width: 80px!important;">
+              <th class="data pl-0" style="min-width: 15rem!important;">
                 <strong class>
-                  <b>Valor</b>
-                </strong>
-                <span class="arrow"></span>
-              </th>
-              <th class="status pl-2">
-                <strong class="col-md-2">
-                  <b>Status</b>
+                  <b>Produto(s)</b>
                 </strong>
                 <span class="arrow"></span>
               </th>
@@ -231,40 +248,37 @@ option {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="{id, metodo, order_id, status, data, total, nome_comprador, time_ago, bandeira, order_number} in dataPerPage"
+                v-for="({id_cart, criado_em, valor_produto, produtos, telefone_cliente, produtos_skus, nome_cliente},index) in dataPerPage"
+                :key="id_cart"
               >
-                <td class="metodo">
-                  <img :src="getImagePaymentID(metodo,bandeira)" class="imgMethodo" />
+                <td class="data padding1010">
+                  <p class="col-md-12 mb-0 dataPedido">{{criado_em | formatDate}}</p>
                 </td>
                 <td class="pedido" style="width: 120px!important;">
-                  <router-link :to="{path: '/pedidos/detalhe/' + getCripto(id, order_id)}">
-                    <p class="col-md-12 numeroPedido mb-0">{{order_id}}</p>
-                    <p class="col-md-12 numeroPedido mb-0">#{{order_number}}</p>
+                  <!-- :to="{path: '/pedidos/detalhe/' + getCripto(id_cart, index)}" -->
+                  <router-link >
+                    <p class="col-md-12 numeroPedido mb-0">{{nome_cliente}}</p>
                   </router-link>
-                  <p class="col-md-12 text-left nomeComprador grey mb-0">{{nome_comprador}}</p>
+                  <p
+                    class="col-md-12 text-left nomeComprador grey mb-0"
+                    v-if="valor_produto"
+                  >R$ {{valor_produto | formatPrice}}</p>
                 </td>
-                <td class="data padding1010">
-                  <p class="col-md-12 mb-0 dataPedido">{{data}}</p>
-                  <p class="col-md-12 mb-0 tempoPedido">{{time_ago}}</p>
-                </td>
-                <td class="total pl-0 p-0">R$ {{total.toLocaleString('pt-BR')}}</td>
-                <td class="pl-0" style="min-width: 80px!important; width: 80px!important;">
-                  <span
-                    class="spanStatus alert"
-                    v-bind:class="getClassStatus(status)"
-                  >{{toUpperCase(status)}}</span>
+                <td class="data padding1010" style="min-width: 15rem!important">
+                  <p class="col-md-12 mb-0 dataPedido">{{produtos}}</p>
+                  <p class="col-md-12 mb-0 tempoPedido">{{produtos_skus}}</p>
                 </td>
                 <td>
-                  <div class="row">
+                  <div class="row" v-if="telefone_cliente != undefined">
                     <select
-                      v-bind:id="getCripto(id, order_id)"
+                      v-bind:id="getCripto(id_cart, index)"
                       @change="selecionaMensagemEnviar($event)"
                       class="form-control col-md-8 background-whatsapp"
                     >
                       <option value="-1">&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspEnvie uma Mensagem</option>
                       <option
                         value="0"
-                        v-show="metodo == 'bolbradesco' || metodo == 'BOLETO'"
+                        v-show="telefone_cliente != undefined"
                       >&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspMensagem de Boleto</option>
                       <option
                         v-for="{id_mensagem, nome_mensagem} in arrayWhatsAppMessage"
@@ -278,6 +292,9 @@ option {
                     >
                       <span class="fa fa-paper-plane"></span>
                     </button>
+                  </div>
+                  <div v-else>
+                    <span class="alert alert-info">NENHUMA AÇÃO NO MOMENTO</span>
                   </div>
                 </td>
                 <td></td>
@@ -320,7 +337,7 @@ import UTILIS_API from "../../api/utilisAPI";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import constantes_mensagens from "../../api/constantes_mensagens";
-import constantes from '../../api/constantes';
+import API_CARRINHO_ABANDONADO from "../../api/carrinhoAbandonadoAPI";
 Vue.component("v-select", vSelect);
 
 TimeAgo.addLocale(pt);
@@ -332,6 +349,12 @@ Vue.use(VeeValidate, {
 Vue.filter("formatDate", function(value) {
   if (value) {
     return moment(String(value)).format("DD/MM/YYYY hh:mm");
+  }
+});
+Vue.filter("formatPrice", function(value) {
+  if (value) {
+    let val = (value / 1).toFixed(2).replace(".", ",");
+    return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 });
 
@@ -451,60 +474,23 @@ export default {
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
                 });
-              await API_TRANSACOES.GetTransacoes()
-                .then(retProd => {
+              await API_CARRINHO_ABANDONADO.GetCarrinho()
+                .then(retCarrinho => {
                   this.gridData = [];
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
                   //this.pedidosList = retProd.data;
-                  retProd.data.forEach((obj, i) => {
-                    if (obj != null && obj.json_shopify_response.order) {
-                      const LID = obj.id;
+                  retCarrinho.forEach((obj, i) => {
+                    this.gridData.push({
+                      id_cart: obj.id_cart,
+                      criado_em: obj.criado_em,
+                      valor_produto: obj.valor_produto,
+                      produtos: obj.produtos,
+                      produtos_skus: obj.produtos_skus,
+                      nome_cliente: obj.nome_cliente,
+                      telefone_cliente: obj.telefone_cliente
+                    });
 
-                      const LPaymentID = this.getPaymentMethodID(obj);
-                      //console.log(LPaymentID);
-                      let LStatus;
-                      if (obj.status == null) {
-                        if (this.LPaymentID == "BOLETO") {
-                          LStatus = "pendente";
-                        } else {
-                          LStatus = "aprovada";
-                        }
-                      } else {
-                        LStatus = this.getStatusTranslate(obj.status);
-                      }
-                      const LData = dateFormat(
-                        this.getDataCreated(obj),
-                        "dd/mm/yyyy  HH:MM:ss"
-                      );
-                      const LTimeAgo = this.getDataCreated(obj);
-                      const LTotal = this.getValue(obj);
-                      const LNomeComprador = this.toCamelCase(
-                        obj.json_front_end_user_data.dadosComprador
-                          .nome_completo
-                      );
-                      const Bandeira =
-                        obj.json_front_end_user_data.dadosComprador.Bandeira;
-                      const LOrderID = obj.json_shopify_response.order.id;
-                      this.gridData.push({
-                        metodo: LPaymentID,
-                        id: LID,
-                        order_id: LOrderID,
-                        status: LStatus,
-                        data: LData,
-                        total: LTotal,
-                        nome_comprador: LNomeComprador,
-                        time_ago: this.timeAgo.format(
-                          Date.parse(LTimeAgo),
-                          Date.now(),
-                          "time"
-                        ),
-                        json_front_end_user_data: obj.json_front_end_user_data,
-                        json_gw_response: obj.json_gw_response,
-                        bandeira: Bandeira,
-                        order_number: obj.json_front_end_user_data.dadosLoja.plataforma == constantes.PLATAFORMA_SHOPIFY ? obj.json_shopify_response.order.order_number : ''
-                      });
-                    }
-                    console.log(obj.json_shopify_response);
+                    //console.log(Date.now(), Date.parse(LData));
                   });
                 })
                 .catch(error => {
@@ -567,6 +553,7 @@ export default {
       }
     },
     getImagePaymentID(paymentForm, bandeira) {
+      console.log(paymentForm);
       if (paymentForm == "BOLETO" || paymentForm == "bolbradesco") {
         return "img/barcode.png";
       } else {
@@ -599,6 +586,7 @@ export default {
     },
     getCripto(id_pedido, id_ordem) {
       // console.log(id_produto);
+      console.log(id_pedido, id_ordem);
       const hashids = new Hashids("", 0, "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
       const produtHashed = hashids.encode(
         id_pedido.toString(),
@@ -716,6 +704,60 @@ export default {
           return "pendente";
         }
       }
+    },
+    async uploadFileCarrinhoAbandonado() {
+      var arquivoInvalido = false;
+      const LFile = document.getElementById("fileUpload");
+      LFile.addEventListener("change", () => {
+        API_NOTIFICATION.ShowLoading();
+        var file = LFile.files[0];
+        var reader = new FileReader();
+        reader.onload = async function(progressEvent) {
+          // By lines
+          var lines = this.result.split(/\r\n|\n/);
+          lines.forEach(async (obj, i) => {
+            if (i > 0) {
+              const Linhas = obj.split(",");
+              if (Linhas.length >= 5) {
+                var carrinho = {
+                  valor_produto: Linhas[0],
+                  nome_cliente: Linhas[1],
+                  email_cliente: Linhas[2],
+                  telefone_cliente: Linhas[3],
+                  token_push_cliente: Linhas[4],
+                  produtos: Linhas[5],
+                  produtos_skus: Linhas[6],
+                  link_compra: Linhas[7],
+                  criado_em: moment().format(),
+                  modificado_em: null,
+                  status: 0,
+                  campanha_enviar: 1
+                };
+                const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(
+                  carrinho
+                );
+              }
+            }
+          });
+
+          API_NOTIFICATION.showNotificationW(
+            "Pronto!",
+            "Arquivo Importado",
+            "success"
+          );
+        };
+        reader.readAsText(file);
+      });
+      if (LFile) {
+        LFile.click();
+      }
+    },
+    baixarArquivoExemplo() {
+      API_NOTIFICATION.ShowLoading();
+      const URL =
+        "https://docs.google.com/spreadsheets/d/1AOp85og6fSY26MvqZcLJ0w0MO8kf4RszY4rO_kl6ERo/edit?usp=sharing";
+      UTILIS_API.OpenWindow(URL);
+      API_NOTIFICATION.HideLoading();
     }
   }
 };
