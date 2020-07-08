@@ -93,6 +93,10 @@ export default {
       this.dadosStore = JSON.parse(this.dadosCliente.dadosCompra.dataStore);
       this.DadosLoja = await UTILIS_API.GetDadosLojaSession();
       const LLimite = await this.processaQuantidadeLimite();
+      const LCarrinho = await UTILIS_API.GetAbandonCartSession();
+      if (LCarrinho) {
+          const LReturnUpdateCarrinho = await API_CARRINHO_ABANDONADO.UpdateStatusCarrinho(1, LCarrinho);
+      }
       if (this.DadosLoja) {
         if (this.DadosLoja.limpa_carrinho == 1) {
           sessionStorage.removeItem("cart");

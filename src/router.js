@@ -24,6 +24,7 @@ const Pay = () => import('@/components/Cart/Pay.vue');
 const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
 const Pedidos = () => import('@/views/Pages/Pedidos.vue');
+const CarrinhoAbandonado = () => import('@/views/Pages/CarrinhoAbandonado.vue');
 const Comissoes = () => import('@/views/Pages/Comissoes.vue');
 const Mensalidades = () => import('@/views/Pages/Mensalidades.vue');
 
@@ -39,6 +40,8 @@ const UpSell = () => import('@/views/Pages/UpSell.vue')
 const UpSellAdd = () => import('@/views/Pages/UpSellAdd.vue');
 const CrossSell = () => import('@/views/Pages/CrossSell.vue')
 const CrossSellAdd = () => import('@/views/Pages/CrossSellAdd.vue');
+const DownSell = () => import('@/views/Pages/DownSell.vue')
+const DownSellAdd = () => import('@/views/Pages/DownSellAdd.vue');
 const Pixels = () => import('@/views/Pages/Pixels.vue');
 const PixelAdd = () => import('@/views/Pages/PixelAdd.vue');
 const Mensagens = () => import('@/views/Pages/Mensagens.vue');
@@ -143,6 +146,10 @@ export default new Router({
                 component: Pedidos
             },
             {
+                path: '/carrinho-abandonado',
+                component: CarrinhoAbandonado
+            },
+            {
                 path: '/admin',
                 component: Admin
             },
@@ -194,6 +201,20 @@ export default new Router({
             {
                 path: '/marketing/crosssell/edit/:id',
                 component: CrossSellAdd
+            },
+            
+            
+            {
+                path: '/marketing/downsell',
+                component: DownSell
+            },
+            {
+                path: '/marketing/downsell/add',
+                component: DownSellAdd
+            },
+            {
+                path: '/marketing/downsell/edit/:id',
+                component: DownSellAdd
             },
 
             {

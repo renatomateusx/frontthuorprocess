@@ -7,14 +7,14 @@ export default Object.freeze({
   /* PLATAFORMAS */
   PLATAFORMA_SHOPIFY: 1,
 
+  WEBSITE: 'https://app.thuor.com',
+  WEBSITE_CART: 'https://app.thuor.com/cart/items?',
 
   /* PLATAFORMAS */
-  WEBSITEAPI: 'http://localhost:3000/',
+  //WEBSITEAPI: 'http://localhost:3000/',
   //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
-  //WEBSITEAPI: 'https://api.thuor.com:7443/',
+  WEBSITEAPI: 'https://api.thuor.com:7443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
-  //API_PAG_SEGURO: 'https://sandbox.api.pagseguro.com/',
-  API_PAG_SEGURO: 'https://ws.sandbox.pagseguro.uol.com.br/v2/',
   PATH_PS_SESSION: 'checkouts/SessionPagSeguro',
   PATH_PS_CHARGE: 'checkouts/DoPayPagSeguroCard',
   MSG_BOLETO_ENVIO: 'Aqui está o boleto do produto *PRODUTO_NAME*, no valor de R$ VALOR_VALOR Vencimento: *VENCIMENTO* Código de barras: *CODIGO_BARRAS* Link: LINK_LINK',
@@ -107,6 +107,21 @@ export default Object.freeze({
   PATH_DELETE_CROSSSELL: 'crosssells/DeleteCrossSellByID',
   PATH_GET_CROSSSELL_BY_PRODUCT_ID: 'crosssells/GetCrossSellByProductID',
 
+  /* DOWN SELL */
+  PATH_GET_DOWNSELL: 'downsells/GetDownsells',
+  PATH_GET_DOWNSELL_BY_ID: 'downsells/GetDownsellsByID',
+  PATH_SAVE_DOWNSELL: 'downsells/SaveDownsells',
+  PATH_DELETE_DOWNSELL: 'downsells/DeleteDownSellByID',
+  PATH_GET_DOWNSELL_BY_PRODUCT_ID: 'downsells/GetDownSellByProductID',
+
+  /* CARRINHO ABANDONADO */
+  PATH_GET_CARRINHO: 'carrinhoAbandonado/GetCarrinho',
+  PATH_SAVE_CARRINHO: 'carrinhoAbandonado/SaveCarrinho',
+  PATH_UPDATE_STATUS_CARRINHO: 'carrinhoAbandonado/UpdateStatusCarrinho',
+  PATH_UPDATE_CADOS_CLIENTE_CARRINHO: 'carrinhoAbandonado/UpdateDadosClienteCarrinho',
+  
+
+
   CONSTANTE_VENCIMENTO_BOLETO: 3,
   CONSTANTE_EMAIL_PAG_SEGURO: 'renatomateusx@gmail.com',
   
@@ -180,6 +195,7 @@ export default Object.freeze({
   SESSION_CHECKOUT: 'sc',
   SESSION_ATUAL_PAGE: 'atp',
   SESSION_OPTION_CART_OPENED: 'opt',
+  SESSION_ABANDONED_CART: 'ab',
 
   /* MENSALIDADES*/
   PATH_GET_MENSALIDADES_PAGAS: 'mensalidades/GetMensalidadesPagas',

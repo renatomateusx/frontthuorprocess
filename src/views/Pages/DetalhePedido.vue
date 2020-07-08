@@ -7,6 +7,9 @@
     font-size: 12px !important;
   }
 }
+.alertPadding{
+  padding: 5px!important;
+}
 .card-flat {
   margin-top: 80px !important;
 }
@@ -223,6 +226,9 @@ th.active .arrow {
       </form>-->
     </div>
     <div class="cardD row col-xl-12 mt-3">
+      <div class="row col-xl-12 ml-0 mt-2">
+        <span class="alert alert-info alertPadding " v-if="order_number != ''">Pedido #{{order_number}}</span>
+      </div>
       <div class="card col-md-3 mt-3 float-left mr-1">
         <div class="card-header paddingLeftZero">
           <div class="card-title text-left">Cliente</div>
@@ -454,6 +460,7 @@ export default {
   },
   data() {
     return {
+      order_number: "",
       canRender: false,
       pedidoID: 0,
       timeAgo: "",
@@ -874,6 +881,7 @@ export default {
         this.pedido.cidade = obj.json_front_end_user_data.dadosComprador.cidade;
         this.pedido.estado = obj.json_front_end_user_data.dadosComprador.estado;
         this.pedido.cep = obj.json_front_end_user_data.dadosComprador.cep;
+        this.order_number = obj.json_front_end_user_data.dadosLoja.plataforma == constantes.PLATAFORMA_SHOPIFY ? obj.json_shopify_response.order.order_number : '';
         this.canRender = true;
         API_NOTIFICATION.HideLoading();
       }

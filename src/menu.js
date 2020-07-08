@@ -39,6 +39,12 @@ const Menu = [
         // }]
     },
     {
+        name: 'Carrinho Abandonado',
+        icon: 'fas fa-cart-arrow-down',
+        translate: 'sidebar.nav.MENU',
+        path: '/carrinho-abandonado'
+    },
+    {
         name: 'Configurações',
         path: 'configuracoes',
         icon: 'icon-settings',
@@ -74,6 +80,12 @@ const Menu = [
             translate: 'sidebar.nav.SUBMENU',
             icon: 'fa fa-crosshairs',
             path: '/marketing/crosssell'
+        },
+        {
+            name: 'DownSell',
+            translate: 'sidebar.nav.SUBMENU',
+            icon: 'fa fa-downhairs',
+            path: '/marketing/downsell'
         },
         {
             name: 'Mensagens',
