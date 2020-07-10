@@ -11,9 +11,9 @@ export default Object.freeze({
   WEBSITE_CART: 'https://app.thuor.com/cart/items?',
 
   /* PLATAFORMAS */
-  WEBSITEAPI: 'http://localhost:3000/',
+  //WEBSITEAPI: 'http://localhost:3000/',
   //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
-  //WEBSITEAPI: 'https://api.thuor.com:7443/',
+  WEBSITEAPI: 'https://api.thuor.com:7443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   PATH_PS_SESSION: 'checkouts/SessionPagSeguro',
   PATH_PS_CHARGE: 'checkouts/DoPayPagSeguroCard',

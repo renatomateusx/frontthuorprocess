@@ -10,9 +10,9 @@ const Menu = [
         translate: 'sidebar.nav.SINGLEVIEW'
     },
     {
-        name: 'Visão do Vendedor',
+        name: 'Tomada de Decisão',
         path: '/dashboard',
-        icon: 'fas fa-crop',
+        icon: 'fas fa-hand-holding-usd',
         translate: 'sidebar.nav.SUBMENU'
     },
     {

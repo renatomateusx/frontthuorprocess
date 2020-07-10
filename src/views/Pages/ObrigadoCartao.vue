@@ -62,6 +62,7 @@ import API_LOGIN from "../../api/loginAPI";
 import API_HEADERS from "../../api/configAxios";
 import UTILIS from "../../utilis/utilis.js";
 import UpSellCard from "../../components/Cart/UpSellCard";
+import API_CARRINHO_ABANDONADO from '../../api/carrinhoAbandonadoAPI';
 export default {
   template: `#templateObrigado`,
   async created() {

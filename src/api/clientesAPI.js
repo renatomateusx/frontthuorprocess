@@ -106,6 +106,7 @@ var API_CLIENTES = {
                         //console.log("Response", response);
                         const LCarrinho = await UTILIS_API.GetAbandonCartSession();
                         if (LCarrinho) {
+                            console.log("carr",LCarrinho);
                             const LReturnUpdateCarrinho = await API_CARRINHO_ABANDONADO.UpdateDadosClienteCarrinho(nome, email, telefone, LCarrinho);
                         }
                         resolve(response);

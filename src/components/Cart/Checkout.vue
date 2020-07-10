@@ -167,7 +167,7 @@ export default {
         //console.log("1");
         const LCart = sessionStorage.getItem("cart");
         if (LCart) {
-          const LPrepareCarrinhoAbandonado = this.prepareAbandonCart(LCart);
+          const LPrepareCarrinhoAbandonado = await this.prepareAbandonCart(LCart);
           this.dadosLoja = UTILIS_API.GetDadosLojaSession();
           this.produtosCart = JSON.parse(LCart);
         } else {
@@ -204,11 +204,14 @@ export default {
             }
             const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(LBodyCarrinho);
             LRetornoID.push(LRetorno);
+            UTILIS_API.SetAbandonCartSession(LRetornoID);
           });          
-          UTILIS_API.SetAbandonCartSession(LRetornoID);          
+          
+          resolve(1);  
 
         } catch (error) {
           console.log("Erro ao preparar o carrinho abandonado", error);
+          reject(error);
         }
       });
     },
