@@ -36,9 +36,9 @@
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fa fa-cart-arrow-down">
+      <span class="fa fa-barcode">
         <span class="ml-2"></span>
-      </span>Recuperação de Carrinho Abandonado
+      </span>Recuperação de Boletos
     </div>
     <strong>
       Crie sequência de mensagens para recuperar e aumentar suas vendas.
@@ -92,7 +92,7 @@
               <input
                 :class="{'form-control':true, 'is-invalid': errors.has('campanha.nome')}"
                 v-model="campanha.nome"
-                placeholder="Ex: Carrinho Abandonado"
+                placeholder="Ex: Recuperação de Boletos "
                 v-validate="'required'"
                 class
                 type="text"
@@ -149,7 +149,7 @@ import API_CHECKOUT from "../../api/checkoutAPI";
 import API_HEADERS from "../../api/configAxios";
 import API_LOJA from "../../api/lojaAPI";
 import SequenciaCard from "../../components/Campanhas/SequenciaCard";
-import API_CAMPANHA from "../../api/campanhasAPI";
+import API_CAMPANHA_BOLETO from "../../api/campanhasBoletoAPI";
 
 Validator.localize({ pt: pt });
 Vue.use(VeeValidate, {
@@ -191,7 +191,7 @@ export default {
       //API_NOTIFICATION.ShowLoading();
       API_LOGIN.VerificaToken()
         .then(res => {
-          API_CAMPANHA.GetCampanhasCarrinhoAbandonado()
+          API_CAMPANHA_BOLETO.GetCampanhasBoletoRecover()
             .then(resCampanhaCarrinho => {
               if (resCampanhaCarrinho.data) {
                 this.campanha = resCampanhaCarrinho.data.sequencia;
@@ -247,7 +247,7 @@ export default {
     },
     salvarSequencia() {
       API_NOTIFICATION.ShowLoading();
-      API_CAMPANHA.SalvarCampanhaCarrinhoAbandonado(this.campanha)
+      API_CAMPANHA_BOLETO.SalvarCampanhaBoletoRecover(this.campanha)
         .then(resCampanha => {
           API_NOTIFICATION.showNotification(
             "Campanha Salva com Sucesso!",

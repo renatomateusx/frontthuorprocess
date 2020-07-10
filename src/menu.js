@@ -45,6 +45,13 @@ const Menu = [
         path: '/carrinho-abandonado'
     },
     {
+        name: 'Recuperação de Boletos',
+        icon: 'fas fa-barcode',
+        translate: 'sidebar.nav.MENU',
+        path: '/recupera-boleto'
+    },
+    
+    {
         name: 'Configurações',
         path: 'configuracoes',
         icon: 'icon-settings',

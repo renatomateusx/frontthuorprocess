@@ -200,7 +200,7 @@ export default {
               criado_em: moment().format(),
               modificado_em: null,
               status: 0,
-              campanha_enviar: 1
+              campanha_enviar: 0
             }
             const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(LBodyCarrinho);
             LRetornoID.push(LRetorno);

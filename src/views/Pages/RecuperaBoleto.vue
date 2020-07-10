@@ -168,15 +168,15 @@ option {
 <template>
   <ContentWrapper>
     <div class="content-heading">
-      <span class="fas fa-cart-arrow-down">
+      <span class="fas fa-barcode">
         <span class="ml-2"></span>
-      </span>Carrinho Abandonado
+      </span>Recuperação de Boletos
     </div>
     <small>
-      Todos os carrinhos abandonados processados pelo Thuor ou por terceiros estão aqui.
-      <br />Se quiser importar mais carrinhos abandonados, faça upload do arquivo por aqui.
-      <br/>  Para configurar a sequência de mensagens a ser enviada, vá até
-      <span class="icon-settings"></span> Configurações > Campanhas > Carrinho Abandonado.
+      Todos as recuperações de boletos processadas pelo Thuor ou por terceiros estão aqui.
+      <br />Se quiser importar mais dados para recuperar boletos, faça upload do arquivo por aqui.
+      <br />Para configurar a sequência de mensagens a ser enviada, vá até
+      <span class="icon-settings"></span> Configurações > Campanhas > Recuperação de Boletos.
     </small>
     <p></p>
     <button
@@ -250,8 +250,8 @@ option {
           <table class="table-body">
             <tbody>
               <tr
-                v-for="({id_cart, criado_em, valor_produto, produtos, telefone_cliente, produtos_skus, nome_cliente},index) in dataPerPage"
-                :key="id_cart"
+                v-for="({id_cart, criado_em, url_boleto, bar_code, produto_nome, telefone_cliente, nome_cliente},index) in dataPerPage"
+                :key="index"
               >
                 <td class="data padding1010">
                   <p class="col-md-12 mb-0 dataPedido">{{criado_em | formatDate}}</p>
@@ -259,16 +259,12 @@ option {
                 <td class="pedido" style="width: 120px!important;">
                   <!-- :to="{path: '/pedidos/detalhe/' + getCripto(id_cart, index)}" -->
                   <!-- <router-link > -->
-                    <p class="col-md-12 numeroPedido mb-0">{{nome_cliente}}</p>
+                  <p class="col-md-12 numeroPedido mb-0">{{nome_cliente}}</p>
                   <!-- </router-link> -->
-                  <p
-                    class="col-md-12 text-left nomeComprador grey mb-0"
-                    v-if="valor_produto"
-                  >R$ {{valor_produto | formatPrice}}</p>
+
                 </td>
                 <td class="data padding1010" style="min-width: 15rem!important">
-                  <p class="col-md-12 mb-0 dataPedido">{{produtos}}</p>
-                  <p class="col-md-12 mb-0 tempoPedido">{{produtos_skus}}</p>
+                  <p class="col-md-12 mb-0 dataPedido">{{produto_nome}}</p>
                 </td>
                 <td>
                   <div class="row" v-if="telefone_cliente != undefined">
@@ -339,7 +335,7 @@ import UTILIS_API from "../../api/utilisAPI";
 import vSelect from "vue-select";
 import "vue-select/dist/vue-select.css";
 import constantes_mensagens from "../../api/constantes_mensagens";
-import API_CARRINHO_ABANDONADO from "../../api/carrinhoAbandonadoAPI";
+import API_RECUPERA_BOLETO from "../../api/recuperaBoletoAPI";
 Vue.component("v-select", vSelect);
 
 TimeAgo.addLocale(pt);
@@ -350,7 +346,7 @@ Vue.use(VeeValidate, {
 });
 Vue.filter("formatDate", function(value) {
   if (value) {
-    return moment(String(value)).format("DD/MM/YYYY hh:mm");
+    return moment(String(value)).format("DD/MM/YYYY");
   }
 });
 Vue.filter("formatPrice", function(value) {
@@ -476,7 +472,7 @@ export default {
                 .catch(error => {
                   console.log("Erro ao pegar produtos", error);
                 });
-              await API_CARRINHO_ABANDONADO.GetCarrinho()
+              await API_RECUPERA_BOLETO.GetBoletos()
                 .then(retCarrinho => {
                   this.gridData = [];
                   // var LImages = JSON.parse(retProd.data[0].json_dados_produto);
@@ -485,9 +481,8 @@ export default {
                     this.gridData.push({
                       id_cart: obj.id_cart,
                       criado_em: obj.criado_em,
-                      valor_produto: obj.valor_produto,
-                      produtos: obj.produtos,
-                      produtos_skus: obj.produtos_skus,
+                      produto_nome: obj.produto_nome,
+                      url_boleto: obj.url_boleto,
                       nome_cliente: obj.nome_cliente,
                       telefone_cliente: obj.telefone_cliente
                     });
@@ -663,9 +658,9 @@ export default {
           .find(x => x.id == id)
           .json_front_end_user_data.dadosComprador.nome_completo.split(" ")[0];
         Mensagem = Mensagem.replace("{first_name}", "%0a" + Nome + "%0a");
-        Mensagem = Mensagem.replace("{produto_name}", LprodutoTitle);
-        Mensagem = Mensagem.replace("{boleto_bar_code}", LBarCode);
-        Mensagem = Mensagem.replace("{link_boleto}.", LlinkBoleto);
+        Mensagem = Mensagem.replace("{produto_nome}", LprodutoTitle);
+        Mensagem = Mensagem.replace("{barcode}", LBarCode);
+        Mensagem = Mensagem.replace("{url_boleto}.", LlinkBoleto);
         const LURLFinal = LURL.replace("{@PHONE}", Telefone).replace(
           "{@MENSAGEM}",
           Mensagem
@@ -708,6 +703,7 @@ export default {
       }
     },
     async uploadFileCarrinhoAbandonado() {
+      var self = this;
       var arquivoInvalido = false;
       const LFile = document.getElementById("fileUpload");
       LFile.addEventListener("change", () => {
@@ -719,25 +715,22 @@ export default {
           var lines = this.result.split(/\r\n|\n/);
           lines.forEach(async (obj, i) => {
             if (i > 0) {
-              const Linhas = obj.split(",");
+              const Linhas = obj.split(";");
               if (Linhas.length >= 5) {
-                var carrinho = {
-                  valor_produto: Linhas[0],
-                  nome_cliente: Linhas[1],
-                  email_cliente: Linhas[2],
-                  telefone_cliente: Linhas[3],
-                  token_push_cliente: Linhas[4],
-                  produtos: Linhas[5],
-                  produtos_skus: Linhas[6],
-                  link_compra: Linhas[7],
+                var boleto = {
+                  nome_cliente: Linhas[0],
+                  email_cliente: Linhas[1],
+                  telefone_cliente: Linhas[2],
+                  token_push_cliente: Linhas[3],
+                  produto_nome: Linhas[4],
+                  bar_code: Linhas[5],
+                  url_boleto: Linhas[6],
                   criado_em: moment().format(),
                   modificado_em: null,
                   status: 0,
                   campanha_enviar: 0
                 };
-                const LRetorno = await API_CARRINHO_ABANDONADO.SaveCarrinho(
-                  carrinho
-                );
+                const LRetorno = await API_RECUPERA_BOLETO.SaveBoletos(boleto);
               }
             }
           });
@@ -747,6 +740,9 @@ export default {
             "Arquivo Importado",
             "success"
           );
+          setTimeout(() => {
+            self.checkIfLogged();
+          }, 1500);
         };
         reader.readAsText(file);
       });
@@ -757,7 +753,7 @@ export default {
     baixarArquivoExemplo() {
       API_NOTIFICATION.ShowLoading();
       const URL =
-        "https://docs.google.com/spreadsheets/d/1AOp85og6fSY26MvqZcLJ0w0MO8kf4RszY4rO_kl6ERo/edit?usp=sharing";
+        "https://docs.google.com/spreadsheets/d/1fBATcAJI2NfSbStCOy2mdSkKJb5VXDSDvjtp1BDQ730/edit#gid=0";
       UTILIS_API.OpenWindow(URL);
       API_NOTIFICATION.HideLoading();
     }

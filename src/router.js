@@ -25,6 +25,7 @@ const ObrigadoCartao = () => import('@/views/Pages/ObrigadoCartao.vue');
 const ObrigadoBoleto = () => import('@/views/Pages/ObrigadoBoleto.vue');
 const Pedidos = () => import('@/views/Pages/Pedidos.vue');
 const CarrinhoAbandonado = () => import('@/views/Pages/CarrinhoAbandonado.vue');
+const RecuperaBoleto = () => import('@/views/Pages/RecuperaBoleto.vue');
 const Comissoes = () => import('@/views/Pages/Comissoes.vue');
 const Mensalidades = () => import('@/views/Pages/Mensalidades.vue');
 
@@ -51,6 +52,7 @@ const Cupons = () => import('@/views/Pages/Cupons.vue');
 const CupomAdd = () => import('@/views/Pages/CupomAdd.vue');
 const IntegracaoCampanhas = () => import('@/views/Pages/IntegracaoCampanhas.vue');
 const AbandonoCarrinho = () => import('@/views/Pages/AbandonoCarrinho.vue');
+const RecoverTicket = () => import('@/views/Pages/RecoverTicket.vue');
 const Activate = () => import('@/views/Pages/Activate.vue');
 const Redefinir = () => import('@/views/Pages/Redefinir.vue');
 const Review = () => import('@/views/Pages/Review.vue');
@@ -148,6 +150,10 @@ export default new Router({
             {
                 path: '/carrinho-abandonado',
                 component: CarrinhoAbandonado
+            },
+            {
+                path: '/recupera-boleto',
+                component: RecuperaBoleto
             },
             {
                 path: '/admin',
@@ -339,6 +345,10 @@ export default new Router({
             {
                 path: '/configs/campanhas/abandcart',
                 component: AbandonoCarrinho
+            },
+            {
+                path: '/configs/campanhas/recoverbol',
+                component: RecoverTicket
             }
 
         ]

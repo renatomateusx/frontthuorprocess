@@ -11,9 +11,9 @@ export default Object.freeze({
   WEBSITE_CART: 'https://app.thuor.com/cart/items?',
 
   /* PLATAFORMAS */
-  //WEBSITEAPI: 'http://localhost:3000/',
+  WEBSITEAPI: 'http://localhost:3000/',
   //WEBSITEAPI: 'https://hmlapi.thuor.com:9443/',
-  WEBSITEAPI: 'https://api.thuor.com:7443/',
+  //WEBSITEAPI: 'https://api.thuor.com:7443/',
   URL_GET_IP: 'https://api.ipify.org?format=json',
   PATH_PS_SESSION: 'checkouts/SessionPagSeguro',
   PATH_PS_CHARGE: 'checkouts/DoPayPagSeguroCard',
@@ -119,7 +119,11 @@ export default Object.freeze({
   PATH_SAVE_CARRINHO: 'carrinhoAbandonado/SaveCarrinho',
   PATH_UPDATE_STATUS_CARRINHO: 'carrinhoAbandonado/UpdateStatusCarrinho',
   PATH_UPDATE_CADOS_CLIENTE_CARRINHO: 'carrinhoAbandonado/UpdateDadosClienteCarrinho',
-  
+
+  /* RECUPERA BOLETO */
+  PATH_GET_BOLETOS: 'recupera_boleto/GetBoletos',
+  PATH_SAVE_BOLETOS: 'recupera_boleto/SaveBoletos',
+  PATH_UPDATE_STATUS_BOLETOS: 'recupera_boleto/UpdateStatusBoleto',
 
 
   CONSTANTE_VENCIMENTO_BOLETO: 3,
@@ -158,6 +162,16 @@ export default Object.freeze({
   PATH_INTEGRACAO_CAMPANHA_BY_ID: 'campanhas/GetIntegracaoCampanhaByID',
   PATH_INSERT_INTEGRACAO_CAMPANHA: 'campanhas/InsertIntegracaoCampanha',
   PATH_UPDATE_INTEGRACAO_CAMPANHA: 'campanhas/UpdateIntegracaoCampanha',
+
+  /* CAMPANHA BOLETO */
+  
+  PATH_GET_CAMPANHAS_BOLETO: 'campanhas/GetCampanhasBoleto',
+  PATH_INTEGRACAO_CAMPANHA_BOLETO: 'campanhas/GetIntegracaoCampanhaBoleto',
+  PATH_SAVE_CAMPANHA_BOLETO: 'campanhas/SaveCampanhaBoleto',
+  PATH_GET_CAMPANHA_BOLETO: 'campanhas/GetCampanhaBoleto',
+  PATH_INTEGRACAO_CAMPANHA_BY_ID_BOLETO: 'campanhas/GetIntegracaoCampanhaByIDBoleto',
+
+  /* LEAD */
 
   PATH_LEAD_GET_DADOS_COMPRADOR: 'clientes/GetDadosCompradorLead',
 
@@ -220,5 +234,7 @@ export default Object.freeze({
 
   CONSTANTE_THUOR: 'Thuor',
   CONSTANTE_THUOR_EMAIL: 'renatomateusx@gmail.com',
+
+ 
   
 });

@@ -59,7 +59,7 @@
           <div class="card-header">
             <div class="my-2 row p-0">
               <img
-                class="mr-2 img-fluid col-md-3 imgIntegracao mt-2"
+                class="mr-2 img-fluid col-md-2 imgIntegracao mt-2"
                 v-bind:src="getImageIntegracaoCampanha(id)"
                 alt="App"
               />
@@ -70,7 +70,7 @@
               >
                 <h4><span class="fa fa-edit mt-2">Configurar</span></h4>
               </button>
-              <div class="float-right mt-3 col-md-1">
+              <div class="float-right mt-4 col-md-1">
                 <span class="pull-right float-right" v-bind:class="getStatusClassByID(id)"></span>
               </div>
             </div>
@@ -117,7 +117,7 @@ export default {
         .then(res => {
           API_CAMPANHA.GetCampanhas()
             .then(resCampanhas => {
-              //console.log(resCampanhas.data);
+              console.log(resCampanhas.data);
               this.campanhaList = resCampanhas.data;
               this.campanhaList.forEach((obj, i) => {
                 API_CAMPANHA.GetCampanhaByID(obj.id).then(resCampanhaID => {
@@ -141,9 +141,13 @@ export default {
       if (id == 1) {
         this.$router.push("/configs/campanhas/abandcart");
       }
+       if (id == 2) {
+        this.$router.push("/configs/campanhas/recoverbol");
+      }
     },
     getImageIntegracaoCampanha(id) {
       if (id == 1) return "/img/abandoned_cart.png";
+      if(id == 2) return "/img/ticket_recover.png";
       return "";
     },
     getApelidoByID(id) {

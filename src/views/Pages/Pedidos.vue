@@ -564,6 +564,8 @@ export default {
     toUpperCase(str) {
       if (str) {
         return str.toUpperCase();
+      }else{
+        return "INDEFINIDO";
       }
     },
     getImagePaymentID(paymentForm, bandeira) {
@@ -594,6 +596,8 @@ export default {
           return "alert-success";
         if (status == "entregue" || status.toUpperCase() == "DELIVERED")
           return "alert-success";
+        return "alert-warning";
+      }else{
         return "alert-warning";
       }
     },

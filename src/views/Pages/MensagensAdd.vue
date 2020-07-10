@@ -167,6 +167,7 @@ div > p{
                 <small><strong>{merchant}</strong> - nome de sua loja</small><br>
                 <small><strong>{products_list}</strong> - lista de produtos</small><br>
                 <small><strong>{link}</strong> - link do carrinho</small><br>
+                <small><strong>{url_boleto}</strong> - link do boleto</small><br>
                 <small><strong>{barcode}</strong> - código de barras</small><br>
                 <small><strong>{tracking_code}</strong> - código de rastreio</small><br>
               </div>
